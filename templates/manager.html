@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container manager-page">
+    <div class="row">
+        <div class="col-md-3" id="menu-list">
+            <div id="workshop">
+                <h5>WORKSHOP OPERATIONS</h5>
+                <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="addNewWs()" value="Add New Workshop">Add New Workshop</button>
+                <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="addWsDetails()" value="Add Workshop Details">Add Workshop Details</button>
+                <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="addRecordingLink()" value="Add Recording Link">Add Recording Link</button>
+                <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="addSessionLink()" value="Add Session Link">Add Session Link</button>
+                <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="closeRegistration()" value="Close Registration">Close Registration</button>
+            </div>
+            <div id="notification">
+                <h5>NOTIFICATIONS</h5>
+                <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="promotion()" value="New Workshop Promotion">New Workshop Promotion</button>
+                <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="lastDateReminder()" value="Last Date Reminder">Last Date Reminder</button>
+                <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="sessionLink()" value="Session Link">Session Link</button>
+                <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="sessionReminder()" value="Session Reminder">Session Reminder</button>
+                <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="certificateDistribution()" value="Certificate Distribution">Certificate Distribution</button>
+            </div>
+            <div id="export">
+                <h5>EXPORTS</h5>
+                <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="csvForCertificates()" value="CSV for Certificate">CSV for Certificates</button>
+                <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="reports()" value="Reports">Reports</button>
+                <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="gstFilingSheet()" value="GST Filing Sheet">GST Filing Sheet</button>
+            </div>
+        </div>
+        <div class="col-md-1"></div>
+        <div class="col-md-8 operation-body">
+            <div id="manager-img">
+                <img src="static/images/manager.png">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                          <div class="{{category}}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+            <div id="add-ws">
+                <form action="{{ url_for('manager') }}" method="post">
+                    <h2>Add New Workshop</h2>
+                    <input name="name" placeholder="Name" type="text" required><br>
+                    <input name="topic" placeholder="Topic" type="text" required><br>
+                    <label style="color: gray; width:100%;">Workshop Date</label>
+                    <input class="radio-inp" maxlength="2" type="text" name="date" placeholder="Date" required>
+                    <input class="radio-inp" maxlength="2" type="text" name="month" placeholder="Month" required>
+                    <input class="radio-inp" maxlength="4" type="text" name="year" placeholder="Year" required>
+                    <input name="link" placeholder="Session Link" type="text" required>
+                    <input name="instructor" placeholder="Instructor" type="text" required><br>
+                    <button type="submit" class="btn btn-primary btn-block btn-large">ADD TO DATABASE</button>
+                </form>
+            </div>
+            <div id="add-ws-details">
+                <form action="{{ url_for('manager') }}" method="post">
+                    <h2>Add Ws details</h2>
+                    <input name="category" placeholder="category" type="text" required><br>
+                    <input name="brief" placeholder="brief" type="text" required><br>
+                    <input name="sessions" placeholder="sessions" type="text" required><br>
+                    <input name="st1" placeholder="Subtopic1" type="text"><br>
+                    <input name="st2" placeholder="Subtopic2" type="text"><br>
+                    <input name="st3" placeholder="Subtopic3" type="text"><br>
+                    <input name="st4" placeholder="Subtopic4" type="text"><br>
+                    <input name="st5" placeholder="Subtopic5" type="text"><br>
+                    <input name="st6" placeholder="Subtopic6" type="text"><br>
+                    <input name="st7" placeholder="Subtopic7" type="text"><br>
+                    <input name="st8" placeholder="Subtopic8" type="text"><br>
+                    <input name="st9" placeholder="Subtopic9" type="text"><br>
+                    <input name="description" placeholder="Description" type="text" required><br>
+                    <input name="req1" placeholder="Requirement1" type="text"><br>
+                    <input name="req2" placeholder="Requirement2" type="text"><br>
+                    <input name="req3" placeholder="Requirement3" type="text"><br>
+                    <input name="req4" placeholder="Requirement4" type="text"><br>
+                    <input name="req5" placeholder="Requirement5" type="text"><br>
+                    <input name="req6" placeholder="Requirement6" type="text"><br>
+                    <input name="req7" placeholder="Requirement7" type="text"><br>
+                    <input name="req8" placeholder="Requirement8" type="text"><br>
+                    <input name="req9" placeholder="Requirement9" type="text"><br>
+                    <input name="result1" placeholder="Result1" type="text"><br>
+                    <input name="result2" placeholder="Result2" type="text"><br>
+                    <input name="result3" placeholder="Result3" type="text"><br>
+                    <input name="result4" placeholder="Result4" type="text"><br>
+                    <input name="result5" placeholder="Result5" type="text"><br>
+                    <input name="result6" placeholder="Result6" type="text"><br>
+                    <input name="result7" placeholder="Result7" type="text"><br>
+                    <input name="result8" placeholder="Result8" type="text"><br>
+                    <input name="result9" placeholder="Result9" type="text"><br>
+                    <button type="submit" class="btn btn-primary btn-block btn-large">ADD TO DATABASE</button>
+                </form>
+            </div>
+            <div id="add-recording-link">
+                <form action="{{ url_for('manager') }}" method="post">
+                    <h2>Add Recording Link</h2>
+                    <input name="yt" placeholder="Recorded Session URL" type="text"><br>
+                    <button type="submit" class="btn btn-primary btn-block btn-large">ADD TO DATABASE</button>
+                </form>
+            </div>
+            <div id="add-session-link">
+                <form action="{{ url_for('manager') }}" method="post">
+                    <h2>Add Session Link</h2>
+                    <input name="session-link" placeholder="Recorded Session URL" type="text"><br>
+                    <button type="submit" class="btn btn-primary btn-block btn-large">ADD TO DATABASE</button>
+                </form>
+            </div>
+            <div id="close-reg">
+                <form action="{{ url_for('manager') }}" method="post">
+                    <h2>Close Registration Window</h2>
+                    <button type="submit" name="close" class="btn btn-primary btn-block btn-large" value="shut-reg-door">Close Registration</button>
+                </form>
+            </div>
+            <div id="ws-promo">
+                <form action="{{ url_for('manager') }}" method="post">
+                    <h2>Workshop Promotion</h2>
+                    <button type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="mail-promo">Mail Promotion</button>
+                    <button type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="wa-promo">Whatsapp Promotion</button>
+                    <button type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="wa-mail-promo">Mail & Wa Promotion</button>
+                </form>
+            </div>
+            <div id="last-day-reminder">
+                <form action="{{ url_for('manager') }}" method="post">
+                    <h2>Last Day Reminder</h2>
+                    <button type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="mail-last-rem">Mail Reminder</button>
+                    <button type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="wa-last-rem">Whatsapp Reminder</button>
+                    <button type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="wa-mail-last-rem">Mail & Wa Remidner</button>
+                </form>
+            </div>
+            <div id="session-link">
+                <form action="{{ url_for('manager') }}" method="post">
+                    <h2>Send Session Link</h2>
+                    <button type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="mail-link">Email</button>
+                    <button type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="wa-link">Whatsapp</button>
+                    <button type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="wa-mail-link">Email & Whatsapp</button>
+                </form>
+            </div>
+            <div id="session-reminder">
+                <form action="{{ url_for('manager') }}" method="post">
+                    <h2>Send Session Reminder</h2>
+                    <button type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="mail-s-rem">Email Reminder</button>
+                    <button type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="wa-s-rem">Whatsapp Reminder</button>
+                    <button type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="wa-mail-s-rem">Email & Whatsapp Reminder</button>
+                </form>
+            </div>
+            <div id="certificate-dist">
+                <form action="{{ url_for('manager') }}" method="post">
+                    <h2>Distribute Certificates</h2>
+                    <button type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="certificate-dist">Distribute via Email</button>
+                </form>
+                <div id="basket">
+                    <h2>Upload Certificates</h2>
+                    <form action="{{ url_for('manager') }}" method="post" id="form1" enctype="multipart/form-data">
+                        <input type="file" name="file" id="file" multiple>
+                        <button type="submit" name="submit" id="file-btn" class="btn btn-primary btn-block btn-large" value="upload_files">Upload Files</button>
+                    </form>
+                </div>
+            </div>
+            <div id="csv-export-cert">
+                <h2>Export CSV for Certificates</h2>
+                <form action="{{ url_for('manager') }}" method="post">
+                    
+                    <button type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="csv-exp-cert">Create CSV</button>
+                    <button type="submit" name="submit" class="btn btn-secondary btn-block btn-large" value="download-cert-name-csv">Download Name-list</button>
+                </form>
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="static/js/manager.js"></script>
+{% endblock %}

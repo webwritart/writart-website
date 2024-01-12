@@ -1,0 +1,268 @@
+{% extends "base.html" %}
+{% block content %}
+<div>
+    <div class="container user-profile">
+        <form method="post">
+            <div class="row">
+                <div class="col-md-4">
+<!--                    <div class="profile-img">-->
+<!--                        <img src="static\images\{{current_user.id}}\profile.jpg" alt=""/>-->
+<!--                        <div class="file btn btn-lg btn-primary">-->
+<!--                            Change Photo-->
+<!--                            <input type="file" name="file"/>-->
+<!--                        </div>-->
+<!--                    </div>-->
+                </div>
+                <div class="col-md-5">
+                    <div class="profile-head">
+                                <h5>
+                                    {{current_user.name}}
+                                </h5>
+                                <h6>
+                                    {{current_user.profession}}
+                                </h6>
+<!--                                <p class="proile-rating">RANKINGS : <span>8/10</span></p>-->
+
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <input type="button" class="profile-edit-btn" name="btnAddMore" onclick="openForm2()" value="Edit Profile"/>
+                    <input type="button" class="profile-edit-btn" name="change-password" onclick="openForm()" value="Change Password"/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="profile-work">
+                        <p>WORK LINK</p>
+                        <a href="{{current_user.fb_url}}">facebook</a><br/>
+                        <a href="{{current_user.insta_url}}">Instagram</a><br/>
+                        <a href="{{current_user.website}}">Website</a><br><br>
+                        <input type="button" class="profile-edit-btn" onclick="openSocialUpdatePopup()" value="Edit Social"/>
+                        {% if certificate %}
+                            <div style="padding-top: 20%;">
+                                <h6 style="padding-bottom: 3%;">Certificates</h6>
+                                <button style="width: 80%; margin: 2% 0%;" type="submit" class="btn btn-primary" name="submit" value="download-certificate" formmethod="post" formaction="{{url_for('my_account')}}">DOWNLOAD LAST CERTIFICATE</button>
+                                <button style="width: 80%; margin: 2% 0%;" type="button" class="btn btn-primary" name="submit" value="all-certificates" onclick="openCertificateList()">VIEW ALL CERTIFICATES</button>
+                            </div>
+                        {% endif %}
+<!--                        <p>SKILLS</p>-->
+<!--                        <a href="">Web Designer</a><br/>-->
+<!--                        <a href="">Web Developer</a><br/>-->
+<!--                        <a href="">WordPress</a><br/>-->
+<!--                        <a href="">WooCommerce</a><br/>-->
+<!--                        <a href="">PHP, .Net</a><br/>-->
+                    </div>
+                </div>
+                <div class="col-md-8 profile-head2">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">About</a>
+                            </li>
+    <!--                        <li class="nav-item">-->
+    <!--                            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Timeline</a>-->
+    <!--                        </li>-->
+                        </ul>
+                    <div class="tab-content profile-tab" id="myTabContent">
+                        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label>Name</label>
+                                        </div>
+                                        <div class="col-md-6" id="name-info">
+                                            <p>{{current_user.name}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label>Email</label>
+                                        </div>
+                                        <div class="col-md-6" id="email-info">
+                                            <p>{{current_user.email}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label>Phone</label>
+                                        </div>
+                                        <div class="col-md-6" id="phone-info">
+                                            <p>{{current_user.phone}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label>Whatsapp</label>
+                                        </div>
+                                        <div class="col-md-6" id="whatsapp-info">
+                                            {% if current_user.whatsapp == '' %}
+                                                <p>empty</p>
+                                            {% else %}
+                                                <p>{{current_user.whatsapp}}</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label>Sex</label>
+                                        </div>
+                                        <div class="col-md-6" >
+                                            <p>{{current_user.sex.capitalize()}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label>Date of Birth</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p>{{current_user.dob}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label>State</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p>{{current_user.state}}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <button class="btn-primary btn-block btn-large" type="submit" id="update">UPDATE</button>
+                                    </div>
+                                    {% with messages = get_flashed_messages(with_categories=true) %}
+                                        {% if messages %}
+                                              {% for category, message in messages %}
+                                                <div class="{{category}}">{{ message }}</div>
+                                              {% endfor %}
+                                        {% endif %}
+                                    {% endwith %}
+                        </div>
+
+    <!--                    <div class="tab-pane fade " id="profile" role="tabpanel" aria-labelledby="profile-tab">-->
+    <!--                                <div class="row">-->
+    <!--                                    <div class="col-md-6">-->
+    <!--                                        <label>Experience</label>-->
+    <!--                                    </div>-->
+    <!--                                    <div class="col-md-6">-->
+    <!--                                        <p>Expert</p>-->
+    <!--                                    </div>-->
+    <!--                                </div>-->
+    <!--                                <div class="row">-->
+    <!--                                    <div class="col-md-6">-->
+    <!--                                        <label>Hourly Rate</label>-->
+    <!--                                    </div>-->
+    <!--                                    <div class="col-md-6">-->
+    <!--                                        <p>10$/hr</p>-->
+    <!--                                    </div>-->
+    <!--                                </div>-->
+    <!--                                <div class="row">-->
+    <!--                                    <div class="col-md-6">-->
+    <!--                                        <label>Total Projects</label>-->
+    <!--                                    </div>-->
+    <!--                                    <div class="col-md-6">-->
+    <!--                                        <p>230</p>-->
+    <!--                                    </div>-->
+    <!--                                </div>-->
+    <!--                                <div class="row">-->
+    <!--                                    <div class="col-md-6">-->
+    <!--                                        <label>English Level</label>-->
+    <!--                                    </div>-->
+    <!--                                    <div class="col-md-6">-->
+    <!--                                        <p>Expert</p>-->
+    <!--                                    </div>-->
+    <!--                                </div>-->
+    <!--                                <div class="row">-->
+    <!--                                    <div class="col-md-6">-->
+    <!--                                        <label>Availability</label>-->
+    <!--                                    </div>-->
+    <!--                                    <div class="col-md-6">-->
+    <!--                                        <p>6 months</p>-->
+    <!--                                    </div>-->
+    <!--                                </div>-->
+    <!--                        <div class="row">-->
+    <!--                            <div class="col-md-12">-->
+    <!--                                <label>Your Bio</label><br/>-->
+    <!--                                <p>Your detail description</p>-->
+    <!--                            </div>-->
+    <!--                        </div>-->
+    <!--                    </div>-->
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div id="classroom-action">
+        <div class="container" >
+            <div class="row">
+                <div class="col-7">
+
+                </div>
+                <div class="col-5">
+                    <a href="{{ url_for('classroom') }}" CLASS="btn btn-primary btn-block btn-large" role="button">GO TO CLASSROOM</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+ <!--  ---------------------------------------------------------------------- UPDATE RECORDS POPUP -------------------------------------------------------------------------------- -->
+
+<div class="form-popup box" id="change-password">
+    <form action="{{url_for('my_account')}}" class="popup-form-container" name="change-password" onsubmit="return validateForm()" method="post">
+        <div style="display: flex; justify-content: right; width: 95%;">
+            <a style="opacity: 0.5;" type="button" onclick="closeForm()">close <img src="static/images/icons/cross-sign.png" width="10px"></a>
+        </div>
+        <h3 style="color: #c9c9c9;">Change Password</h3>
+        <input type="password" placeholder="Old Password" name="old-pwd" required>
+        <input type="password" placeholder="New Password" name="new-pwd" required>
+        <input type="password" placeholder="Retype New Password" name="pwd-retyped" required>
+        <input type="submit" class="btn btn-primary" value="Change Password">
+    </form>
+</div>
+
+<div class="form-popup2 box" id="update-profile-details">
+    <form class="popup-form-container" action="{{url_for('my_account')}}" name="update-profile" method="post">
+        <div style="display: flex; justify-content: right; width: 95%;">
+            <a style="opacity: 0.5;" type="button" onclick="closeForm2()">close <img src="static/images/icons/cross-sign.png" width="10px"></a>
+        </div>
+        <h3 style="color: #c9c9c9;">Update Profile</h3>
+        <input type="text" placeholder="Name: {{current_user.name}}" name="name">
+        <input type="text" placeholder="Email: {{current_user.email}}" name="email">
+        <input type="text" placeholder="Phone: {{current_user.phone}}" name="phone">
+        <input type="text" placeholder="Whatsapp: {{current_user.whatsapp}}" name="whatsapp">
+        <input type="text" placeholder="Profession: {{current_user.profession}}" name="profession">
+        <input type="text" placeholder="State: {{current_user.state}}" name="state">
+        <input type="submit" class="btn btn-primary" value="Update Profile">
+    </form>
+</div>
+
+<div class="form-popup2 box" id="update-social-media">
+    <form class="popup-form-container" action="{{url_for('my_account')}}" name="update-profile" method="post">
+        <div style="display: flex; justify-content: right; width: 95%;">
+            <a style="opacity: 0.5;" type="button" onclick="closeForm3()">close <img src="static/images/icons/cross-sign.png" width="10px"></a>
+        </div>
+        <h3 style="color: #c9c9c9;">Update Social Handles</h3>
+        <input type="text" placeholder="Facebook link: {{current_user.fb_url}}" name="fb-url">
+        <input type="text" placeholder="Instagram link: {{current_user.insta_url}}" name="insta-url">
+        <input type="text" placeholder="Website: {{current_user.website}}" name="web-url">
+        <input type="submit" class="btn btn-primary" value="Update Handles">
+    </form>
+</div>
+
+<div class="form-popup box" id="certificate_list">
+    <div style="border: 2px solid black; background-color: white; margin: auto; text-align: center;" class="cert_list" >
+        <form action="{{url_for('my_account')}}" method="post">
+            <div style="display: flex; justify-content: right; width: 95%;">
+                <a style="opacity: 0.5;" type="button" onclick="closeCertificateList()">close <img src="static/images/icons/cross-sign.png" width="10px"></a>
+            </div>
+            <p style="color: #590f59;"><b>All Certificates</b><br><span style="font-size: 0.8em;">Click names to download</span></p>
+            {% for certificate in certificate_list: %}
+                <button style="padding: 0%; background: none; border: none; color: blue; text-decoration: underline;" type="submit" name="submit" value="{{certificate}}">{{certificate}}</button>
+            {% endfor %}
+        </form>
+    </div>
+</div>
+
+<!--  ---------------------------------------------------------------------------- SCRIPTS ---------------------------------------------------------------------------------------- -->
+<script src="static/js/my_account.js"></script>
+
+{% endblock %}
