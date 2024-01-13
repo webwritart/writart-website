@@ -1,13 +1,16 @@
+from extensions import db
+from flask_login import UserMixin
+
+
 user_workshop = db.Table('user_workshop',
                          db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
-                         db.Column('workshop_id', db.Integer, db.ForeignKey('workshop.workshop.id'))
+                         db.Column('workshop_id', db.Integer, db.ForeignKey('workshop.id'))
                          )
 
 user_role = db.Table('user_role',
                      db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
-                     db.Column('role_id', db.Integer, db.ForeignKey('role.role.id'))
+                     db.Column('role_id', db.Integer, db.ForeignKey('role.id'))
                      )
-
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -24,8 +27,8 @@ class User(UserMixin, db.Model):
     insta_url = db.Column(db.String(100))
     website = db.Column(db.String(100))
     registration_date = db.Column(db.String(50))
-    participated = db.relationship('Workshop', secondary=user_workshop, backref='participants')
-    role = db.relationship('Role', secondary=user_role, backref='members')
+    participated = db.relationship('workshop.Workshop', secondary="user_workshop", backref='participants')
+    role = db.relationship('role.Role', secondary="user_role", backref='members')
 
 
 
