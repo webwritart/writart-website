@@ -23,13 +23,13 @@
         {% if video_count == 0 %}
             <div class="course-btn">
             <p style="color: white">To watch our Art workshop recorded videos on various creative topics you need to first join our workshops.</p>
-            <a href="{{url_for('workshops')}}" class="btn btn-primary btn-block btn-large" role="button">OUR UPCOMING WORKSHOPS</a>
+            <a href="{{url_for('school.home')}}" class="btn btn-primary btn-block btn-large" role="button">OUR UPCOMING WORKSHOPS</a>
         </div>
         {% endif %}
     {% else %}
         <div class="course-btn">
             <p style="color: white">To watch our Art workshop recorded videos on various creative topics you need to first join our workshops.</p>
-            <a href="{{url_for('workshops')}}" class="btn btn-primary btn-block btn-large" role="button">OUR UPCOMING WORKSHOPS</a>
+            <a href="{{url_for('school.home')}}" class="btn btn-primary btn-block btn-large" role="button">OUR UPCOMING WORKSHOPS</a>
         </div>
     {% endif %}
     </div>

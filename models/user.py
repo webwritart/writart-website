@@ -1,7 +1,6 @@
 from extensions import db
 from flask_login import UserMixin
 
-
 user_workshop = db.Table('user_workshop',
                          db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
                          db.Column('workshop_id', db.Integer, db.ForeignKey('workshop.id'))
@@ -11,6 +10,7 @@ user_role = db.Table('user_role',
                      db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
                      db.Column('role_id', db.Integer, db.ForeignKey('role.id'))
                      )
+
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -35,3 +35,4 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return f'{self.name}, {self.email}, {self.phone}'
+
