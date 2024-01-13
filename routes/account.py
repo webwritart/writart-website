@@ -3,12 +3,11 @@ from flask import Blueprint, render_template, request, flash, send_file, redirec
 from werkzeug.security import check_password_hash, generate_password_hash
 from extensions import db, image_dict
 from messenger import send_email_school, send_email_support
-from models.user import User
+from models.user import User, Workshop
 from flask_login import current_user, login_required, login_user, logout_user
 from datetime import date
 import random
 
-from models.workshop import Workshop
 
 account = Blueprint('account', __name__, static_folder='static', template_folder='templates')
 
@@ -115,7 +114,7 @@ def home():
             return send_file(path_or_file=path, as_attachment=True,
                              download_name=f"Certificate - {topic_list[index]} - Writart Gurukul.pdf")
 
-        return redirect(url_for('my_account'))
+        return redirect(url_for('account.home'))
 
     certificate_list = []
     if len(current_user.participated) > 0:
@@ -166,11 +165,11 @@ def register():
         user = result.scalar()
         if user:
             flash("You've already signed up with that email, log in instead!", "error")
-            return redirect(url_for('login'))
+            return redirect(url_for('account.login'))
         if phone in num_list:
             flash("Already an account exists with phone number. Please register with different phone number or log in",
                   "error")
-            return redirect(url_for('register'))
+            return redirect(url_for('account.register'))
         hash_and_salted_password = generate_password_hash(
             request.form.get('password'),
             method='pbkdf2:sha256',
@@ -215,6 +214,7 @@ def login():
     raw_num_list = []
     result = db.session.query(User)
     for user in result:
+        print(user)
         num = user.phone
         raw_num_list.append(num)
         if len(num) == 10:
@@ -263,7 +263,7 @@ def login():
             login_user(user)
             return redirect(url_for('account.home', name=current_user.name.split()[0]))
 
-    return render_template("login.html", logged_in=current_user.is_authenticated)
+    return render_template("login.html")
 
 
 @account.route('/forgot_password', methods=['GET', 'POST'])

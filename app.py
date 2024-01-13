@@ -1,9 +1,12 @@
 import os
 from flask import Flask
-from extensions import db, mail
+from extensions import db, mail, login_manager
 from routes.account import account
 from routes.main import main
 from routes.school import school
+from models.user import *
+from routes.payment import payment
+from routes.manager import manager
 
 
 def create_app():
@@ -17,9 +20,17 @@ def create_app():
     app.config["MAIL_USE_SSL"] = True
     mail.init_app(app)
     db.init_app(app)
+    login_manager.init_app(app)
 
     app.register_blueprint(main, url_prefix='/')
     app.register_blueprint(account, url_prefix='/account')
     app.register_blueprint(school, url_prefix='/school')
+    app.register_blueprint(payment, url_prefix='/payment')
+    app.register_blueprint(manager, url_prefix='/manager')
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        return db.get_or_404(User, user_id)
+
 
     return app
