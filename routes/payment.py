@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, current_app, redirect, url_for
 from flask_login import current_user
-from extensions import db
+from extensions import db, image_dict
+
 from datetime import date
 import razorpay
 import os
@@ -12,8 +13,8 @@ from models.user import *
 payment = Blueprint('payment', __name__, static_folder='static', template_folder='templates')
 
 
-KEY_ID = os.environ.get("RAZORPAY_KEY_ID_TEST")
-KEY_SECRET = os.environ.get("RAZORPAY_KEY_SECRET_TEST")
+KEY_ID = 'rzp_test_O1Mx6Q1rwEcZmG'
+KEY_SECRET = 'q8uNnB1pNpj7Dd2UhqJ1FKq8'
 client = razorpay.Client(auth=(KEY_ID, KEY_SECRET))
 
 today_date = date.today()
@@ -33,6 +34,7 @@ def home():
 
 @payment.route('/checkout', methods=['POST'])
 def checkout():
+    current_ws_name = db.session.query(Workshop)[db.session.query(Workshop).count()-1].name
     global payment, msg
     name = current_user.name
     email = current_user.email
@@ -87,15 +89,11 @@ def verify():
         db.session.add(entry)
         db.session.query(Tools).filter_by(keyword='last invoice').one().data = str(int(inv_no) + 1)
         db.session.commit()
+        topic = current_ws_topic
+        date_time = current_ws.date
+        session_link = current_ws.joining_link
+        mail = render_template('mails/enrollment_success.html', topic=topic, date_time=date_time,session_link=session_link)
 
-        try:
-            send_email_support('Enrolled', [current_user.email],
-                               f"Dear {current_user.name.split()[0]},\nYou've been successfully enrolled in the "
-                               f"workshop: {current_ws_topic}.\nFor any query we're always ready to explain.\nThanks "
-                               f"for giving us an opportunity to serve you!",
-                               '')
-        except:
-            pass
         try:
             current_user.role.append(student)
             db.session.commit()
@@ -106,7 +104,14 @@ def verify():
             db.session.commit()
         except:
             pass
-        return redirect(url_for('ws_registration_success'))
+        try:
+            send_email_support('Enrolled', [current_user.email],
+                               '',
+                               mail,
+                               image_dict)
+        except:
+            pass
+        return redirect(url_for('payment.ws_registration_success'))
 
     return render_template('order.html', logged_in=current_user.is_authenticated)
 

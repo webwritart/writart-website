@@ -27,7 +27,8 @@ class User(UserMixin, db.Model):
     insta_url = db.Column(db.String(100))
     website = db.Column(db.String(100))
     registration_date = db.Column(db.String(50))
-
+    participated = db.relationship('Workshop', secondary=user_workshop, backref='participants')
+    role = db.relationship('Role', secondary=user_role, backref='members')
 
 
 

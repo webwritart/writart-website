@@ -29,7 +29,7 @@
         <div class="col-md-1"></div>
         <div class="col-md-8 operation-body">
             <div id="manager-img">
-                <img src="static/images/manager.png">
+                <img src="{{ url_for('static', filename='images/manager.png')}}">
                 {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
                         {% for category, message in messages %}
@@ -39,7 +39,7 @@
                 {% endwith %}
             </div>
             <div id="add-ws">
-                <form action="{{ url_for('manager') }}" method="post">
+                <form action="{{ url_for('manager.home') }}" method="post">
                     <h2>Add New Workshop</h2>
                     <input name="name" placeholder="Name" type="text" required><br>
                     <input name="topic" placeholder="Topic" type="text" required><br>
@@ -53,7 +53,7 @@
                 </form>
             </div>
             <div id="add-ws-details">
-                <form action="{{ url_for('manager') }}" method="post">
+                <form action="{{ url_for('manager.home') }}" method="post">
                     <h2>Add Ws details</h2>
                     <input name="category" placeholder="category" type="text" required><br>
                     <input name="brief" placeholder="brief" type="text" required><br>
@@ -90,27 +90,27 @@
                 </form>
             </div>
             <div id="add-recording-link">
-                <form action="{{ url_for('manager') }}" method="post">
+                <form action="{{ url_for('manager.home') }}" method="post">
                     <h2>Add Recording Link</h2>
                     <input name="yt" placeholder="Recorded Session URL" type="text"><br>
                     <button type="submit" class="btn btn-primary btn-block btn-large">ADD TO DATABASE</button>
                 </form>
             </div>
             <div id="add-session-link">
-                <form action="{{ url_for('manager') }}" method="post">
+                <form action="{{ url_for('manager.home') }}" method="post">
                     <h2>Add Session Link</h2>
                     <input name="session-link" placeholder="Recorded Session URL" type="text"><br>
                     <button type="submit" class="btn btn-primary btn-block btn-large">ADD TO DATABASE</button>
                 </form>
             </div>
             <div id="close-reg">
-                <form action="{{ url_for('manager') }}" method="post">
+                <form action="{{ url_for('manager.home') }}" method="post">
                     <h2>Close Registration Window</h2>
                     <button type="submit" name="close" class="btn btn-primary btn-block btn-large" value="shut-reg-door">Close Registration</button>
                 </form>
             </div>
             <div id="ws-promo">
-                <form action="{{ url_for('manager') }}" method="post">
+                <form action="{{ url_for('manager.home') }}" method="post">
                     <h2>Workshop Promotion</h2>
                     <button type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="mail-promo">Mail Promotion</button>
                     <button type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="wa-promo">Whatsapp Promotion</button>
@@ -118,7 +118,7 @@
                 </form>
             </div>
             <div id="last-day-reminder">
-                <form action="{{ url_for('manager') }}" method="post">
+                <form action="{{ url_for('manager.home') }}" method="post">
                     <h2>Last Day Reminder</h2>
                     <button type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="mail-last-rem">Mail Reminder</button>
                     <button type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="wa-last-rem">Whatsapp Reminder</button>
@@ -126,7 +126,7 @@
                 </form>
             </div>
             <div id="session-link">
-                <form action="{{ url_for('manager') }}" method="post">
+                <form action="{{ url_for('manager.home') }}" method="post">
                     <h2>Send Session Link</h2>
                     <button type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="mail-link">Email</button>
                     <button type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="wa-link">Whatsapp</button>
@@ -134,7 +134,7 @@
                 </form>
             </div>
             <div id="session-reminder">
-                <form action="{{ url_for('manager') }}" method="post">
+                <form action="{{ url_for('manager.home') }}" method="post">
                     <h2>Send Session Reminder</h2>
                     <button type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="mail-s-rem">Email Reminder</button>
                     <button type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="wa-s-rem">Whatsapp Reminder</button>
@@ -142,13 +142,13 @@
                 </form>
             </div>
             <div id="certificate-dist">
-                <form action="{{ url_for('manager') }}" method="post">
+                <form action="{{ url_for('manager.home') }}" method="post">
                     <h2>Distribute Certificates</h2>
                     <button type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="certificate-dist">Distribute via Email</button>
                 </form>
                 <div id="basket">
                     <h2>Upload Certificates</h2>
-                    <form action="{{ url_for('manager') }}" method="post" id="form1" enctype="multipart/form-data">
+                    <form action="{{ url_for('manager.home') }}" method="post" id="form1" enctype="multipart/form-data">
                         <input type="file" name="file" id="file" multiple>
                         <button type="submit" name="submit" id="file-btn" class="btn btn-primary btn-block btn-large" value="upload_files">Upload Files</button>
                     </form>
@@ -156,7 +156,7 @@
             </div>
             <div id="csv-export-cert">
                 <h2>Export CSV for Certificates</h2>
-                <form action="{{ url_for('manager') }}" method="post">
+                <form action="{{ url_for('manager.home') }}" method="post">
                     
                     <button type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="csv-exp-cert">Create CSV</button>
                     <button type="submit" name="submit" class="btn btn-secondary btn-block btn-large" value="download-cert-name-csv">Download Name-list</button>
@@ -168,5 +168,5 @@
     </div>
 </div>
 
-<script src="static/js/manager.js"></script>
+<script src="{{ url_for('static', filename='js/manager.js')}}"></script>
 {% endblock %}

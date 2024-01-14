@@ -45,4 +45,4 @@ class WorkshopDetails(db.Model):
 
 
     def __repr__(self):
-        return f'Details of: {self.category}'
+        return f'Details of: {self.category} {self.ws_id}'

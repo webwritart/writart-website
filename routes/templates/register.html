@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="background">
+    <div class="box1">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                  {% for category, message in messages %}
+                    <div class="{{category}}">{{ message }}</div>
+                  {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <h1>Register</h1>
+        <form id="registration" action="{{ url_for('account.register') }}" method="post" onsubmit="return validateRegistration()">
+            <input type="text" name="name" placeholder="Name (required)" required="required" />
+            <input type="email" name="email" placeholder="Email (required)" required="required" />
+            <input type="password" minlength="5" name="password" placeholder="Password (required)" required="required" />
+            <input type="text" name="phone" placeholder="Phone (required)" required="required" />
+            <input type="text" name="whatsapp" placeholder="Whatsapp (if different than phone) (optional)" />
+            <label class="radio-inline radio-inp-option">
+                <input class="radio-inp" type="radio" name="sex" value="female" required> <span style="color: gray;"> Female</span>
+            </label>
+            <label class="radio-inline radio-inp-option">
+                <input class="radio-inp" type="radio" name="sex" value="male" required> <span style="color: gray;"> Male</span>
+            </label>
+            <label class="radio-inline radio-inp-option">
+                <input class="radio-inp" type="radio" name="sex" value="other" required>  <span style="color: gray;"> Other</span>
+            </label>
+            <label style="color: gray; width:100%;">Date of Birth (required)</label>
+            <input class="radio-inp" maxlength="2" type="text" name="date" placeholder="Date" required>
+            <input class="radio-inp" maxlength="2" type="text" name="month" placeholder="Month" required>
+            <input class="radio-inp" maxlength="4" type="text" name="year" placeholder="Year" required>
+            <input type="text" name="profession" maxlength="50" placeholder="Profession (required)" required/>
+            <input type="text" name="state" placeholder="State (required)" required>
+            <button type="submit" class="btn btn-primary btn-block btn-large">REGISTER</button>
+        </form>
+    </div>
+</div>
+<script src="static/js/my_account.js"></script>
+{% endblock %}

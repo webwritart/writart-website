@@ -22,9 +22,11 @@ def allowed_file(filename, allowed_extensions):
 @manager.route('/', methods=['GET', 'POST'])
 @login_required
 def home():
-    current_workshop = current_ws = db.session.query(Workshop)[db.session.query(Workshop).count()-1]
-    current_ws_name = current_workshop_name = current_workshop.name
-    current_ws_topic = current_workshop_topic = current_workshop.topic
+    global current_ws_name, current_ws, current_workshop, current_ws_topic
+    if db.session.query(Workshop).count() > 0:
+        current_workshop = current_ws = db.session.query(Workshop)[db.session.query(Workshop).count()-1]
+        current_ws_name = current_workshop_name = current_workshop.name
+        current_ws_topic = current_workshop_topic = current_workshop.topic
     if db.session.query(Role).filter(Role.name == 'admin').scalar() in current_user.role:
         if request.method == 'POST':
             if request.form.get('name'):
@@ -86,7 +88,7 @@ def home():
                     result7=request.form.get('result7'),
                     result8=request.form.get('result8'),
                     result9=request.form.get('result9'),
-                    cover=f"{models.workshop.current_ws_name()}/cover.jpg",
+                    cover=f"{current_ws_name}/cover.jpg",
                     thumbnail=f"{current_ws_name}/thumbnail.jpg",
                     photo1=f'{current_ws_name}/p1',
                     photo2=f'{current_ws_name}/p2',
@@ -589,13 +591,13 @@ def home():
                     else:
                         name_dict['Name'].append(participant.name)
                 df = pd.DataFrame.from_dict(name_dict)
-                file = 'static/files/internal_operations/certificate_name_list.csv'
+                file = '../static/files/internal_operations/certificate_name_list.csv'
                 if os.path.exists(file):
                     os.remove(file)
                 df.to_csv(file, index=False)
 
             if request.form.get('submit') and request.form.get('submit') == 'download-cert-name-csv':
-                file = 'static/files/internal_operations/certificate_name_list.csv'
+                file = '../static/files/internal_operations/certificate_name_list.csv'
                 if os.path.exists(file) and os.path.isfile(file):
                     current_workshop_name = db.session.query(Workshop)[db.session.query(Workshop).count()-1].name
                     file_name = 'certificate_name_list_' + current_workshop_name
@@ -633,7 +635,7 @@ def home():
                     if file and allowed_file(file.filename, allowed_extensions):
                         # filename = secure_filename(file.filename)
                         file_name = f"{current_workshop.name}-{name_list[cnt]}.pdf"
-                        path = f'static/files/users/{folder_name_list[cnt]}/certificates'
+                        path = f'../static/files/users/{folder_name_list[cnt]}/certificates'
 
                         file.save(os.path.join(path, file_name))
                         cnt += 1

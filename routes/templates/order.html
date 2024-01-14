@@ -2,7 +2,7 @@
 {% block content %}
 
 <div class="box">
-    <form action="{{ url_for('checkout') }}" method="post">
+    <form action="{{ url_for('payment.checkout') }}" method="post">
         <h2>Please enter details</h2>
         <input name="amount" placeholder="Enter any amount you want to offer" type="text" required><br>
         <input name="message" placeholder="Any message for us?" type="text">

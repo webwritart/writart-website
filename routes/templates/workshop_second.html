@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="master-container">
+    <div class="row justify-content-center align-items-center" id="ws-content" style="padding: 0% 2%;">
+        <div class="col-md-9 align-items-center" style="background-color: #edcce9; padding: 5%;">
+            <div class="row justify-content-between align-items-center">
+                <div class="col-md-2" style="text-align: center;">
+                    <h6>{{category}}</h6>
+                </div>
+                <div class="col-md-2" style="text-align: center;">
+                    <h6>SESSIONS- {{sessions}}</h6>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col" style="text-align: center; padding: 10% 0%;">
+                    <h1>{{topic}}</h1>
+                    <h6>{{brief}}</h6>
+                </div>
+            </div>
+            <div class="col">
+                <div id="topics">
+                    <div class="row justify-content-center" style="text-align: center;">
+                        <div class="col heading">
+                            <h5>Topics we'll cover</h5>
+                        </div>
+                    </div>
+                    <div class="wrapper-ws">
+                        <div class="container-ws">
+                            {% for item in sub_list %}
+                            <div class="point">
+                                <div class="content">
+                                    {{item}}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col heading">
+                        <h5>About the Session</h5>
+                    </div>
+                </div>
+                <div class="row description" >
+                    <div class="col">
+                        <p>{{description}}</p>
+                    </div>
+                </div>
+                <div class="row justify-content-center" style="text-align: center;">
+                    <div class="col heading">
+                        <h5>Requirements</h5>
+                    </div>
+                </div>
+                <div class="wrapper-ws">
+                    <div class="container-ws">
+                        {% for item in req_list %}
+                        <div class="point">
+                            <div class="content">
+                                {{item}}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="row justify-content-center" style="text-align: center;">
+                    <div class="col heading">
+                        <h5>Where will it will help you</h5>
+                    </div>
+                </div>
+                <div class="wrapper-ws">
+                    <div class="container-ws">
+                        {% for item in result_list %}
+                        <div class="point">
+                            <div class="content">
+                                {{item}}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="btn-set">
+                    <div class="row btn-wrapper">
+                        <div class="col button-container">
+                            <a class="btn btn-primary btn-block btn-large button">ASK A QUESTION</a>
+                        </div>
+                        <div class="col button-container">
+                            <a class="btn btn-primary btn-block btn-large button">ENROLL NOW</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col heading">
+                        <h5>Our Vision</h5>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

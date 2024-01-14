@@ -67,31 +67,32 @@
                 
                 <div class="block" style="display: block;">
                     <h3 style="opacity: 0.4;">Dear {{current_user.name}}</h3>
-                    <h2>Registered Successfully!</h2>
+                    <h2>Congratulation!</h2>
                     <h4 style="opacity: 0.7;"></h4>
                 </div>
                 <div class="block" style="display: block; width: 100%; justify-content: center;">
-                    <h3 id="topics" style="opacity: 0.4; padding-top: 2%;">Login using these credentials</h3>
+                    <h3 id="topics" style="opacity: 0.4; padding-top: 2%;">Workshop Details</h3>
                 </div>
                 <div class="details" style="display: flex; justify-content:center;">
                     <div style="display: flex; justify-content: center; width: 50%;">
                         <div style="display: block; width: 50%; text-align: left;">
-                            <h4>Email:<br>Phone:</h4>
+                            <h4>Topic:<br>Date & Time:<br>Mode:</h4>
                         </div>
                         <div style="display: block; width: 50%; text-align: right;">
-                            <h4> {{current_user.email}}<br> {{current_user.phone}}</h4>
+                            <h4> {{topic}}<br> {{date_time}}<br> Online - Google Meet</h4>
                         </div>
                     </div>
                 </div>
                 <div class="block description" style="display: block; text-align: center;">
-                    <p>Thanks for becoming a member of our creative family.<br>Now you can enroll in our upcoming workshops and courses.</p>
+                    <h3 style="color: #c756b6; opacity: 1; text-align: center;">Recorded session available</h3>
+                    <p>You'll be provided RECORDED VIDEO of the session which you can watch anytime again in the classroom on our website. Use the button below to join our session on the scheduled date and time.</p>
                 </div>
                 <div class="block btn" style="padding-top: 2%; display: block;">
                     <a type="button" style="background-color: #8f0b7b;
             color: white;
             padding: 1% 3%;
             text-decoration: none;
-            border-radius: 20px;" href="">UPCOMING WORKSHOPS</a>
+            border-radius: 20px;" href="{{session_link}}">CLICK TO JOIN</a>
                 </div>
             </div>
         </div>

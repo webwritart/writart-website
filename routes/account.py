@@ -90,7 +90,7 @@ def home():
             topic2 = current_user.participated[len(current_user.participated) - 2].topic
             file_name = f"{last_workshop_name}-{current_user.name.split()[0]}.pdf"
             file_name_2 = f"{second_last_workshop_name}-{current_user.name.split()[0]}.pdf"
-            path = f"static/files/users/{folder_name}/certificates/{file_name}"
+            path = f"../static/files/users/{folder_name}/certificates/{file_name}"
             path2 = f"static/files/users/{folder_name}/certificates/{file_name_2}"
             if os.path.exists(path):
                 return send_file(path_or_file=path, as_attachment=True,
@@ -110,7 +110,7 @@ def home():
             ws = db.session.query(Workshop).filter_by(topic=topic_list[index]).one()
             folder_name = current_user.name.split()[0] + str(current_user.id)
             file_name = f"{ws.name}-{current_user.name.split()[0]}.pdf"
-            path = f"static/files/users/{folder_name}/certificates/{file_name}"
+            path = f"../static/files/users/{folder_name}/certificates/{file_name}"
             return send_file(path_or_file=path, as_attachment=True,
                              download_name=f"Certificate - {topic_list[index]} - Writart Gurukul.pdf")
 
@@ -121,7 +121,7 @@ def home():
         for workshop in current_user.participated:
             file_name = f"{workshop.name}-{current_user.name.split()[0]}.pdf"
             folder_name = current_user.name.split()[0] + str(current_user.id)
-            path = f"static/files/users/{folder_name}/certificates/{file_name}"
+            path = f"../static/files/users/{folder_name}/certificates/{file_name}"
             if os.path.exists(path):
                 certificate_list.append(workshop.topic)
     return render_template('my_account.html', certificate_list=certificate_list, certificate=certificate,
@@ -200,7 +200,7 @@ def register():
         db.session.add(new_user)
         db.session.commit()
         login_user(new_user)
-        mail = render_template('registration_success.html')
+        mail = render_template('mails/registration_success.html')
         send_email_school('Registration success!', [email],
                           '',
                           mail, image_dict)
@@ -266,10 +266,12 @@ def login():
     return render_template("login.html")
 
 
+email_list = []
+
+
 @account.route('/forgot_password', methods=['GET', 'POST'])
 def forgot_password():
     if request.method == 'POST':
-        email_list = []
         if request.form.get('email'):
             email = request.form.get('email')
             email_list.append(email)
@@ -277,11 +279,11 @@ def forgot_password():
             results = db.session.query(User)
             for result in results:
                 user_mail_list.append(result.email)
-            if email:
+            if email in user_mail_list:
                 send_email_support(subject="Password reset",
-                                   recipients=['shwetabhartist@gmail.com'], body='',
-                                   html=render_template('password_reset_link.html',
-                                                        link=f"http://127.0.0.1:5000/set_new_password?otp={otp}"),
+                                   recipients=email_list, body='',
+                                   html=render_template('mails/password_reset_link.html',
+                                                        link=f"http://127.0.0.1:5000/account/set_new_password?otp={otp}"),
                                    image_dict=image_dict)
                 return render_template('check_mail_notification.html')
             else:
@@ -301,7 +303,7 @@ def forgot_password():
             db.session.commit()
             login_user(user)
             flash('New password set successfully!', 'success')
-            mail = render_template('password_reset_notification.html')
+            mail = render_template('mails/password_reset_notification.html')
             send_email_support('Password Reset', [current_user.email],
                                '',
                                mail, image_dict)

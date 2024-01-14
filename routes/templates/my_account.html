@@ -41,7 +41,7 @@
                         {% if certificate %}
                             <div style="padding-top: 20%;">
                                 <h6 style="padding-bottom: 3%;">Certificates</h6>
-                                <button style="width: 80%; margin: 2% 0%;" type="submit" class="btn btn-primary" name="submit" value="download-certificate" formmethod="post" formaction="{{url_for('my_account')}}">DOWNLOAD LAST CERTIFICATE</button>
+                                <button style="width: 80%; margin: 2% 0%;" type="submit" class="btn btn-primary" name="submit" value="download-certificate" formmethod="post" formaction="{{url_for('account.home')}}">DOWNLOAD LAST CERTIFICATE</button>
                                 <button style="width: 80%; margin: 2% 0%;" type="button" class="btn btn-primary" name="submit" value="all-certificates" onclick="openCertificateList()">VIEW ALL CERTIFICATES</button>
                             </div>
                         {% endif %}
@@ -197,7 +197,7 @@
 
                 </div>
                 <div class="col-5">
-                    <a href="{{ url_for('classroom') }}" CLASS="btn btn-primary btn-block btn-large" role="button">GO TO CLASSROOM</a>
+                    <a href="{{ url_for('school.classroom') }}" CLASS="btn btn-primary btn-block btn-large" role="button">GO TO CLASSROOM</a>
                 </div>
             </div>
         </div>
@@ -207,7 +207,7 @@
  <!--  ---------------------------------------------------------------------- UPDATE RECORDS POPUP -------------------------------------------------------------------------------- -->
 
 <div class="form-popup box" id="change-password">
-    <form action="{{url_for('my_account')}}" class="popup-form-container" name="change-password" onsubmit="return validateForm()" method="post">
+    <form action="{{url_for('account.home')}}" class="popup-form-container" name="change-password" onsubmit="return validateForm()" method="post">
         <div style="display: flex; justify-content: right; width: 95%;">
             <a style="opacity: 0.5;" type="button" onclick="closeForm()">close <img src="static/images/icons/cross-sign.png" width="10px"></a>
         </div>
@@ -220,7 +220,7 @@
 </div>
 
 <div class="form-popup2 box" id="update-profile-details">
-    <form class="popup-form-container" action="{{url_for('my_account')}}" name="update-profile" method="post">
+    <form class="popup-form-container" action="{{url_for('account.home')}}" name="update-profile" method="post">
         <div style="display: flex; justify-content: right; width: 95%;">
             <a style="opacity: 0.5;" type="button" onclick="closeForm2()">close <img src="static/images/icons/cross-sign.png" width="10px"></a>
         </div>
@@ -236,7 +236,7 @@
 </div>
 
 <div class="form-popup2 box" id="update-social-media">
-    <form class="popup-form-container" action="{{url_for('my_account')}}" name="update-profile" method="post">
+    <form class="popup-form-container" action="{{url_for('account.home')}}" name="update-profile" method="post">
         <div style="display: flex; justify-content: right; width: 95%;">
             <a style="opacity: 0.5;" type="button" onclick="closeForm3()">close <img src="static/images/icons/cross-sign.png" width="10px"></a>
         </div>
@@ -250,7 +250,7 @@
 
 <div class="form-popup box" id="certificate_list">
     <div style="border: 2px solid black; background-color: white; margin: auto; text-align: center;" class="cert_list" >
-        <form action="{{url_for('my_account')}}" method="post">
+        <form action="{{url_for('account.home')}}" method="post">
             <div style="display: flex; justify-content: right; width: 95%;">
                 <a style="opacity: 0.5;" type="button" onclick="closeCertificateList()">close <img src="static/images/icons/cross-sign.png" width="10px"></a>
             </div>

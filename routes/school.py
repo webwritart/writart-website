@@ -1,5 +1,9 @@
 from flask import Blueprint, render_template
 from flask_login import current_user
+from extensions import db
+from models.tool import Tools
+from models.user import Workshop
+from models.workshop_details import WorkshopDetails
 
 
 school = Blueprint('school', __name__, static_folder='static', template_folder='templates')
@@ -7,7 +11,49 @@ school = Blueprint('school', __name__, static_folder='static', template_folder='
 
 @school.route('/')
 def home():
-    return render_template('courses.html', logged_in=current_user.is_authenticated)
+    current_workshop_name = db.session.query(Tools).filter_by(keyword='current_workshop').first().data
+    current_workshop = db.session.query(Workshop).filter_by(name=current_workshop_name).first()
+    current_workshop_details = current_workshop.details
+
+    category = current_workshop_details.category
+    sessions = current_workshop_details.sessions
+    topic = current_workshop.topic
+    brief = current_workshop_details.brief
+    sub1 = current_workshop_details.subtopic1
+    sub2 = current_workshop_details.subtopic2
+    sub3 = current_workshop_details.subtopic3
+    sub4 = current_workshop_details.subtopic4
+    sub5 = current_workshop_details.subtopic5
+    sub6 = current_workshop_details.subtopic6
+    sub7 = current_workshop_details.subtopic7
+    sub8 = current_workshop_details.subtopic8
+    sub9 = current_workshop_details.subtopic9
+    sub_list = [sub1, sub2, sub3, sub4, sub5, sub6, sub7, sub8, sub9]
+    description = current_workshop_details.description
+    rq1 = current_workshop_details.req1
+    rq2 = current_workshop_details.req2
+    rq3 = current_workshop_details.req3
+    rq4 = current_workshop_details.req4
+    rq5 = current_workshop_details.req5
+    rq6 = current_workshop_details.req6
+    rq7 = current_workshop_details.req7
+    rq8 = current_workshop_details.req8
+    rq9 = current_workshop_details.req9
+    req_list = [rq1, rq2, rq3, rq4, rq5, rq6, rq7, rq8, rq9]
+    r1 = current_workshop_details.result1
+    r2 = current_workshop_details.result2
+    r3 = current_workshop_details.result3
+    r4 = current_workshop_details.result4
+    r5 = current_workshop_details.result5
+    r6 = current_workshop_details.result6
+    r7 = current_workshop_details.result7
+    r8 = current_workshop_details.result8
+    r9 = current_workshop_details.result9
+    result_list = [r1, r2, r3, r4, r5, r6, r7, r8, r9]
+
+    return render_template('workshops_main.html', category=category, topic=topic, sessions=sessions, brief=brief,
+                           sub_list=sub_list, description=description, req_list=req_list, result_list=result_list,
+                           logged_in=current_user.is_authenticated)
 
 
 @school.route('/classroom')
