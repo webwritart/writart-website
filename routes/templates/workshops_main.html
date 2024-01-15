@@ -18,6 +18,13 @@
                     <h6>{{brief}}</h6>
                 </div>
             </div>
+            <div class="row" style="padding-bottom: 5%;">
+                <div class="col" style="text-align: center; padding 10% 0%;">
+                    <h5>Date: {{date}}</h5>
+                    <h5>Time: {{time}}</h5>
+                    <h5>Mode: Online (Google Meet)</h5>
+                </div>
+            </div>
             <div class="col">
                 <div id="topics">
                     <div class="row justify-content-center" style="text-align: center;">
@@ -85,7 +92,7 @@
                             <a class="btn btn-primary btn-block btn-large button">ASK A QUESTION</a>
                         </div>
                         <div class="col button-container">
-                            <a class="btn btn-primary btn-block btn-large button">ENROLL NOW</a>
+                            <a class="btn btn-primary btn-block btn-large button" href="{{url_for('payment.home')}}">ENROLL NOW</a>
                         </div>
                     </div>
                 </div>
@@ -103,5 +110,37 @@
         </div>
     </div>
 </div>
+<div>
+    <div class="row justify-content-center align-items-center" style="padding: 0% 2%;">
+        <div class="col-md-9 align-items-center" style="background-color: #edcce9; padding: 2%;">
+            <div class="col">
+                <div>
+                    <div class="row justify-content-center" style="text-align: center;">
+                        <div class="col heading">
+                            <h4><b>UPCOMING WORKSHOPS</b></h4>
+                        </div>
+                    </div>
+                    <div class="wrapper-ws">
+                        <div class="container-upcoming-ws">
+                            {% for workshop in upcoming_workshop_list %}
+                            <div class="upcoming_ws_thumbnail">
+                                <div class="upcoming_ws_content">
+                                    <img src="../static/images/workshops/{{workshop}}/thumbnail.jpg" width="100%" height="100%">
+                                    <div style="display: flex; justify-content: stretch;">
 
+                                        <a class="btn btn-primary btn-large" style="width: 50%;">INTERESTED</a>
+                                        <form action="{{url_for('school.home')}}" method="post" style="width: 50%">
+                                             <button class="btn btn-primary btn-large" type="submit" name="submit" value="{{workshop}}" style="width: 100%">KNOW MORE</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

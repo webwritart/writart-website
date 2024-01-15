@@ -48,8 +48,8 @@ def home():
     # )
 
     # entry = Tools(
-    #     keyword='last invoice',
-    #     data=1
+    #     keyword='certificate',
+    #     data='initial entry'
     # )
     # db.session.add(entry)
     # db.session.commit()

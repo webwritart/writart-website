@@ -41,6 +41,7 @@ class Workshop(db.Model):
     name = db.Column(db.String(10))
     topic = db.Column(db.String(100))
     date = db.Column(db.String(50))
+    time = db.Column(db.String(50))
     instructor = db.Column(db.String(100))
     strength = db.Column(db.String(50))
     gross_revenue = db.Column(db.String(100))

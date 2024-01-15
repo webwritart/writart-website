@@ -2,6 +2,7 @@ import os
 import pandas as pd
 from flask import Blueprint, render_template, request, flash, redirect, url_for, send_file
 from flask_login import login_required, current_user
+from werkzeug.utils import secure_filename
 
 from extensions import db
 from messenger import send_email_school, send_wa_msg_by_list, send_email_school_and_wa_msg_by_list
@@ -23,12 +24,19 @@ def allowed_file(filename, allowed_extensions):
 @login_required
 def home():
     global current_ws_name, current_ws, current_workshop, current_ws_topic
-    if db.session.query(Workshop).count() > 0:
-        current_workshop = current_ws = db.session.query(Workshop)[db.session.query(Workshop).count()-1]
-        current_ws_name = current_workshop_name = current_workshop.name
-        current_ws_topic = current_workshop_topic = current_workshop.topic
+    current_ws_name = db.session.query(Tools).filter_by(keyword='current_workshop').one().data
+    current_ws = current_workshop = db.session.query(Workshop).filter_by(name=current_ws_name).one()
+    current_ws_topic = current_ws.topic
+
     if db.session.query(Role).filter(Role.name == 'admin').scalar() in current_user.role:
         if request.method == 'POST':
+            if request.form.get('current_ws_name'):
+                current_ws_name = request.form.get('current_ws_name')
+                result = db.session.query(Tools).filter_by(keyword='current_workshop').first()
+                result.data = current_ws_name
+                db.session.query(Workshop).filter_by(name=current_ws_name).one().reg_start = today_date
+                db.session.commit()
+                flash('Updated current Workshop', 'success')
             if request.form.get('name'):
                 name = request.form.get('name')
                 topic = request.form.get('topic')
@@ -40,15 +48,16 @@ def home():
                     month = "0" + month
                 year = request.form.get('year')
                 date_ = f"{year}-{month}-{dt}"
+                time = request.form.get('time')
                 instructor_ = request.form.get('instructor')
                 session_link = request.form.get('link')
                 entry = Workshop(
                     name=name,
                     topic=topic,
                     date=date_,
+                    time=time,
                     instructor=instructor_,
                     joining_link=session_link,
-                    reg_start=today_date,
                 )
                 db.session.add(entry)
                 db.session.commit()
@@ -56,6 +65,7 @@ def home():
                 return redirect(url_for('manager.home'))
 
             if request.form.get('category'):
+                ws_name = request.form.get('ws_name')
                 entry = WorkshopDetails(
                     category=request.form.get('category'),
                     brief=request.form.get('brief'),
@@ -93,7 +103,7 @@ def home():
                     photo1=f'{current_ws_name}/p1',
                     photo2=f'{current_ws_name}/p2',
                     photo3=f'{current_ws_name}/p3',
-                    workshop=current_ws,
+                    workshop=db.session.query(Workshop).filter_by(name=ws_name).one(),
                 )
                 try:
                     db.session.add(entry)
@@ -101,6 +111,27 @@ def home():
                     flash('Workshop details added successfully, Chief!', 'success')
                 except:
                     flash("Sorry, Couldn't add, Chief!", "error")
+
+            if request.form.get('submit') and request.form.get('submit') == 'upload_photos':
+                allowed_extensions = {'png', 'jpg'}
+
+                if 'file' not in request.files:
+                    flash('No file part', 'error')
+                    return redirect(request.url)
+                files = request.files.getlist('file')
+
+                folder_name = request.form.get('workshop_name')
+                folder = f"./static/images/workshops/{folder_name}"
+                if not os.path.exists(folder):
+                    os.makedirs(folder)
+                for file in files:
+                    if file.filename == '':
+                        flash('No selected file', 'error')
+                        return redirect(request.url)
+                    if file and allowed_file(file.filename, allowed_extensions):
+                        filename = secure_filename(file.filename)
+                        file.save(f"{folder}/{filename}")
+                        flash('Chief! Images uploaded successfully!', 'success')
 
             if request.form.get('session-link'):
                 ws_count = db.session.query(Workshop).count()
@@ -414,7 +445,7 @@ def home():
                                                      name_list)
 
             if request.form.get('submit') and request.form.get('submit') == 'mail-link':
-                current_workshop = db.session.query(Workshop)[db.session.query(Workshop).count()-1]
+                current_workshop = db.session.query(Workshop)[db.session.query(Workshop).count() - 1]
 
                 if not current_workshop.joining_link2 or current_workshop.joining_link2 == '':
                     joining_link = current_workshop.joining_link
@@ -491,7 +522,7 @@ def home():
                 send_email_school_and_wa_msg_by_list(subject, recipients, body, '', '', wa_msg, num_list, names_list)
 
             if request.form.get('submit') and request.form.get('submit') == 'mail-s-rem':
-                current_workshop = db.session.query(Workshop)[db.session.query(Workshop).count()-1]
+                current_workshop = db.session.query(Workshop)[db.session.query(Workshop).count() - 1]
                 students = current_workshop.participants
                 subject = 'WORKSHOP SESSION STARTED'
                 image_dict = {
@@ -561,10 +592,11 @@ def home():
                     wa_msg = f"Dear{user.name.split()[0]},\nThe workshop session has started. If you've not joined " \
                              f"yet please join it by clicking below.\n{joining_link}\n"
                     html = render_template('mails/session_joining_reminder.html', name=name, joining_link=joining_link)
-                    send_email_school_and_wa_msg_by_list(subject, recipients, '', html, image_dict, wa_msg, num_list, name_list)
+                    send_email_school_and_wa_msg_by_list(subject, recipients, '', html, image_dict, wa_msg, num_list,
+                                                         name_list)
 
             if request.form.get('submit') and request.form.get('submit') == 'certificate-dist':
-                current_workshop = db.session.query(Workshop)[db.session.query(Workshop).count()-1]
+                current_workshop = db.session.query(Workshop)[db.session.query(Workshop).count() - 1]
                 participants = current_workshop.participants
                 cat = current_workshop.details.category
                 subject = 'CERTIFICATE DOWNLOAD'
@@ -573,7 +605,8 @@ def home():
                     'path': ['social-icons', 'social-icons', 'social-icons'],
                 }
                 for participant in participants:
-                    html = render_template('mails/certificate_download.html', name=participant.name.split()[0], download_link='https://writart.com', category=cat)
+                    html = render_template('mails/certificate_download.html', name=participant.name.split()[0],
+                                           download_link='https://writart.com', category=cat)
                     recipients = [participant.email]
                     send_email_school(subject, recipients, '', html, image_dict)
 
@@ -581,7 +614,7 @@ def home():
                 name_dict = {
                     'Name': []
                 }
-                current_workshop = db.session.query(Workshop)[db.session.query(Workshop).count()-1]
+                current_workshop = db.session.query(Workshop)[db.session.query(Workshop).count() - 1]
                 participants = current_workshop.participants
                 for participant in participants:
                     if participant.sex == 'male':
@@ -599,7 +632,7 @@ def home():
             if request.form.get('submit') and request.form.get('submit') == 'download-cert-name-csv':
                 file = '../static/files/internal_operations/certificate_name_list.csv'
                 if os.path.exists(file) and os.path.isfile(file):
-                    current_workshop_name = db.session.query(Workshop)[db.session.query(Workshop).count()-1].name
+                    current_workshop_name = db.session.query(Workshop)[db.session.query(Workshop).count() - 1].name
                     file_name = 'certificate_name_list_' + current_workshop_name
                     return send_file(path_or_file=file, as_attachment=True, download_name=file_name)
                 else:
@@ -607,15 +640,14 @@ def home():
 
             if request.form.get('submit') and request.form.get('submit') == 'upload_files':
                 allowed_extensions = {'pdf', 'jpg'}
-                current_workshop = db.session.query(Workshop)[db.session.query(Workshop).count()-1]
+                current_workshop = db.session.query(Workshop)[db.session.query(Workshop).count() - 1]
                 participants = current_workshop.participants
 
                 if 'file' not in request.files:
                     flash('No file part', 'error')
                     return redirect(request.url)
                 files = request.files.getlist('file')
-
-                db.session.query(Tools).filter_by(keyword='certificate').one().data = db.session.query(Workshop)[db.session.query(Workshop).count()-1].topic
+                db.session.query(Tools).filter_by(keyword='certificate').one().data = current_ws_topic
 
                 name_list = []
                 folder_name_list = []

@@ -28,7 +28,8 @@ def create_app():
     app.register_blueprint(payment, url_prefix='/payment')
     app.register_blueprint(manager, url_prefix='/manager')
 
-
+    with app.app_context():
+        db.create_all()
 
 
     @login_manager.user_loader

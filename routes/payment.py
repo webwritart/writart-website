@@ -10,6 +10,7 @@ from models.payment import Payment
 from models.tool import Tools
 from models.user import *
 
+
 payment = Blueprint('payment', __name__, static_folder='static', template_folder='templates')
 
 
@@ -23,18 +24,16 @@ today_date = date.today()
 @payment.route('/')
 def home():
     global current_ws, current_ws_name, current_ws_topic, student
-    count = db.session.query(Workshop).count()
-    if count > 0:
-        current_ws = db.session.query(Workshop)[count - 1]
-        current_ws_name = db.session.query(Workshop)[count - 1].name
-        current_ws_topic = db.session.query(Workshop)[count - 1].topic
+    current_ws_name = db.session.query(Tools).filter_by(keyword='current_workshop').one().data
+    current_ws = db.session.query(Workshop).filter_by(name=current_ws_name).one()
+    current_ws_topic = current_ws.topic
     student = db.session.query(Role).filter_by(name='student').one()
     return render_template('order.html', logged_in=current_user.is_authenticated)
 
 
 @payment.route('/checkout', methods=['POST'])
 def checkout():
-    current_ws_name = db.session.query(Workshop)[db.session.query(Workshop).count()-1].name
+    # current_ws_name = db.session.query(Workshop)[db.session.query(Workshop).count()-1].name
     global payment, msg
     name = current_user.name
     email = current_user.email
@@ -67,7 +66,13 @@ def verify():
         client.payment.capture(response_data["razorpay_payment_id"], amount)
         month = str(today_date).split('-')[1]
         year = str(today_date).split('-')[0]
-        inv_no = db.session.query(Tools).filter_by(keyword='last invoice').one().data
+        inv_n = db.session.query(Tools).filter_by(keyword='last invoice').one().data
+        if len(inv_n) == 1:
+            inv_no = f"00{inv_n}"
+        elif len(inv_n) == 2:
+            inv_no = f"0{inv_n}"
+        else:
+            inv_no = inv_n
         invoice = f"INV-{year}-{month}-{inv_no}"
         if current_user.whatsapp:
             phone = current_user.whatsapp
@@ -87,7 +92,10 @@ def verify():
             ws_name=current_ws_name
         )
         db.session.add(entry)
-        db.session.query(Tools).filter_by(keyword='last invoice').one().data = str(int(inv_no) + 1)
+        if inv_n == '999':
+            db.session.query(Tools).filter_by(keyword='last invoice').one().data = '1'
+        else:
+            db.session.query(Tools).filter_by(keyword='last invoice').one().data = str(int(inv_no) + 1)
         db.session.commit()
         topic = current_ws_topic
         date_time = current_ws.date

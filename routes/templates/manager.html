@@ -47,14 +47,20 @@
                     <input class="radio-inp" maxlength="2" type="text" name="date" placeholder="Date" required>
                     <input class="radio-inp" maxlength="2" type="text" name="month" placeholder="Month" required>
                     <input class="radio-inp" maxlength="4" type="text" name="year" placeholder="Year" required>
+                    <input name="time" placeholder="Time" type="text" required>
                     <input name="link" placeholder="Session Link" type="text" required>
                     <input name="instructor" placeholder="Instructor" type="text" required><br>
                     <button type="submit" class="btn btn-primary btn-block btn-large">ADD TO DATABASE</button>
+                </form>
+                <form action="{{url_for('manager.home')}}" method="post" style="padding-top: 5%;">
+                    <input name="current_ws_name" placeholder="Current Workshop Name" type="text" required>
+                    <button type="submit" class="btn btn-primary btn-block btn-large">OPEN REGISTRATION</button>
                 </form>
             </div>
             <div id="add-ws-details">
                 <form action="{{ url_for('manager.home') }}" method="post">
                     <h2>Add Ws details</h2>
+                    <input name="ws_name" placeholder="Workshop Name" type="text" required>
                     <input name="category" placeholder="category" type="text" required><br>
                     <input name="brief" placeholder="brief" type="text" required><br>
                     <input name="sessions" placeholder="sessions" type="text" required><br>
@@ -87,6 +93,11 @@
                     <input name="result8" placeholder="Result8" type="text"><br>
                     <input name="result9" placeholder="Result9" type="text"><br>
                     <button type="submit" class="btn btn-primary btn-block btn-large">ADD TO DATABASE</button>
+                </form>
+                <form action="{{ url_for('manager.home') }}" method="post" id="form2" enctype="multipart/form-data">
+                    <input type="text" name="workshop_name" placeholder="Workshop Name" required>
+                    <input type="file" name="file" id="file2" multiple>
+                    <button type="submit" name="submit" id="file-btn2" class="btn btn-primary btn-block btn-large" value="upload_photos">UPLOAD PHOTOS</button>
                 </form>
             </div>
             <div id="add-recording-link">
