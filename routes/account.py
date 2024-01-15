@@ -16,7 +16,7 @@ today_date = date.today()
 
 
 @login_required
-@account.route('/')
+@account.route('/', methods=['GET', 'POST'])
 def home():
     if len(current_user.participated) > 0:
         certificate = True
@@ -83,6 +83,7 @@ def home():
         db.session.commit()
 
         if request.form.get('submit') == 'download-certificate':
+            print('button working!')
             folder_name = current_user.name.split()[0] + str(current_user.id)
             last_workshop_name = current_user.participated[len(current_user.participated) - 1].name
             second_last_workshop_name = current_user.participated[len(current_user.participated) - 2].name
@@ -90,8 +91,10 @@ def home():
             topic2 = current_user.participated[len(current_user.participated) - 2].topic
             file_name = f"{last_workshop_name}-{current_user.name.split()[0]}.pdf"
             file_name_2 = f"{second_last_workshop_name}-{current_user.name.split()[0]}.pdf"
+            print('variables set successfully')
             path = f"../static/files/users/{folder_name}/certificates/{file_name}"
-            path2 = f"static/files/users/{folder_name}/certificates/{file_name_2}"
+            path2 = f"../static/files/users/{folder_name}/certificates/{file_name_2}"
+            print('path is okay!')
             if os.path.exists(path):
                 return send_file(path_or_file=path, as_attachment=True,
                                  download_name=f"Certificate - {topic} - Writart Gurukul.pdf")
@@ -100,6 +103,7 @@ def home():
                                  download_name=f"Certificate - {topic2} - Writart Gurukul.pdf")
             else:
                 flash('The Certificate is to be uploaded soon!', 'error')
+            print('path checked successfully')
 
         topic_list = []
         result = current_user.participated
