@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, request, flash, send_file, redirec
 from werkzeug.security import check_password_hash, generate_password_hash
 from extensions import db, image_dict
 from messenger import send_email_school, send_email_support
-from models.user import User, Workshop
+from models.user import User, Workshop, Role
 from flask_login import current_user, login_required, login_user, logout_user
 from datetime import date
 import random
@@ -18,6 +18,8 @@ today_date = date.today()
 @login_required
 @account.route('/')
 def home():
+    admin = db.session.query(Role).filter_by(name='admin').one()
+
     if len(current_user.participated) > 0:
         certificate = True
     else:
@@ -125,7 +127,7 @@ def home():
             if os.path.exists(path):
                 certificate_list.append(workshop.topic)
     return render_template('my_account.html', certificate_list=certificate_list, certificate=certificate,
-                           name=current_user.name, logged_in=current_user.is_authenticated)
+                           name=current_user.name, logged_in=current_user.is_authenticated, admin=admin)
 
 
 @account.route('/register', methods=['GET', 'POST'])

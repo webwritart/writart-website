@@ -2,15 +2,15 @@ from flask import Blueprint, render_template, request
 from flask_login import current_user
 from extensions import db
 from models.tool import Tools
-from models.user import Workshop
+from models.user import Workshop, Role
 from models.workshop_details import WorkshopDetails
-
 
 school = Blueprint('school', __name__, static_folder='static', template_folder='templates')
 
 
 @school.route('/', methods=['GET', 'POST'])
 def home():
+    admin = db.session.query(Role).filter_by(name='admin').one()
     if request.method == 'POST':
         if request.form.get('submit'):
             ws = request.form.get('submit')
@@ -66,7 +66,7 @@ def home():
                                    sub_list=sub_list, description=description, req_list=req_list,
                                    result_list=result_list,
                                    logged_in=current_user.is_authenticated,
-                                   upcoming_workshop_list=upcoming_workshop_list, date=date, time=time)
+                                   upcoming_workshop_list=upcoming_workshop_list, date=date, time=time, admin=admin)
 
     current_workshop_name = db.session.query(Tools).filter_by(keyword='current_workshop').first().data
     current_workshop = db.session.query(Workshop).filter_by(name=current_workshop_name).first()
@@ -118,11 +118,12 @@ def home():
     return render_template('workshops_main.html', category=category, topic=topic, sessions=sessions, brief=brief,
                            sub_list=sub_list, description=description, req_list=req_list, result_list=result_list,
                            logged_in=current_user.is_authenticated, upcoming_workshop_list=upcoming_workshop_list,
-                           date=date, time=time)
+                           date=date, time=time, admin=admin)
 
 
 @school.route('/classroom')
 def classroom():
+    admin = db.session.query(Role).filter_by(name='admin').one()
     all_recorded_video_urls = []
     vid_caption_list = []
     if current_user.is_authenticated:
@@ -144,4 +145,4 @@ def classroom():
 
     return render_template('classroom.html', yt_vid_id_list=all_recorded_video_urls,
                            vid_caption_list=vid_caption_list, video_count=video_count,
-                           logged_in=current_user.is_authenticated)
+                           logged_in=current_user.is_authenticated, admin=admin)

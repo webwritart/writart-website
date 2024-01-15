@@ -3,7 +3,7 @@ import os
 from flask import Blueprint, render_template
 from extensions import login_manager, db
 from models.tool import Tools
-from models.user import User, Workshop,Role
+from models.user import User, Workshop, Role
 from flask_login import current_user
 
 
@@ -53,4 +53,5 @@ def home():
     # )
     # db.session.add(entry)
     # db.session.commit()
-    return render_template('index.html', logged_in=current_user.is_authenticated)
+    admin = db.session.query(Role).filter_by(name='admin').one()
+    return render_template('index.html', logged_in=current_user.is_authenticated, admin=admin)
