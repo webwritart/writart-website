@@ -14,15 +14,40 @@ def home():
     upcoming_workshop_list = []
     admin = db.session.query(Role).filter_by(name='admin').one()
     if request.method == 'POST':
-        if request.form.get('submit'):
-            ws_name = request.form.get('interested_ws')
-            print(ws_name)
-            if current_user:
+        if request.form.get('interested-form-hidden-workshop2'):
+            ws_name = request.form.get('interested-form-hidden-workshop2')
+            try:
                 name = current_user.name
                 email = current_user.email
                 phone = current_user.phone
                 whatsapp = current_user.whatsapp
-            else:
+            except:
+                name = request.form.get('name')
+                email = request.form.get('email')
+                phone = request.form.get('phone')
+                whatsapp = request.form.get('whatsapp')
+            message = request.form.get('message')
+
+            entry = Query(
+                name=name,
+                email=email,
+                phone=phone,
+                whatsapp=whatsapp,
+                interested_ws=ws_name,
+                message=message
+            )
+            db.session.add(entry)
+            db.session.commit()
+            flash("Successfully saved details. We'll notify you when time comes!", "success")
+
+        if request.form.get('interested-form-hidden-workshop'):
+            ws_name = request.form.get('interested-form-hidden-workshop')
+            try:
+                name = current_user.name
+                email = current_user.email
+                phone = current_user.phone
+                whatsapp = current_user.whatsapp
+            except:
                 name = request.form.get('name')
                 email = request.form.get('email')
                 phone = request.form.get('phone')
@@ -84,7 +109,6 @@ def home():
             date = workshop.date
             time = workshop.time
 
-
             workshops = db.session.query(Workshop)
             for workshop in workshops:
                 if not workshop.reg_start and workshop.name != ws:
@@ -95,7 +119,7 @@ def home():
                                    sub_list=sub_list, description=description, req_list=req_list,
                                    result_list=result_list,
                                    logged_in=current_user.is_authenticated,
-                                   upcoming_workshop_list=upcoming_workshop_list, date=date, time=time, admin=admin)
+                                   upcoming_workshop_list=upcoming_workshop_list, date=date, time=time, admin=admin, ws=ws)
 
     current_workshop_name = db.session.query(Tools).filter_by(keyword='current_workshop').first().data
     current_workshop = db.session.query(Workshop).filter_by(name=current_workshop_name).first()

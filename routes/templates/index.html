@@ -1,7 +1,19 @@
 {% extends "base.html" %} {% block content %}
 
-    <div class="container" style="height: 80vh;">
-        <h1>HOMEPAGE IS VISIBLE</h1>
+<div class="container-fluid cover-container">
+    <div class="row cover">
+        <div class="col">
+          <div class="hero-content">
+            <h1><b>Art & Illustration</b></h1>
+            <h4>Training for Traditional, Animation, Gaming, Illustration Industry</h4>
+            <p>We, at Writart Gurukul provide art workshops and other art activities and training which is directly applicable in professional art field.
+            The skills we train here can be applied in traditional painting, Designing, Digital art, photography, Concept art and Illustration in Animation and Gaming field.<br>
+                We have 'Pay what you want' fee system inspired from ancient Indian Gurukul system.
+              </p>
+              <a type="button" href="{{url_for('school.home')}}">WORKSHOPS</a>
+          </div>
+        </div>
     </div>
+</div>
 
 {% endblock %}

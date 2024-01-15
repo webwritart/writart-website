@@ -147,11 +147,12 @@
                                             <input type="text" placeholder="Phone" name="phone" required>
                                             <input type="text" placeholder="Whatsapp (skip if same whatsapp)" name="whatsapp">
                                             {% endif %}
+                                            <input type="hidden" id="interested-form-hidden-workshop" name="interested-form-hidden-workshop" required>
                                             <input type="text" maxlength="300" placeholder="Any message for us? (optional)" name="message">
                                             <input type="submit" name="submit" class="btn btn-primary" onclick="closeFormInterested()" value="SUBMIT">
                                         </form>
                                      </div>
-                                        <button class="btn btn-primary btn-large" style="width: 50%;" onclick="openInterestedForm()" value="{{workshop}}">INTERESTED</button>
+                                        <button class="btn btn-primary btn-large" style="width: 50%;" onclick="openInterestedForm('{{workshop}}')">INTERESTED</button>
                                         <form action="{{url_for('school.home')}}" method="post" style="width: 50%">
                                              <input type="hidden" name="know-more" value="know-more">
                                              <button class="btn btn-primary btn-large" type="submit" name="submit" value="{{workshop}}" style="width: 100%">KNOW MORE</button>
