@@ -1,6 +1,7 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, redirect, flash
 from flask_login import current_user
 from extensions import db
+from models.query import Query
 from models.tool import Tools
 from models.user import Workshop, Role
 from models.workshop_details import WorkshopDetails
@@ -10,11 +11,39 @@ school = Blueprint('school', __name__, static_folder='static', template_folder='
 
 @school.route('/', methods=['GET', 'POST'])
 def home():
+    upcoming_workshop_list = []
     admin = db.session.query(Role).filter_by(name='admin').one()
     if request.method == 'POST':
         if request.form.get('submit'):
+            ws_name = request.form.get('interested_ws')
+            print(ws_name)
+            if current_user:
+                name = current_user.name
+                email = current_user.email
+                phone = current_user.phone
+                whatsapp = current_user.whatsapp
+            else:
+                name = request.form.get('name')
+                email = request.form.get('email')
+                phone = request.form.get('phone')
+                whatsapp = request.form.get('whatsapp')
+            message = request.form.get('message')
+
+            entry = Query(
+                name=name,
+                email=email,
+                phone=phone,
+                whatsapp=whatsapp,
+                interested_ws=ws_name,
+                message=message
+            )
+            db.session.add(entry)
+            db.session.commit()
+            flash("Successfully saved details. We'll notify you when time comes!", "success")
+
+        if request.form.get('know-more') == 'know-more':
             ws = request.form.get('submit')
-            workshop = db.session.query(Workshop).filter_by(name=ws).one()
+            workshop = db.session.query(Workshop).filter_by(name=ws).first()
             workshop_details = workshop.details
 
             category = workshop_details.category
@@ -55,7 +84,7 @@ def home():
             date = workshop.date
             time = workshop.time
 
-            upcoming_workshop_list = []
+
             workshops = db.session.query(Workshop)
             for workshop in workshops:
                 if not workshop.reg_start and workshop.name != ws:

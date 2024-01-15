@@ -8,6 +8,7 @@ class Query(db.Model):
     whatsapp = db.Column(db.String(100))
     phone = db.Column(db.String(100))
     interested_ws = db.Column(db.String(100))
+    message = db.Column(db.String(300))
 
 
 
