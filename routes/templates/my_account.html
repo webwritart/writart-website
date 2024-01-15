@@ -209,7 +209,7 @@
 <div class="form-popup box" id="change-password">
     <form action="{{url_for('account.home')}}" class="popup-form-container" name="change-password" onsubmit="return validateForm()" method="post">
         <div style="display: flex; justify-content: right; width: 95%;">
-            <a style="opacity: 0.5;" type="button" onclick="closeForm()">close <img src="static/images/icons/cross-sign.png" width="10px"></a>
+            <a style="opacity: 0.5;" type="button" onclick="closeForm()">close <img src="../static/images/icons/cross-sign.png" width="10px"></a>
         </div>
         <h3 style="color: #c9c9c9;">Change Password</h3>
         <input type="password" placeholder="Old Password" name="old-pwd" required>
@@ -222,7 +222,7 @@
 <div class="form-popup2 box" id="update-profile-details">
     <form class="popup-form-container" action="{{url_for('account.home')}}" name="update-profile" method="post">
         <div style="display: flex; justify-content: right; width: 95%;">
-            <a style="opacity: 0.5;" type="button" onclick="closeForm2()">close <img src="static/images/icons/cross-sign.png" width="10px"></a>
+            <a style="opacity: 0.5;" type="button" onclick="closeForm2()">close <img src="../static/images/icons/cross-sign.png" width="10px"></a>
         </div>
         <h3 style="color: #c9c9c9;">Update Profile</h3>
         <input type="text" placeholder="Name: {{current_user.name}}" name="name">
@@ -238,7 +238,7 @@
 <div class="form-popup2 box" id="update-social-media">
     <form class="popup-form-container" action="{{url_for('account.home')}}" name="update-profile" method="post">
         <div style="display: flex; justify-content: right; width: 95%;">
-            <a style="opacity: 0.5;" type="button" onclick="closeForm3()">close <img src="static/images/icons/cross-sign.png" width="10px"></a>
+            <a style="opacity: 0.5;" type="button" onclick="closeForm3()">close <img src="../static/images/icons/cross-sign.png" width="10px"></a>
         </div>
         <h3 style="color: #c9c9c9;">Update Social Handles</h3>
         <input type="text" placeholder="Facebook link: {{current_user.fb_url}}" name="fb-url">
@@ -252,7 +252,7 @@
     <div style="border: 2px solid black; background-color: white; margin: auto; text-align: center;" class="cert_list" >
         <form action="{{url_for('account.home')}}" method="post">
             <div style="display: flex; justify-content: right; width: 95%;">
-                <a style="opacity: 0.5;" type="button" onclick="closeCertificateList()">close <img src="static/images/icons/cross-sign.png" width="10px"></a>
+                <a style="opacity: 0.5;" type="button" onclick="closeCertificateList()">close <img src="../static/images/icons/cross-sign.png" width="10px"></a>
             </div>
             <p style="color: #590f59;"><b>All Certificates</b><br><span style="font-size: 0.8em;">Click names to download</span></p>
             {% for certificate in certificate_list: %}
@@ -263,6 +263,6 @@
 </div>
 
 <!--  ---------------------------------------------------------------------------- SCRIPTS ---------------------------------------------------------------------------------------- -->
-<script src="static/js/my_account.js"></script>
+<script src="../static/js/my_account.js"></script>
 
 {% endblock %}
