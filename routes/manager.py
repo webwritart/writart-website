@@ -134,8 +134,6 @@ def home():
                         flash('Chief! Images uploaded successfully!', 'success')
 
             if request.form.get('session-link'):
-                ws_count = db.session.query(Workshop).count()
-                current_workshop = db.session.query(Workshop)[ws_count - 1]
                 j_link = request.form.get('session-link')
                 if current_workshop.joining_link2 is None or current_workshop.joining_link2 == '':
                     current_workshop.joining_link2 = j_link
@@ -262,7 +260,6 @@ def home():
                         name_list.append(q.name.split()[0])
 
                 recipients = []
-                current_workshop = db.session.query(Workshop)[db.session.query(Workshop).count() - 1]
                 subject = 'NEW WORKSHOP ENROLLMENT OPEN'
                 result = db.session.query(User)
                 for user in result:
@@ -298,7 +295,6 @@ def home():
                     flash('Mailed and messaged successfully, Chief!', 'success')
 
             if request.form.get('submit') and request.form.get('submit') == 'mail-last-rem':
-                current_workshop = db.session.query(Workshop)[db.session.query(Workshop).count() - 1]
                 if current_workshop.details:
                     d = current_workshop.details
                     html = render_template('mails/enrollment_reminder.html',
@@ -372,7 +368,7 @@ def home():
                 send_wa_msg_by_list(message, number_list, name_list)
 
             if request.form.get('submit') and request.form.get('submit') == 'wa-mail-last-rem':
-                current_workshop = db.session.query(Workshop)[db.session.query(Workshop).count() - 1]
+                # current_workshop = db.session.query(Workshop)[db.session.query(Workshop).count() - 1]
                 if current_workshop.details:
                     d = current_workshop.details
                     html = render_template('mails/enrollment_reminder.html',
@@ -445,7 +441,6 @@ def home():
                                                      name_list)
 
             if request.form.get('submit') and request.form.get('submit') == 'mail-link':
-                current_workshop = db.session.query(Workshop)[db.session.query(Workshop).count() - 1]
 
                 if not current_workshop.joining_link2 or current_workshop.joining_link2 == '':
                     joining_link = current_workshop.joining_link
@@ -465,7 +460,6 @@ def home():
                 send_email_school(subject, recipients, body, '', '')
 
             if request.form.get('submit') and request.form.get('submit') == 'wa-link':
-                current_workshop = db.session.query(Workshop)[db.session.query(Workshop).count() - 1]
                 if not current_workshop.joining_link2 or current_workshop.joining_link2 == '':
                     joining_link = current_workshop.joining_link
                 elif not current_workshop.joining_link3 or current_workshop.joining_link3 == '':
@@ -489,7 +483,6 @@ def home():
                 send_wa_msg_by_list(wa_msg, num_list, names_list)
 
             if request.form.get('submit') and request.form.get('submit') == 'wa-mail-link':
-                current_workshop = db.session.query(Workshop)[db.session.query(Workshop).count() - 1]
 
                 if not current_workshop.joining_link2 or current_workshop.joining_link2 == '':
                     joining_link = current_workshop.joining_link
@@ -522,7 +515,6 @@ def home():
                 send_email_school_and_wa_msg_by_list(subject, recipients, body, '', '', wa_msg, num_list, names_list)
 
             if request.form.get('submit') and request.form.get('submit') == 'mail-s-rem':
-                current_workshop = db.session.query(Workshop)[db.session.query(Workshop).count() - 1]
                 students = current_workshop.participants
                 subject = 'WORKSHOP SESSION STARTED'
                 image_dict = {
@@ -544,7 +536,7 @@ def home():
                     send_email_school(subject, recipients, '', html, image_dict)
 
             if request.form.get('submit') and request.form.get('submit') == 'wa-s-rem':
-                current_workshop = db.session.query(Workshop)[db.session.query(Workshop).count() - 1]
+                # current_workshop = db.session.query(Workshop)[db.session.query(Workshop).count() - 1]
                 students = current_workshop.participants
                 if not current_workshop.joining_link2 or current_workshop.joining_link2 == '':
                     joining_link = current_workshop.joining_link
@@ -565,8 +557,6 @@ def home():
                     send_wa_msg_by_list(wa_msg, num_list, name_list)
 
             if request.form.get('submit') and request.form.get('submit') == 'wa-mail-s-rem':
-                current_workshop = db.session.query(Workshop)[db.session.query(Workshop).count() - 1]
-                students = current_workshop.participants
                 if not current_workshop.joining_link2 or current_workshop.joining_link2 == '':
                     joining_link = current_workshop.joining_link
                 elif not current_workshop.joining_link3 or current_workshop.joining_link3 == '':
@@ -596,7 +586,6 @@ def home():
                                                          name_list)
 
             if request.form.get('submit') and request.form.get('submit') == 'certificate-dist':
-                current_workshop = db.session.query(Workshop)[db.session.query(Workshop).count() - 1]
                 participants = current_workshop.participants
                 cat = current_workshop.details.category
                 subject = 'CERTIFICATE DOWNLOAD'
@@ -614,7 +603,6 @@ def home():
                 name_dict = {
                     'Name': []
                 }
-                current_workshop = db.session.query(Workshop)[db.session.query(Workshop).count() - 1]
                 participants = current_workshop.participants
                 for participant in participants:
                     if participant.sex == 'male':
@@ -624,23 +612,19 @@ def home():
                     else:
                         name_dict['Name'].append(participant.name)
                 df = pd.DataFrame.from_dict(name_dict)
-                file = '../static/files/internal_operations/certificate_name_list.csv'
-                if os.path.exists(file):
-                    os.remove(file)
+                file = './static/files/internal_operations/certificate_name_list.csv'
                 df.to_csv(file, index=False)
 
             if request.form.get('submit') and request.form.get('submit') == 'download-cert-name-csv':
-                file = '../static/files/internal_operations/certificate_name_list.csv'
+                file = './static/files/internal_operations/certificate_name_list.csv'
                 if os.path.exists(file) and os.path.isfile(file):
-                    current_workshop_name = db.session.query(Workshop)[db.session.query(Workshop).count() - 1].name
-                    file_name = 'certificate_name_list_' + current_workshop_name
+                    file_name = 'certificate_name_list_' + current_ws_name + '.csv'
                     return send_file(path_or_file=file, as_attachment=True, download_name=file_name)
                 else:
                     flash("Oops Chief! The file doesn't exist!", "error")
 
             if request.form.get('submit') and request.form.get('submit') == 'upload_files':
                 allowed_extensions = {'pdf', 'jpg'}
-                current_workshop = db.session.query(Workshop)[db.session.query(Workshop).count() - 1]
                 participants = current_workshop.participants
 
                 if 'file' not in request.files:
