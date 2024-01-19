@@ -165,13 +165,14 @@ def home():
 
     upcoming_workshop_list = []
     workshops = db.session.query(Workshop)
+    reg_status = db.session.query(Tools).filter_by(keyword='reg_status').one()
     for workshop in workshops:
         if not workshop.reg_start:
             upcoming_workshop_list.append(workshop.name)
     return render_template('workshops_main.html', category=category, topic=topic, sessions=sessions, brief=brief,
                            sub_list=sub_list, description=description, req_list=req_list, result_list=result_list,
                            logged_in=current_user.is_authenticated, upcoming_workshop_list=upcoming_workshop_list,
-                           date=date, time=time, admin=admin)
+                           date=date, time=time, admin=admin, reg_status=reg_status)
 
 
 @school.route('/classroom')

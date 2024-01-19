@@ -35,6 +35,7 @@ def home():
                 result = db.session.query(Tools).filter_by(keyword='current_workshop').first()
                 result.data = current_ws_name
                 db.session.query(Workshop).filter_by(name=current_ws_name).one().reg_start = today_date
+                db.session.query(Tools).filter_by(keyword='reg_status').one().data = 'open'
                 db.session.commit()
                 flash('Updated current Workshop', 'success')
             if request.form.get('name'):
@@ -60,6 +61,7 @@ def home():
                     joining_link=session_link,
                 )
                 db.session.add(entry)
+                db.session.query(Tools).filter_by(keyword='reg_status').one().data = 'pending'
                 db.session.commit()
                 flash('New Workshop Added', 'success')
                 return redirect(url_for('manager.home'))
@@ -174,6 +176,7 @@ def home():
                 current_workshop.gross_revenue = collection
                 current_workshop.reg_close = today_date
                 current_workshop.strength = len(current_workshop.participants)
+                db.session.query(Tools).filter_by(keyword='reg_status').one().data = 'close'
                 db.session.commit()
             if request.form.get('submit') and request.form.get('submit') == 'mail-promo':
                 recipients = []

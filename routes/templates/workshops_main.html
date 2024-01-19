@@ -92,7 +92,14 @@
                             <a class="btn btn-primary btn-block btn-large button" href="https://wa.link/vfza06">ASK A QUESTION</a>
                         </div>
                         <div class="col button-container">
-                            <a class="btn btn-primary btn-block btn-large button" href="{{url_for('payment.home')}}">ENROLL NOW</a>
+                            {% if reg_status == 'open' %}
+                                <a class="btn btn-primary btn-block btn-large button" href="{{url_for('payment.home')}}">ENROLL NOW</a>
+                            {% elif reg_status == 'close' %}
+                                <a class="btn btn-primary btn-block btn-large button" href="#">REGISTRATION CLOSED</a>
+                            {% elif reg_status == 'pending' %}
+                                <a class="btn btn-primary btn-block btn-large button" href="#">REG. OPENS SOON</a>
+                            {% else %}
+                            {% endif %}
                         </div>
                     </div>
                 </div>
