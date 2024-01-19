@@ -7,6 +7,7 @@
                 <h5>WORKSHOP OPERATIONS</h5>
                 <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="addNewWs()" value="Add New Workshop">Add New Workshop</button>
                 <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="addWsDetails()" value="Add Workshop Details">Add Workshop Details</button>
+                <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="openRegistration()" value="open-registration">Open Registration</button>
                 <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="addRecordingLink()" value="Add Recording Link">Add Recording Link</button>
                 <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="addSessionLink()" value="Add Session Link">Add Session Link</button>
                 <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="closeRegistration()" value="Close Registration">Close Registration</button>
@@ -52,10 +53,6 @@
                     <input name="instructor" placeholder="Instructor" type="text" required><br>
                     <button type="submit" class="btn btn-primary btn-block btn-large">ADD TO DATABASE</button>
                 </form>
-                <form action="{{url_for('manager.home')}}" method="post" style="padding-top: 5%;">
-                    <input name="current_ws_name" placeholder="Current Workshop Name" type="text" required>
-                    <button type="submit" class="btn btn-primary btn-block btn-large">OPEN REGISTRATION</button>
-                </form>
             </div>
             <div id="add-ws-details">
                 <form action="{{ url_for('manager.home') }}" method="post">
@@ -98,6 +95,13 @@
                     <input type="text" name="workshop_name" placeholder="Workshop Name" required>
                     <input type="file" name="file" id="file2" multiple>
                     <button type="submit" name="submit" id="file-btn2" class="btn btn-primary btn-block btn-large" value="upload_photos">UPLOAD PHOTOS</button>
+                </form>
+            </div>
+            <div id="open-reg">
+                <form action="{{url_for('manager.home')}}" method="post" style="padding-top: 5%;">
+                    <h2>Open Registration Window</h2>
+                    <input name="current_ws_name" placeholder="Current Workshop Name" type="text" required>
+                    <button type="submit" class="btn btn-primary btn-block btn-large">OPEN REGISTRATION</button>
                 </form>
             </div>
             <div id="add-recording-link">

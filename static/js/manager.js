@@ -11,6 +11,7 @@ function closeAll() {
     document.getElementById("session-reminder").style.display = 'none';
     document.getElementById("certificate-dist").style.display = 'none';
     document.getElementById("csv-export-cert").style.display = 'none';
+    document.getElementById("open-reg").style.display = 'none';
 
 }
 
@@ -22,6 +23,11 @@ function addNewWs() {
 function addWsDetails() {
     closeAll();
     document.getElementById("add-ws-details").style.display = 'block';
+}
+
+function openRegistration() {
+    closeAll();
+    document.getElementById("open-reg").style.display = 'block';
 }
 
 function addRecordingLink() {

@@ -626,6 +626,10 @@ lite-youtube.lyt-activated > .lty-playbtn {
     display: none;
 }
 
+#open-reg {
+    display: none;
+}
+
 #close-reg {
     display: none;
 }

@@ -203,6 +203,14 @@ def register():
             registration_date=today_date
         )
 
+        try:
+            admin = db.session.query(Role).filter_by(name='admin').one()
+            first_user = db.session.query(User).filter_by(id=1).one()
+            first_user.role.append(admin)
+            db.session.commit()
+        except:
+            pass
+
         db.session.add(new_user)
         db.session.commit()
         login_user(new_user)
