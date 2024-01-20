@@ -34,6 +34,11 @@ def home():
                 current_ws_name = request.form.get('current_ws_name')
                 result = db.session.query(Tools).filter_by(keyword='current_workshop').first()
                 result.data = current_ws_name
+                db.session.query(Tools).filter_by(keyword='open_reg').one().data = 'Done'
+                db.session.query(Tools).filter_by(keyword='promotion').one().data = 'Pending'
+                db.session.query(Tools).filter_by(keyword='reminder').one().data = 'Pending'
+                db.session.query(Tools).filter_by(keyword='close_reg').one().data = 'Pending'
+                db.session.query(Tools).filter_by(keyword='certificate_distribution').one().data = 'Pending'
                 db.session.query(Workshop).filter_by(name=current_ws_name).one().reg_start = today_date
                 db.session.query(Tools).filter_by(keyword='reg_status').one().data = 'open'
                 db.session.commit()
@@ -177,6 +182,7 @@ def home():
                 current_workshop.reg_close = today_date
                 current_workshop.strength = len(current_workshop.participants)
                 db.session.query(Tools).filter_by(keyword='reg_status').one().data = 'close'
+                db.session.query(Tools).filter_by(keyword='close_reg').one().data = 'Done'
                 db.session.commit()
             if request.form.get('submit') and request.form.get('submit') == 'mail-promo':
                 recipients = []
@@ -212,6 +218,7 @@ def home():
                         'path': ['social-icons', 'social-icons', 'social-icons'],
                     }
                     send_email_school('NEW WORKSHOP ENROLLMENT OPEN', recipients, '', html, image_dict)
+                    db.session.query(Tools).filter_by(keyword='promotion').one().data = 'Done'
                     flash('Mailed successfully, Chief!', 'success')
                 else:
                     flash('No workshop-details found, Chief!', 'error')
@@ -238,6 +245,7 @@ def home():
                         number_list.append(q.phone)
                     name_list.append(q.name.split()[0])
                 send_wa_msg_by_list(message, number_list, name_list)
+                db.session.query(Tools).filter_by(keyword='promotion').one().data = 'Done'
 
             if request.form.get('submit') and request.form.get('submit') == 'wa-mail-promo':
                 message = f"Dear [name],\nEnrollment/Registration to the new workshop: {current_ws_topic} is open.\n" \
@@ -295,6 +303,7 @@ def home():
                     }
                     send_email_school_and_wa_msg_by_list(subject, recipients, '', html, image_dict, message,
                                                          number_list, name_list)
+                    db.session.query(Tools).filter_by(keyword='promotion').one().data = 'Done'
                     flash('Mailed and messaged successfully, Chief!', 'success')
 
             if request.form.get('submit') and request.form.get('submit') == 'mail-last-rem':
@@ -336,6 +345,7 @@ def home():
                             if user.email not in enrolled_user_list and user.email not in recipients:
                                 recipients.append(user.email)
                     send_email_school(subject, recipients, '', html, image_dict)
+                    db.session.query(Tools).filter_by(keyword='reminder').one().data = 'Done'
 
             if request.form.get('submit') and request.form.get('submit') == 'wa-last-rem':
                 message = f"Dear [name],\n Today is the last day for enrollment/registration to the workshop: {current_ws_topic}.\n" \
@@ -369,6 +379,7 @@ def home():
                         name_list.append(user.name.split()[0])
 
                 send_wa_msg_by_list(message, number_list, name_list)
+                db.session.query(Tools).filter_by(keyword='reminder').one().data = 'Done'
 
             if request.form.get('submit') and request.form.get('submit') == 'wa-mail-last-rem':
                 # current_workshop = db.session.query(Workshop)[db.session.query(Workshop).count() - 1]
@@ -442,6 +453,7 @@ def home():
 
                 send_email_school_and_wa_msg_by_list(subject, recipients, '', html, image_dict, message, number_list,
                                                      name_list)
+                db.session.query(Tools).filter_by(keyword='reminder').one().data = 'Done'
 
             if request.form.get('submit') and request.form.get('submit') == 'mail-link':
 
@@ -601,6 +613,7 @@ def home():
                                            download_link='https://writart.com', category=cat)
                     recipients = [participant.email]
                     send_email_school(subject, recipients, '', html, image_dict)
+                    db.session.query(Tools).filter_by(keyword='certificate_distribution').one().data = 'Done'
 
             if request.form.get('submit') and request.form.get('submit') == 'csv-exp-cert':
                 name_dict = {
@@ -659,7 +672,106 @@ def home():
                         file.save(os.path.join(path, file_name))
                         cnt += 1
                 return redirect(url_for('manager.home'))
+        open_reg = db.session.query(Tools).filter_by(keyword='open_reg').one().data
+        promotion = db.session.query(Tools).filter_by(keyword='promotion').one().data
+        reminder = db.session.query(Tools).filter_by(keyword='reminder').one().data
+        close_reg = db.session.query(Tools).filter_by(keyword='close_reg').one().data
+        certificate_distribution = db.session.query(Tools).filter_by(keyword='certificate_distribution').one().data
+        workshops = db.session.query(Workshop)
+        upcoming_ws_dict = {
+            'ws': [],
+            'details': []
+        }
+        for workshop in workshops:
+            if not workshop.reg_start or workshop.reg_start == '':
+                workshop_dict = {
+                    'name': workshop.name,
+                    'topic': workshop.topic,
+                    'instructor': workshop.instructor
+                }
+                upcoming_ws_dict['ws'].append(workshop_dict)
+                if not workshop.details.brief:
+                    details_dict = {
+                        'status': 'Empty',
+                        'category': '',
+                        'brief': '',
+                        'sessions': '',
+                        'subtopic1': '',
+                        'subtopic2': '',
+                        'subtopic3': '',
+                        'subtopic4': '',
+                        'subtopic5': '',
+                        'subtopic6': '',
+                        'subtopic7': '',
+                        'subtopic8': '',
+                        'subtopic9': '',
+                        'description': '',
+                        'req1': '',
+                        'req2': '',
+                        'req3': '',
+                        'req4': '',
+                        'req5': '',
+                        'req6': '',
+                        'req7': '',
+                        'req8': '',
+                        'req9': '',
+                        'r1': '',
+                        'r2': '',
+                        'r3': '',
+                        'r4': '',
+                        'r5': '',
+                        'r6': '',
+                        'r7': '',
+                        'r8': '',
+                        'r9': '',
+                    }
+                    upcoming_ws_dict['details'].append(details_dict)
+                else:
+                    details_dict = {
+                        'status': 'Exists',
+                        'category': workshop.details.category,
+                        'brief': workshop.details.brief,
+                        'sessions': workshop.details.sessions,
+                        'subtopic1': workshop.details.subtopic1,
+                        'subtopic2': workshop.details.subtopic2,
+                        'subtopic3': workshop.details.subtopic3,
+                        'subtopic4': workshop.details.subtopic4,
+                        'subtopic5': workshop.details.subtopic5,
+                        'subtopic6': workshop.details.subtopic6,
+                        'subtopic7': workshop.details.subtopic7,
+                        'subtopic8': workshop.details.subtopic8,
+                        'subtopic9': workshop.details.subtopic9,
+                        'description': workshop.details.description,
+                        'req1': workshop.details.req1,
+                        'req2': workshop.details.req2,
+                        'req3': workshop.details.req3,
+                        'req4': workshop.details.req4,
+                        'req5': workshop.details.req5,
+                        'req6': workshop.details.req6,
+                        'req7': workshop.details.req7,
+                        'req8': workshop.details.req8,
+                        'req9': workshop.details.req9,
+                        'r1': workshop.details.result1,
+                        'r2': workshop.details.result2,
+                        'r3': workshop.details.result3,
+                        'r4': workshop.details.result4,
+                        'r5': workshop.details.result5,
+                        'r6': workshop.details.result6,
+                        'r7': workshop.details.result7,
+                        'r8': workshop.details.result8,
+                        'r9': workshop.details.result9,
+                    }
+                    upcoming_ws_dict['details'].append(details_dict)
 
-        return render_template('manager.html', logged_in=current_user.is_authenticated)
+        count = len(upcoming_ws_dict['ws'])
+        count_list = []
+        for i in range(count):
+            count_list.append(i)
+
+        return render_template('manager.html', logged_in=current_user.is_authenticated,
+                               current_ws_name=current_ws_name, open_reg=open_reg, promotion=promotion,
+                               reminder=reminder, close_reg=close_reg,
+                               certificate_distribution=certificate_distribution, upcoming_ws_dict=upcoming_ws_dict,
+                               count=count, count_list=count_list)
     else:
         return render_template('admin_area.html', logged_in=current_user.is_authenticated)

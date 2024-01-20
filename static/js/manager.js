@@ -12,6 +12,7 @@ function closeAll() {
     document.getElementById("certificate-dist").style.display = 'none';
     document.getElementById("csv-export-cert").style.display = 'none';
     document.getElementById("open-reg").style.display = 'none';
+    document.getElementById("overview-content").style.display = 'none';
 
 }
 
@@ -81,4 +82,19 @@ function reports() {
 
 function gstFilingSheet() {
     closeAll();
+}
+
+function    overview() {
+    closeAll();
+    document.getElementById("overview-content").style.display = 'block';
+}
+
+function    workshopDetails(n, count_list) {
+    var list = count_list
+    for (var i in list) {
+        if (i != n) {
+            document.getElementById(i).style.display = 'none';
+        }
+    }
+    document.getElementById(n).style.display = 'block';
 }

@@ -3,6 +3,10 @@
 <div class="container manager-page">
     <div class="row">
         <div class="col-md-3" id="menu-list">
+            <div id="overview">
+                <h5>OVERVIEW</h5>
+                <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="overview()" value="overview">OVERVIEW</button>
+            </div>
             <div id="workshop">
                 <h5>WORKSHOP OPERATIONS</h5>
                 <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="addNewWs()" value="Add New Workshop">Add New Workshop</button>
@@ -38,6 +42,189 @@
                         {% endfor %}
                     {% endif %}
                 {% endwith %}
+            </div>
+            <div id="overview-content">
+                <h2>Current Workshop Status</h2>
+                <table class="ws_view_table">
+                    <tr>
+                        <th>Current Workshop</th>
+                        <th>Open Registration</th>
+                        <th>Promotion</th>
+                        <th>Last-Day Reminder</th>
+                        <th>Close Registration</th>
+                        <th>Certificate Distribution</th>
+                    </tr>
+                    <tr>
+                        <td>{{current_ws_name}}</td>
+                        <td class="{{open_reg}}">{{open_reg}}</td>
+                        <td class="{{promotion}}">{{promotion}}</td>
+                        <td class="{{reminder}}">{{reminder}}</td>
+                        <td class="{{close_reg}}">{{close_reg}}</td>
+                        <td class="{{certificate_distribution}}">{{certificate_distribution}}</td>
+                    </tr>
+                </table>
+                <h3 style="margin-top: 8%; margin-bottom: 5%;">Upcoming Workshops</h3>
+                <table class="ws_view_table">
+                    <tr>
+                        <th>Workshop Name</th>
+                        <th>Details</th>
+                    </tr>
+                        {% for n in range(count) %}
+                        <tr>
+                            <td><a type="button" onclick="workshopDetails({{n}}, {{count_list}})"><u>{{upcoming_ws_dict['ws'][n]['name']}}</u></a></td>
+                            <td class="{{upcoming_ws_dict['details'][n]['status']}}">{{upcoming_ws_dict['details'][n]['status']}}</td>
+                        </tr>
+                        {% endfor %}
+                </table>
+                {% for n in range(count) %}
+                    <div class="view_workshop_table" id="{{n}}">
+                        <h5 style="padding-top: 5%; padding-bottom: 2%;">Workshop</h5>
+                        <table class="ws_view_table">
+                            <tr>
+                                <th>Name</th>
+                                <th>Topic</th>
+                                <th>Instructor</th>
+                            </tr>
+                            <tr>
+                                <td>{{upcoming_ws_dict['ws'][n]['name']}}</td>
+                                <td>{{upcoming_ws_dict['ws'][n]['topic']}}</td>
+                                <td>{{upcoming_ws_dict['ws'][n]['instructor']}}</td>
+                            </tr>
+                        </table>
+                        <h5 style="padding: 2%;">Details</h5>
+                        <table class="ws_view_table">
+                            <tr>
+                                <th>Column</th>
+                                <th>Data</th>
+                            </tr>
+                            <tr>
+                                <th>Category</th>
+                                <td>{{upcoming_ws_dict['details'][n]['category']}}</td>
+                            </tr>
+                            <tr>
+                                <th>Brief</th>
+                                <td>{{upcoming_ws_dict['details'][n]['brief']}}</td>
+                            </tr>
+                            <tr>
+                                <th>Sessions</th>
+                                <td>{{upcoming_ws_dict['details'][n]['sessions']}}</td>
+                            </tr>
+                            <tr>
+                                <th>Subtopic 1</th>
+                                <td>{{upcoming_ws_dict['details'][n]['subtopic1']}}</td>
+                            </tr>
+                            <tr>
+                                <th>Subtopic 2</th>
+                                <td>{{upcoming_ws_dict['details'][n]['subtopic2']}}</td>
+                            </tr>
+                            <tr>
+                                <th>Subtopic 3</th>
+                                <td>{{upcoming_ws_dict['details'][n]['subtopic3']}}</td>
+                            </tr>
+                            <tr>
+                                <th>Subtopic 4</th>
+                                <td>{{upcoming_ws_dict['details'][n]['subtopic4']}}</td>
+                            </tr>
+                            <tr>
+                                <th>Subtopic 5</th>
+                                <td>{{upcoming_ws_dict['details'][n]['subtopic5']}}</td>
+                            </tr>
+                            <tr>
+                                <th>Subtopic 6</th>
+                                <td>{{upcoming_ws_dict['details'][n]['subtopic6']}}</td>
+                            </tr>
+                            <tr>
+                                <th>Subtopic 7</th>
+                                <td>{{upcoming_ws_dict['details'][n]['subtopic7']}}</td>
+                            </tr>
+                            <tr>
+                                <th>Subtopic 8</th>
+                                <td>{{upcoming_ws_dict['details'][n]['subtopic8']}}</td>
+                            </tr>
+                            <tr>
+                                <th>Subtopic 9</th>
+                                <td>{{upcoming_ws_dict['details'][n]['subtopic9']}}</td>
+                            </tr>
+                            <tr>
+                                <th>Description</th>
+                                <td>{{upcoming_ws_dict['details'][n]['description']}}</td>
+                            </tr>
+                            <tr>
+                                <th>Requirement 1</th>
+                                <td>{{upcoming_ws_dict['details'][n]['req1']}}</td>
+                            </tr>
+                            <tr>
+                                <th>Requirement 2</th>
+                                <td>{{upcoming_ws_dict['details'][n]['req2']}}</td>
+                            </tr>
+                            <tr>
+                                <th>Requirement 3</th>
+                                <td>{{upcoming_ws_dict['details'][n]['req3']}}</td>
+                            </tr>
+                            <tr>
+                                <th>Requirement 4</th>
+                                <td>{{upcoming_ws_dict['details'][n]['req4']}}</td>
+                            </tr>
+                            <tr>
+                                <th>Requirement 5</th>
+                                <td>{{upcoming_ws_dict['details'][n]['req5']}}</td>
+                            </tr>
+                            <tr>
+                                <th>Requirement 6</th>
+                                <td>{{upcoming_ws_dict['details'][n]['req6']}}</td>
+                            </tr>
+                            <tr>
+                                <th>Requirement 7</th>
+                                <td>{{upcoming_ws_dict['details'][n]['req7']}}</td>
+                            </tr>
+                            <tr>
+                                <th>Requirement 8</th>
+                                <td>{{upcoming_ws_dict['details'][n]['req8']}}</td>
+                            </tr>
+                            <tr>
+                                <th>Requirement 9</th>
+                                <td>{{upcoming_ws_dict['details'][n]['req9']}}</td>
+                            </tr>
+                            <tr>
+                                <th>Result 1</th>
+                                <td>{{upcoming_ws_dict['details'][n]['r1']}}</td>
+                            </tr>
+                            <tr>
+                                <th>Result 2</th>
+                                <td>{{upcoming_ws_dict['details'][n]['r2']}}</td>
+                            </tr>
+                            <tr>
+                                <th>Result 3</th>
+                                <td>{{upcoming_ws_dict['details'][n]['r3']}}</td>
+                            </tr>
+                            <tr>
+                                <th>Result 4</th>
+                                <td>{{upcoming_ws_dict['details'][n]['r4']}}</td>
+                            </tr>
+                            <tr>
+                                <th>Result 5</th>
+                                <td>{{upcoming_ws_dict['details'][n]['r5']}}</td>
+                            </tr>
+                            <tr>
+                                <th>Result 6</th>
+                                <td>{{upcoming_ws_dict['details'][n]['r6']}}</td>
+                            </tr>
+                            <tr>
+                                <th>Result 7</th>
+                                <td>{{upcoming_ws_dict['details'][n]['r7']}}</td>
+                            </tr>
+                            <tr>
+                                <th>Result 8</th>
+                                <td>{{upcoming_ws_dict['details'][n]['r8']}}</td>
+                            </tr>
+                            <tr>
+                                <th>Result 9</th>
+                                <td>{{upcoming_ws_dict['details'][n]['r9']}}</td>
+                            </tr>
+
+                        </table>
+                    </div>
+                {% endfor %}
             </div>
             <div id="add-ws">
                 <form action="{{ url_for('manager.home') }}" method="post">

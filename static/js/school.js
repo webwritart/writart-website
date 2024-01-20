@@ -14,3 +14,10 @@ function    openInterestedForm(workshop) {
 function    closeFormInterested() {
     document.getElementById("interested-form").style.display = 'none';
 }
+
+function    workshopDetails(n) {
+    document.getElementById("view_workshop_table").style.display = 'block';
+    document.getElementById("name").innerHTML = "{{upcoming_ws_dict['ws'][n]['name']}}"
+    document.getElementById("topic").innerHTML = "{{upcoming_ws_dict['ws'][n]['topic']}}"
+    document.getElementById("instructor").innerHTML = "{{upcoming_ws_dict['ws'][n]['instructor']}}"
+}
