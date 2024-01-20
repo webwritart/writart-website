@@ -14,8 +14,8 @@ from models.user import *
 payment = Blueprint('payment', __name__, static_folder='static', template_folder='templates')
 
 
-KEY_ID = 'rzp_test_O1Mx6Q1rwEcZmG'
-KEY_SECRET = 'q8uNnB1pNpj7Dd2UhqJ1FKq8'
+KEY_ID = os.environ.get('RAZORPAY_KEY_ID_TEST')
+KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET_TEST')
 client = razorpay.Client(auth=(KEY_ID, KEY_SECRET))
 
 today_date = date.today()
