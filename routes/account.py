@@ -8,7 +8,6 @@ from flask_login import current_user, login_required, login_user, logout_user
 from datetime import date
 import random
 
-
 account = Blueprint('account', __name__, static_folder='static', template_folder='templates')
 
 otp = random.randint(1000, 9999)
@@ -275,6 +274,8 @@ def login():
             flash('Password incorrect, please try again.', category='error')
         else:
             login_user(user)
+            if db.session.query(Role).filter(Role.name == 'admin').scalar() in current_user.role:
+                return redirect(url_for('manager.home'))
             return redirect(url_for('account.home', name=current_user.name.split()[0]))
 
     return render_template("login.html")

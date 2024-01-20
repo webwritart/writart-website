@@ -1,0 +1,65 @@
+{% extends "advanced_operations.html" %}
+{% block submenu %}
+<script src="{{ url_for('static', filename='js/manager.js')}}"></script>
+
+
+<h2 style="padding: 0%;">Visualization</h2>
+<table class="submenu">
+    <tr>
+        <th width="20%"><button type="button" class="btn btn-primary btn-block btn-large my_btn" onclick="user()">USER</button></th>
+        <th width="20%"><button type="button" class="btn btn-primary btn-block btn-large my_btn" onclick="workshop()">WORKSHOP</button> </th>
+        <th width="20%"><button type="button" class="btn btn-primary btn-block btn-large my_btn" onclick="query()">QUERY</button> </th>
+        <th width="20%"><button type="button" class="btn btn-primary btn-block btn-large my_btn" onclick="accountant()">ACCOUNTANT</button> </th>
+        <th width="20%"><button type="button" class="btn btn-primary btn-block btn-large my_btn" onclick="gst()">GST</button> </th>
+    </tr>
+</table>
+
+<div class="submenu_options"  style="font-size: 12px; width: 100%;">
+    <table id="blank"></table>
+    <table id="user-opt" style="width: 100%;">
+        <tr>
+            <td width="15%"><button class="btn btn-secondary btn-block ">All Users</button></td>
+            <td width="15%"><button class="btn btn-secondary btn-block ">By Workshop</button></td>
+            <td width="15%"><button class="btn btn-secondary btn-block ">By Role</button></td>
+            <td width="15%"><button class="btn btn-secondary btn-block ">By Name</button></td>
+            <td width="15%"><button class="btn btn-secondary btn-block ">By Mail</button></td>
+        </tr>
+    </table>
+    <table id="workshop1-opt" style="width: 100%;">
+        <tr>
+            <td width="20%"><button class="btn btn-secondary btn-block ">All</button></td>
+            <td width="20%"><button class="btn btn-secondary btn-block ">Participants by WS</button></td>
+            <td width="20%"><button class="btn btn-secondary btn-block ">By Instructor</button></td>
+            <td width="20%"><button class="btn btn-secondary btn-block ">By Date</button></td>
+        </tr>
+    </table>
+    <table id="query-opt" style="width: 100%;">
+        <tr>
+            <td width="15%"><button class="btn btn-secondary btn-block ">All</button></td>
+            <td width="15%"><button class="btn btn-secondary btn-block ">By Workshop</button></td>
+            <td width="15%"><button class="btn btn-secondary btn-block ">By Role</button></td>
+            <td width="15%"><button class="btn btn-secondary btn-block ">By Name</button></td>
+            <td width="15%"><button class="btn btn-secondary btn-block ">By Mail</button></td>
+        </tr>
+    </table>
+    <table id="accountant-opt" style="width: 100%;">
+        <tr>
+            <td width="15%"><button class="btn btn-secondary btn-block ">All</button></td>
+            <td width="15%"><button class="btn btn-secondary btn-block ">By Workshop</button></td>
+            <td width="15%"><button class="btn btn-secondary btn-block ">By Role</button></td>
+            <td width="15%"><button class="btn btn-secondary btn-block ">By Name</button></td>
+            <td width="15%"><button class="btn btn-secondary btn-block ">By Mail</button></td>
+        </tr>
+    </table>
+    <table id="gst-opt" style="width: 100%;">
+        <tr>
+            <td width="15%"><button class="btn btn-secondary btn-block ">All</button></td>
+            <td width="15%"><button class="btn btn-secondary btn-block ">By Workshop</button></td>
+            <td width="15%"><button class="btn btn-secondary btn-block ">By Role</button></td>
+            <td width="15%"><button class="btn btn-secondary btn-block ">By Name</button></td>
+            <td width="15%"><button class="btn btn-secondary btn-block ">By Mail</button></td>
+        </tr>
+    </table>
+</div>
+
+{% endblock %}

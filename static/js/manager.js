@@ -98,3 +98,38 @@ function    workshopDetails(n, count_list) {
     }
     document.getElementById(n).style.display = 'block';
 }
+
+
+function    closeAllOptions() {
+    document.getElementById("blank").style.display = 'none';
+    document.getElementById("user-opt").style.display = 'none';
+    document.getElementById("workshop1-opt").style.display = 'none';
+    document.getElementById("query-opt").style.display = 'none';
+    document.getElementById("accountant-opt").style.display = 'none';
+    document.getElementById("gst-opt").style.display = 'none';
+}
+
+function user() {
+    closeAllOptions();
+    document.getElementById("user-opt").style.display = 'block';
+}
+
+function workshop() {
+    closeAllOptions();
+    document.getElementById("workshop1-opt").style.display = 'block';
+}
+
+function query() {
+    closeAllOptions();
+    document.getElementById("query-opt").style.display = 'block';
+}
+
+function accountant() {
+    closeAllOptions();
+    document.getElementById("accountant-opt").style.display = 'block';
+}
+
+function gst() {
+    closeAllOptions();
+    document.getElementById("gst-opt").style.display = 'block';
+}

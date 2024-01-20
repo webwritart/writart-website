@@ -711,3 +711,44 @@ lite-youtube.lyt-activated > .lty-playbtn {
     margin-right: auto;
 }
 
+#operations {
+    display: none;
+}
+
+/* .submenu_options { */
+    /* margin-left: auto;
+    margin-right: auto;
+} */
+
+.submenu_options table, th, td {
+    padding: 0.5%;
+    border: 0px solid black;
+    border-collapse: collapse;
+}
+
+.submenu_options table tr {
+    width: 100%;
+}
+
+#user-opt {
+    display: none;
+}
+
+#workshop1-opt {
+    display: none;
+}
+
+#query-opt {
+    display: none;
+}
+
+#accountant-opt {
+    display: none;
+}
+
+#gst-opt {
+    display: none;
+}
+#blank {
+    display: block;
+}

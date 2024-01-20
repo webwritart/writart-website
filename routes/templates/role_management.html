@@ -1,0 +1,48 @@
+{% extends "advanced_operations.html" %}
+{% block submenu %}
+<script src="{{ url_for('static', filename='js/manager.js')}}"></script>
+
+<div class="background">
+  <h2 style="padding: 0%;">Role Management</h2>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+              {% for category, message in messages %}
+                <div class="{{category}}">{{ message }}</div>
+              {% endfor %}
+        {% endif %}
+    {% endwith %}
+  <div class="box2">
+    <form action="{{ url_for('manager.role_management') }}" method="post">
+      <input type="text" name="email" placeholder="Email" required="required" />
+      <select id="role" name="role">
+        <option value="student">student</option>
+        <option value="admin">admin</option>
+        <option value="editor">editor</option>
+        <option value="blogger">blogger</option>
+        <option value="artist">artist</option>
+        <option value="customer">customer</option>
+        <option value="animation_client">animation_client</option>
+        <option value="instructor">instructor</option>
+      <input type="submit" class="btn btn-primary btn-block btn-large" value="Assign by email">
+      </select>
+    </form>
+  </div>
+  <div class="box2">
+    <form action="{{ url_for('manager.role_management') }}" method="post">
+      <input type="text" name="email" placeholder="Email" required="required" />
+      <select name="role">
+        <option value="student1">student</option>
+        <option value="admin1">admin</option>
+        <option value="editor1">editor</option>
+        <option value="blogger1">blogger</option>
+        <option value="artist1">artist</option>
+        <option value="customer1">customer</option>
+        <option value="animation_client1">animation_client</option>
+        <option value="instructor1">instructor</option>
+      <input type="submit" class="btn btn-primary btn-block btn-large" value="Remove by email">
+      </select>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

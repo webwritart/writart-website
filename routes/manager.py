@@ -3,8 +3,7 @@ import pandas as pd
 from flask import Blueprint, render_template, request, flash, redirect, url_for, send_file
 from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
-
-from extensions import db
+from extensions import db, admin_only
 from messenger import send_email_school, send_wa_msg_by_list, send_email_school_and_wa_msg_by_list
 from models.payment import Payment
 from models.query import Query
@@ -775,3 +774,88 @@ def home():
                                count=count, count_list=count_list)
     else:
         return render_template('admin_area.html', logged_in=current_user.is_authenticated)
+
+
+@login_required
+@admin_only
+@manager.route('/adv_operations')
+def adv_operations():
+    return render_template('advanced_operations.html', logged_in=current_user.is_authenticated)
+
+
+@login_required
+@admin_only
+@manager.route('/visualization')
+def visualization():
+    return render_template('visualization.html', logged_in=current_user.is_authenticated)
+
+
+@login_required
+@admin_only
+@manager.route('/role_management', methods=['GET', 'POST'])
+def role_management():
+    student = db.session.query(Role).filter_by(name='student').one()
+    admin = db.session.query(Role).filter_by(name='admin').one()
+    editor = db.session.query(Role).filter_by(name='editor').one()
+    blogger = db.session.query(Role).filter_by(name='blogger').one()
+    artist = db.session.query(Role).filter_by(name='artist').one()
+    customer = db.session.query(Role).filter_by(name='customer').one()
+    animation_client = db.session.query(Role).filter_by(name='animation_client').one()
+    instructor = db.session.query(Role).filter_by(name='instructor').one()
+    if request.method == 'POST':
+        email = request.form.get('email')
+        user = db.session.query(User).filter_by(email=email).one()
+        if request.form.get('role') == 'student' and student not in user.role:
+            user.role.append(student)
+            flash(f"{email} has been assigned student role", "success")
+        elif request.form.get('role') == 'admin' and admin not in user.role:
+            user.role.append(admin)
+            flash(f"{email} has been assigned admin role", "success")
+        elif request.form.get('role') == 'editor' and editor not in user.role:
+            user.role.append(editor)
+            flash(f"{email} has been assigned editor role", "success")
+        elif request.form.get('role') == 'blogger' and blogger not in user.role:
+            user.role.append(blogger)
+            flash(f"{email} has been assigned blogger role", "success")
+        elif request.form.get('role') == 'artist' and artist not in user.role:
+            user.role.append(artist)
+            flash(f"{email} has been assigned artist role", "success")
+        elif request.form.get('role') == 'customer' and customer not in user.role:
+            user.role.append(customer)
+            flash(f"{email} has been assigned customer role", "success")
+        elif request.form.get('role') == 'animation_client' and animation_client not in user.role:
+            user.role.append(animation_client)
+            flash(f"{email} has been assigned animation client role", "success")
+        elif request.form.get('role') == 'instructor' and instructor not in user.role:
+            user.role.append(instructor)
+            flash(f"{email} has been assigned instructor role", "success")
+        db.session.commit()
+
+        if request.form.get('role') == 'student1' and student in user.role:
+            user.role.remove(student)
+            flash(f"{email} has been removed from student role", "success")
+        if request.form.get('role') == 'admin1' and admin in user.role:
+            user.role.remove(admin)
+            flash(f"{email} has been removed from admin role", "success")
+        if request.form.get('role') == 'editor1' and editor in user.role:
+            user.role.remove(editor)
+            flash(f"{email} has been removed from editor role", "success")
+        if request.form.get('role') == 'blogger1' and blogger in user.role:
+            user.role.remove(blogger)
+            flash(f"{email} has been removed from blogger role", "success")
+        if request.form.get('role') == 'artist1' and artist in user.role:
+            user.role.remove(artist)
+            flash(f"{email} has been removed from artist role", "success")
+        if request.form.get('role') == 'customer1' and customer in user.role:
+            user.role.remove(customer)
+            flash(f"{email} has been removed from customer role", "success")
+        if request.form.get('role') == 'animation_client1' and animation_client in user.role:
+            user.role.remove(animation_client)
+            flash(f"{email} has been removed from animation_client role", "success")
+        if request.form.get('role') == 'instructor1' and instructor in user.role:
+            user.role.remove(instructor)
+            flash(f"{email} has been removed from instructor role", "success")
+        db.session.commit()
+        return redirect(url_for('manager.role_management'))
+
+    return render_template('role_management.html', logged_in=current_user.is_authenticated)
