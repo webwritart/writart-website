@@ -201,7 +201,8 @@ def register():
             state=state,
             registration_date=today_date
         )
-
+        db.session.add(new_user)
+        db.session.commit()
         try:
             admin = db.session.query(Role).filter_by(name='admin').one()
             first_user = db.session.query(Member).filter_by(id=1).one()
@@ -210,8 +211,6 @@ def register():
         except:
             pass
 
-        db.session.add(new_user)
-        db.session.commit()
         login_user(new_user)
         mail = render_template('mails/registration_success.html')
         send_email_school('Registration success!', [email],
