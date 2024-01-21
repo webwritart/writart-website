@@ -8,7 +8,7 @@ from messenger import send_email_school, send_wa_msg_by_list, send_email_school_
 from models.payment import Payment
 from models.query import Query
 from models.tool import Tools
-from models.user import User, Workshop, Role
+from models.member import Member, Workshop, Role
 from models.workshop_details import WorkshopDetails
 from routes.account import today_date
 
@@ -186,7 +186,7 @@ def home():
             if request.form.get('submit') and request.form.get('submit') == 'mail-promo':
                 recipients = []
                 current_workshop = db.session.query(Workshop)[db.session.query(Workshop).count() - 1]
-                result = db.session.query(User)
+                result = db.session.query(Member)
                 for user in result:
                     recipients.append(user.email)
                 result2 = db.session.query(Query)
@@ -228,7 +228,7 @@ def home():
                 number_list = []
                 name_list = []
 
-                users = db.session.query(User)
+                users = db.session.query(Member)
                 query = db.session.query(Query)
 
                 for user in users:
@@ -252,7 +252,7 @@ def home():
                 number_list = []
                 name_list = []
 
-                users = db.session.query(User)
+                users = db.session.query(Member)
                 query = db.session.query(Query)
 
                 for user in users:
@@ -271,7 +271,7 @@ def home():
 
                 recipients = []
                 subject = 'NEW WORKSHOP ENROLLMENT OPEN'
-                result = db.session.query(User)
+                result = db.session.query(Member)
                 for user in result:
                     recipients.append(user.email)
                 result2 = db.session.query(Query)
@@ -334,7 +334,7 @@ def home():
                     enrolled_users = current_workshop.participants
                     for user in enrolled_users:
                         enrolled_user_list.append(user.email)
-                    result = db.session.query(User)
+                    result = db.session.query(Member)
                     result2 = db.session.query(Query)
                     for user in result:
                         if user.email not in enrolled_user_list and user.email not in recipients:
@@ -359,7 +359,7 @@ def home():
                         enrolled_numbers.append(user.whatsapp)
                     else:
                         enrolled_numbers.append(user.phone)
-                users = db.session.query(User)
+                users = db.session.query(Member)
                 query = db.session.query(Query)
 
                 for user in users:
@@ -410,7 +410,7 @@ def home():
                     enrolled_users = current_workshop.participants
                     for user in enrolled_users:
                         enrolled_user_list.append(user.email)
-                    result = db.session.query(User)
+                    result = db.session.query(Member)
                     result2 = db.session.query(Query)
                     for user in result:
                         if user.email not in enrolled_user_list and user.email not in recipients:
@@ -432,7 +432,7 @@ def home():
                             enrolled_numbers.append(user.whatsapp)
                         else:
                             enrolled_numbers.append(user.phone)
-                    users = db.session.query(User)
+                    users = db.session.query(Member)
                     query = db.session.query(Query)
 
                     for user in users:
@@ -804,7 +804,7 @@ def role_management():
     instructor = db.session.query(Role).filter_by(name='instructor').one()
     if request.method == 'POST':
         email = request.form.get('email')
-        user = db.session.query(User).filter_by(email=email).one()
+        user = db.session.query(Member).filter_by(email=email).one()
         if request.form.get('role') == 'student' and student not in user.role:
             user.role.append(student)
             flash(f"{email} has been assigned student role", "success")

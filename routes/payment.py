@@ -8,7 +8,7 @@ import os
 from messenger import send_email_support
 from models.payment import Payment
 from models.tool import Tools
-from models.user import *
+from models.member import *
 
 
 payment = Blueprint('payment', __name__, static_folder='static', template_folder='templates')

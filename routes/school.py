@@ -3,7 +3,7 @@ from flask_login import current_user
 from extensions import db
 from models.query import Query
 from models.tool import Tools
-from models.user import Workshop, Role
+from models.member import Workshop, Role
 from models.workshop_details import WorkshopDetails
 
 school = Blueprint('school', __name__, static_folder='static', template_folder='templates')

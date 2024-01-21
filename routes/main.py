@@ -3,7 +3,7 @@ import os
 from flask import Blueprint, render_template
 from extensions import login_manager, db
 from models.tool import Tools
-from models.user import User, Workshop, Role
+from models.member import Member, Workshop, Role
 from flask_login import current_user
 
 

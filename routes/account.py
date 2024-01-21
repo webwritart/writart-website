@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, request, flash, send_file, redirec
 from werkzeug.security import check_password_hash, generate_password_hash
 from extensions import db, image_dict
 from messenger import send_email_school, send_email_support
-from models.user import User, Workshop, Role
+from models.member import Member, Workshop, Role
 from flask_login import current_user, login_required, login_user, logout_user
 from datetime import date
 import random
@@ -35,7 +35,7 @@ def home():
             current_user.state = request.form.get('state')
         if request.form.get('phone'):
             phone = request.form.get('phone')
-            result = db.session.execute(db.select(User).where(User.phone == phone))
+            result = db.session.execute(db.select(Member).where(Member.phone == phone))
             user = result.scalar()
             if user:
                 flash("Couldn't update number as there's already an account with this number", category="error")
@@ -43,7 +43,7 @@ def home():
                 current_user.phone = request.form.get("phone")
         if request.form.get('email'):
             mail_ = request.form.get('email')
-            result2 = db.session.execute(db.select(User).where(User.email == mail_))
+            result2 = db.session.execute(db.select(Member).where(Member.email == mail_))
             user2 = result2.scalar()
             if user2:
                 flash("Couldn't update email as there's already an account with this email", category="error")
@@ -136,7 +136,7 @@ def home():
 @account.route('/register', methods=['GET', 'POST'])
 def register():
     num_list = []
-    result = db.session.query(User)
+    result = db.session.query(Member)
     for user in result:
         num = user.phone
         if len(num) == 10:
@@ -166,7 +166,7 @@ def register():
 
         email = request.form.get('email')
         state = request.form.get('state')
-        result = db.session.execute(db.select(User).where(User.email == email))
+        result = db.session.execute(db.select(Member).where(Member.email == email))
         user = result.scalar()
         if user:
             flash("You've already signed up with that email, log in instead!", "error")
@@ -189,7 +189,7 @@ def register():
         year = request.form.get('year')
         dob = f"{year}-{month}-{date_}"
 
-        new_user = User(
+        new_user = Member(
             email=request.form.get('email'),
             password=hash_and_salted_password,
             name=request.form.get('name'),
@@ -204,7 +204,7 @@ def register():
 
         try:
             admin = db.session.query(Role).filter_by(name='admin').one()
-            first_user = db.session.query(User).filter_by(id=1).one()
+            first_user = db.session.query(Member).filter_by(id=1).one()
             first_user.role.append(admin)
             db.session.commit()
         except:
@@ -225,7 +225,7 @@ def register():
 def login():
     num_list = []
     raw_num_list = []
-    result = db.session.query(User)
+    result = db.session.query(Member)
     for user in result:
         print(user)
         num = user.phone
@@ -245,7 +245,7 @@ def login():
         data = request.form.get('email-phone')
         if '@' in data:
             email = data
-            result = db.session.execute(db.select(User).where(User.email == email))
+            result = db.session.execute(db.select(Member).where(Member.email == email))
             user = result.scalar()
         else:
             user_phone = ''
@@ -263,7 +263,7 @@ def login():
             if phone in num_list:
                 index = num_list.index(phone)
                 user_phone = raw_num_list[index]
-            result = db.session.execute(db.select(User).where(User.phone == user_phone))
+            result = db.session.execute(db.select(Member).where(Member.phone == user_phone))
             user = result.scalar()
         password = request.form.get('password')
 
@@ -291,7 +291,7 @@ def forgot_password():
             email = request.form.get('email')
             email_list.append(email)
             user_mail_list = []
-            results = db.session.query(User)
+            results = db.session.query(Member)
             for result in results:
                 user_mail_list.append(result.email)
             if email in user_mail_list:
@@ -311,7 +311,7 @@ def forgot_password():
                 method='pbkdf2:sha256',
                 salt_length=8
             )
-            result = db.session.execute(db.select(User).where(User.email == email_list[0]))
+            result = db.session.execute(db.select(Member).where(Member.email == email_list[0]))
             user = result.scalar()
             user.password = hash_and_salted_password
 

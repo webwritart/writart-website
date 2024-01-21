@@ -4,7 +4,7 @@ from extensions import db, mail, login_manager
 from routes.account import account
 from routes.main import main
 from routes.school import school
-from models.user import *
+from models.member import *
 from routes.payment import payment
 from routes.manager import manager
 
@@ -33,8 +33,8 @@ def create_app():
 
 
     @login_manager.user_loader
-    def load_user(user_id):
-        return db.get_or_404(User, user_id)
+    def load_user(member_id):
+        return db.get_or_404(Member,member_id)
 
 
 
