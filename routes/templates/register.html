@@ -9,21 +9,22 @@
                   {% endfor %}
             {% endif %}
         {% endwith %}
-        <h1>Register</h1>
+        <h1 style="color: #b542c7;>Register">Register</h1>
         <form id="registration" action="{{ url_for('account.register') }}" method="post" onsubmit="return validateRegistration()">
             <input type="text" name="name" placeholder="Name (required)" required="required" />
             <input type="email" name="email" placeholder="Email (required)" required="required" />
             <input type="password" minlength="5" name="password" placeholder="Password (required)" required="required" />
+            <input type="password" name="retype-password" minlength="5" placeholder="Retype Password" required="required" />
             <input type="text" name="phone" placeholder="Phone (required)" required="required" />
             <input type="text" name="whatsapp" placeholder="Whatsapp (if different than phone) (optional)" />
             <label class="radio-inline radio-inp-option">
-                <input class="radio-inp" type="radio" name="sex" value="female" required> <span style="color: gray;"> Female</span>
+                <input class="radio-inp" type="radio" name="sex" value="female" required> <span> Female</span>
             </label>
             <label class="radio-inline radio-inp-option">
-                <input class="radio-inp" type="radio" name="sex" value="male" required> <span style="color: gray;"> Male</span>
+                <input class="radio-inp" type="radio" name="sex" value="male" required> <span> Male</span>
             </label>
             <label class="radio-inline radio-inp-option">
-                <input class="radio-inp" type="radio" name="sex" value="other" required>  <span style="color: gray;"> Other</span>
+                <input class="radio-inp" type="radio" name="sex" value="other" required>  <span> Other</span>
             </label>
             <label style="color: gray; width:100%;">Date of Birth (required)</label>
             <input class="radio-inp" maxlength="2" type="text" name="date" placeholder="Date" required>

@@ -1,7 +1,8 @@
+import dotenv
 from flask import Blueprint, render_template, request, current_app, redirect, url_for
 from flask_login import current_user
 from extensions import db, image_dict
-
+from dotenv import load_dotenv
 from datetime import date
 import razorpay
 import os
@@ -9,6 +10,8 @@ from messenger import send_email_support
 from models.payment import Payment
 from models.tool import Tools
 from models.member import *
+
+load_dotenv()
 
 
 payment = Blueprint('payment', __name__, static_folder='static', template_folder='templates')
@@ -33,8 +36,7 @@ def home():
 
 @payment.route('/checkout', methods=['POST'])
 def checkout():
-    # current_ws_name = db.session.query(Workshop)[db.session.query(Workshop).count()-1].name
-    global payment, msg
+    global payment_, msg
     name = current_user.name
     email = current_user.email
     phone = current_user.phone
@@ -43,15 +45,14 @@ def checkout():
     msg = request.form.get('message')
 
     data = {"amount": amount, "currency": "INR", "receipt": "#105"}
-    payment = client.order.create(data=data)
+    payment_ = client.order.create(data=data)
 
-    return render_template('checkout.html', payment=payment, name=name, email=email, phone=phone, key_id=KEY_ID,
+    return render_template('checkout.html', payment=payment_, name=name, email=email, phone=phone, key_id=KEY_ID,
                            ws_name=current_ws_name, logged_in=current_user.is_authenticated)
 
 
 @payment.route('/verify', methods=['POST'])
 def verify():
-    global payment, msg
     resp = request.get_data()
     response = resp.decode('utf-8').split('&')
     response_data = {
@@ -59,8 +60,8 @@ def verify():
         "razorpay_order_id": response[1].split('=')[1],
         "razorpay_signature": response[2].split('=')[1]
     }
-    amount = payment['amount']
-    order_id = payment['id']
+    amount = payment_['amount']
+    order_id = payment_['id']
 
     if client.utility.verify_payment_signature(response_data):
         client.payment.capture(response_data["razorpay_payment_id"], amount)
@@ -83,7 +84,7 @@ def verify():
             email=current_user.email,
             phone=phone,
             state=current_user.state,
-            amount=str(payment['amount'])[:-2],
+            amount=str(payment_['amount'])[:-2],
             message=msg,
             order_id=order_id,
             invoice_no=invoice,

@@ -5,6 +5,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from extensions import db, Message, mail
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def send_email_school(subject, recipients, body, html, image_dict):

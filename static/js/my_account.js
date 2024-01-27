@@ -69,13 +69,19 @@ function validateRegistration() {
     let month = document.forms["registration"]["month"].value
     let year = document.forms["registration"]["year"].value
     let email = document.forms["registration"]["email"].value
-    
+    let password = document.forms["registration"]["password"].value
+    let retypePassword = document.forms["registration"]["retype-password"].value
+
     if (!dates.includes(date)) {
         alert("Wrong date. Please check again!");
         return false;
     }
     if (!months.includes(month)) {
         alert("Wrong month. Please check again!");
+        return false;
+    }
+    if (password != retypePassword) {
+        alert("The Retyped message doesn't match. Please enter again");
         return false;
     }
 }

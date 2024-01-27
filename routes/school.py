@@ -12,7 +12,7 @@ school = Blueprint('school', __name__, static_folder='static', template_folder='
 @school.route('/', methods=['GET', 'POST'])
 def home():
     upcoming_workshop_list = []
-    admin = db.session.query(Role).filter_by(name='admin').one()
+    admin = db.session.query(Role).filter_by(name='admin').first()
     if request.method == 'POST':
         if request.form.get('interested-form-hidden-workshop2'):
             ws_name = request.form.get('interested-form-hidden-workshop2')
@@ -177,7 +177,7 @@ def home():
 
 @school.route('/classroom')
 def classroom():
-    admin = db.session.query(Role).filter_by(name='admin').one()
+    admin = db.session.query(Role).filter_by(name='admin').one_or_none()
     all_recorded_video_urls = []
     vid_caption_list = []
     if current_user.is_authenticated:
