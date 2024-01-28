@@ -19,6 +19,9 @@ body {
     background-color: #FFDCF3;
 	
 }
+body p {
+    color: black;
+}
 .box h1 {
     color: black;
 }
@@ -149,7 +152,6 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 .hero-content p {
   opacity: 0.5;
   padding-bottom: 3%;
-  color: black;
 }
 
 /*  ----------------------------------------------------------------------  PAGES -------------------------------------------------------------------------------------------------------------------  */
