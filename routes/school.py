@@ -180,8 +180,39 @@ def classroom():
     admin = db.session.query(Role).filter_by(name='admin').one_or_none()
     all_recorded_video_urls = []
     vid_caption_list = []
+    qa_recorded_video_urls = []
+    qa_vid_caption_list = []
+
+    workshops = db.session.query(Workshop).all()
+    q_a_ws_list = []
+    for workshop in workshops:
+        if workshop.details.category == 'Q&A':
+            q_a_ws_list.append(workshop)
+        # if workshop.details.category == 'Q&A':
+        #     print('Got the details category qa')
+        #     q_a_ws_list.append(workshop)
+        # else:
+        #     print('skipped category verification')
+        q_a_ws_list.reverse()
+        all_qa = q_a_ws_list
+        for i in all_qa:
+            nm = i.name
+            topic = i.topic
+            vid_list = [i.yt_p1_id, i.yt_p2_id, i.yt_p3_id, i.yt_p4_id]
+            for n in range(len(vid_list)):
+                if vid_list[n]:
+                    part = f"Part-{n + 1}"
+                    caption = f'{nm}-{topic} | {part}'
+                    qa_recorded_video_urls.append(vid_list[n])
+                    qa_vid_caption_list.append(caption)
+
     if current_user.is_authenticated:
-        ws_list = current_user.participated
+        ws_list = []
+
+        for ws in current_user.participated:
+            if ws.details.category == 'workshop':
+                ws_list.append(ws)
+
         ws_list.reverse()
         all_ws = ws_list
         for i in all_ws:
@@ -196,7 +227,9 @@ def classroom():
                     vid_caption_list.append(caption)
 
     video_count = len(all_recorded_video_urls)
+    q_a_video_count = len(qa_recorded_video_urls)
 
-    return render_template('classroom.html', yt_vid_id_list=all_recorded_video_urls,
+    return render_template('classroom.html', vid_id_list=qa_recorded_video_urls, qa_caption_list=qa_vid_caption_list
+                           ,qa_video_count=q_a_video_count, yt_vid_id_list=all_recorded_video_urls,
                            vid_caption_list=vid_caption_list, video_count=video_count,
                            logged_in=current_user.is_authenticated, admin=admin)

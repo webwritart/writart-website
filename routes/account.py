@@ -129,6 +129,11 @@ def home():
                            name=current_user.name, logged_in=current_user.is_authenticated, admin=admin)
 
 
+@account.route('/update_details', methods=['GET', 'POST'])
+def update_details():
+    pass
+
+
 @account.route('/register', methods=['GET', 'POST'])
 def register():
     num_list = []
@@ -236,6 +241,31 @@ def login():
             user_no = num
         num_list.append(user_no)
     if request.method == 'POST':
+        if request.form.get('password2'):
+            pwd = request.form.get('password2')
+            retype_pwd = request.form.get('retype-password2')
+            if pwd != retype_pwd:
+                flash("Retyped password did not match! Please try again.", "error")
+                return render_template('update_account.html')
+            hash_and_salted_password = generate_password_hash(
+                pwd,
+                method='pbkdf2:sha256',
+                salt_length=8
+            )
+            current_user.password = hash_and_salted_password
+            current_user.sex = request.form.get('sex')
+            date_ = request.form.get('date')
+            if len(date_) < 2:
+                date_ = "0" + date_
+            month = request.form.get('month')
+            if len(month) < 2:
+                month = "0" + month
+            year = request.form.get('year')
+            current_user.dob = f"{year}-{month}-{date_}"
+            current_user.profession = request.form.get('profession')
+            current_user.state = request.form.get('state')
+            db.session.commit()
+            return redirect(url_for('account.home'))
         data = request.form.get('email-phone')
         if '@' in data:
             email = data
@@ -270,6 +300,9 @@ def login():
             login_user(user)
             if db.session.query(Role).filter(Role.name == 'admin').scalar() in current_user.role:
                 return redirect(url_for('manager.home'))
+            if not current_user.sex or current_user.sex == '':
+                return render_template('update_account.html')
+
             return redirect(url_for('account.home', name=current_user.name.split()[0]))
 
     return render_template("login.html")

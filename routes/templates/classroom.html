@@ -8,8 +8,22 @@
     </div>
 </div>
 
-<div id="wrapper">
-    <div id="video-container">
+<div class="video-wrapper">
+    <div class="video-wrapper-container">
+        {% for n in range(qa_video_count) %}
+            <div class="video">
+                <div class="content">
+                    <lite-youtube videoid="{{ vid_id_list[n] }}"
+                                  params="controls=1"></lite-youtube>
+                    <p>{{ qa_caption_list[n] }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="video-wrapper">
+    <div class="video-wrapper-container">
     {% if logged_in %}
         {% for n in range(video_count) %}
             <div class="video">
@@ -22,7 +36,7 @@
         {% endfor %}
         {% if video_count == 0 %}
             <div class="course-btn">
-                <p style="color: white">To watch our Art workshop recorded videos on various creative topics you need to first join our workshops.</p>
+                <p>To watch our Art workshop recorded videos on various creative topics you need to first join our workshops.</p>
                 <a href="{{url_for('school.home')}}" class="btn btn-primary btn-block btn-large" role="button">OUR WORKSHOPS</a>
             </div>
         {% endif %}
