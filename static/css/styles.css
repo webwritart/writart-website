@@ -19,9 +19,7 @@ body {
     background-color: #FFDCF3;
 	
 }
-body p {
-    color: black;
-}
+
 .box h1 {
     color: black;
 }
@@ -407,38 +405,70 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     box-sizing: border-box;
 }
 
-.video-wrapper {
+#video-wrapper {
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.video-wrapper-container {
+#video-wrapper-container {
     width: 1240px;
     overflow: auto;
 
 }
 
-.video-wrapper-container .video {
+#video-wrapper-container .video {
     padding: 8px;
     width: 25%;
     height: 200px;
     float: left;
 }
 
-.video-wrapper-container .video .content {
+#video-wrapper-container .video .content {
     width: 100%;
     height: 100%;
 }
 
 
-.video-wrapper-container .video .content p{
+#video-wrapper-container .video .content p{
     text-align: center;
     color: black;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 0.8rem;
 }
 
+#video-wrapper2 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 5%;
+}
+
+#video-wrapper-container2 {
+    width: 1240px;
+    overflow: auto;
+
+}
+
+#video-wrapper-container2 .video {
+    padding: 8px;
+    width: 25%;
+    height: 200px;
+    float: left;
+}
+
+#video-wrapper-container2 .video .content {
+    width: 100%;
+    height: 100%;
+}
+
+
+#video-wrapper-container2 .video .content p{
+    text-align: center;
+    color: black;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.8rem;
+}
 @media only screen
 and (min-width : 1440px) {
     #video-container .video {

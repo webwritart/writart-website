@@ -3,13 +3,14 @@
 
 <div id="classroom-hero">
     <div id="title">
-        <h1 style="text-align: center">WORKSHOP RECORDED SESSIONS</h1>
+        <h1 style="text-align: center">RECORDED SESSIONS</h1>
         <p style="color: gray">Revisions and Practice make an artist perfect. Therefore, welcome to your classroom! Take Notes, Draw at least more than 5 rough drawings/sketches every day. Keep showing your work</p>
     </div>
 </div>
 
-<div class="video-wrapper">
-    <div class="video-wrapper-container">
+<div id="video-wrapper2">
+    <div id="video-wrapper-container2">
+        <h1>Doubt Solving Sessions</h1>
         {% for n in range(qa_video_count) %}
             <div class="video">
                 <div class="content">
@@ -22,21 +23,22 @@
     </div>
 </div>
 
-<div class="video-wrapper">
-    <div class="video-wrapper-container">
-    {% if logged_in %}
-        {% for n in range(video_count) %}
-            <div class="video">
-                <div class="content">
-                    <lite-youtube videoid="{{ yt_vid_id_list[n] }}"
+<div id="video-wrapper">
+    <div id="video-wrapper-container">
+        <h1>Workshops</h1>
+        {% if logged_in %}
+             {% for n in range(video_count) %}
+                <div class="video">
+                    <div class="content">
+                        <lite-youtube videoid="{{ yt_vid_id_list[n] }}"
                                   params="controls=1"></lite-youtube>
-                    <p>{{ vid_caption_list[n] }}</p>
-                </div>
-            </div>
-        {% endfor %}
+                        <p>{{ vid_caption_list[n] }}</p>
+                    </div>
+                 </div>
+             {% endfor %}
         {% if video_count == 0 %}
             <div class="course-btn">
-                <p>To watch our Art workshop recorded videos on various creative topics you need to first join our workshops.</p>
+                <p style="color: black;">To watch our Art workshop recorded videos on various creative topics you need to first join our workshops.</p>
                 <a href="{{url_for('school.home')}}" class="btn btn-primary btn-block btn-large" role="button">OUR WORKSHOPS</a>
             </div>
         {% endif %}
@@ -45,7 +47,7 @@
     {% else %}
         <div class="course-btn">
             <div class="text-button-center">
-                <p>To watch our Art workshop recorded videos on various creative topics you need to first join our workshops.</p>
+                <p style="color: black;">To watch our Art workshop recorded videos on various creative topics you need to first join our workshops.</p>
                 <a href="{{url_for('school.home')}}" class="btn btn-primary btn-block btn-large button_medium" role="button">OUR WORKSHOPS</a>
             </div>
         </div>

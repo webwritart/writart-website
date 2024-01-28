@@ -119,7 +119,8 @@ def home():
                                    sub_list=sub_list, description=description, req_list=req_list,
                                    result_list=result_list,
                                    logged_in=current_user.is_authenticated,
-                                   upcoming_workshop_list=upcoming_workshop_list, date=date, time=time, admin=admin, ws=ws)
+                                   upcoming_workshop_list=upcoming_workshop_list, date=date, time=time, admin=admin,
+                                   ws=ws)
 
     current_workshop_name = db.session.query(Tools).filter_by(keyword='current_workshop').first().data
     current_workshop = db.session.query(Workshop).filter_by(name=current_workshop_name).first()
@@ -230,6 +231,6 @@ def classroom():
     q_a_video_count = len(qa_recorded_video_urls)
 
     return render_template('classroom.html', vid_id_list=qa_recorded_video_urls, qa_caption_list=qa_vid_caption_list
-                           ,qa_video_count=q_a_video_count, yt_vid_id_list=all_recorded_video_urls,
+                           , qa_video_count=q_a_video_count, yt_vid_id_list=all_recorded_video_urls,
                            vid_caption_list=vid_caption_list, video_count=video_count,
                            logged_in=current_user.is_authenticated, admin=admin)
