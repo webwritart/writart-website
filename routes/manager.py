@@ -32,7 +32,7 @@ def home():
             if request.form.get('current_ws'):
                 db.session.query(Tools).filter_by(keyword='current_workshop').first().data = request.form.get('current_ws')
                 db.session.commit()
-            if request.form.get('reg-open'):
+            if request.form.get('open-reg'):
                 db.session.query(Tools).filter_by(keyword='open_reg').one().data = 'Done'
                 db.session.query(Tools).filter_by(keyword='promotion').one().data = 'Pending'
                 db.session.query(Tools).filter_by(keyword='reminder').one().data = 'Pending'
