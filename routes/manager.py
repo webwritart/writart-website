@@ -41,81 +41,86 @@ def home():
                 db.session.commit()
                 flash('Updated current Workshop', 'success')
             if request.form.get('name'):
-                name = request.form.get('name')
-                topic = request.form.get('topic')
-                dt = request.form.get('date')
-                if len(dt) < 2:
-                    dt = "0" + dt
-                month = request.form.get('month')
-                if len(month) < 2:
-                    month = "0" + month
-                year = request.form.get('year')
-                date_ = f"{year}-{month}-{dt}"
-                time = request.form.get('time')
-                instructor_ = request.form.get('instructor')
-                session_link = request.form.get('link')
-                entry = Workshop(
-                    name=name,
-                    topic=topic,
-                    date=date_,
-                    time=time,
-                    instructor=instructor_,
-                    joining_link=session_link,
-                )
-                db.session.add(entry)
-                db.session.query(Tools).filter_by(keyword='reg_status').one().data = 'pending'
-                db.session.commit()
-                entry2 = WorkshopDetails(
-                    workshop=db.session.query(Workshop).filter_by(name=name).one()
-                )
-                db.session.add(entry2)
-                db.session.commit()
-                flash('New Workshop Added', 'success')
-                return redirect(url_for('manager.home'))
+                result = db.session.query(Workshop).filter_by(name=request.form.get('name')).first()
+                if result:
+                    flash("Chief! The workshop already exist!", "error")
+                    return redirect(request.url)
+                else:
+                    name = request.form.get('name')
+                    topic = request.form.get('topic')
+                    dt = request.form.get('date')
+                    if len(dt) < 2:
+                        dt = "0" + dt
+                    month = request.form.get('month')
+                    if len(month) < 2:
+                        month = "0" + month
+                    year = request.form.get('year')
+                    date_ = f"{year}-{month}-{dt}"
+                    time = request.form.get('time')
+                    instructor_ = request.form.get('instructor')
+                    session_link = request.form.get('link')
+                    entry = Workshop(
+                        name=name,
+                        topic=topic,
+                        date=date_,
+                        time=time,
+                        instructor=instructor_,
+                        joining_link=session_link,
+                    )
+                    db.session.add(entry)
+                    db.session.query(Tools).filter_by(keyword='reg_status').one().data = 'pending'
+                    db.session.commit()
+                    entry2 = WorkshopDetails(
+                        workshop=db.session.query(Workshop).filter_by(name=name).one()
+                    )
+                    db.session.add(entry2)
+                    db.session.commit()
+                    flash('New Workshop Added', 'success')
+                    return redirect(url_for('manager.home'))
 
             if request.form.get('category'):
                 ws_name = request.form.get('ws_name')
-                entry = WorkshopDetails(
-                    category=request.form.get('category'),
-                    brief=request.form.get('brief'),
-                    sessions=request.form.get('sessions'),
-                    subtopic1=request.form.get('st1'),
-                    subtopic2=request.form.get('st2'),
-                    subtopic3=request.form.get('st3'),
-                    subtopic4=request.form.get('st4'),
-                    subtopic5=request.form.get('st5'),
-                    subtopic6=request.form.get('st6'),
-                    subtopic7=request.form.get('st7'),
-                    subtopic8=request.form.get('st8'),
-                    subtopic9=request.form.get('st9'),
-                    description=request.form.get('description'),
-                    req1=request.form.get('req1'),
-                    req2=request.form.get('req2'),
-                    req3=request.form.get('req3'),
-                    req4=request.form.get('req4'),
-                    req5=request.form.get('req5'),
-                    req6=request.form.get('req6'),
-                    req7=request.form.get('req7'),
-                    req8=request.form.get('req8'),
-                    req9=request.form.get('req9'),
-                    result1=request.form.get('result1'),
-                    result2=request.form.get('result2'),
-                    result3=request.form.get('result3'),
-                    result4=request.form.get('result4'),
-                    result5=request.form.get('result5'),
-                    result6=request.form.get('result6'),
-                    result7=request.form.get('result7'),
-                    result8=request.form.get('result8'),
-                    result9=request.form.get('result9'),
-                    cover=f"{current_ws_name}/cover.jpg",
-                    thumbnail=f"{current_ws_name}/thumbnail.jpg",
-                    photo1=f'{current_ws_name}/p1',
-                    photo2=f'{current_ws_name}/p2',
-                    photo3=f'{current_ws_name}/p3',
-                    workshop=db.session.query(Workshop).filter_by(name=ws_name).one(),
-                )
+                workshop = db.session.query(Workshop).filter_by(name=ws_name).first()
+                details = workshop.details
+                details.category = request.form.get('category'),
+                details.brief = request.form.get('brief'),
+                details.sessions = request.form.get('sessions'),
+                details.subtopic1 = request.form.get('st1'),
+                details.subtopic2 = request.form.get('st2'),
+                details.subtopic3 = request.form.get('st3'),
+                details.subtopic4 = request.form.get('st4'),
+                details.subtopic5 = request.form.get('st5'),
+                details.subtopic6 = request.form.get('st6'),
+                details.subtopic7 = request.form.get('st7'),
+                details.subtopic8 = request.form.get('st8'),
+                details.subtopic9 = request.form.get('st9'),
+                details.description = request.form.get('description'),
+                details.req1 = request.form.get('req1'),
+                details.req2 = request.form.get('req2'),
+                details.req3 = request.form.get('req3'),
+                details.req4 = request.form.get('req4'),
+                details.req5 = request.form.get('req5'),
+                details.req6 = request.form.get('req6'),
+                details.req7 = request.form.get('req7'),
+                details.req8 = request.form.get('req8'),
+                details.req9 = request.form.get('req9'),
+                details.result1 = request.form.get('result1'),
+                details.result2 = request.form.get('result2'),
+                details.result3 = request.form.get('result3'),
+                details.result4 = request.form.get('result4'),
+                details.result5 = request.form.get('result5'),
+                details.result6 = request.form.get('result6'),
+                details.result7 = request.form.get('result7'),
+                details.result8 = request.form.get('result8'),
+                details.result9 = request.form.get('result9'),
+                details.cover = f"{current_ws_name}/cover.jpg",
+                details.thumbnail = f"{current_ws_name}/thumbnail.jpg",
+                details.photo1 = f'{current_ws_name}/p1',
+                details.photo2 = f'{current_ws_name}/p2',
+                details.photo3 = f'{current_ws_name}/p3',
+                details.workshop = db.session.query(Workshop).filter_by(name=ws_name).one()
                 try:
-                    db.session.add(entry)
+                    db.session.add()
                     db.session.commit()
                     flash('Workshop details added successfully, Chief!', 'success')
                 except:
