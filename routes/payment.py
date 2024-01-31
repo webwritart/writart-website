@@ -22,6 +22,7 @@ KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET_TEST')
 client = razorpay.Client(auth=(KEY_ID, KEY_SECRET))
 
 today_date = date.today()
+payment_ = ''
 
 
 @payment.route('/')
