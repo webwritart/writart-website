@@ -73,18 +73,22 @@
                 <div class="block" style="display: block; width: 100%; justify-content: center;">
                     <h3 id="topics" style="opacity: 0.4; padding-top: 2%;">Login using these credentials</h3>
                 </div>
-                <div class="details" style="display: flex; justify-content:center;">
-                    <div style="display: flex; justify-content: center; width: 50%;">
-                        <div style="width: 25%"></div>
-                            <div style="width:50%">
-                                <div style="display: block; width: 100%%; text-align: left;">
-                                    <h4>Email: {{current_user.email}}</h4>
-                                </div>
-                                <div style="display: block; width: 100%; text-align: right;">
-                                    <h4>Phone: {{current_user.phone}}</h4>
-                                </div>
-                            </div>
-                        <div style="width: 25%"></div>
+                <div class="details" style="display: block; justify-content:center;">
+<!--                    <div style="display: flex; justify-content: center; width: 50%;">-->
+<!--                        <div style="width: 25%"></div>-->
+<!--                            <div style="width:50%">-->
+<!--                                <div style="display: block; width: 100%%; text-align: left;">-->
+<!--                                    <h4>Email: {{current_user.email}}</h4>-->
+<!--                                </div>-->
+<!--                                <div style="display: block; width: 100%; text-align: right;">-->
+<!--                                    <h4>Phone: {{current_user.phone}}</h4>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        <div style="width: 25%"></div>-->
+<!--                    </div>-->
+                    <div>
+                        <h4>Email: {{ current_user.email }}</h4>
+                        <h4>Phone: {{ current_user.phone }}</h4>
                     </div>
                 </div>
                 <div class="block description" style="display: block; text-align: center;">
