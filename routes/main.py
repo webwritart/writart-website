@@ -26,5 +26,10 @@ def home():
     #     db.session.add(entry)
     #     db.session.commit()
 
+    # member = db.session.query(Member).filter_by(id=1).first()
+    # role = db.session.query(Role).filter_by(name='admin').first()
+    # member.role.remove(role)
+    # db.session.commit()
+
     admin = db.session.query(Role).filter_by(name='admin').one_or_none()
     return render_template('index.html', logged_in=current_user.is_authenticated, admin=admin)

@@ -204,13 +204,6 @@ def register():
         )
         db.session.add(new_user)
         db.session.commit()
-        try:
-            admin = db.session.query(Role).filter_by(name='admin').first()
-            first_user = db.session.query(Member).filter_by(id=1).first()
-            first_user.role.append(admin)
-            db.session.commit()
-        except:
-            pass
 
         login_user(new_user)
         mail = render_template('mails/registration_success.html')
