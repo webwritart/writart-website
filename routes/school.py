@@ -122,8 +122,8 @@ def home():
                                    upcoming_workshop_list=upcoming_workshop_list, date=date, time=time, admin=admin,
                                    ws=ws)
 
-    current_workshop_name = db.session.query(Tools).filter_by(keyword='current_workshop').first().data
-    current_workshop = db.session.query(Workshop).filter_by(name=current_workshop_name).first()
+    current_workshop_name = db.session.query(Tools).filter_by(keyword='current_workshop').scalar().data
+    current_workshop = db.session.query(Workshop).filter_by(name=current_workshop_name).scalar()
     current_workshop_details = current_workshop.details
 
     category = current_workshop_details.category
