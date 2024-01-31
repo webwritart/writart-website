@@ -31,8 +31,6 @@ def home():
         if request.method == 'POST':
             if request.form.get('current_ws_name'):
                 current_ws_name = request.form.get('current_ws_name')
-                result = db.session.query(Tools).filter_by(keyword='current_workshop').first()
-                result.data = current_ws_name
                 db.session.query(Tools).filter_by(keyword='open_reg').one().data = 'Done'
                 db.session.query(Tools).filter_by(keyword='promotion').one().data = 'Pending'
                 db.session.query(Tools).filter_by(keyword='reminder').one().data = 'Pending'
@@ -66,6 +64,11 @@ def home():
                 )
                 db.session.add(entry)
                 db.session.query(Tools).filter_by(keyword='reg_status').one().data = 'pending'
+                db.session.commit()
+                entry2 = WorkshopDetails(
+                    workshop=db.session.query(Workshop).filter_by(name=name).one()
+                )
+                db.session.add(entry2)
                 db.session.commit()
                 flash('New Workshop Added', 'success')
                 return redirect(url_for('manager.home'))
@@ -689,79 +692,78 @@ def home():
                     'instructor': workshop.instructor
                 }
                 upcoming_ws_dict['ws'].append(workshop_dict)
-                if workshop.details:
-                    if not workshop.details.brief:
-                        details_dict = {
-                            'status': 'Empty',
-                            'category': '',
-                            'brief': '',
-                            'sessions': '',
-                            'subtopic1': '',
-                            'subtopic2': '',
-                            'subtopic3': '',
-                            'subtopic4': '',
-                            'subtopic5': '',
-                            'subtopic6': '',
-                            'subtopic7': '',
-                            'subtopic8': '',
-                            'subtopic9': '',
-                            'description': '',
-                            'req1': '',
-                            'req2': '',
-                            'req3': '',
-                            'req4': '',
-                            'req5': '',
-                            'req6': '',
-                            'req7': '',
-                            'req8': '',
-                            'req9': '',
-                            'r1': '',
-                            'r2': '',
-                            'r3': '',
-                            'r4': '',
-                            'r5': '',
-                            'r6': '',
-                            'r7': '',
-                            'r8': '',
-                            'r9': '',
-                        }
-                        upcoming_ws_dict['details'].append(details_dict)
-                    else:
-                        details_dict = {
-                            'status': 'Exists',
-                            'category': workshop.details.category,
-                            'brief': workshop.details.brief,
-                            'sessions': workshop.details.sessions,
-                            'subtopic1': workshop.details.subtopic1,
-                            'subtopic2': workshop.details.subtopic2,
-                            'subtopic3': workshop.details.subtopic3,
-                            'subtopic4': workshop.details.subtopic4,
-                            'subtopic5': workshop.details.subtopic5,
-                            'subtopic6': workshop.details.subtopic6,
-                            'subtopic7': workshop.details.subtopic7,
-                            'subtopic8': workshop.details.subtopic8,
-                            'subtopic9': workshop.details.subtopic9,
-                            'description': workshop.details.description,
-                            'req1': workshop.details.req1,
-                            'req2': workshop.details.req2,
-                            'req3': workshop.details.req3,
-                            'req4': workshop.details.req4,
-                            'req5': workshop.details.req5,
-                            'req6': workshop.details.req6,
-                            'req7': workshop.details.req7,
-                            'req8': workshop.details.req8,
-                            'req9': workshop.details.req9,
-                            'r1': workshop.details.result1,
-                            'r2': workshop.details.result2,
-                            'r3': workshop.details.result3,
-                            'r4': workshop.details.result4,
-                            'r5': workshop.details.result5,
-                            'r6': workshop.details.result6,
-                            'r7': workshop.details.result7,
-                            'r8': workshop.details.result8,
-                            'r9': workshop.details.result9,
-                        }
-                        upcoming_ws_dict['details'].append(details_dict)
+                if not workshop.details.brief:
+                    details_dict = {
+                        'status': 'Empty',
+                        'category': '',
+                        'brief': '',
+                        'sessions': '',
+                        'subtopic1': '',
+                        'subtopic2': '',
+                        'subtopic3': '',
+                        'subtopic4': '',
+                        'subtopic5': '',
+                        'subtopic6': '',
+                        'subtopic7': '',
+                        'subtopic8': '',
+                        'subtopic9': '',
+                        'description': '',
+                        'req1': '',
+                        'req2': '',
+                        'req3': '',
+                        'req4': '',
+                        'req5': '',
+                        'req6': '',
+                        'req7': '',
+                        'req8': '',
+                        'req9': '',
+                        'r1': '',
+                        'r2': '',
+                        'r3': '',
+                        'r4': '',
+                        'r5': '',
+                        'r6': '',
+                        'r7': '',
+                        'r8': '',
+                        'r9': '',
+                    }
+                    upcoming_ws_dict['details'].append(details_dict)
+                else:
+                    details_dict = {
+                        'status': 'Exists',
+                        'category': workshop.details.category,
+                        'brief': workshop.details.brief,
+                        'sessions': workshop.details.sessions,
+                        'subtopic1': workshop.details.subtopic1,
+                        'subtopic2': workshop.details.subtopic2,
+                        'subtopic3': workshop.details.subtopic3,
+                        'subtopic4': workshop.details.subtopic4,
+                        'subtopic5': workshop.details.subtopic5,
+                        'subtopic6': workshop.details.subtopic6,
+                        'subtopic7': workshop.details.subtopic7,
+                        'subtopic8': workshop.details.subtopic8,
+                        'subtopic9': workshop.details.subtopic9,
+                        'description': workshop.details.description,
+                        'req1': workshop.details.req1,
+                        'req2': workshop.details.req2,
+                        'req3': workshop.details.req3,
+                        'req4': workshop.details.req4,
+                        'req5': workshop.details.req5,
+                        'req6': workshop.details.req6,
+                        'req7': workshop.details.req7,
+                        'req8': workshop.details.req8,
+                        'req9': workshop.details.req9,
+                        'r1': workshop.details.result1,
+                        'r2': workshop.details.result2,
+                        'r3': workshop.details.result3,
+                        'r4': workshop.details.result4,
+                        'r5': workshop.details.result5,
+                        'r6': workshop.details.result6,
+                        'r7': workshop.details.result7,
+                        'r8': workshop.details.result8,
+                        'r9': workshop.details.result9,
+                    }
+                    upcoming_ws_dict['details'].append(details_dict)
 
         count = len(upcoming_ws_dict['ws'])
         count_list = []

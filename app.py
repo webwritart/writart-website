@@ -14,6 +14,7 @@ load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('APP_SECRET')
+# app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///writart.db"
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URI')
 app.config["MAIL_SERVER"] = 'smtp.gmail.com'
 app.config["MAIL_PORT"] = 465
