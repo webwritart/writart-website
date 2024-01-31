@@ -47,6 +47,8 @@ def checkout():
     data = {"amount": amount, "currency": "INR", "receipt": "#105"}
     payment_ = client.order.create(data=data)
 
+    current_ws_name = db.session.query(Tools).filter_by(keyword='current_workshop').first()
+
     return render_template('checkout.html', payment=payment_, name=name, email=email, phone=phone, key_id=KEY_ID,
                            ws_name=current_ws_name, logged_in=current_user.is_authenticated)
 
