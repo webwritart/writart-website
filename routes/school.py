@@ -189,24 +189,25 @@ def classroom():
     for workshop in workshops:
         if workshop.details.category == 'Q&A':
             q_a_ws_list.append(workshop)
+
         # if workshop.details.category == 'Q&A':
         #     print('Got the details category qa')
         #     q_a_ws_list.append(workshop)
         # else:
         #     print('skipped category verification')
-        q_a_ws_list.reverse()
-        all_qa = q_a_ws_list
-        for i in all_qa:
-            nm = i.name
-            topic = i.topic
-            vid_list = [i.yt_p1_id, i.yt_p2_id, i.yt_p3_id, i.yt_p4_id]
-            for n in range(len(vid_list)):
-                if vid_list[n]:
-                    part = f"Part-{n + 1}"
-                    caption = f'{nm}-{topic} | {part}'
-                    qa_recorded_video_urls.append(vid_list[n])
-                    qa_vid_caption_list.append(caption)
-
+    q_a_ws_list.reverse()
+    all_qa = q_a_ws_list
+    for i in all_qa:
+        nm = i.name
+        topic = i.topic
+        vid_list = [i.yt_p1_id, i.yt_p2_id, i.yt_p3_id, i.yt_p4_id]
+        for n in range(len(vid_list)):
+            if vid_list[n]:
+                part = f"Part-{n + 1}"
+                caption = f'{nm}-{topic} | {part}'
+                qa_recorded_video_urls.append(vid_list[n])
+                qa_vid_caption_list.append(caption)
+    # print(q_a_ws_list)
     if current_user.is_authenticated:
         ws_list = []
 
