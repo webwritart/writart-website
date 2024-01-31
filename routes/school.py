@@ -234,3 +234,18 @@ def classroom():
                            , qa_video_count=q_a_video_count, yt_vid_id_list=all_recorded_video_urls,
                            vid_caption_list=vid_caption_list, video_count=video_count,
                            logged_in=current_user.is_authenticated, admin=admin)
+
+
+@school.route('/instructor')
+def instructor():
+    return render_template('instructor.html')
+
+
+@school.route('/vision')
+def vision():
+    return render_template('vision.html')
+
+
+@school.route('/t&c_school')
+def terms_and_conditions_school():
+    return render_template('t&c_school.html')
