@@ -166,7 +166,7 @@ def home():
 
     upcoming_workshop_list = []
     workshops = db.session.query(Workshop)
-    reg_status = db.session.query(Tools).filter_by(keyword='reg_status').one()
+    reg_status = db.session.query(Tools).filter_by(keyword='reg_status').one().data
     for workshop in workshops:
         if not workshop.reg_start:
             upcoming_workshop_list.append(workshop.name)

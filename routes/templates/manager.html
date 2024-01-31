@@ -49,6 +49,10 @@
             </div>
             <div id="overview-content">
                 <h2>Current Workshop Status</h2>
+                <form action="{{ url_for('manager.home') }}" method="post">
+                    <input name="current_ws" placeholder="Current workshop name" type="text" required><br>
+                    <button type="submit" class="btn btn-primary btn-block btn-large">SET IT!</button>
+                </form>
                 <table class="ws_view_table">
                     <tr>
                         <th>Current Workshop</th>
@@ -291,7 +295,7 @@
             <div id="open-reg">
                 <form action="{{url_for('manager.home')}}" method="post" style="padding-top: 5%;">
                     <h2>Open Registration Window</h2>
-                    <input name="current_ws_name" placeholder="Current Workshop Name" type="text" required>
+                    <input type="hidden" name="open-reg" value="open-reg">
                     <button type="submit" class="btn btn-primary btn-block btn-large">OPEN REGISTRATION</button>
                 </form>
             </div>

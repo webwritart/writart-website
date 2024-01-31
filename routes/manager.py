@@ -29,8 +29,10 @@ def home():
 
     if db.session.query(Role).filter(Role.name == 'admin').scalar() in current_user.role:
         if request.method == 'POST':
-            if request.form.get('current_ws_name'):
-                current_ws_name = request.form.get('current_ws_name')
+            if request.form.get('current_ws'):
+                db.session.query(Tools).filter_by(keyword='current_workshop').first().data = request.form.get('current_ws')
+                db.session.commit()
+            if request.form.get('reg-open'):
                 db.session.query(Tools).filter_by(keyword='open_reg').one().data = 'Done'
                 db.session.query(Tools).filter_by(keyword='promotion').one().data = 'Pending'
                 db.session.query(Tools).filter_by(keyword='reminder').one().data = 'Pending'
