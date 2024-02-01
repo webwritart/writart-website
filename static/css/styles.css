@@ -475,6 +475,9 @@ and (min-width : 1440px) {
     width: 25%;}
     #video-wrapper-container2 .video {
     width: 25%;}}
+    .course-btn {
+    padding: 0% 3%;
+    }
 }
 
 @media only screen
@@ -511,6 +514,12 @@ and (max-width : 768px) {
      .upcoming_ws_thumbnail {
         width: 50%%;
     }
+    .button_medium {
+    width: 60%%;
+    }
+    .course-btn {
+    padding: 0% 5%;
+    }
 }
 
 @media only screen
@@ -518,10 +527,18 @@ and (max-width : 576px) {
     #video-wrapper-container .video {
     width: 100%;
     margin-bottom: 25%;
+    padding: 0% 5%;
+    }
+    #video-wrapper-container2 h1 {
+        padding: 0% 5%;
+    }
+    #video-wrapper-container h1 {
+        padding: 0% 5%;
     }
     #video-wrapper-container2 .video {
     width: 100%;
-    margin-bottom: 25%
+    margin-bottom: 25%;
+    padding: 0% 5%;
     }
     .hero-content {
     padding: 0% 5%;}
@@ -545,6 +562,12 @@ and (max-width : 576px) {
     }
     .course-btn a {
     font-size: 12px;
+    }
+    .button_medium {
+    width: 80%;
+    }
+    .course-btn {
+    padding: 0% 5%;
     }
 }
 
