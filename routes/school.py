@@ -111,7 +111,7 @@ def home():
 
             workshops = db.session.query(Workshop)
             for workshop in workshops:
-                if not workshop.reg_start and workshop.name != ws:
+                if not workshop.reg_start and not workshop.reg_close and workshop.name != ws:
                     upcoming_workshop_list.append(workshop.name)
 
             return render_template('workshops_second.html', category=category, topic=topic, sessions=sessions,
