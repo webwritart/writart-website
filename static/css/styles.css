@@ -504,6 +504,13 @@ and (max-width : 768px) {
     width: 50%;}
     #video-wrapper-container2 .video {
     width: 50%;}
+    .button {
+        font-size: 16px;
+        width: 100%;
+    }
+     .upcoming_ws_thumbnail {
+        width: 50%%;
+    }
 }
 
 @media only screen
@@ -514,7 +521,7 @@ and (max-width : 576px) {
     }
     #video-wrapper-container2 .video {
     width: 100%;
-    margin-bottom: 35%
+    margin-bottom: 25%
     }
     .hero-content {
     padding: 0% 5%;}
@@ -522,6 +529,22 @@ and (max-width : 576px) {
     font-size: 36px;}
     .hero-content h4 {
     font-size: 24px;
+    }
+    .button {
+        font-size: 12px;
+        width: 100%;
+    }
+     .upcoming_ws_thumbnail {
+        width: 100%;
+    }
+    .container-ws {
+    width: 100%;
+    }
+     .wrapper-ws {
+    font-size: 14px;
+    }
+    .course-btn a {
+    font-size: 12px;
     }
 }
 
@@ -539,12 +562,11 @@ and (max-width : 576px) {
 }
 
 .course-btn {
-    display: flex;
+    display: block;
     height: 10%;
-    width: 100;
     padding: 5%;
+    /* width: 100% /*
     /* margin: 0 0 0 -15%; */
-    justify-content: center;
     text-align: center;
 }
 
@@ -558,6 +580,10 @@ and (max-width : 576px) {
 
 .text-button-center {
     display: block;
+    text-align: center;
+}
+.text-button-center a {
+
 }
 /* ---------------------------------------------------------------------------------- YOUTUBE VIDEOS FAST LOADING ------------------------------------------------------------------------------------- */
 
