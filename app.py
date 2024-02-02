@@ -8,6 +8,7 @@ from routes.main import main
 from routes.manager import manager
 from routes.payment import payment
 from routes.school import school
+from routes.gallery import gallery
 
 load_dotenv()
 
@@ -30,6 +31,7 @@ app.register_blueprint(account, url_prefix='/account')
 app.register_blueprint(school, url_prefix='/school')
 app.register_blueprint(payment, url_prefix='/payment')
 app.register_blueprint(manager, url_prefix='/manager')
+app.register_blueprint(gallery, url_prefix='/gallery')
 
 
 with app.app_context():

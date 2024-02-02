@@ -681,6 +681,26 @@ def home():
                         file.save(os.path.join(path, file_name))
                         cnt += 1
                 return redirect(url_for('manager.home'))
+            if request.form.get('submit') and request.form.get('submit') == 'upload_artworks':
+                allowed_extensions = {'jpg'}
+
+                if 'file' not in request.files:
+                    flash('No file part', 'error')
+                    return redirect(request.url)
+                files = request.files.getlist('file')
+
+                for file in files:
+                    if file.filename == '':
+                        flash('No selected file', 'error')
+                        return redirect(request.url)
+                    if file and allowed_file(file.filename, allowed_extensions):
+                        filename = secure_filename(file.filename)
+                        path = 'static/files/users/Shwetabh1/artworks'
+                        if not os.path.exists(path):
+                            os.makedirs(path)
+                        file.save(os.path.join(path, filename))
+                return redirect(url_for('manager.home'))
+
         open_reg = db.session.query(Tools).filter_by(keyword='open_reg').one().data
         promotion = db.session.query(Tools).filter_by(keyword='promotion').one().data
         reminder = db.session.query(Tools).filter_by(keyword='reminder').one().data

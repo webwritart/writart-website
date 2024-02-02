@@ -13,6 +13,8 @@ function closeAll() {
     document.getElementById("csv-export-cert").style.display = 'none';
     document.getElementById("open-reg").style.display = 'none';
     document.getElementById("overview-content").style.display = 'none';
+    document.getElementById("gallery").style.display = 'none';
+
 
 }
 
@@ -88,6 +90,10 @@ function    overview() {
     closeAll();
     document.getElementById("overview-content").style.display = 'block';
 }
+function gallery()  {
+    closeAll();
+    document.getElementById("gallery").style.display = 'block';
+}
 
 function    workshopDetails(n, count_list) {
     var list = count_list
@@ -101,7 +107,7 @@ function    workshopDetails(n, count_list) {
 
 
 function    closeAllOptions() {
-    document.getElementById("blank").style.display = 'none';
+    // document.getElementById("blank").style.display = 'none';
     document.getElementById("user-opt").style.display = 'none';
     document.getElementById("workshop1-opt").style.display = 'none';
     document.getElementById("query-opt").style.display = 'none';

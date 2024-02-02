@@ -412,10 +412,28 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     justify-content: center;
 }
 
+#video-wrapper3 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 #video-wrapper-container {
     width: 1240px;
     overflow: auto;
+}
 
+#video-wrapper-container3 {
+    width: 1240px;
+}
+
+#video-wrapper-container3 .photo {
+    padding: 8px;
+    padding-top: 8px;
+    height: 400px;
+    float: left;
+    margin-top: 2%;
+    margin-bottom: 2%;
 }
 
 #video-wrapper-container .video {
@@ -580,6 +598,18 @@ and (max-width : 576px) {
     align-items: center;
     justify-content: center;
     padding: 10%;
+}
+#gallery-hero {
+    width: 100%;
+    height: 20%;
+    background: black;
+    color: white;
+    opacity: 0.4;
+    margin-bottom: 3%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5%;
 }
 
 .course-btn {
@@ -817,6 +847,10 @@ lite-youtube.lyt-activated > .lty-playbtn {
     justify-content: center;
     width: 100%;
 
+}
+
+#gallery {
+    display: none;
 }
 
 .ws_view_table {

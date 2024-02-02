@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div id="gallery-hero">
+    <div id="title">
+        <h1 style="text-align: center">Artworks by the Instructor</h1>
+        <p style="color: gray">These are some of the artworks created by Shwetabh Suman, your instructor. What do you thing about them? Do let him know by clicking <a href="#" style="color: white;">here</a></p>
+    </div>
+</div>
+
+<div id="video-wrapper3">
+    <div id="video-wrapper-container3">
+        <h3>Illustrations</h3>
+        {% for img in img_list %}
+            <div class="photo">
+                <div class="content" style="background-image: url('../static/files/users/Shwetabh1/artworks/{{ img }}'); background-size: conver;">
+                    <img src="../static/files/users/Shwetabh1/artworks/{{ img }}" height="400px">
+                    <p>img</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

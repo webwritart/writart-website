@@ -33,6 +33,7 @@
             <div id="miscellaneous">
                 <h5>MISCELLANEOUS</h5>
                 <a class="btn-primary btn-block btn-large my_btn" href="{{ url_for('manager.adv_operations') }}">OPERATIONS</a>
+                <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="gallery()" value="Gallery">GALLERY</button>
             </div>
         </div>
         <div class="col-md-1"></div>
@@ -361,6 +362,15 @@
                     <form action="{{ url_for('manager.home') }}" method="post" id="form1" enctype="multipart/form-data">
                         <input type="file" name="file" id="file" multiple>
                         <button type="submit" name="submit" id="file-btn" class="btn btn-primary btn-block btn-large" value="upload_files">Upload Files</button>
+                    </form>
+                </div>
+            </div>
+            <div id="gallery">
+                <div id="gallery-content">
+                    <h2>Upload artworks</h2>
+                    <form action="{{ url_for('manager.home') }}" method="post" id="form3" enctype="multipart/form-data">
+                        <input type="file" name="file" id="file3" multiple>
+                        <button type="submit" name="submit" id="file-btn3" class="btn btn-primary btn-block btn-large" value="upload_artworks">Upload Files</button>
                     </form>
                 </div>
             </div>
