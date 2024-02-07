@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="background">
+    <div class="box">
+        <form method="post" action="{{url_for('school.certificate_download')}}">
+            <button type="submit" style="width: 80%; margin: 2% 0%;" class="btn btn-primary" name="submit" value="download-cert">DOWNLOAD LAST CERTIFICATE</button>
+            {% if help %}
+            <button class="btn btn-secondary" type="submit" name="submit2" value="report-problem">Report Issue</button>
+            {% endif %}
+        </form>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                  {% for category, message in messages %}
+                    <div class="{{category}}">{{ message }}</div>
+                  {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+</div>
+
+
+{% endblock %}

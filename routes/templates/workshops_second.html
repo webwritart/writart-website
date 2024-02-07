@@ -1,28 +1,44 @@
 {% extends "base.html" %}
 {% block content %}
+<style>
+.cover {
+        width: 100%;
+        background-image: url({{cover_path}});
+        background-size: cover;
+        background-repeat: no-repeat;
+        aspect-ratio: 3 / 1;
+        height: auto;
+        top: 0px;
+        bottom: 0px;
+        left: 0px;
+        color: white;
+    }
+</style>
 
 <div class="master-container">
     <div class="row justify-content-center align-items-center" id="ws-content" style="padding: 0% 2%;">
         <div class="col-md-9 align-items-center" style="background-color: #edcce9; padding: 5%;">
-            <div class="row justify-content-between align-items-center">
-                <div class="col-md-2" style="text-align: center;">
-                    <h6>{{category}}</h6>
+            <div class="cover" style="padding-top: 2%;">
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-md-2" style="text-align: center;">
+                        <h6>{{category}}</h6>
+                    </div>
+                    <div class="col-md-2" style="text-align: center;">
+                        <h6>SESSIONS- {{sessions}}</h6>
+                    </div>
                 </div>
-                <div class="col-md-2" style="text-align: center;">
-                    <h6>SESSIONS- {{sessions}}</h6>
+                <div class="row justify-content-center">
+                    <div class="col" style="text-align: center; padding: 10% 0% 0% 0%;">
+                        <h1>{{topic}}</h1>
+                        <h6>{{brief}}</h6>
+                    </div>
                 </div>
             </div>
-            <div class="row justify-content-center">
-                <div class="col" style="text-align: center; padding: 10% 0%;">
-                    <h1>{{topic}}</h1>
-                    <h6>{{brief}}</h6>
-                </div>
-            </div>
-            <div class="row" style="padding-bottom: 5%">
-                <div class="col" style="text-align: center; padding 10% 0%;">
-                    <h4>Date: {{date}}</h4>
-                    <h4>Time: {{time}}</h4>
-                    <h4>Mode: Online (Google Meet)</h4>
+            <div class="row">
+                <div class="col" style="text-align: center; padding: 5% 0%;">
+                    <h5>Date: {{date}}</h5>
+                    <h5>Time: {{time}}</h5>
+                    <h5>Mode: Online (Google Meet)</h5>
                 </div>
             </div>
             <div class="col">
@@ -72,7 +88,7 @@
                 </div>
                 <div class="row justify-content-center" style="text-align: center;">
                     <div class="col heading">
-                        <h5>Where will it will help you</h5>
+                        <h5>Whom & How it'll help</h5>
                     </div>
                 </div>
                 <div class="wrapper-ws">
@@ -92,7 +108,7 @@
                             <a class="btn btn-primary btn-block btn-large button" href="https://wa.link/vfza06">ASK A QUESTION</a>
                         </div>
                         <div class="col button-container">
-                            <button class="btn btn-primary btn-block btn-large button" onclick="openInterestedForm2('{{ws}}')">INTERESTED</button>
+                            <a class="btn btn-primary btn-large btn-block button" type="button" onclick="openInterestedForm3('{{ws}}')">INTERESTED</a>
                         </div>
                     </div>
                 </div>
@@ -102,8 +118,13 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col">
-                        <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."</p>
+                    <div class="col" style="text-align:center;">
+                        <h3 style="opacity:0.5; padding-bottom:2%;"><i>" Education is our RIGHT! Not a luxury. "</i></h3>
+                        <p style="opacity:0.7;">Inspired from the beautiful ‘Guru Dakshina’  model of school, ours is an art school , Writart Gurukul where you can pay whatever you want and learn in depth practically applicable art skills which are used in the actual art production industry. <br><br>The trainer is a full time artist working on several Hollywood animation projects and global indie animation, film-making projects. More about the Trainer <a href="{{ url_for('school.instructor') }}">here.</a><br><br>
+Your Guru Dakshina is used in purchasing website hosting, domain, google meet plan, books and other learning tools so that our this learning community keeps improving. More about Our Dakshina model <a href="{{ url_for('school.vision') }}">here.</a>
+<br><br>
+Let’s Learn together!
+</p>
                     </div>
                 </div>
             </div>
@@ -118,6 +139,13 @@
                     <div class="row justify-content-center" style="text-align: center;">
                         <div class="col heading">
                             <h4><b>UPCOMING WORKSHOPS</b></h4>
+                            {% with messages = get_flashed_messages(with_categories=true) %}
+                                {% if messages %}
+                                    {% for category, message in messages %}
+                                        <div class="{{category}}">{{ message }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endwith %}
                         </div>
                     </div>
                     <div class="wrapper-ws">
@@ -127,10 +155,10 @@
                                 <div class="upcoming_ws_content">
                                     <img src="../static/images/workshops/{{workshop}}/thumbnail.jpg" width="100%" height="100%">
                                     <div style="display: flex; justify-content: stretch;">
-                                       <div class="form-popup3 box" id="interested-form2">
+                                       <div class="form-popup3 box" id="interested-form3">
                                         <form class="popup-form-container" action="{{url_for('school.home')}}" name="interested-form" method="post">
                                             <div style="display: flex; justify-content: right; width: 95%;">
-                                                <a style="opacity: 0.5;" type="button" onclick="closeFormInterested2()">close <img src="../static/images/icons/cross-sign.png" width="10px"></a>
+                                                <a style="opacity: 0.5;" type="button" onclick="closeFormInterested3()">close <img src="../static/images/icons/cross-sign.png" width="10px"></a>
                                             </div>
                                             <h3 style="color: #c9c9c9;">INTERESTED</h3>
                                             <p>We'll notify you when enrollment of the selected workshop opens</p>
@@ -140,15 +168,15 @@
                                             <input type="text" placeholder="Phone" name="phone" required>
                                             <input type="text" placeholder="Whatsapp (skip if same whatsapp)" name="whatsapp">
                                             {% endif %}
-                                            <input type="hidden" id="interested-form-hidden-workshop2" name="interested-form-hidden-workshop2" required>
+                                            <input type="hidden" id="interested-form-hidden-workshop3" name="interested-form-hidden-workshop3" required>
                                             <input type="text" maxlength="300" placeholder="Any message for us? (optional)" name="message">
-                                            <input type="submit" name="submit" class="btn btn-primary" onclick="closeFormInterested()" value="SUBMIT">
+                                            <input type="submit" name="submit" class="btn btn-primary" onclick="closeFormInterested3()" value="SUBMIT">
                                         </form>
                                      </div>
-                                        <button class="btn btn-primary btn-large" style="width: 50%;" onclick="openInterestedForm2('{{workshop}}')">INTERESTED</button>
-                                        <form action="{{url_for('school.home')}}" method="post" style="width: 50%">
+                                        <button class="btn btn-primary btn-large" style="width: 50%;" onclick="openInterestedForm3('{{workshop}}')">INTERESTED</button>
+                                        <form action="{{url_for('school.upcoming_workshop')}}" method="post" style="width: 50%">
                                              <input type="hidden" name="know-more" value="know-more">
-                                             <button class="btn btn-primary btn-large" type="submit" name="submit" value="{{workshop}}" style="width: 100%">KNOW MORE</button>
+                                             <button class="btn btn-primary btn-large" type="submit" name="submit" value={{workshop}} style="width: 100%">KNOW MORE</button>
                                         </form>
                                     </div>
                                 </div>

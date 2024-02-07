@@ -1,40 +1,45 @@
-import dotenv
-from flask import Blueprint, render_template, request, current_app, redirect, url_for
-from flask_login import current_user
-from extensions import db, image_dict
+from flask import Blueprint, render_template, request, redirect, url_for
+from flask_login import current_user, login_required
+from extensions import image_dict
 from dotenv import load_dotenv
 from datetime import date
 import razorpay
 import os
-from messenger import send_email_support
+from operations.messenger import send_email_support
 from models.payment import Payment
 from models.tool import Tools
 from models.member import *
 
 load_dotenv()
 
-
 payment = Blueprint('payment', __name__, static_folder='static', template_folder='templates')
 
-
-KEY_ID = os.environ.get('RAZORPAY_KEY_ID_LIVE')
-KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET_LIVE')
+KEY_ID = os.environ.get('RAZORPAY_KEY_ID_TEST')
+KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET_TEST')
 client = razorpay.Client(auth=(KEY_ID, KEY_SECRET))
 
 today_date = date.today()
 payment_ = ''
 
 
+@login_required
 @payment.route('/')
 def home():
     global current_ws, current_ws_name, current_ws_topic, student
-    current_ws_name = db.session.query(Tools).filter_by(keyword='current_workshop').one().data
-    current_ws = db.session.query(Workshop).filter_by(name=current_ws_name).one()
-    current_ws_topic = current_ws.topic
-    student = db.session.query(Role).filter_by(name='student').one()
-    return render_template('order.html', logged_in=current_user.is_authenticated)
+
+    try:
+        if current_user.name:
+            current_ws_name = db.session.query(Tools).filter_by(keyword='current_workshop').one().data
+            current_ws = db.session.query(Workshop).filter_by(name=current_ws_name).one()
+            current_ws_topic = current_ws.topic
+            student = db.session.query(Role).filter_by(name='student').one()
+            return render_template('order.html', logged_in=current_user.is_authenticated)
+    except Exception as e:
+        instruction = 'Please login to continue'
+        return render_template('login.html', prev_page='enroll', instruction=instruction)
 
 
+@login_required
 @payment.route('/checkout', methods=['POST'])
 def checkout():
     global payment_, msg
@@ -54,6 +59,7 @@ def checkout():
                            ws_name=current_ws_name, logged_in=current_user.is_authenticated)
 
 
+@login_required
 @payment.route('/verify', methods=['POST'])
 def verify():
     resp = request.get_data()
@@ -104,7 +110,8 @@ def verify():
         topic = current_ws_topic
         date_time = current_ws.date
         session_link = current_ws.joining_link
-        mail = render_template('mails/enrollment_success.html', topic=topic, date_time=date_time,session_link=session_link)
+        mail = render_template('mails/enrollment_success.html', topic=topic, date_time=date_time,
+                               session_link=session_link)
 
         try:
             current_user.role.append(student)

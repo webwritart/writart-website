@@ -4,7 +4,7 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for,
 from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
 from extensions import db, admin_only
-from messenger import send_email_school, send_wa_msg_by_list, send_email_school_and_wa_msg_by_list
+from operations.messenger import send_email_school, send_wa_msg_by_list, send_email_school_and_wa_msg_by_list
 from models.payment import Payment
 from models.query import Query
 from models.tool import Tools
@@ -41,7 +41,7 @@ def home():
                 db.session.query(Workshop).filter_by(name=current_ws_name).one().reg_start = today_date
                 db.session.query(Tools).filter_by(keyword='reg_status').one().data = 'open'
                 db.session.commit()
-                flash('Updated current Workshop', 'success')
+                flash('Registration opened boss!', 'success')
             if request.form.get('name'):
                 result = db.session.query(Workshop).filter_by(name=request.form.get('name')).first()
                 if result:
@@ -71,6 +71,7 @@ def home():
                     )
                     db.session.add(entry)
                     db.session.query(Tools).filter_by(keyword='reg_status').one().data = 'pending'
+                    db.session.query(Tools).filter_by(keyword='open_reg').first().data = 'Pending'
                     db.session.commit()
                     entry2 = WorkshopDetails(
                         workshop=db.session.query(Workshop).filter_by(name=name).one()
@@ -619,7 +620,7 @@ def home():
                 }
                 for participant in participants:
                     html = render_template('mails/certificate_download.html', name=participant.name.split()[0],
-                                           download_link='https://writart.com', category=cat)
+                                           download_link='https://writart.com/school/certificate_download', category=cat)
                     recipients = [participant.email]
                     send_email_school(subject, recipients, '', html, image_dict)
                     db.session.query(Tools).filter_by(keyword='certificate_distribution').one().data = 'Done'

@@ -23,8 +23,6 @@ class Member(UserMixin, db.Model):
     sex = db.Column(db.String(10))
     dob = db.Column(db.String(15))
     state = db.Column(db.String(100))
-    fb_url = db.Column(db.String(100))
-    insta_url = db.Column(db.String(100))
     website = db.Column(db.String(100))
     registration_date = db.Column(db.String(50))
     participated = db.relationship('Workshop', secondary=member_workshop, backref='participants')

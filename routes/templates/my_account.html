@@ -41,7 +41,7 @@
                         {% if certificate %}
                             <div style="padding-top: 20%;">
                                 <h6 style="padding-bottom: 3%;">Certificates</h6>
-                                <button style="width: 80%; margin: 2% 0%;" type="submit" class="btn btn-primary" name="submit" value="download-certificate" formmethod="post" formaction="{{url_for('account.home')}}">DOWNLOAD LAST CERTIFICATE</button>
+                                <button  type="submit" class="btn btn-primary" name="submit" value="download-certificate" formmethod="post" formaction="{{url_for('account.home')}}">DOWNLOAD LAST CERTIFICATE</button>
                                 <button style="width: 80%; margin: 2% 0%;" type="button" class="btn btn-primary" name="submit" value="all-certificates" onclick="openCertificateList()">VIEW ALL CERTIFICATES</button>
                             </div>
                         {% endif %}

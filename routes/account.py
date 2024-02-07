@@ -1,12 +1,13 @@
 import os
-from flask import Blueprint, render_template, request, flash, send_file, redirect, url_for
+from flask import Blueprint, render_template, request, flash, send_file, redirect, url_for, session
 from werkzeug.security import check_password_hash, generate_password_hash
 from extensions import db, image_dict
-from messenger import send_email_school, send_email_support
+from operations.messenger import send_email_school, send_email_support
 from models.member import Member, Workshop, Role
 from flask_login import current_user, login_required, login_user, logout_user
 from datetime import date
 import random
+from operations.miscellaneous import calculate_age
 
 account = Blueprint('account', __name__, static_folder='static', template_folder='templates')
 
@@ -189,6 +190,11 @@ def register():
             month = "0" + month
         year = request.form.get('year')
         dob = f"{year}-{month}-{date_}"
+        age = calculate_age(dob)
+
+        if age < 13:
+            flash("You're below 13 year. Really very sorry we cannot take you in!", "error")
+            return redirect(request.url)
 
         new_user = Member(
             email=request.form.get('email'),
@@ -291,14 +297,18 @@ def login():
             flash('Password incorrect, please try again.', category='error')
         else:
             login_user(user)
+            if 'url' in session:
+                return redirect(session['url'])
             if db.session.query(Role).filter(Role.name == 'admin').scalar() in current_user.role:
                 return redirect(url_for('manager.home'))
             if not current_user.sex or current_user.sex == '':
                 return render_template('update_account.html')
-
+            if request.form.get('prev-page') == 'enroll':
+                flash("You are successfully logged in. Now proceed to enroll", "success")
+                return redirect(url_for('payment.home'))
             return redirect(url_for('account.home', name=current_user.name.split()[0]))
 
-    return render_template("login.html")
+    return render_template("login.html", instruction='login')
 
 
 email_list = []

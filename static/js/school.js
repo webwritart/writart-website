@@ -6,6 +6,14 @@ function    openInterestedForm2(workshop) {
 function    closeFormInterested2() {
     document.getElementById("interested-form2").style.display = 'none';
 }
+function    openInterestedForm3(workshop) {
+    document.getElementById("interested-form3").style.display = 'block';
+    document.getElementById("interested-form-hidden-workshop3").value = workshop;
+}
+
+function    closeFormInterested3() {
+    document.getElementById("interested-form3").style.display = 'none';
+}
 function    openInterestedForm(workshop) {
     document.getElementById("interested-form").style.display = 'block';
     document.getElementById("interested-form-hidden-workshop").value = workshop;

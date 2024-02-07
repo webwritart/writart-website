@@ -15,7 +15,7 @@ def send_email_school(subject, recipients, body, html, image_dict):
     message.body = body
     if html:
         message.html = html
-        root_path = 'static/images'
+        root_path = '../static/images'
         if image_dict:
             for n in range(len(image_dict['file'])):
                 file_format = 'image/' + image_dict['file'][n].split('.')[-1]
@@ -30,7 +30,7 @@ def send_email_studio(subject, recipients, body, html, image_dict):
     message.body = body
     if html:
         message.html = html
-        root_path = 'static/images'
+        root_path = '../static/images'
         if image_dict:
             for n in range(len(image_dict['file'])):
                 file_format = 'image/' + image_dict['file'][n].split('.')[-1]
@@ -45,7 +45,7 @@ def send_email_support(subject, recipients, body, html, image_dict):
     message.body = body
     if html:
         message.html = html
-        root_path = 'static/images'
+        root_path = '../static/images'
         if image_dict:
             for n in range(len(image_dict['file'])):
                 file_format = 'image/' + image_dict['file'][n].split('.')[-1]

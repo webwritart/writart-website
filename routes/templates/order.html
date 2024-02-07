@@ -3,9 +3,17 @@
 
 <div class="box">
     <form action="{{ url_for('payment.checkout') }}" method="post">
-        <h2>Please enter details</h2>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+              {% for category, message in messages %}
+                <div class="{{category}}">{{ message }}</div>
+              {% endfor %}
+        {% endif %}
+    {% endwith %}
+        <h2>Enroll</h2>
         <input name="amount" placeholder="Enter any amount you want to offer" type="text" required><br>
-        <input name="message" placeholder="Any message for us?" type="text">
+        <input name="message" placeholder="Any message for us?" type="text"><br>
+        By clicking CONTINUE button you agree to our school's <a href="{{url_for('school.terms_and_conditions_school')}}">terms and conditions</a>
         <button type="submit" class="btn btn-primary btn-block btn-large">CONTINUE</button>
     </form>
 </div>
