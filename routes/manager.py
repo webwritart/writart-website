@@ -10,13 +10,10 @@ from models.query import Query
 from models.tool import Tools
 from models.member import Member, Workshop, Role
 from models.workshop_details import WorkshopDetails
+from operations.miscellaneous import allowed_file
 from routes.account import today_date
 
 manager = Blueprint('manager', __name__, static_folder='static', template_folder='templates')
-
-
-def allowed_file(filename, allowed_extensions):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
 
 
 @manager.route('/', methods=['GET', 'POST'])
