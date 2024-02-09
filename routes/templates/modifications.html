@@ -1,0 +1,36 @@
+{% extends "advanced_operations.html" %}
+{% block operation_content %}
+
+<div class="background">
+    <h2>Modifications</h2>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="{{category}}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="box2">
+        <form action="{{ url_for('manager.modifications') }}" method="post">
+            <select id="table" name="table">
+                <option value="table">Table</option>
+                <option value="member">Member</option>
+                <option value="payment">Payment</option>
+                <option value="query">Query</option>
+                <option value="role">Role</option>
+                <option value="tools">Tools</option>
+                <option value="workshop">Workshop</option>
+            </select>
+            <input type="text" placeholder="filter by (column)" name="filter_by" required>
+            <input type="text" placeholder="filter keyword" name="filter_keyword" required>
+            <input type="text" placeholder="to be changed (column)" name="change_column" required>
+            <input type="text" placeholder="data to be added" name="data" required>
+
+            <input type="submit" class="btn btn-primary btn-block btn-large" value="Modify">
+       </form>
+    </div>
+</div>
+
+
+{% endblock %}

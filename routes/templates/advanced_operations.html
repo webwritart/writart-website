@@ -7,14 +7,14 @@
                 <h5>ADVANCED OPERATIONS</h5>
                 <a class="btn-primary btn-block btn-large my_btn" href="{{ url_for('manager.visualization') }}">VISUALIZATION</a>
                 <a class="btn-primary btn-block btn-large my_btn" href="{{ url_for('manager.role_management') }}">ROLE MANAGEMENT</a>
-                <a class="btn-primary btn-block btn-large my_btn">MODIFICATIONS</a>
+                <a class="btn-primary btn-block btn-large my_btn" href="{{ url_for('manager.modifications')}}">MODIFICATIONS</a>
                 <a class="btn-primary btn-block btn-large my_btn">MANUAL ENROLL</a>
                 <a class="btn-primary btn-block btn-large my_btn">DELETIONS</a>
             </div>
         </div>
         <div class="col-md-1"></div>
         <div class="col-md-8">
-            {% block submenu %}
+            {% block operation_content %}
             {% endblock %}
         </div>
     </div>

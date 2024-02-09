@@ -1,3 +1,6 @@
+import table as table
+
+
 from extensions import db
 from flask_login import UserMixin
 
@@ -13,6 +16,8 @@ member_role = db.Table('member_role',
 
 
 class Member(UserMixin, db.Model):
+    __tablename__ = 'member'
+
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(100))
@@ -36,6 +41,8 @@ class Member(UserMixin, db.Model):
 
 
 class Workshop(db.Model):
+    __tablename__ = 'workshop'
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(10))
     topic = db.Column(db.String(100))
@@ -64,6 +71,8 @@ class Workshop(db.Model):
 
 
 class Role(db.Model):
+    __tablename__ = 'role'
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
     description = db.Column(db.String(500))

@@ -2,6 +2,8 @@ from extensions import db
 
 
 class WorkshopDetails(db.Model):
+    __tablename__ = 'workshop_details'
+
     id = db.Column(db.Integer, primary_key=True)
     category = db.Column(db.String(100))
     brief = db.Column(db.String(100))

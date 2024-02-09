@@ -2,6 +2,8 @@ from extensions import db
 
 
 class Payment(db.Model):
+    __tablename__ = 'payment'
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
     email = db.Column(db.String(100))

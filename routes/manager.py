@@ -118,9 +118,7 @@ def home():
                 details.photo1 = f'{current_ws_name}/p1',
                 details.photo2 = f'{current_ws_name}/p2',
                 details.photo3 = f'{current_ws_name}/p3',
-                details.workshop = db.session.query(Workshop).filter_by(name=ws_name).one()
                 try:
-                    db.session.add()
                     db.session.commit()
                     flash('Workshop details added successfully, Chief!', 'success')
                 except:
@@ -808,14 +806,16 @@ def home():
 @admin_only
 @manager.route('/adv_operations')
 def adv_operations():
-    return render_template('advanced_operations.html', logged_in=current_user.is_authenticated)
+    admin = db.session.query(Role).filter_by(name='admin').one_or_none()
+    return render_template('advanced_operations.html', logged_in=current_user.is_authenticated, admin=admin)
 
 
 @login_required
 @admin_only
 @manager.route('/visualization')
 def visualization():
-    return render_template('visualization.html', logged_in=current_user.is_authenticated)
+    admin = db.session.query(Role).filter_by(name='admin').one_or_none()
+    return render_template('visualization.html', logged_in=current_user.is_authenticated, admin=admin)
 
 
 @login_required
@@ -885,5 +885,37 @@ def role_management():
             flash(f"{email} has been removed from instructor role", "success")
         db.session.commit()
         return redirect(url_for('manager.role_management'))
+    admin = db.session.query(Role).filter_by(name='admin').one_or_none()
+    return render_template('role_management.html', logged_in=current_user.is_authenticated, admin=admin)
 
-    return render_template('role_management.html', logged_in=current_user.is_authenticated)
+
+@manager.route('/modifications', methods=['GET', 'POST'])
+def modifications():
+    global query
+    if request.method == 'POST':
+        table = request.form.get('table')
+        filter_by = request.form.get('filter_by')
+        keyword = request.form.get('filter_keyword')
+        change_column = enumerate(request.form.get('change_column'))
+        data = request.form.get('data')
+
+        if table == 'member':
+            query = db.session.query(Member)
+        elif table == 'payment':
+            query = db.session.query(Payment)
+        elif table == 'query':
+            query = db.session.query(Query)
+        elif table == 'role':
+            query = db.session.query(Role)
+        elif table == 'tools':
+            query = db.session.query(Tools)
+        elif table == 'workshop':
+            query = db.session.query(Workshop)
+
+        filter_key = f"{filter_by}='{keyword}'"
+        row = query.filter_by(filter_key).one()
+
+    admin = db.session.query(Role).filter_by(name='admin').one_or_none()
+    return render_template('modifications.html', admin=admin, logged_in=current_user.is_authenticated)
+
+
