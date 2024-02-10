@@ -260,7 +260,8 @@ def classroom():
 
         if url1 and url1 != '':
             all_demo_url_list.append(url1)
-            part_list.append(' | Part 1')
+            if url2:
+                part_list.append(' | Part 1')
             demo_caption_list.append(r.caption)
             title_list.append(r.title)
         if url2 and url2 != '':

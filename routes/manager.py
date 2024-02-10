@@ -223,7 +223,7 @@ def home():
                         flash("Chief! Demo successfully added!", "success")
                     except Exception as e:
                         print(e)
-                        flash("I'm sorry Chief! Some error occured!", "error")
+                        flash("I'm sorry Chief! Some error occurred!", "error")
 
             if request.form.get('submit') and request.form.get('submit') == 'mail-promo':
                 recipients = []
