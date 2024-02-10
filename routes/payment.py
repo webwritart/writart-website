@@ -12,7 +12,7 @@ from models.member import *
 
 load_dotenv()
 
-payment = Blueprint('payment', __name__, static_folder='static', template_folder='templates')
+payment = Blueprint('payment', __name__, static_folder='static', template_folder='templates/payment')
 
 KEY_ID = os.environ.get('RAZORPAY_KEY_ID_TEST')
 KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET_TEST')
@@ -36,7 +36,7 @@ def home():
             return render_template('order.html', logged_in=current_user.is_authenticated)
     except Exception as e:
         instruction = 'Please login to continue'
-        return render_template('login.html', prev_page='enroll', instruction=instruction)
+        return render_template('account/login.html', prev_page='enroll', instruction=instruction)
 
 
 @login_required
@@ -137,4 +137,4 @@ def verify():
 
 @payment.route('/ws_registration_success')
 def ws_registration_success():
-    return render_template('ws_registration_success.html', logged_in=current_user.is_authenticated)
+    return render_template('school/ws_registration_success.html', logged_in=current_user.is_authenticated)

@@ -14,6 +14,7 @@ function closeAll() {
     document.getElementById("open-reg").style.display = 'none';
     document.getElementById("overview-content").style.display = 'none';
     document.getElementById("gallery").style.display = 'none';
+    document.getElementById("open-demo").style.display = 'none';
 
 
 }
@@ -93,6 +94,10 @@ function    overview() {
 function gallery()  {
     closeAll();
     document.getElementById("gallery").style.display = 'block';
+}
+function openDemo() {
+    closeAll();
+    document.getElementById("open-demo").style.display = 'block';
 }
 
 function    workshopDetails(n, count_list) {

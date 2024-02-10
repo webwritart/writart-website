@@ -9,7 +9,7 @@ from datetime import date
 import random
 from operations.miscellaneous import calculate_age
 
-account = Blueprint('account', __name__, static_folder='static', template_folder='templates')
+account = Blueprint('account', __name__, static_folder='static', template_folder='templates/account')
 
 otp = random.randint(1000, 9999)
 today_date = date.today()

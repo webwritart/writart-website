@@ -8,13 +8,14 @@
                 <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="overview()" value="overview">OVERVIEW</button>
             </div>
             <div id="workshop">
-                <h5>WORKSHOP OPERATIONS</h5>
+                <h5>STUDY MATERIAL OPERATIONS</h5>
                 <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="addNewWs()" value="Add New Workshop">Add New Workshop</button>
                 <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="addWsDetails()" value="Add Workshop Details">Add Workshop Details</button>
                 <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="openRegistration()" value="open-registration">Open Registration</button>
                 <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="addRecordingLink()" value="Add Recording Link">Add Recording Link</button>
                 <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="addSessionLink()" value="Add Session Link">Add Session Link</button>
                 <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="closeRegistration()" value="Close Registration">Close Registration</button>
+                <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="openDemo()" value="add_demo">Add Demo Video</button>
             </div>
             <div id="notification">
                 <h5>NOTIFICATIONS</h5>
@@ -318,6 +319,19 @@
                 <form action="{{ url_for('manager.home') }}" method="post">
                     <h2>Close Registration Window</h2>
                     <button type="submit" name="close" class="btn btn-primary btn-block btn-large" value="shut-reg-door">Close Registration</button>
+                </form>
+            </div>
+            <div id="open-demo">
+                <form action="{{ url_for('manager.home') }}" method="post">
+                    <h2>Add Demo Video</h2>
+                    <input name="title" type="text" placeholder="Title">
+                    <input name="level" type="text" placeholder="Level">
+                    <input name="caption" type="text" placeholder="Caption">
+                    <input name="vid_id1" type="text" placeholder="Video id Part 1">
+                    <input name="vid_id2" type="text" placeholder="Video id Part 2">
+                    <input name="vid_id3" type="text" placeholder="Video id Part 3">
+                    <input name="tags" type="text" placeholder="Tags">
+                    <button type="submit" name="add_demo" value="demo" class="btn btn-primary btn-block btn-large">ADD DEMO VIDEO</button>
                 </form>
             </div>
             <div id="ws-promo">

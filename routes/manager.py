@@ -4,6 +4,7 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for,
 from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
 from extensions import db, admin_only
+from models.videos import Demo
 from operations.messenger import send_email_school, send_wa_msg_by_list, send_email_school_and_wa_msg_by_list
 from models.payment import Payment
 from models.query import Query
@@ -13,7 +14,7 @@ from models.workshop_details import WorkshopDetails
 from operations.miscellaneous import allowed_file
 from routes.account import today_date
 
-manager = Blueprint('manager', __name__, static_folder='static', template_folder='templates')
+manager = Blueprint('manager', __name__, static_folder='static', template_folder='templates/manager')
 
 
 @manager.route('/', methods=['GET', 'POST'])
@@ -189,6 +190,41 @@ def home():
                 db.session.query(Tools).filter_by(keyword='reg_status').one().data = 'close'
                 db.session.query(Tools).filter_by(keyword='close_reg').one().data = 'Done'
                 db.session.commit()
+
+            if request.form.get('add_demo') == 'demo':
+                title = request.form.get('title')
+                level = request.form.get('level')
+                caption = request.form.get('caption')
+                video_id1 = request.form.get('vid_id1')
+                video_id2 = request.form.get('vid_id2')
+                video_id3 = request.form.get('vid_id3')
+                tags = request.form.get('tags')
+
+                demo_url_list = []
+                result = db.session.query(Demo)
+                for r in result:
+                    demo_url_list.append(r.vid_id1)
+
+                if video_id1 not in demo_url_list:
+                    try:
+                        entry = Demo(
+                            title=title,
+                            caption=caption,
+                            vid_id1=video_id1,
+                            vid_id2=video_id2,
+                            vid_id3=video_id3,
+                            tags=tags,
+                            date=today_date,
+                            level=level,
+                            creator_id=current_user.id
+                        )
+                        db.session.add(entry)
+                        db.session.commit()
+                        flash("Chief! Demo successfully added!", "success")
+                    except Exception as e:
+                        print(e)
+                        flash("I'm sorry Chief! Some error occured!", "error")
+
             if request.form.get('submit') and request.form.get('submit') == 'mail-promo':
                 recipients = []
                 current_workshop = db.session.query(Workshop)[db.session.query(Workshop).count() - 1]

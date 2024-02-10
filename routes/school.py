@@ -6,14 +6,15 @@ from extensions import db
 from models.query import Query
 from models.tool import Tools
 from models.member import Workshop, Role
+from models.videos import Demo
 from models.workshop_details import WorkshopDetails
 from operations.messenger import *
 import webbrowser
 
-school = Blueprint('school', __name__, static_folder='static', template_folder='templates')
+school = Blueprint('school', __name__, static_folder='static', template_folder='templates/school')
 
 
-@school.route('/',)
+@school.route('/', )
 def home():
     admin = db.session.query(Role).filter_by(name='admin').first()
 
@@ -246,10 +247,43 @@ def classroom():
     video_count = len(all_recorded_video_urls)
     q_a_video_count = len(qa_recorded_video_urls)
 
+    all_demo_url_list = []
+    demo_caption_list = []
+    part_list = []
+    title_list = []
+
+    result = db.session.query(Demo)
+    for r in result:
+        url1 = r.vid_id1
+        url2 = r.vid_id2
+        url3 = r.vid_id3
+
+        if url1 and url1 != '':
+            all_demo_url_list.append(url1)
+            part_list.append(' | Part 1')
+            demo_caption_list.append(r.caption)
+            title_list.append(r.title)
+        if url2 and url2 != '':
+            all_demo_url_list.append(url2)
+            part_list.append(' | Part 2')
+            demo_caption_list.append(r.caption)
+            title_list.append(r.title)
+        if url3 and url3 != '':
+            all_demo_url_list.append(url3)
+            part_list.append(' | Part 3')
+            demo_caption_list.append(r.caption)
+            title_list.append(r.title)
+
+        demo_caption_list.append(r.caption)
+
+    demo_count = len(all_demo_url_list)
+
     return render_template('classroom.html', vid_id_list=qa_recorded_video_urls, qa_caption_list=qa_vid_caption_list
                            , qa_video_count=q_a_video_count, yt_vid_id_list=all_recorded_video_urls,
                            vid_caption_list=vid_caption_list, video_count=video_count,
-                           logged_in=current_user.is_authenticated, admin=admin)
+                           logged_in=current_user.is_authenticated, admin=admin, all_demo_url_list=all_demo_url_list,
+                           demo_caption_list=demo_caption_list, part_list=part_list, demo_count=demo_count,
+                           title_list=title_list)
 
 
 @school.route('/certificate_download', methods=['GET', 'POST'])

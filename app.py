@@ -3,6 +3,7 @@ from flask import Flask
 from dotenv import load_dotenv
 from extensions import mail, login_manager, db
 from models.member import Member, member_role, member_workshop, Workshop, Role
+from models.videos import Demo
 from routes.account import account
 from routes.main import main
 from routes.manager import manager

@@ -7,10 +7,25 @@
         <p style="color: gray">Revisions and Practice make an artist perfect. Therefore, welcome to your classroom! Take Notes, Draw at least more than 5 rough drawings/sketches every day. Keep showing your work</p>
     </div>
 </div>
+<div id="video-wrapper4">
+    <div id="video-wrapper-container4">
+        <h3 style="color:#b38fc2;">Art Demonstrations</h3>
+        {% for n in range(demo_count) %}
+            <div class="video">
+                <div class="content">
+                    <lite-youtube videoid="{{ all_demo_url_list[n] }}"
+                                  params="controls=1"></lite-youtube>
+                    <p><b>{{ title_list[n] }}{{ part_list[n] }}</b><br>{{ demo_caption_list[n] }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+<hr/>
 
 <div id="video-wrapper2">
     <div id="video-wrapper-container2">
-        <h1>Doubt Solving Sessions</h1>
+        <h3 style="color:#b38fc2;">Doubt Solving Sessions</h3>
         {% for n in range(qa_video_count) %}
             <div class="video">
                 <div class="content">
@@ -23,9 +38,11 @@
     </div>
 </div>
 
+<hr/>
+
 <div id="video-wrapper">
     <div id="video-wrapper-container">
-        <h1>Workshops</h1>
+        <h3 style="color:#b38fc2;">Workshops</h3>
         {% if logged_in %}
             {% if video_count == 0 %}
                 <div class="course-btn">

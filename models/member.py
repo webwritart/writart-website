@@ -16,7 +16,7 @@ member_role = db.Table('member_role',
 
 
 class Member(UserMixin, db.Model):
-    __tablename__ = 'member'
+    __tablename__ = "member"
 
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(100), unique=True)
@@ -32,6 +32,7 @@ class Member(UserMixin, db.Model):
     registration_date = db.Column(db.String(50))
     participated = db.relationship('Workshop', secondary=member_workshop, backref='participants')
     role = db.relationship('Role', secondary=member_role, backref='members')
+    demo = db.relationship('Demo', backref='creator')
 
 
 
