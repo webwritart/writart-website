@@ -120,7 +120,7 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 
   .cover-container {
     padding: 10% 0%;
-    background-color: #993f85;
+    background-color: rgba(0,0,0,0.6);
     background-size: cover;
     height: 600px;
 }
@@ -630,15 +630,15 @@ and (max-width : 576px) {
 
 #classroom-hero {
     width: 100%;
-    height: 40%;
+    height: 0%;
     background: black;
     color: white;
-    opacity: 0.4;
+    opacity: 0.6;
     margin-bottom: 3%;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 10%;
+    padding: 5%;
 }
 #gallery-hero {
     width: 100%;
