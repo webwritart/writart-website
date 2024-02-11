@@ -10,14 +10,15 @@ from routes.manager import manager
 from routes.payment import payment
 from routes.school import school
 from routes.gallery import gallery
+from routes.studios import studios
 
 load_dotenv()
 
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('APP_SECRET')
-# app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///writart.db"
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URI')
+app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///writart.db"
+# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URI')
 app.config["MAIL_SERVER"] = 'smtp.gmail.com'
 app.config["MAIL_PORT"] = 465
 app.config["MAIL_USERNAME"] = os.environ.get('MAIL_USERNAME')
@@ -33,6 +34,7 @@ app.register_blueprint(school, url_prefix='/school')
 app.register_blueprint(payment, url_prefix='/payment')
 app.register_blueprint(manager, url_prefix='/manager')
 app.register_blueprint(gallery, url_prefix='/gallery')
+app.register_blueprint(studios, url_prefix='/studios')
 
 
 with app.app_context():

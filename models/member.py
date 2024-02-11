@@ -38,7 +38,7 @@ class Member(UserMixin, db.Model):
 
 
     def __repr__(self):
-        return f'{self.name}, {self.email}, {self.phone}'
+        return f'{self.name.split()[0]}'
 
 
 class Workshop(db.Model):
