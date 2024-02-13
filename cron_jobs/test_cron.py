@@ -1,3 +1,3 @@
-from ..operations.messenger import send_email_school
+import operations.messenger as m
 
-send_email_school('Test cron job', ['shwetabhartist@gmail.com'], 'Test cron job ubuntu', '', '')
+m.send_email_school('Test cron job', ['shwetabhartist@gmail.com'], 'Test cron job ubuntu', '', '')
