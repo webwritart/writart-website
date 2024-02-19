@@ -5,7 +5,7 @@ from werkzeug.utils import secure_filename
 from extensions import db
 from models.member import Member
 from operations.miscellaneous import allowed_file
-from operations.artist_tools import add_watermark, delete_single_watermarked_image
+from operations.artist_tools import add_watermark, delete_single_watermarked_image, delete_all_from_user
 
 
 studio = Blueprint('studio', __name__, static_folder="static", template_folder='templates/studio/')
@@ -55,15 +55,16 @@ def artist_tools():
         path = f"../{folder_path}/{photo}"
         photo_path_list.append(path)
     folder_name = current_user.name.split()[0] + str(current_user.id)
+    watermark_text = request.form.get('watermark-text')
 
     if request.form.get('submit') and request.form.get('submit') == 'upload_photos':
-        allowed_extensions = {'png', 'jpg'}
+        allowed_extensions = {'png', 'jpg', 'jpeg'}
 
         if 'file' not in request.files:
             flash('No file part', 'error')
             return redirect(request.url)
         files = request.files.getlist('file')
-
+        no_of_files = len(files)
         folder = f"static/files/users/{folder_name}/watermark_input"
         output_folder = f"static/files/users/{folder_name}/watermark_output"
         if not os.path.exists(folder):
@@ -71,22 +72,21 @@ def artist_tools():
         if not os.path.exists(output_folder):
             os.mkdir(output_folder)
 
-        for file in files:
-            if file.filename == '':
+        for n in range(no_of_files):
+            if files[n].filename == '':
                 flash('No selected file', 'error')
                 return redirect(request.url)
-            if file and allowed_file(file.filename, allowed_extensions):
-                filename = secure_filename(file.filename)
-                print(filename)
-                file.save(f"{folder}/{filename}")
+            if files[n] and allowed_file(files[n].filename, allowed_extensions):
+                filename = secure_filename(files[n].filename)
+                print(files[n])
+                files[n].save(f"{folder}/{filename}")
                 input_path = f"{folder}/{filename}"
-                watermark_text = request.form.get('watermark-text')
                 output_path = f"{output_folder}/{filename}"
                 color = request.form.get('color')
 
                 add_watermark(input_path, watermark_text, output_path, color)
 
-            return redirect(url_for('studio.artist_tools'))
+        return redirect(url_for('studio.artist_tools'))
     if request.form.get('download'):
         image = request.form.get('download')
         file_path = f"static/files/users/{current_user.name.split()[0]}{str(current_user.id)}/watermark_output/{image}"
@@ -96,6 +96,11 @@ def artist_tools():
         file_path = f"static/files/users/{current_user.name.split()[0]}{str(current_user.id)}/watermark_output/{image}"
         delete_single_watermarked_image(file_path)
         flash("Successfully deleted!", "success")
+        return redirect(url_for('studio.artist_tools'))
+    if request.form.get('delete_all'):
+        folder = f"{current_user.name.split()[0]}{str(current_user.id)}"
+        delete_all_from_user(folder)
+        flash("All files successfully deleted!", "success")
         return redirect(url_for('studio.artist_tools'))
     total_watermarked_photos = len(photo_path_list)
 

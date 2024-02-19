@@ -69,7 +69,12 @@
                     </div>
                     <div class="wrapper-ws">
                         <div class="container-upcoming-ws">
-                            {% if total_watermarked == 0 %}
+                            {% if total_watermarked > 0 %}
+                            <form action="{{url_for('studio.artist_tools')}}" method="post">
+                                <input type="hidden" name="delete_all" value="delete_all">
+                                <button type="submit" class="btn btn-secondary btn-block btn-large">DELETE ALL</button>
+                            </form>
+                            {% else %}
                                 <h3>No Watermarked artwork.</h3>
                             {% endif %}
                             {% for photo in photo_list %}

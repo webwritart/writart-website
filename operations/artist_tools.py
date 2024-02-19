@@ -63,3 +63,11 @@ def delete_watermarked_images():
 
 def delete_single_watermarked_image(path):
     os.remove(path)
+
+
+def delete_all_from_user(folder):
+    path = f"static/files/users/{folder}/watermark_output"
+    file_list = os.listdir(path)
+    for file in file_list:
+        file_path = f"{path}/{file}"
+        os.remove(file_path)
