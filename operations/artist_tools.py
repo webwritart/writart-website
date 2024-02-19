@@ -19,8 +19,8 @@ def add_watermark(input_path, watermark_text, output_path, color):
     text = watermark_text
 
     font_size = int(width/50)
-    # font = ImageFont.truetype('/home/writart/website/static/fonts/Arial.ttf', font_size)
-    font = ImageFont.truetype('arial.ttf', font_size)
+    font = ImageFont.truetype('/home/writart/website/static/fonts/Arial.ttf', font_size)
+    # font = ImageFont.truetype('arial.ttf', font_size)
     ascent, descent = font.getmetrics()
 
     text_width = font.getmask(watermark_text).getbbox()[2]
