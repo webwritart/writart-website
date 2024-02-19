@@ -955,3 +955,8 @@ def modifications():
     return render_template('modifications.html', admin=admin, logged_in=current_user.is_authenticated)
 
 
+@manager.route('/log')
+def log():
+    return render_template('log.html')
+
+

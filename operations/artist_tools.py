@@ -1,6 +1,7 @@
 from PIL import Image, ImageDraw, ImageFont
 import os
 import datetime
+from operations.miscellaneous import log
 
 
 def add_watermark(input_path, watermark_text, output_path, color):
@@ -18,7 +19,8 @@ def add_watermark(input_path, watermark_text, output_path, color):
     text = watermark_text
 
     font_size = int(width/50)
-    font = ImageFont.truetype('/home/writart/website/static/fonts/Arial.ttf', font_size)
+    # font = ImageFont.truetype('/home/writart/website/static/fonts/Arial.ttf', font_size)
+    font = ImageFont.truetype('arial.ttf', font_size)
     ascent, descent = font.getmetrics()
 
     text_width = font.getmask(watermark_text).getbbox()[2]
@@ -53,6 +55,8 @@ def delete_watermarked_images():
                 delta = today - creation_date
                 if delta.days > 7:
                     os.remove(file_path)
+                    log("Watermarked images older than 7 days deleted successfully!", "success")
+
         except Exception as e:
             print(e)
 

@@ -12,11 +12,8 @@ from routes.school import school
 from routes.gallery import gallery
 from routes.studio import studio
 from apscheduler.schedulers.background import BackgroundScheduler
-from operations.messenger import send_email_school
+from operations.artist_tools import delete_watermarked_images
 
-# scheduler = BackgroundScheduler(daemon=True)
-# scheduler.add_job(send_email_school('Test mail 15', ['shwetabhartist@gmail.com'], 'Test mail 15', '', ''), 'interval',
-#                   minutes=5)
 
 load_dotenv()
 
@@ -50,7 +47,18 @@ def load_user(member_id):
     return db.get_or_404(Member, member_id)
 
 
-# scheduler.start()
+# ------------------------------------------- SCHEDULED TASKS ---------------------------------------------- #
+
+
+with app.app_context():
+    scheduler = BackgroundScheduler(daemon=True)
+    scheduler.add_job(delete_watermarked_images,
+                      'interval',
+                      minutes=1440)
+    scheduler.start()
+
+
+# ---------------------------------------------------------------------------------------------------------- #
 
 if __name__ == '__main__':
     app.run(debug=True)
