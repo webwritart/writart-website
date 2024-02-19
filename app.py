@@ -17,7 +17,6 @@ from operations.messenger import send_email_school
 scheduler = BackgroundScheduler(daemon=True)
 scheduler.add_job(send_email_school('Test mail 15', ['shwetabhartist@gmail.com'], 'Test mail 15', '', ''), 'interval',
                   minutes=5)
-scheduler.start()
 
 load_dotenv()
 
@@ -50,6 +49,8 @@ with app.app_context():
 def load_user(member_id):
     return db.get_or_404(Member, member_id)
 
+
+scheduler.start()
 
 if __name__ == '__main__':
     app.run(debug=True)
