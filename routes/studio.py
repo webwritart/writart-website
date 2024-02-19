@@ -85,7 +85,7 @@ def artist_tools():
 
                 add_watermark(input_path, watermark_text, output_path, color)
 
-                return redirect(url_for('studio.artist_tools'))
+            return redirect(url_for('studio.artist_tools'))
     if request.form.get('download'):
         image = request.form.get('download')
         file_path = f"static/files/users/{current_user.name.split()[0]}{str(current_user.id)}/watermark_output/{image}"
