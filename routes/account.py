@@ -1,13 +1,15 @@
 import os
 from flask import Blueprint, render_template, request, flash, send_file, redirect, url_for, session
 from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.utils import secure_filename
+from operations.artist_tools import add_watermark
 from extensions import db, image_dict
 from operations.messenger import send_email_school, send_email_support
 from models.member import Member, Workshop, Role
 from flask_login import current_user, login_required, login_user, logout_user
 from datetime import date
 import random
-from operations.miscellaneous import calculate_age
+from operations.miscellaneous import calculate_age, allowed_file
 
 account = Blueprint('account', __name__, static_folder='static', template_folder='templates/account')
 
@@ -116,7 +118,9 @@ def home():
             return send_file(path_or_file=path, as_attachment=True,
                              download_name=f"Certificate - {topic_list[index]} - Writart Gurukul.pdf")
 
+
         return redirect(url_for('account.home'))
+
 
     certificate_list = []
     if len(current_user.participated) > 0:
@@ -126,8 +130,13 @@ def home():
             path = f"../static/files/users/{folder_name}/certificates/{file_name}"
             if os.path.exists(path):
                 certificate_list.append(workshop.topic)
+
+    role_result = current_user.role
+    roles = []
+    for role in role_result:
+        roles.append(role.name)
     return render_template('my_account.html', certificate_list=certificate_list, certificate=certificate,
-                           name=current_user.name, logged_in=current_user.is_authenticated, admin=admin)
+                           name=current_user.name, logged_in=current_user.is_authenticated, admin=admin, roles=roles)
 
 
 @account.route('/update_details', methods=['GET', 'POST'])
@@ -192,6 +201,8 @@ def register():
         dob = f"{year}-{month}-{date_}"
         age = calculate_age(dob)
 
+        artist_account = request.form.get('artist_account')
+
         if age < 13:
             flash("You're below 13 year. Really very sorry we cannot take you in!", "error")
             return redirect(request.url)
@@ -212,6 +223,11 @@ def register():
         db.session.commit()
 
         login_user(new_user)
+
+        if artist_account == 'yes':
+            artist = db.session.query(Role).filter_by(name='artist').first()
+            current_user.role.append(artist)
+            db.session.commit()
         mail = render_template('mails/registration_success.html')
         send_email_school('Registration success!', [email],
                           '',

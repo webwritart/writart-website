@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-<div>
+<div style="margin-bottom:200px;">
     <div class="container user-profile">
         <form method="post">
             <div class="row">
@@ -190,16 +190,36 @@
             </div>
         </form>
     </div>
-    <div id="classroom-action">
-        <div class="container" >
-            <div class="row">
+    <div id="action">
+        <div class="container">
+            {% if 'student' in roles %}
+            <div class="row" style="background:black; height:200px;display:flex; margin-bottom:3%; align-items:center;">
                 <div class="col-7">
-
+                    <div style="color:white; text-align:left; padding-left:10%;">
+                        <ul>Demo videos</ul>
+                        <ul>Workshop recorded videos</ul>
+                        <ul>Doubt-solving videos and more</ul>
+                    </div>
                 </div>
-                <div class="col-5">
-                    <a href="{{ url_for('school.classroom') }}" CLASS="btn btn-primary btn-block btn-large" role="button">GO TO CLASSROOM</a>
+                <div class="col-5" style="padding:5%;">
+                    <a href="{{ url_for('school.classroom') }}" class="btn btn-primary btn-block btn-large" role="button">CLASSROOM</a>
                 </div>
             </div>
+            {% endif %}
+            {% if 'artist' in roles %}
+            <div class="row" style="background:black; height:200px;display:flex; margin-bottom:3%; align-items:center;">
+                <div class="col-7">
+                    <div style="color:white; text-align:left; padding-left:10%;">
+                        <ul>Add watermark</ul>
+                        <ul>More coming soon!</ul>
+                    </div>
+                </div>
+                <div class="col-5" style="padding:5%;">
+                    <a href="{{ url_for('studio.artist_tools') }}" class="btn btn-primary btn-block btn-large" role="button">ARTIST TOOLS</a>
+                </div>
+            </div>
+            {% endif %}
+            <div class="row"></div>
         </div>
     </div>
 </div>

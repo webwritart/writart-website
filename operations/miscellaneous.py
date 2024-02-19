@@ -14,8 +14,3 @@ def allowed_file(filename, allowed_extensions):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
 
 
-# tables_dict = {table.__tablename__: table for table in db.Model.__class__()}
-
-
-# def table_object(table_name):
-#     return tables_dict.get(table_name)
