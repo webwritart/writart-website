@@ -234,6 +234,8 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
         display: flex;
         align-items: center;
         justify-content: center;
+        padding-left: 10%;
+        padding-right: 10%;
     }
     .form-popup3 {
     display: none;
@@ -248,7 +250,7 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 .user-profile{
     padding: 3%;
     margin-top: 3%;
-    margin-bottom: 3%;
+    margin-bottom: 0%;
     border-radius: 0.5rem;
     background: #fff;
     text-align: left;
@@ -405,6 +407,18 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     background-color: white;
     box-shadow: 0px 0px 10px 5px rgba(120,120,120,0.5);
 }
+
+#action .container {
+    margin-bottom: 25%;
+}
+.form-center-container {
+    display: flex;
+    justify-content: center;
+}
+
+.form-center {
+    width: 20%;
+}
 /* --------------------------------------------------------------------- CLASSROOM VIDEOS DISPLAY ------------------------------------------------------------------------ */
 * {
     padding: 0;
@@ -530,6 +544,9 @@ and (min-width : 1440px) {
 
 @media only screen
 and (max-width : 1440px) {
+    .form-center {
+        width: 40%;
+    }
     #video-wrapper-container .video {
     width: 25%;}
     #video-wrapper-container2 .video {
@@ -542,6 +559,9 @@ and (max-width : 1440px) {
 
 @media only screen
 and (max-width : 992px) {
+.form-center {
+        width: 100%;
+    }
     #video-wrapper-container .video {
     width: 33.33%;}
     #video-wrapper-container2 .video {
@@ -551,6 +571,9 @@ and (max-width : 992px) {
 
 @media only screen
 and (max-width : 768px) {
+.form-center {
+        width: 60%;
+    }
     #video-wrapper-container .video {
     width: 50%;}
     #video-wrapper-container2 .video {
@@ -572,6 +595,9 @@ and (max-width : 768px) {
 
 @media only screen
 and (max-width : 576px) {
+    .form-center {
+        width: 80%;
+    }
     #video-wrapper-container .video {
     width: 100%;
     margin-bottom: 25%;
@@ -662,9 +688,7 @@ and (max-width : 576px) {
     text-align: center;
 }
 
-#classroom-action .container .row{
-    padding-bottom: 10%;
-}
+
 
 .button_medium {
     width: 40%;
@@ -770,6 +794,38 @@ lite-youtube.lyt-activated > .lty-playbtn {
     width: 1px;
   }
 
+  /* -------------------------------------------------------------------------------------- STUDIOS ----------------------------------------------------------------------------------------------------------- */
+    .trunk {
+        text-align: left;
+        padding-top: 5%;
+    }
+    .trunk img {
+        float: left;
+        padding-right: 2%;
+    }
+    .trunk h2, h4, h6 {
+        line-height: 0px;
+    }
+    .trunk p {
+        opacity: 0.7;
+    }
+    .trunk h2 {
+        padding-top: 8%;
+    }
+    .two-btn-full {
+        display: flex;
+        width: 100%;
+    }
+    .two-btn-full a{
+        width: 50%;
+        margin-top: 2%;
+    }
+    .btn-one  {
+        margin-right: 3%;
+    }
+    .btn-two {
+        margin-left: 3%;
+    }
   /* -------------------------------------------------------------------------------------- MANAGER ----------------------------------------------------------------------------------------------------------- */
 
 .manager-page {

@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="background:white;" xmlns="http://www.w3.org/1999/html">
+    <div style="display:flex; justify-content:center; align-items:center; padding:10%; padding-bottom:0%;">
+        <div>
+            <h3>Watermark artworks</h3><br>
+            <form action="{{ url_for('studio.artist_tools') }}" method="post" id="watermark_image_upload" enctype="multipart/form-data">
+                <input type="file" name="file" id="watermark-files" multiple>
+                <input type="text" name="watermark-text" placeholder="Enter watermark text" required>
+                <label class="radio-inline radio-inp-option">
+                    <input class="radio-inp" type="radio" name="color" value="black" required> <span>Black</span>
+                </label>
+                <label class="radio-inline radio-inp-option">
+                    <input class="radio-inp" type="radio" name="color" value="white" required> <span>White</span>
+                </label>
+                <button type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="upload_photos">WATERMARK PHOTOS</button>
+
+            </form>
+        </div>
+    </div>
+    <div style="display:block;padding-left: 10%; padding-right: 10%; padding-top: 5%;">
+        <h4 style="line-height:1;">Watermarked artworks</h4>
+        <h6 style="color:red; line-height:1;">Please download the watermarked photos now. The photos will be deleted after 7 days of creation</h6>
+        <hr>
+    </div>
+<!--<div class="row justify-content-center align-items-center" style="padding: 0% 2%;">-->
+<!--    <div class="col-md-9 align-items-center" style="background-color: #edcce9; padding: 2%;">-->
+<!--        <div class="col">-->
+<!--            <div>-->
+<!--            <div class="wrapper-ws">-->
+<!--                <div class="container-upcoming-ws">-->
+<!--                    <div class="upcoming_ws_thumbnail">-->
+<!--                        {% for photo_path in photo_list %}-->
+<!--                        <div class="upcoming_ws_content">-->
+<!--                            <img src="{{photo_path}}" width=100% height="100%">-->
+<!--                            <div style="display: flex; justify-content: stretch;">-->
+
+<!--                                <button class="btn btn-primary btn-large" formmethod="post" type="submit" value="download" formaction="{{url_for('studio.artist_tools')}}" style="width: 50%;">DOWNLOAD</button>-->
+
+<!--                                <form action="{{url_for('school.upcoming_workshop')}}" method="post" style="width: 50%">-->
+<!--                                    <input type="hidden" name="form-name" value="watermarked_photo_actions">-->
+<!--                                    <button class="btn btn-primary btn-large" type="submit" name="submit" style="width: 100%">DELETE</button>-->
+<!--                                </form>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        {% endfor %}-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+<div>
+    <div class="row justify-content-center align-items-center" style="padding: 0% 2%;">
+        <div class="col-md-9 align-items-center" style="background-color: #edcce9; padding: 2%;">
+            <div class="col">
+                <div>
+                    <div class="row justify-content-center" style="text-align: center;">
+                        <div class="col heading">
+                            {% with messages = get_flashed_messages(with_categories=true) %}
+                                {% if messages %}
+                                    {% for category, message in messages %}
+                                        <div class="{{category}}">{{ message }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endwith %}
+                        </div>
+                    </div>
+                    <div class="wrapper-ws">
+                        <div class="container-upcoming-ws">
+                            {% for photo in photo_list %}
+                            <div class="upcoming_ws_thumbnail">
+                                <div class="upcoming_ws_content">
+                                    <img src="../static/files/users/{{folder_name}}/watermark_output/{{photo}}" width="100%" height="200px">
+                                    <div style="display: flex; justify-content: stretch;">
+                                        <form action="{{url_for('studio.artist_tools')}}" method="post">
+                                            <input type="hidden" name="download" value="{{photo}}">
+                                            <button class="btn btn-primary btn-large" type="submit" style="width: 100%;">DOWNLOAD</button>
+                                        </form>
+                                        <form action="{{url_for('studio.artist_tools')}}" method="post" style="width: 50%">
+                                             <input type="hidden" name="delete" value="{{photo}}">
+                                             <button class="btn btn-primary btn-large" type="submit" style="width: 100%">DELETE</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div style="height:200px;background:white;"></div>
+{% endblock %}

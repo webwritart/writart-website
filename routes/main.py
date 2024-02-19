@@ -8,6 +8,7 @@ from models.member import Member, Workshop, Role
 from flask_login import current_user
 import pandas as pd
 from operations.messenger import send_email_school
+from operations.artist_tools import delete_watermarked_images
 
 
 main = Blueprint('main', __name__, static_folder='static', template_folder='templates')
@@ -15,7 +16,6 @@ main = Blueprint('main', __name__, static_folder='static', template_folder='temp
 
 @main.route('/')
 def home():
-    send_email_school('Test cron job', ['shwetabhartist@gmail.com'], 'Test cron job ubuntu', '', '')
     admin = db.session.query(Role).filter_by(name='admin').one_or_none()
     return render_template('index.html', logged_in=current_user.is_authenticated, admin=admin)
 
