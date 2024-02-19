@@ -46,6 +46,7 @@ def portfolio(member):
 
 @studio.route('/artist_tools', methods=['GET', 'POST'])
 def artist_tools():
+    total_file_size = 0
     folder_path = f"static/files/users/{current_user.name.split()[0]}{str(current_user.id)}/watermark_output"
     photo_path_list = []
     if not os.path.exists(folder_path):
@@ -56,6 +57,12 @@ def artist_tools():
         photo_path_list.append(path)
     folder_name = current_user.name.split()[0] + str(current_user.id)
     watermark_text = request.form.get('watermark-text')
+    folder = f"static/files/users/{folder_name}/watermark_input"
+    output_folder = f"static/files/users/{folder_name}/watermark_output"
+    if not os.path.exists(folder):
+        os.mkdir(folder)
+    if not os.path.exists(output_folder):
+        os.mkdir(output_folder)
 
     if request.form.get('submit') and request.form.get('submit') == 'upload_photos':
         allowed_extensions = {'png', 'jpg', 'jpeg'}
@@ -64,27 +71,32 @@ def artist_tools():
             flash('No file part', 'error')
             return redirect(request.url)
         files = request.files.getlist('file')
-        no_of_files = len(files)
-        folder = f"static/files/users/{folder_name}/watermark_input"
-        output_folder = f"static/files/users/{folder_name}/watermark_output"
-        if not os.path.exists(folder):
-            os.mkdir(folder)
-        if not os.path.exists(output_folder):
-            os.mkdir(output_folder)
 
-        for n in range(no_of_files):
-            if files[n].filename == '':
+        for file in files:
+            if file.filename == '':
                 flash('No selected file', 'error')
                 return redirect(request.url)
-            if files[n] and allowed_file(files[n].filename, allowed_extensions):
-                filename = secure_filename(files[n].filename)
-                print(files[n])
-                files[n].save(f"{folder}/{filename}")
-                input_path = f"{folder}/{filename}"
-                output_path = f"{output_folder}/{filename}"
-                color = request.form.get('color')
+            if file and allowed_file(file.filename, allowed_extensions):
+                filename = secure_filename(file.filename)
+                file.save(f"{folder}/{filename}")
+                file_size = os.path.getsize(f"{folder}/{filename}")
+                total_file_size += file_size
+            else:
+                flash("some problem occured!", "error")
 
-                add_watermark(input_path, watermark_text, output_path, color)
+        if total_file_size > 104857600:
+            flash("Total file size exceeds 100 MB. Please upload less files at one time", "error")
+        else:
+            for f in files:
+                if f.filename != '' and f and allowed_file(f.filename, allowed_extensions):
+                    filename = secure_filename(f.filename)
+                    input_path = f"{folder}/{filename}"
+                    output_path = f"{output_folder}/{filename}"
+                    color = request.form.get('color')
+
+                    add_watermark(input_path, watermark_text, output_path, color)
+                else:
+                    flash("Some error occured!", "error")
 
         return redirect(url_for('studio.artist_tools'))
     if request.form.get('download'):
