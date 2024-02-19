@@ -77,6 +77,7 @@ def artist_tools():
                 return redirect(request.url)
             if file and allowed_file(file.filename, allowed_extensions):
                 filename = secure_filename(file.filename)
+                print(filename)
                 file.save(f"{folder}/{filename}")
                 input_path = f"{folder}/{filename}"
                 watermark_text = request.form.get('watermark-text')
