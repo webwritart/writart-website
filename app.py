@@ -11,9 +11,15 @@ from routes.payment import payment
 from routes.school import school
 from routes.gallery import gallery
 from routes.studio import studio
+from apscheduler.schedulers.background import BackgroundScheduler
+from operations.messenger import send_email_school
+
+scheduler = BackgroundScheduler(daemon=True)
+scheduler.add_job(send_email_school('Test mail 15', ['shwetabhartist@gmail.com'], 'Test mail 15', '', ''), 'interval',
+                  minutes=5)
+scheduler.start()
 
 load_dotenv()
-
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('APP_SECRET')
@@ -35,7 +41,6 @@ app.register_blueprint(payment, url_prefix='/payment')
 app.register_blueprint(manager, url_prefix='/manager')
 app.register_blueprint(gallery, url_prefix='/gallery')
 app.register_blueprint(studio, url_prefix='/studio')
-
 
 with app.app_context():
     db.create_all()

@@ -69,6 +69,9 @@
                     </div>
                     <div class="wrapper-ws">
                         <div class="container-upcoming-ws">
+                            {% if total_watermarked == 0 %}
+                                <h3>No Watermarked artwork.</h3>
+                            {% endif %}
                             {% for photo in photo_list %}
                             <div class="upcoming_ws_thumbnail">
                                 <div class="upcoming_ws_content">

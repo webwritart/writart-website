@@ -96,5 +96,7 @@ def artist_tools():
         delete_single_watermarked_image(file_path)
         flash("Successfully deleted!", "success")
         return redirect(url_for('studio.artist_tools'))
+    total_watermarked_photos = len(photo_path_list)
 
-    return render_template('artist_tools.html', folder_name=folder_name, photo_list=photo_list, logged_in=current_user.is_authenticated)
+    return render_template('artist_tools.html', folder_name=folder_name, photo_list=photo_list,
+                           logged_in=current_user.is_authenticated, total_watermarked=total_watermarked_photos)
