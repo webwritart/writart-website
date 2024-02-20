@@ -6,12 +6,22 @@ from extensions import db
 from flask_login import current_user
 
 
-def add_watermark(input_path, watermark_text, output_path, color):
-    global col_code
+def add_watermark(input_path, watermark_text, output_path, color, intensity, size):
+    global col_code, font_size
     if color == 'black':
-        col_code = (0, 0, 0, 50)
+        if intensity == 'strong':
+            col_code = (0, 0, 0, 255)
+        elif intensity == 'light':
+            col_code = (0, 0, 0, 125)
+        elif intensity == 'super-light':
+            col_code = (0, 0, 0, 50)
     elif color == 'white':
-        col_code = (255, 255, 255, 50)
+        if intensity == 'strong':
+            col_code = (255, 255, 255, 255)
+        elif intensity == 'light':
+            col_code = (255, 255, 255, 125)
+        elif intensity == 'super-light':
+            col_code = (255, 255, 255, 50)
     input_image = Image.open(input_path)
     input_image = input_image.convert('RGBA')
     txt = Image.new("RGBA", input_image.size, (255, 255, 255, 0))
@@ -20,9 +30,14 @@ def add_watermark(input_path, watermark_text, output_path, color):
     draw = ImageDraw.Draw(txt)
     text = watermark_text
 
-    font_size = int(width/50)
-    font = ImageFont.truetype('/home/writart/website/static/fonts/Arial.ttf', font_size)
-    # font = ImageFont.truetype('arial.ttf', font_size)
+    if size == 'large':
+        font_size = int(width/35)
+    elif size == 'medium':
+        font_size = int(width/40)
+    elif size == 'small':
+        font_size = int(width/50)
+    # font = ImageFont.truetype('/home/writart/website/static/fonts/Arial.ttf', font_size)
+    font = ImageFont.truetype('arial.ttf', font_size)
     ascent, descent = font.getmetrics()
 
     text_width = font.getmask(watermark_text).getbbox()[2]

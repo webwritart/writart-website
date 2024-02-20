@@ -67,64 +67,67 @@ def artist_tools():
     if not os.path.exists(output_folder):
         os.mkdir(output_folder)
 
-    if request.form.get('submit') and request.form.get('submit') == 'upload_photos':
-        allowed_extensions = {'png', 'jpg', 'jpeg'}
+    if request.method == 'POST':
+        if request.form.get('submit') and request.form.get('submit') == 'upload_photos':
+            allowed_extensions = {'png', 'jpg', 'jpeg'}
+            intensity = request.form.get('intensity')
+            size = request.form.get('size')
 
-        if 'file' not in request.files:
-            flash('No file part', 'error')
-            return redirect(request.url)
-        files = request.files.getlist('file')
-
-        for file in files:
-            if file.filename == '':
-                flash('No selected file', 'error')
+            if 'file' not in request.files:
+                flash('No file part', 'error')
                 return redirect(request.url)
-            if file and allowed_file(file.filename, allowed_extensions):
-                filename = secure_filename(file.filename)
-                file.save(f"{folder}/{filename}")
-                file_size = os.path.getsize(f"{folder}/{filename}")
-                total_file_size += file_size
-            else:
-                flash("some problem occured!", "error")
+            files = request.files.getlist('file')
 
-        if total_file_size > 104857600:
-            flash("Total file size exceeds 100 MB. Please upload less files at one time", "error")
-        else:
-            for f in files:
-                if f.filename != '' and f and allowed_file(f.filename, allowed_extensions):
-                    filename = secure_filename(f.filename)
-                    input_path = f"{folder}/{filename}"
-                    output_path = f"{output_folder}/{filename}"
-                    color = request.form.get('color')
-
-                    file_final_size = add_watermark(input_path, watermark_text, output_path, color)
-                    total_final_file_size += file_final_size
-                    file_no += 1
+            for file in files:
+                if file.filename == '':
+                    flash('No selected file', 'error')
+                    return redirect(request.url)
+                if file and allowed_file(file.filename, allowed_extensions):
+                    filename = secure_filename(file.filename)
+                    file.save(f"{folder}/{filename}")
+                    file_size = os.path.getsize(f"{folder}/{filename}")
+                    total_file_size += file_size
                 else:
-                    flash("Some error occured!", "error")
-        watermarked_artworks = current_user.artist_data.watermarked_artworks
-        current_user.artist_data.watermarked_artworks = watermarked_artworks + file_no
+                    flash("some problem occured!", "error")
 
-        memory_occupied_total = current_user.artist_data.memory_occupied_total
-        current_user.artist_data.memory_occupied_total = memory_occupied_total + total_final_file_size
-        db.session.commit()
+            if total_file_size > 104857600:
+                flash("Total file size exceeds 100 MB. Please upload less files at one time", "error")
+            else:
+                for f in files:
+                    if f.filename != '' and f and allowed_file(f.filename, allowed_extensions):
+                        filename = secure_filename(f.filename)
+                        input_path = f"{folder}/{filename}"
+                        output_path = f"{output_folder}/{filename}"
+                        color = request.form.get('color')
 
-        return redirect(url_for('studio.artist_tools'))
-    if request.form.get('download'):
-        image = request.form.get('download')
-        file_path = f"static/files/users/{current_user.name.split()[0]}{str(current_user.id)}/watermark_output/{image}"
-        return send_file(path_or_file=file_path, as_attachment=True)
-    if request.form.get('delete'):
-        image = request.form.get('delete')
-        file_path = f"static/files/users/{current_user.name.split()[0]}{str(current_user.id)}/watermark_output/{image}"
-        delete_single_watermarked_image(file_path)
-        flash("Successfully deleted!", "success")
-        return redirect(url_for('studio.artist_tools'))
-    if request.form.get('delete_all'):
-        folder = f"{current_user.name.split()[0]}{str(current_user.id)}"
-        delete_all_from_user(folder)
-        flash("All files successfully deleted!", "success")
-        return redirect(url_for('studio.artist_tools'))
+                        file_final_size = add_watermark(input_path, watermark_text, output_path, color, intensity, size)
+                        total_final_file_size += file_final_size
+                        file_no += 1
+                    else:
+                        flash("Some error occured!", "error")
+            watermarked_artworks = current_user.artist_data.watermarked_artworks
+            current_user.artist_data.watermarked_artworks = watermarked_artworks + file_no
+
+            memory_occupied_total = current_user.artist_data.memory_occupied_total
+            current_user.artist_data.memory_occupied_total = memory_occupied_total + total_final_file_size
+            db.session.commit()
+
+            return redirect(url_for('studio.artist_tools'))
+        if request.form.get('download'):
+            image = request.form.get('download')
+            file_path = f"static/files/users/{current_user.name.split()[0]}{str(current_user.id)}/watermark_output/{image}"
+            return send_file(path_or_file=file_path, as_attachment=True)
+        if request.form.get('delete'):
+            image = request.form.get('delete')
+            file_path = f"static/files/users/{current_user.name.split()[0]}{str(current_user.id)}/watermark_output/{image}"
+            delete_single_watermarked_image(file_path)
+            flash("Successfully deleted!", "success")
+            return redirect(url_for('studio.artist_tools'))
+        if request.form.get('delete_all'):
+            folder = f"{current_user.name.split()[0]}{str(current_user.id)}"
+            delete_all_from_user(folder)
+            flash("All files successfully deleted!", "success")
+            return redirect(url_for('studio.artist_tools'))
     total_watermarked_photos = len(photo_path_list)
 
     return render_template('artist_tools.html', folder_name=folder_name, photo_list=photo_list,
