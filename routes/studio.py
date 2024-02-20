@@ -6,6 +6,7 @@ from extensions import db
 from models.member import Member
 from operations.miscellaneous import allowed_file
 from operations.artist_tools import add_watermark, delete_single_watermarked_image, delete_all_from_user
+from models.artist_data import ArtistData
 
 
 studio = Blueprint('studio', __name__, static_folder="static", template_folder='templates/studio/')
@@ -47,6 +48,7 @@ def portfolio(member):
 @studio.route('/artist_tools', methods=['GET', 'POST'])
 def artist_tools():
     total_file_size = 0
+    files = 0
     folder_path = f"static/files/users/{current_user.name.split()[0]}{str(current_user.id)}/watermark_output"
     photo_path_list = []
     if not os.path.exists(folder_path):
@@ -95,8 +97,12 @@ def artist_tools():
                     color = request.form.get('color')
 
                     add_watermark(input_path, watermark_text, output_path, color)
+                    files += 1
                 else:
                     flash("Some error occured!", "error")
+        watermarked_artworks = current_user.artist_data.watermarked_artworks
+        watermarked_artworks = files
+        db.session.commit()
 
         return redirect(url_for('studio.artist_tools'))
     if request.form.get('download'):

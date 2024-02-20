@@ -13,6 +13,7 @@ from routes.gallery import gallery
 from routes.studio import studio
 from apscheduler.schedulers.background import BackgroundScheduler
 from operations.artist_tools import delete_watermarked_images
+from models.artist_data import ArtistData
 
 
 load_dotenv()

@@ -33,6 +33,7 @@ class Member(UserMixin, db.Model):
     participated = db.relationship('Workshop', secondary=member_workshop, backref='participants')
     role = db.relationship('Role', secondary=member_role, backref='members')
     demo = db.relationship('Demo', backref='creator')
+    artist_data = db.relationship('ArtistData', backref='member', uselist=False)
 
 
 
