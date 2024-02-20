@@ -48,7 +48,8 @@ def portfolio(member):
 @studio.route('/artist_tools', methods=['GET', 'POST'])
 def artist_tools():
     total_file_size = 0
-    files = 0
+    total_final_file_size = 0
+    file_no = 0
     folder_path = f"static/files/users/{current_user.name.split()[0]}{str(current_user.id)}/watermark_output"
     photo_path_list = []
     if not os.path.exists(folder_path):
@@ -96,12 +97,16 @@ def artist_tools():
                     output_path = f"{output_folder}/{filename}"
                     color = request.form.get('color')
 
-                    add_watermark(input_path, watermark_text, output_path, color)
-                    files += 1
+                    file_final_size = add_watermark(input_path, watermark_text, output_path, color)
+                    total_final_file_size += file_final_size
+                    file_no += 1
                 else:
                     flash("Some error occured!", "error")
         watermarked_artworks = current_user.artist_data.watermarked_artworks
-        watermarked_artworks = files
+        current_user.artist_data.watermarked_artworks = watermarked_artworks + file_no
+
+        memory_occupied_total = current_user.artist_data.memory_occupied_total
+        current_user.artist_data.memory_occupied_total = memory_occupied_total + total_final_file_size
         db.session.commit()
 
         return redirect(url_for('studio.artist_tools'))

@@ -2,6 +2,8 @@ from PIL import Image, ImageDraw, ImageFont
 import os
 import datetime
 from operations.miscellaneous import log
+from extensions import db
+from flask_login import current_user
 
 
 def add_watermark(input_path, watermark_text, output_path, color):
@@ -40,10 +42,14 @@ def add_watermark(input_path, watermark_text, output_path, color):
     out = out.convert("RGB")
     out.save(output_path)
     os.remove(input_path)
+    file_final_size = os.path.getsize(output_path)
+    return file_final_size
 
 
 def delete_watermarked_images():
     all_users = os.listdir("static/files/users")
+    memory_occupied_total = current_user.artist_data.memory_occupied_total
+    file_size = 0
     for user in all_users:
         path = f"static/files/users/{user}/watermark_output"
         all_files = os.listdir(path)
@@ -54,20 +60,35 @@ def delete_watermarked_images():
                 today = datetime.datetime.today()
                 delta = today - creation_date
                 if delta.days > 7:
+                    file_size += os.path.getsize(file_path)
                     os.remove(file_path)
                     log("Watermarked images older than 7 days deleted successfully!", "success")
+            current_user.artist_data.memory_occupied_total = memory_occupied_total - file_size
+            db.session.commit()
 
         except Exception as e:
             print(e)
 
 
 def delete_single_watermarked_image(path):
+    file_size = os.path.getsize(path)
+    memory_occupied_total = current_user.artist_data.memory_occupied_total
     os.remove(path)
+    current_user.artist_data.memory_occupied_total = memory_occupied_total - file_size
+    db.session.commit()
 
 
 def delete_all_from_user(folder):
     path = f"static/files/users/{folder}/watermark_output"
+    file_size = 0
+    memory_occupied_total = current_user.artist_data.memory_occupied_total
+
     file_list = os.listdir(path)
     for file in file_list:
         file_path = f"{path}/{file}"
+        file_size += os.path.getsize(file_path)
         os.remove(file_path)
+
+    current_user.artist_data.memory_occupied_total = memory_occupied_total - file_size
+    db.session.commit()
+

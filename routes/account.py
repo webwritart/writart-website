@@ -10,6 +10,8 @@ from flask_login import current_user, login_required, login_user, logout_user
 from datetime import date
 import random
 from operations.miscellaneous import calculate_age, allowed_file
+from models.artist_data import ArtistData
+
 
 account = Blueprint('account', __name__, static_folder='static', template_folder='templates/account')
 
@@ -225,8 +227,26 @@ def register():
         login_user(new_user)
 
         if artist_account == 'yes':
-            artist = db.session.query(Role).filter_by(name='artist').first()
+            artist = db.session.query(Role).filter_by(name='artist').one()
+
             current_user.role.append(artist)
+            db.session.commit()
+            entry = ArtistData(
+                artist=current_user.name,
+                watermarked_artworks=0,
+                gallery_artworks=0,
+                all_collections=0,
+                commission_collections=0,
+                sold_artworks=0,
+                queried_artworks=0,
+                shipped_artworks=0,
+                contracted_artworks=0,
+                sold_commissions=0,
+                memory_occupied_total=0,
+                memory_occupied_gallery=0,
+                member=current_user,
+            )
+            db.session.add(entry)
             db.session.commit()
         mail = render_template('mails/registration_success.html')
         send_email_school('Registration success!', [email],

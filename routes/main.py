@@ -4,6 +4,7 @@ from models.member import Member, Workshop, Role
 from flask_login import current_user
 from operations.miscellaneous import log
 from models.artist_data import ArtistData
+from operations.artist_tools import delete_watermarked_images
 
 
 main = Blueprint('main', __name__, static_folder='static', template_folder='templates')
