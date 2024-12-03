@@ -52,7 +52,7 @@ def send_email_support(subject, recipients, body, html, image_dict):
                 message.attach(image_dict['file'][n], file_format, open(os.path.join(root_path, image_dict['path'][n],
                                                                                      image_dict['file'][n]),
                                                                         'rb').read(), 'inline',
-                               headers=[['content-ID', '<' + image_dict['file'][n].split('.')[0] + '>'], ])
+                               headers={['content-ID', '<' + image_dict['file'][n].split('.')[0] + '>'], })
     mail.send(message)
 
 
