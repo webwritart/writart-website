@@ -1,4 +1,4 @@
-import table as table
+# import table as table
 
 
 from extensions import db
@@ -35,9 +35,6 @@ class Member(UserMixin, db.Model):
     demo = db.relationship('Demo', backref='creator')
     artist_data = db.relationship('ArtistData', backref='member', uselist=False)
 
-
-
-
     def __repr__(self):
         return f'{self.name.split()[0]}'
 
@@ -65,9 +62,6 @@ class Workshop(db.Model):
     reg_close = db.Column(db.String(50))
     details = db.relationship('WorkshopDetails', backref='workshop', uselist=False)
 
-
-
-
     def __repr__(self):
         return f'{self.name}, {self.topic}, {self.date}'
 
@@ -78,9 +72,6 @@ class Role(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
     description = db.Column(db.String(500))
-
-
-
 
     def __repr__(self):
         return f'{self.name}'
