@@ -12,7 +12,6 @@ import random
 from operations.miscellaneous import calculate_age, allowed_file
 from models.artist_data import ArtistData
 
-
 account = Blueprint('account', __name__, static_folder='static', template_folder='templates/account')
 
 otp = random.randint(1000, 9999)
@@ -120,9 +119,7 @@ def home():
             return send_file(path_or_file=path, as_attachment=True,
                              download_name=f"Certificate - {topic_list[index]} - Writart Gurukul.pdf")
 
-
         return redirect(url_for('account.home'))
-
 
     certificate_list = []
     if len(current_user.participated) > 0:
@@ -364,7 +361,7 @@ def forgot_password():
                 send_email_support(subject="Password reset",
                                    recipients=email_list, body='',
                                    html=render_template('mails/password_reset_link.html',
-                                                        link=f"http://127.0.0.1:5000/account/set_new_password?otp={otp}"),
+                                                        link=f"http://writart.com/account/set_new_password?otp={otp}"),
                                    image_dict=image_dict)
                 return render_template('check_mail_notification.html')
             else:
