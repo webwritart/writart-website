@@ -378,8 +378,10 @@ def forgot_password():
                 flash('No account found with the entered email!', 'error')
 
         if request.form.get('password'):
+            print('new password data received successfully!')
             new_pwd = request.form.get('password')
-            email = request.form.get('email')
+            email = request.form.get('mail')
+            print(f'{new_pwd} : {email}')
             hash_and_salted_password = generate_password_hash(
                 new_pwd,
                 method='pbkdf2:sha256',
@@ -387,10 +389,12 @@ def forgot_password():
             )
             result = db.session.execute(db.select(Member).where(Member.email == email))
             user = result.scalar()
+            print(f'User : {user}')
             user.password = hash_and_salted_password
 
             db.session.commit()
             login_user(user)
+            print('login successful!')
             flash('New password set successfully!', 'success')
             mail = render_template('mails/password_reset_notification.html')
             send_email_support('Password Reset', [current_user.email],
@@ -405,7 +409,9 @@ def forgot_password():
 def set_new_password():
     print("Function Set New Password working!")
     entered_token = request.args.get('token')
+    print(entered_token)
     email = request.args.get('email')
+    print(email)
     token = db.session.query(Member).filter_by(email=email).one().token
     if str(token) == str(entered_token):
         return render_template('set_new_password.html', email=email)
