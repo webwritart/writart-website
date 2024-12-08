@@ -51,9 +51,10 @@ def send_email_support(subject, recipients, body, html, image_dict):
                 file_format = 'image/' + image_dict['file'][n].split('.')[-1]
                 message.attach(image_dict['file'][n], file_format, open(os.path.join(root_path, image_dict['path'][n],
                                                                                      image_dict['file'][n]),
-                                                                        'rb').read(), 'inline',
-                               headers=[['content-ID', '<' + image_dict['file'][n].split('.')[0] + '>'], []])
+                                                                        'rb').read(), 'inline',)
+                               # headers=[['content-ID', '<' + image_dict['file'][n].split('.')[0] + '>'], ])
     mail.send(message)
+    print("Mail sent")
 
 
 def send_wa_message_by_db(wa_message, db_table_name):

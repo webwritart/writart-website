@@ -14,7 +14,7 @@ from models.artist_data import ArtistData
 
 account = Blueprint('account', __name__, static_folder='static', template_folder='templates/account')
 
-otp = random.randint(1000, 9999)
+otp = []
 today_date = date.today()
 
 
@@ -221,6 +221,13 @@ def register():
         db.session.add(new_user)
         db.session.commit()
 
+        all_users = db.session.query(Member)
+        admin = db.session.query(Role).filter_by(name='admin').one()
+
+        if len(all_users.all()) == 1:
+            all_users[0].role.append(admin)
+            db.session.commit()
+
         login_user(new_user)
 
         if artist_account == 'yes':
@@ -245,6 +252,8 @@ def register():
             )
             db.session.add(entry)
             db.session.commit()
+
+
         mail = render_template('mails/registration_success.html')
         send_email_school('Registration success!', [email],
                           '',
@@ -352,8 +361,12 @@ def forgot_password():
     if request.method == 'POST':
         if request.form.get('email'):
             email = request.form.get('email')
+            email_list.clear()
             email_list.append(email)
             user_mail_list = []
+            otp.clear()
+            otp.append(random.randint(1000, 9999))
+            print(otp[0])
             results = db.session.query(Member)
             for result in results:
                 user_mail_list.append(result.email)
@@ -361,7 +374,7 @@ def forgot_password():
                 send_email_support(subject="Password reset",
                                    recipients=email_list, body='',
                                    html=render_template('mails/password_reset_link.html',
-                                                        link=f"http://writart.com/account/set_new_password?otp={otp}"),
+                                                        link=f"https://writart.com/account/set_new_password?otp={str(otp[0])}"),
                                    image_dict=image_dict)
                 return render_template('check_mail_notification.html')
             else:
@@ -392,11 +405,15 @@ def forgot_password():
 
 @account.route('/set_new_password', methods=['GET', 'POST'])
 def set_new_password():
+    print("Function Set New Password working!")
     entered_otp = request.args.get('otp')
-    if str(otp) == str(entered_otp):
+    print(f'Entered Otp: {entered_otp}')
+    print(f'Stored Otp: {otp}')
+    if str(otp[0]) == str(entered_otp):
         return render_template('set_new_password.html')
     else:
-        send_email_support('ERROR!!!', ['shwetabh@writart.com'], 'Problem forget password reset', '', '')
+        send_email_support('ERROR!!!', ['shwetabh@writart.com'], f'Problem forget password reset for {email_list[0]}', '', '')
+        print("Error mail sent!")
         return redirect(url_for("account.login"))
 
 
