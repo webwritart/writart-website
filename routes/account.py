@@ -363,20 +363,18 @@ def forgot_password():
             email = request.form.get('email')
             email_list.clear()
             email_list.append(email)
-            user_mail_list = []
-            otp.clear()
-            otp.append(random.randint(1000, 9999))
-            print(otp[0])
+            token = random.randint(1000,9999)
             results = db.session.query(Member)
             for result in results:
-                user_mail_list.append(result.email)
-            if email in user_mail_list:
-                send_email_support(subject="Password reset",
-                                   recipients=email_list, body='',
-                                   html=render_template('mails/password_reset_link.html',
-                                                        link=f"https://writart.com/account/set_new_password?otp={str(otp[0])}"),
-                                   image_dict=image_dict)
-                return render_template('check_mail_notification.html')
+                if email == result.email:
+                    result.token = token
+                    db.session.commit()
+                    send_email_support(subject="Password reset",
+                                       recipients=email_list, body='',
+                                       html=render_template('mails/password_reset_link.html',
+                                                            link=f"https://writart.com/account/set_new_password?token={str(token)}&email={email}"),
+                                       image_dict=image_dict)
+                    return render_template('check_mail_notification.html')
             else:
                 flash('No account found with the entered email!', 'error')
 
@@ -406,10 +404,10 @@ def forgot_password():
 @account.route('/set_new_password', methods=['GET', 'POST'])
 def set_new_password():
     print("Function Set New Password working!")
-    entered_otp = request.args.get('otp')
-    print(f'Entered Otp: {entered_otp}')
-    print(f'Stored Otp: {otp}')
-    if str(otp[0]) == str(entered_otp):
+    entered_token = request.args.get('token')
+    email = request.args.get('email')
+    token = db.session.query(Member).filter_by(email=email).one().token
+    if str(token) == str(entered_token):
         return render_template('set_new_password.html')
     else:
         send_email_support('ERROR!!!', ['shwetabh@writart.com'], f'Problem forget password reset for {email_list[0]}', '', '')

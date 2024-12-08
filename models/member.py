@@ -30,6 +30,7 @@ class Member(UserMixin, db.Model):
     state = db.Column(db.String(100))
     website = db.Column(db.String(100))
     registration_date = db.Column(db.String(50))
+    token = db.Column(db.String(10))
     participated = db.relationship('Workshop', secondary=member_workshop, backref='participants')
     role = db.relationship('Role', secondary=member_role, backref='members')
     demo = db.relationship('Demo', backref='creator')
