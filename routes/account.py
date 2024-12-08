@@ -253,7 +253,6 @@ def register():
             db.session.add(entry)
             db.session.commit()
 
-
         mail = render_template('mails/registration_success.html')
         send_email_school('Registration success!', [email],
                           '',
@@ -380,12 +379,13 @@ def forgot_password():
 
         if request.form.get('password'):
             new_pwd = request.form.get('password')
+            email = request.form.get('email')
             hash_and_salted_password = generate_password_hash(
                 new_pwd,
                 method='pbkdf2:sha256',
                 salt_length=8
             )
-            result = db.session.execute(db.select(Member).where(Member.email == email_list[0]))
+            result = db.session.execute(db.select(Member).where(Member.email == email))
             user = result.scalar()
             user.password = hash_and_salted_password
 
@@ -408,7 +408,7 @@ def set_new_password():
     email = request.args.get('email')
     token = db.session.query(Member).filter_by(email=email).one().token
     if str(token) == str(entered_token):
-        return render_template('set_new_password.html')
+        return render_template('set_new_password.html', email=email)
     else:
         send_email_support('ERROR!!!', ['shwetabh@writart.com'], f'Problem forget password reset for {email_list[0]}', '', '')
         print("Error mail sent!")
