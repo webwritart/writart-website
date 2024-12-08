@@ -21,7 +21,8 @@ def send_email_school(subject, recipients, body, html, image_dict):
                 file_format = 'image/' + image_dict['file'][n].split('.')[-1]
                 message.attach(image_dict['file'][n], file_format,
                                open(os.path.join(root_path, image_dict['path'][n], image_dict['file'][n]), 'rb').read(),
-                               'inline', headers=[['content-ID', '<' + image_dict['file'][n].split('.')[0] + '>'], ])
+                               'inline')
+                # headers=[['content-ID', '<' + image_dict['file'][n].split('.')[0] + '>'], ])
     mail.send(message)
 
 
@@ -36,7 +37,8 @@ def send_email_studio(subject, recipients, body, html, image_dict):
                 file_format = 'image/' + image_dict['file'][n].split('.')[-1]
                 message.attach(image_dict['file'][n], file_format,
                                open(os.path.join(root_path, image_dict['path'][n], image_dict['file'][n]), 'rb').read(),
-                               'inline', headers=[['content-ID', '<' + image_dict['file'][n].split('.')[0] + '>'], ])
+                               'inline')
+                # headers=[['content-ID', '<' + image_dict['file'][n].split('.')[0] + '>'], ])
     mail.send(message)
 
 

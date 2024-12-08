@@ -371,8 +371,7 @@ def forgot_password():
                     send_email_support(subject="Password reset",
                                        recipients=email_list, body='',
                                        html=render_template('mails/password_reset_link.html',
-                                                            link=f"https://writart.com/account/set_new_password?token={str(token)}&email={email}"),
-                                       image_dict=image_dict)
+                                                            link=f"https://writart.com/account/set_new_password?token={str(token)}&email={email}"), image_dict='')
                     return render_template('check_mail_notification.html')
             else:
                 flash('No account found with the entered email!', 'error')

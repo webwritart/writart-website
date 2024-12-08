@@ -258,7 +258,7 @@ def home():
                         'file': ['fb.png', 'insta.png', 'twitter.png'],
                         'path': ['social-icons', 'social-icons', 'social-icons'],
                     }
-                    send_email_school('NEW WORKSHOP ENROLLMENT OPEN', recipients, '', html, image_dict)
+                    send_email_school('NEW WORKSHOP ENROLLMENT OPEN', recipients, '', html, '')
                     db.session.query(Tools).filter_by(keyword='promotion').one().data = 'Done'
                     flash('Mailed successfully, Chief!', 'success')
                 else:
@@ -342,7 +342,7 @@ def home():
                         'file': ['fb.png', 'insta.png', 'twitter.png'],
                         'path': ['social-icons', 'social-icons', 'social-icons'],
                     }
-                    send_email_school_and_wa_msg_by_list(subject, recipients, '', html, image_dict, message,
+                    send_email_school_and_wa_msg_by_list(subject, recipients, '', html, '', message,
                                                          number_list, name_list)
                     db.session.query(Tools).filter_by(keyword='promotion').one().data = 'Done'
                     flash('Mailed and messaged successfully, Chief!', 'success')
@@ -385,7 +385,7 @@ def home():
                         for user in result2:
                             if user.email not in enrolled_user_list and user.email not in recipients:
                                 recipients.append(user.email)
-                    send_email_school(subject, recipients, '', html, image_dict)
+                    send_email_school(subject, recipients, '', html, '')
                     db.session.query(Tools).filter_by(keyword='reminder').one().data = 'Done'
 
             if request.form.get('submit') and request.form.get('submit') == 'wa-last-rem':
@@ -492,7 +492,7 @@ def home():
                                 number_list.append(user.phone)
                             name_list.append(user.name.split()[0])
 
-                send_email_school_and_wa_msg_by_list(subject, recipients, '', html, image_dict, message, number_list,
+                send_email_school_and_wa_msg_by_list(subject, recipients, '', html, '', message, number_list,
                                                      name_list)
                 db.session.query(Tools).filter_by(keyword='reminder').one().data = 'Done'
 
@@ -589,7 +589,7 @@ def home():
                     name = user.name.split()[0]
                     recipients = [user.email]
                     html = render_template('mails/session_joining_reminder.html', name=name, joining_link=joining_link)
-                    send_email_school(subject, recipients, '', html, image_dict)
+                    send_email_school(subject, recipients, '', html, '')
 
             if request.form.get('submit') and request.form.get('submit') == 'wa-s-rem':
                 # current_workshop = db.session.query(Workshop)[db.session.query(Workshop).count() - 1]
@@ -638,7 +638,7 @@ def home():
                     wa_msg = f"Dear{user.name.split()[0]},\nThe workshop session has started. If you've not joined " \
                              f"yet please join it by clicking below.\n{joining_link}\n"
                     html = render_template('mails/session_joining_reminder.html', name=name, joining_link=joining_link)
-                    send_email_school_and_wa_msg_by_list(subject, recipients, '', html, image_dict, wa_msg, num_list,
+                    send_email_school_and_wa_msg_by_list(subject, recipients, '', html, '', wa_msg, num_list,
                                                          name_list)
 
             if request.form.get('submit') and request.form.get('submit') == 'certificate-dist':
@@ -653,7 +653,7 @@ def home():
                     html = render_template('mails/certificate_download.html', name=participant.name.split()[0],
                                            download_link='https://writart.com/school/certificate_download', category=cat)
                     recipients = [participant.email]
-                    send_email_school(subject, recipients, '', html, image_dict)
+                    send_email_school(subject, recipients, '', html, '')
                     db.session.query(Tools).filter_by(keyword='certificate_distribution').one().data = 'Done'
 
             if request.form.get('submit') and request.form.get('submit') == 'csv-exp-cert':
