@@ -21,8 +21,8 @@ manager = Blueprint('manager', __name__, static_folder='static', template_folder
 @login_required
 def home():
     global current_ws_name, current_ws, current_workshop, current_ws_topic
-    current_ws_name = db.session.query(Tools).filter_by(keyword='current_workshop').one().data
-    current_ws = current_workshop = db.session.query(Workshop).filter_by(name=current_ws_name).one()
+    current_ws_name = db.session.query(Tools).filter_by(keyword='current_workshop').one_or_none().data
+    current_ws = current_workshop = db.session.query(Workshop).filter_by(name=current_ws_name).one_or_none()
     current_ws_topic = current_ws.topic
 
     if db.session.query(Role).filter(Role.name == 'admin').scalar() in current_user.role:
@@ -858,17 +858,17 @@ def visualization():
 @admin_only
 @manager.route('/role_management', methods=['GET', 'POST'])
 def role_management():
-    student = db.session.query(Role).filter_by(name='student').one()
+    student = db.session.query(Role).filter_by(name='student').one_or_none()
     admin = db.session.query(Role).filter_by(name='admin').one()
-    editor = db.session.query(Role).filter_by(name='editor').one()
-    blogger = db.session.query(Role).filter_by(name='blogger').one()
-    artist = db.session.query(Role).filter_by(name='artist').one()
-    customer = db.session.query(Role).filter_by(name='customer').one()
-    animation_client = db.session.query(Role).filter_by(name='animation_client').one()
-    instructor = db.session.query(Role).filter_by(name='instructor').one()
+    editor = db.session.query(Role).filter_by(name='editor').one_or_none()
+    blogger = db.session.query(Role).filter_by(name='blogger').one_or_none()
+    artist = db.session.query(Role).filter_by(name='artist').one_or_none()
+    customer = db.session.query(Role).filter_by(name='customer').one_or_none()
+    client = db.session.query(Role).filter_by(name='client').one_or_none()
+    instructor = db.session.query(Role).filter_by(name='instructor').one_or_none()
     if request.method == 'POST':
         email = request.form.get('email')
-        user = db.session.query(Member).filter_by(email=email).one()
+        user = db.session.query(Member).filter_by(email=email).one_or_none()
         if request.form.get('role') == 'student' and student not in user.role:
             user.role.append(student)
             flash(f"{email} has been assigned student role", "success")
@@ -887,12 +887,14 @@ def role_management():
         elif request.form.get('role') == 'customer' and customer not in user.role:
             user.role.append(customer)
             flash(f"{email} has been assigned customer role", "success")
-        elif request.form.get('role') == 'animation_client' and animation_client not in user.role:
-            user.role.append(animation_client)
-            flash(f"{email} has been assigned animation client role", "success")
+        elif request.form.get('role') == 'client' and client not in user.role:
+            user.role.append(client)
+            flash(f"{email} has been assigned client role", "success")
         elif request.form.get('role') == 'instructor' and instructor not in user.role:
             user.role.append(instructor)
             flash(f"{email} has been assigned instructor role", "success")
+        else:
+            flash(f"{email} already has this role!!""success")
         db.session.commit()
 
         if request.form.get('role') == 'student1' and student in user.role:
@@ -913,8 +915,8 @@ def role_management():
         if request.form.get('role') == 'customer1' and customer in user.role:
             user.role.remove(customer)
             flash(f"{email} has been removed from customer role", "success")
-        if request.form.get('role') == 'animation_client1' and animation_client in user.role:
-            user.role.remove(animation_client)
+        if request.form.get('role') == 'animation_client1' and client in user.role:
+            user.role.remove(client)
             flash(f"{email} has been removed from animation_client role", "success")
         if request.form.get('role') == 'instructor1' and instructor in user.role:
             user.role.remove(instructor)

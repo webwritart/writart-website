@@ -22,6 +22,7 @@ today_date = date.today()
 @account.route('/', methods=['GET', 'POST'])
 def home():
     admin = db.session.query(Role).filter_by(name='admin').one_or_none()
+    client = db.session.query(Role).filter_by(name='client').one_or_none()
 
     if len(current_user.participated) > 0:
         certificate = True
@@ -135,7 +136,8 @@ def home():
     for role in role_result:
         roles.append(role.name)
     return render_template('my_account.html', certificate_list=certificate_list, certificate=certificate,
-                           name=current_user.name, logged_in=current_user.is_authenticated, admin=admin, roles=roles)
+                           name=current_user.name, logged_in=current_user.is_authenticated, admin=admin, client=client,
+                           roles=roles)
 
 
 @account.route('/update_details', methods=['GET', 'POST'])
@@ -342,6 +344,8 @@ def login():
                 return redirect(session['url'])
             if db.session.query(Role).filter(Role.name == 'admin').scalar() in current_user.role:
                 return redirect(url_for('manager.home'))
+            if db.session.query(Role).filter(Role.name == 'client').scalar() in current_user.role:
+                return redirect(url_for('client_section.client_dashboard'))
             if not current_user.sex or current_user.sex == '':
                 return render_template('update_account.html')
             if request.form.get('prev-page') == 'enroll':

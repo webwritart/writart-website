@@ -17,6 +17,8 @@
 <!--    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">-->
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    {% block style %}
+    {% endblock %}
   </head>
 
   <body>
@@ -47,6 +49,11 @@
           {% if admin in current_user.role %}
           <li class="nav-item">
             <a class="nav-link" href="{{url_for('manager.home')}}">Manager</a>
+          </li>
+          {% endif %}
+          {% if client in current_user.role %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{url_for('client_section.client_dashboard')}}">DASHBOARD</a>
           </li>
           {% endif %}
           <li class="nav-item">

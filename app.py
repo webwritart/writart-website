@@ -11,6 +11,7 @@ from routes.payment import payment
 from routes.school import school
 from routes.gallery import gallery
 from routes.studio import studio
+from routes.client_section import client_section
 from apscheduler.schedulers.background import BackgroundScheduler
 from operations.artist_tools import delete_watermarked_images
 from models.artist_data import ArtistData
@@ -20,8 +21,8 @@ load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('APP_SECRET')
-# app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///writart.db"
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URI')
+app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///writart.db"
+# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URI')
 app.config["MAIL_SERVER"] = 'smtp.gmail.com'
 app.config["MAIL_PORT"] = 465
 app.config["MAIL_USERNAME"] = os.environ.get('MAIL_USERNAME')
@@ -38,6 +39,7 @@ app.register_blueprint(payment, url_prefix='/payment')
 app.register_blueprint(manager, url_prefix='/manager')
 app.register_blueprint(gallery, url_prefix='/gallery')
 app.register_blueprint(studio, url_prefix='/studio')
+app.register_blueprint(client_section, url_prefix='/client_section')
 
 with app.app_context():
     db.create_all()

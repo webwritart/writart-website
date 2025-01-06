@@ -14,6 +14,11 @@ member_role = db.Table('member_role',
                        db.Column('role_id', db.Integer, db.ForeignKey('role.id'))
                        )
 
+member_project = db.Table('member_project',
+                          db.Column('member_id', db.Integer, db.ForeignKey('member.id')),
+                          db.Column('project_id', db.Integer, db.ForeignKey('project.id'))
+                          )
+
 
 class Member(UserMixin, db.Model):
     __tablename__ = "member"
@@ -35,6 +40,7 @@ class Member(UserMixin, db.Model):
     role = db.relationship('Role', secondary=member_role, backref='members')
     demo = db.relationship('Demo', backref='creator')
     artist_data = db.relationship('ArtistData', backref='member', uselist=False)
+    project = db.relationship('Project', secondary=member_project, backref='clients')
 
     def __repr__(self):
         return f'{self.name.split()[0]}'
@@ -76,3 +82,19 @@ class Role(db.Model):
 
     def __repr__(self):
         return f'{self.name}'
+
+
+class Project(db.Model):
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    category = db.Column(db.String(50))
+    short_description = db.Column(db.String(200))
+    detailed_description = db.Column(db.String(1000))
+    start_date = db.Column(db.String(12))
+    deadline = db.Column(db.String(12))
+    sponsors = db.Column(db.String(5000))
+    producers = db.Column(db.String(5000))
+
+    def __repr__(self):
+        return f'{self.name}, Producers: {self.producers}'

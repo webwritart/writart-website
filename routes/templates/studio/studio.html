@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
     {% for member in members %}
-    <form action="{{url_for('studios.home')}}" method="post">
+    <form action="{{url_for('studio.home')}}" method="post">
         <button type="submit" name="portfolio-link" value="{{member.id}}">View Portfolio of {{member.name.split()[0]}}</button><br>
     </form>
     {% endfor %}

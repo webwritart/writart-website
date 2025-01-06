@@ -14,7 +14,9 @@ main = Blueprint('main', __name__, static_folder='static', template_folder='temp
 def home():
 
     admin = db.session.query(Role).filter_by(name='admin').one_or_none()
-    return render_template('index.html', logged_in=current_user.is_authenticated, admin=admin)
+    client = db.session.query(Role).filter_by(name='client').one_or_none()
+
+    return render_template('index.html', logged_in=current_user.is_authenticated, admin=admin, client=client)
 
 
 @main.route('/privacy_policy')

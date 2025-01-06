@@ -132,3 +132,5 @@ def artist_tools():
 
     return render_template('artist_tools.html', folder_name=folder_name, photo_list=photo_list,
                            logged_in=current_user.is_authenticated, total_watermarked=total_watermarked_photos)
+
+
