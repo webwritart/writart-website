@@ -1,54 +1,43 @@
 {% extends 'base.html' %}
 
 {% block style %}
-<style>
-  h1 {
-    font-family: Arial, Helvetica, sans-serif;
-    font-weight: 400;
-    font-size: 5vh;
-}
-.title {
-    padding: 0% 8%;
-}
-.box {
-    display: flex;
-    justify-items: center;
-}
-.card {
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    transition: 0.3s;
-    width: 100%;
-}
-.card:hover {
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-}
-.container {
-  padding: 2px 16px;
-}
-btn {
-    text-align: center;
-    color: white;
-    border: 2px solid black;
-    background: gray;
-    box-shadow: 0 4px 4px 0 rgba(0,0,0,0.5);
-}
-</style>
-
-
-
+<link rel="stylesheet" type="text/css" href="../../static/css/project.css">
 {% endblock %}
+
 {% block content %}
 
-<div class="title">
-    <h1>PROJECTS</h1>
-</div>
-<hr>
-<div class="box">
-    {% for project in client_project_list %}
-    <div class="card">
-        <img src="../static/images/client/projects/Flying Colors/thumbnail.jpg" alt="project_poster" style="width:100%">
-        <a href="{{url_for('client_section.project_page', project_id=project.id)}}"><btn>View</btn></a>
+
+<div class="header_bg">
+    <div class="title" style="margin-top:3.5vh;">
+        <h1 style="color:white;">PROJECTS</h1>
     </div>
-    {% endfor %}
+    <div style="display:flex;justify-content:center;width:100%;">
+        <div style="display:flex;width:100%;height: 85vh;background:rgba(58,46,91, 0.5);padding:5%;justify-content:center;">
+            {% for project in client_project_list %}
+            <div id="project_card" style="">
+                <div class="" style="display:flex;flex-direction:column;">
+                    <p style="line-height:1;font-weight: 600;color: #3A2E5B;">{{project.name}}</p>
+                    <a href="{{url_for('client_section.project_page', project_id=project.id)}}" style="border:2px solid #D2A5A4;"><img src="../static/images/client/projects/Flying Colors/project-thumbnail.jpg" alt="project_poster" style="width:100%"></a>
+                    <a style="background:#D2A5A4;width:100%;text-decoration:none;color:white;" href="{{url_for('client_section.project_page', project_id=project.id)}}">View Project</a>
+
+                </div>
+                <div id="project-casting">
+                    <h6>Producer: {{project.producers}} </h6>
+                    <h6>writer: {{project.writers}} </h6>
+                    <h6>Studio: {{project.studio}} </h6>
+                    {% if project.sponsors: %}
+                    <h6>sponsors: {{project.sponsors}}</h6>
+                    {% endif %}
+                    <p>{{project.short_description}}</p>
+                    <p>{{project.detailed_description}}</p>
+                </div>
+                {% endfor %}
+            </div>
+
+        </div>
+    </div>
 </div>
+
+
+
 {% endblock %}

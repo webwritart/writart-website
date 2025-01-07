@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block style %}
+<link rel="stylesheet" type="text/css" href="../../static/css/project.css">
+{% endblock %}
+
+Colors
+1 = #FFB4BB
+2 = #FFDED5
+3 = #FFABAB
+4 = #FFC29E
+5 = #D7AAFE
+
+{% block content %}
+<div id="section_header">
+    <div id="animation_admin_header">
+        <a href="{{url_for('client_section.animation_preproduction', project_id=project_id)}}">PRE-PRODUCTION</a>
+        <a href="{{url_for('client_section.animation_production', project_id=project_id)}}">PRODUCTION</a>
+        <a href="{{url_for('client_section.animation_postproduction', project_id=project_id)}}">POST-PRODUCTION</a>
+    </div>
+</div>
+
+
+
+{% block project %}
+{% endblock %}
+
+{% endblock %}
