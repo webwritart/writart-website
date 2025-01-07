@@ -1,0 +1,97 @@
+{% extends 'animation_admin_home.html' %}
+{% block operation_window %}
+<!-- lightest = '#F6F2E9' -->
+<!-- darkest = '#0F203F'-->
+<!-- muted = '#BD8765'-->
+<!-- warmer_mid = '#F5BE98'-->
+<!-- cooler_mid = '#FAE4C2'-->
+
+<style>
+    #operation_box {
+        background:#F5BE98;
+        height:73vh;
+        margin:4%;
+        border: 5px solid gray;
+        display:flex;
+        justify-content: center;
+        align-items:center;
+    }
+    #operation_box:hover {
+        border: 5px solid red;
+    }
+    .form__ {
+        width: 80%;
+        height: 60vh;
+        border: 2px solid gray;
+        border-radius:5vh;
+        padding: 5%;
+        overflow:auto;
+    }
+    form {
+        display: flex;
+        flex-direction:column;
+        align-items:center;
+    }
+    form label input {
+        width:50%;
+    }
+    form select {
+        width: 50%;
+    }
+</style>
+
+<div id="operation_box">
+    <div class="form__">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                  <div class="{{category}}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <h3>ASSIGN PROJECTS TO CLIENTS</h3>
+        <form action="{{url_for('animation_admin.home')}}" method="post">
+            <select style="margin-top:10vh;" name="project" required>
+                <option value="default">Choose a Project</option>
+                {% for project in projects %}
+                <option value={{project}}>{{project}}</option>
+                {% endfor %}
+            </select>
+            <select name="client" required>
+                <option value="default">Choose a Client</option>
+                {% for client in clients %}
+                <option value={{client}}>{{client}}</option>
+                {% endfor %}
+            </select>
+            <button style="background:black;margin-top:2vh;color:white; width:100%;padding:0.5vh 0vh;" name="submit" type="submit" value="assign_project">ASSIGN PROJECT</button>
+        </form>
+    </div>
+    <div class="form__">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                  <div class="{{category}}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <h3>REVOKE PROJECT ACCESS FOR CLIENTS</h3>
+        <form action="{{url_for('animation_admin.home')}}" method="post">
+            <select style="margin-top:10vh;" name="project1" required>
+                <option value="default">Choose a Project</option>
+                {% for project in projects %}
+                <option value={{project}}>{{project}}</option>
+                {% endfor %}
+            </select>
+            <select name="client1" required>
+                <option value="default">Choose a Client</option>
+                {% for client in clients %}
+                <option value={{client}}>{{client}}</option>
+                {% endfor %}
+            </select>
+            <button style="background:black;margin-top:2vh;color:white; width:100%;padding:0.5vh 0vh;" name="submit" type="submit" value="revoke_project">REMOVE PROJECT</button>
+        </form>
+    </div>
+
+</div>
+
+{% endblock %}

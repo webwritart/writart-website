@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+   #section_header {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+   }
+   #animation_admin_header button {
+        background-color: #0F203F;
+        color:#BD8765;
+        text-align:center;
+        font-size:1.5rem;
+        padding: 1% 4%;
+        border: 2px solid #F5BE98;
+   }
+   #animation_admin_header button:hover {
+        border: 2px solid red;
+        color: red;
+   }
+</style>
+<div id="section_header">
+    <div id="animation_admin_header" style="display: flex; width:40%; justify-content:space-evenly;z-index:3;">
+        <button>Section 1</button>
+        <button>Section 2</button>
+        <button>Section 3</button>
+        <button>Section 4</button>
+    </div>
+</div>
+
+{% block animation_admin_content %}
+{% endblock %}
+{% endblock %}

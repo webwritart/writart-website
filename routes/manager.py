@@ -859,7 +859,8 @@ def visualization():
 @manager.route('/role_management', methods=['GET', 'POST'])
 def role_management():
     student = db.session.query(Role).filter_by(name='student').one_or_none()
-    admin = db.session.query(Role).filter_by(name='admin').one()
+    admin = db.session.query(Role).filter_by(name='admin').one_or_none()
+    animation_admin = db.session.query(Role).filter_by(name='animation_admin').one_or_none()
     editor = db.session.query(Role).filter_by(name='editor').one_or_none()
     blogger = db.session.query(Role).filter_by(name='blogger').one_or_none()
     artist = db.session.query(Role).filter_by(name='artist').one_or_none()
@@ -875,6 +876,9 @@ def role_management():
         elif request.form.get('role') == 'admin' and admin not in user.role:
             user.role.append(admin)
             flash(f"{email} has been assigned admin role", "success")
+        elif request.form.get('role') == 'animation_admin' and animation_admin not in user.role:
+            user.role.append(animation_admin)
+            flash(f"{email} has been assigned animation_admin role", "success")
         elif request.form.get('role') == 'editor' and editor not in user.role:
             user.role.append(editor)
             flash(f"{email} has been assigned editor role", "success")
@@ -900,25 +904,28 @@ def role_management():
         if request.form.get('role') == 'student1' and student in user.role:
             user.role.remove(student)
             flash(f"{email} has been removed from student role", "success")
-        if request.form.get('role') == 'admin1' and admin in user.role:
+        elif request.form.get('role') == 'admin1' and admin in user.role:
             user.role.remove(admin)
             flash(f"{email} has been removed from admin role", "success")
-        if request.form.get('role') == 'editor1' and editor in user.role:
+        elif request.form.get('role') == 'animation_admin1' and animation_admin in user.role:
+            user.role.remove(animation_admin)
+            flash(f"{email} has been removed from admin role", "success")
+        elif request.form.get('role') == 'editor1' and editor in user.role:
             user.role.remove(editor)
             flash(f"{email} has been removed from editor role", "success")
-        if request.form.get('role') == 'blogger1' and blogger in user.role:
+        elif request.form.get('role') == 'blogger1' and blogger in user.role:
             user.role.remove(blogger)
             flash(f"{email} has been removed from blogger role", "success")
-        if request.form.get('role') == 'artist1' and artist in user.role:
+        elif request.form.get('role') == 'artist1' and artist in user.role:
             user.role.remove(artist)
             flash(f"{email} has been removed from artist role", "success")
-        if request.form.get('role') == 'customer1' and customer in user.role:
+        elif request.form.get('role') == 'customer1' and customer in user.role:
             user.role.remove(customer)
             flash(f"{email} has been removed from customer role", "success")
-        if request.form.get('role') == 'animation_client1' and client in user.role:
+        elif request.form.get('role') == 'animation_client1' and client in user.role:
             user.role.remove(client)
             flash(f"{email} has been removed from animation_client role", "success")
-        if request.form.get('role') == 'instructor1' and instructor in user.role:
+        elif request.form.get('role') == 'instructor1' and instructor in user.role:
             user.role.remove(instructor)
             flash(f"{email} has been removed from instructor role", "success")
         db.session.commit()

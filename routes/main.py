@@ -15,8 +15,10 @@ def home():
 
     admin = db.session.query(Role).filter_by(name='admin').one_or_none()
     client = db.session.query(Role).filter_by(name='client').one_or_none()
+    animation_admin = db.session.query(Role).filter_by(name='animation_admin').one_or_none()
 
-    return render_template('index.html', logged_in=current_user.is_authenticated, admin=admin, client=client)
+    return render_template('index.html', logged_in=current_user.is_authenticated, admin=admin, client=client,
+                           animation_admin=animation_admin)
 
 
 @main.route('/privacy_policy')

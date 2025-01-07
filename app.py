@@ -11,6 +11,7 @@ from routes.payment import payment
 from routes.school import school
 from routes.gallery import gallery
 from routes.studio import studio
+from routes.animation_admin import animation_admin
 from routes.client_section import client_section
 from apscheduler.schedulers.background import BackgroundScheduler
 from operations.artist_tools import delete_watermarked_images
@@ -40,6 +41,7 @@ app.register_blueprint(manager, url_prefix='/manager')
 app.register_blueprint(gallery, url_prefix='/gallery')
 app.register_blueprint(studio, url_prefix='/studio')
 app.register_blueprint(client_section, url_prefix='/client_section')
+app.register_blueprint(animation_admin, url_prefix='/animation_admin')
 
 with app.app_context():
     db.create_all()
@@ -64,4 +66,5 @@ with app.app_context():
 # ---------------------------------------------------------------------------------------------------------- #
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    # app.run(host='0.0.0.0', port=5000)
+    app.run(debug=True)

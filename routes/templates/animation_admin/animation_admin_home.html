@@ -1,0 +1,79 @@
+{% extends 'animation_admin_base.html' %}
+
+{% block animation_admin_content %}
+<style>
+    .menu_button {
+        width:100%;
+        border:2px solid #F5BE98;
+        background:#0F203F;
+        color:#F5BE98;
+        margin:0.4vh 0vh;
+        text-align:center;
+    }
+    .menu_button:hover{
+        border: 2px solid red;
+        color: red;
+    }
+    .menu_list {
+        list-style-type:none;
+        width:100%;
+        display:flex;
+        flex-direction:column;
+    }
+    .menu_list li {
+        width:100%;
+    }
+    #operation_window {
+        display:flex;
+        background:#0F203F;
+        flex-direction:column;
+        align-content:center;
+        width:70%;
+        height:79vh;
+        margin-top:5vh;
+
+<!--        border: 2px solid #BD8765;-->
+    }
+    #animation_admin_menu {
+        background:#BD8765;
+        display:flex;
+        padding-top:3vh;
+        flex-direction:column;
+        box-shadow: 5px 5px 10px;
+        align-items:center;
+        width:30%;
+        height:75vh;
+        margin-top:7vh;
+        border: 1px solid gray;
+    }
+    #animation_admin_menu:hover {
+        border: 1px solid red;
+    }
+
+</style>
+
+<div style="display:flex; background:#0F203F; height:85vh; margin-top:-3vh; justify-content:center;">
+    <div style="display:flex;width:80%;">
+        <div id="animation_admin_menu" style="">
+            <div style="width:80%;margin:0.4vh 0vh;">
+                <h3 style="color:#0F203F;">MENU</h3>
+            </div>
+            <div style=" display:flex; width:80%; height:65vh; overflow:auto; justify-content:center;">
+                <div class="menu_list">
+                    <li><a href="{{url_for('animation_admin.home', destination='add_new_project')}}">
+                        <button class="menu_button" >ADD NEW PROJECT</button></a></li>
+                    <li><a href="{{url_for('animation_admin.home', destination='assign_project')}}">
+                        <button class="menu_button">ASSIGN/WITHDRAW PROJECT</button></a></li>
+
+                 </div>
+            </div>
+        </div>
+        <div id="operation_window">
+            {% block operation_window %}
+            {% endblock %}
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

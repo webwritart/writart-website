@@ -43,8 +43,5 @@ class WorkshopDetails(db.Model):
     photo3 = db.Column(db.String(100))
     ws_id = db.Column(db.Integer, db.ForeignKey('workshop.id'), unique=True)
 
-
-
-
     def __repr__(self):
         return f'Details of: {self.category} {self.ws_id}'

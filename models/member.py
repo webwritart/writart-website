@@ -43,7 +43,7 @@ class Member(UserMixin, db.Model):
     project = db.relationship('Project', secondary=member_project, backref='clients')
 
     def __repr__(self):
-        return f'{self.name.split()[0]}'
+        return f'{self.name.split()[0]} -- {self.email}'
 
 
 class Workshop(db.Model):
@@ -97,4 +97,4 @@ class Project(db.Model):
     producers = db.Column(db.String(5000))
 
     def __repr__(self):
-        return f'{self.name}, Producers: {self.producers}'
+        return f'{self.name}'

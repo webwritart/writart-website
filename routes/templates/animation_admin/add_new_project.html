@@ -1,0 +1,70 @@
+{% extends 'animation_admin_home.html' %}
+{% block operation_window %}
+<!-- lightest = '#F6F2E9' -->
+<!-- darkest = '#0F203F'-->
+<!-- muted = '#BD8765'-->
+<!-- warmer_mid = '#F5BE98'-->
+<!-- cooler_mid = '#FAE4C2'-->
+
+<style>
+    #operation_box {
+        background:#F5BE98;
+        height:73vh;
+        margin:4%;
+        border: 5px solid gray;
+        display:flex;
+        justify-content: center;
+        align-items:center;
+    }
+    #operation_box:hover {
+        border: 5px solid red;
+    }
+    #form__ {
+        width: 80%;
+        height: 60vh;
+        border: 2px solid gray;
+        border-radius:5vh;
+        padding: 5%;
+        overflow:auto;
+    }
+    form {
+        display: flex;
+        flex-direction:column;
+        align-items:center;
+    }
+    form label input {
+        width:50%;
+    }
+</style>
+
+<div id="operation_box">
+    <div id="form__">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                  <div class="{{category}}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <h3>CREATE NEW PROJECT</h3>
+        <form action="{{url_for('animation_admin.home')}}" method="post">
+            <input type="text" name="name" placeholder="Name of the Project" required>
+            <input type="text" name="short-description" placeholder="Short Description">
+            <input type="text" name="detailed-description" placeholder="Detailed Description">
+            <input type="text" name="producers" placeholder="Producers (separated by comma '.')" required>
+            <input type="text" name="sponsors" placeholder="Sponsors (separated by comma '.')">
+            <label style="width:100%; text-align:left;">Date of Beginning</label><input type="date" name="start_date" required>
+            <label style="width:100%; text-align:left;">Deadline</label><input type="date" name="deadline" required>
+            <label >Choose a category</label>
+            <select name="category" required>
+                <option value="animation">Animation</option>
+                <option value="illustration">Illustration</option>
+                <option value="concept-art">Concept Art</option>
+            </select>
+            <button style="background:black;margin-top:2vh;color:white; width:100%;padding:0.5vh 0vh;" name="submit" type="submit" value="create_new_project">CREATE NEW PROJECT</button>
+        </form>
+    </div>
+
+</div>
+
+{% endblock %}

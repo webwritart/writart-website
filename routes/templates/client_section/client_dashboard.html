@@ -44,9 +44,11 @@ btn {
 </div>
 <hr>
 <div class="box">
+    {% for project in client_project_list %}
     <div class="card">
         <img src="../static/images/client/projects/Flying Colors/thumbnail.jpg" alt="project_poster" style="width:100%">
-        <btn>View</btn>
+        <a href="{{url_for('client_section.project_page', project_id=project.id)}}"><btn>View</btn></a>
     </div>
+    {% endfor %}
 </div>
 {% endblock %}

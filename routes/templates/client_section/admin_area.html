@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    .container {
+        height: 100vh;
+    }
+</style>
+
+<div class="container">
+    <h3>
+        Sorry {{ current_user.name.split()[0] }}, This is Management Area.<br>
+        Only Admins are allowed here.
+    </h3><br>
+    <a class="btn btn-primary btn-large" href="{{url_for('main.home')}}">Go to Home</a>
+</div>
+
+{% endblock %}
