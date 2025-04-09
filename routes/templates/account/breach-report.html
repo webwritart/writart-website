@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="default-form">
+    <div>
+    <h3>BREACH-REPORT</h3>
+
+    <p>If you feel your account is compromised in any way like hacking, password reset by someone else other than you or
+        anything sort of this please fill this form and let us know, and we will help recover you account.</p>
+        <form action="{{url_for('account.breach_report')}}" name="breach_report" method="post">
+            <label>Email or phone number related to account</label><br>
+            <input type="text" name="email_phone" required>
+            <label>Any message for us? (optional)</label>
+            <input type="text" name="message">
+            <input class="default-submit" type="submit" name="submit" value="REPORT">
+        </form>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+         {% if messages %}
+          <ul>
+          {% for category,message in messages %}
+              <li class="{{category}}">{{ message }}</li>
+          {% endfor %}
+          </ul>
+         {% endif %}
+        {% endwith %}
+    </div>
+
+</div>
+
+{% endblock %}
