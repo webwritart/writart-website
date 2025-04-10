@@ -225,7 +225,7 @@ def register():
         db.session.commit()
 
         all_users = db.session.query(Member)
-        admin = db.session.query(Role).filter_by(name='admin').one()
+        admin = db.session.query(Role).filter_by(name='admin').scalar()
 
         if len(all_users.all()) == 1:
             all_users[0].role.append(admin)

@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
 
+<style>
+
+</style>
+
 <div id="classroom-hero">
     <div id="title">
         <h1 style="text-align: center">RECORDED SESSIONS</h1>
@@ -27,13 +31,31 @@
     <div id="video-wrapper-container2">
         <h3 style="color:#b38fc2;">Doubt Solving Sessions</h3>
         {% for n in range(qa_video_count) %}
-            <div class="video">
-                <div class="content">
-                    <lite-youtube videoid="{{ vid_id_list[n] }}"
-                                  params="controls=1"></lite-youtube>
-                    <p>{{ qa_caption_list[n] }}</p>
-                </div>
-            </div>
+            <iframe class="responsive-iframe" src="https://www.youtube.com/embed/{{vid_id_list[n]}}?si=2BVYS-0QHsxcX4f5"
+                    title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write;
+                    encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
+        <iframe class="responsive-iframe" src="https://www.youtube.com/embed/{{vid_id_list[n]}}?si=2BVYS-0QHsxcX4f5"
+                    title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write;
+                    encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
+        <iframe class="responsive-iframe" src="https://www.youtube.com/embed/{{vid_id_list[n]}}?si=2BVYS-0QHsxcX4f5"
+                    title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write;
+                    encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
+        <iframe class="responsive-iframe" src="https://www.youtube.com/embed/{{vid_id_list[n]}}?si=2BVYS-0QHsxcX4f5"
+                    title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write;
+                    encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
+<!--            <div class="video">-->
+
+<!--                <div class="content">-->
+<!--&lt;!&ndash;                    <lite-youtube videoid="{{ vid_id_list[n] }}"&ndash;&gt;-->
+<!--&lt;!&ndash;                                  params="controls=1"></lite-youtube>&ndash;&gt;-->
+<!--                        -->
+<!--                    <p>{{ qa_caption_list[n] }}</p>-->
+<!--                </div>-->
+<!--            </div>-->
         {% endfor %}
     </div>
 </div>
@@ -55,6 +77,7 @@
                     <div class="video">
                         <div class="content">
                             <lite-youtube videoid="{{ yt_vid_id_list[n] }}"
+
                                       params="controls=1"></lite-youtube>
                             <p>{{ vid_caption_list[n] }}</p>
                         </div>

@@ -1,6 +1,6 @@
 @import url(https://fonts.googleapis.com/css?family=Open+Sans);
-.btn { display: inline-block; *display: inline; *zoom: 1; padding: 4px 10px 4px; margin-bottom: 0; font-size: 13px; line-height: 18px; color: #333333; text-align: center;text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75); vertical-align: middle; background-color: #f5f5f5; background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6); background-image: -ms-linear-gradient(top, #ffffff, #e6e6e6); background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6)); background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6); background-image: -o-linear-gradient(top, #ffffff, #e6e6e6); background-image: linear-gradient(top, #ffffff, #e6e6e6); background-repeat: repeat-x; filter: progid:dximagetransform.microsoft.gradient(startColorstr=#ffffff, endColorstr=#e6e6e6, GradientType=0); border-color: #e6e6e6 #e6e6e6 #e6e6e6; border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25); border: 1px solid #e6e6e6; -webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px; -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05); -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05); cursor: pointer; *margin-left: .3em; }
-.btn:hover, .btn:active, .btn.active, .btn.disabled, .btn[disabled] { background-color: #e6e6e6; }
+.btn { display: inline-block; *display: inline; *zoom: 1; padding: 4px 10px 4px; margin-bottom: 0; font-size: 13px; line-height: 18px; color: #163953; text-align: center;text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75); vertical-align: middle; background-color: #163953; background-image: -moz-linear-gradient(top, #163953, #163953); background-image: -ms-linear-gradient(top, #163953, #163953); background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#163953), to(#163953)); background-image: -webkit-linear-gradient(top, #163953, #163953); background-image: -o-linear-gradient(top, #163953, #163953); background-image: linear-gradient(top, #163953, #163953); background-repeat: repeat-x; filter: progid:dximagetransform.microsoft.gradient(startColorstr=#163953, endColorstr=#163953, GradientType=0); border-color: #e6e6e6 #e6e6e6 #e6e6e6; border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25); border: 1px solid #e6e6e6; -webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px; -webkit-box-shadow: inset 0 1px 0 rgba(22, 57, 83, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05); -moz-box-shadow: inset 0 1px 0 rgba(22, 57, 83, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05); box-shadow: inset 0 1px 0 rgba(22, 57, 83, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05); cursor: pointer; *margin-left: .3em; }
+.btn:hover, .btn:active, .btn.active, .btn.disabled, .btn[disabled] { background-color: #163953; }
 .btn-large { padding: 9px 14px; font-size: 15px; line-height: normal; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; }
 .btn:hover { color: #333333; text-decoration: none; background-color: #e6e6e6; background-position: 0 -15px; -webkit-transition: background-position 0.1s linear; -moz-transition: background-position 0.1s linear; -ms-transition: background-position 0.1s linear; -o-transition: background-position 0.1s linear; transition: background-position 0.1s linear; }
 .btn-primary, .btn-primary:hover { text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25); color: #ffffff; }
@@ -242,6 +242,10 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     }
     .button {
         width: 80%;
+        background: #163953;
+    }
+    .button:hover {
+        background: #051d2e;
     }
 
     .description {
@@ -540,8 +544,9 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 }
 
 #video-wrapper-container2 {
-    width: 1240px;
+    width: 80%;
     overflow: auto;
+    height: 100%;
 
 }
 
@@ -564,6 +569,10 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     font-family: Arial, Helvetica, sans-serif;
     font-size: 0.8rem;
 }
+.responsive-iframe {
+        width: 24%;
+        aspect-ratio: 16/9;
+    }
 @media only screen
 and (min-width : 1440px) {
     #video-wrapper-container .video {
@@ -591,6 +600,9 @@ and (max-width : 1440px) {
     .main-upcoming-ws-item {
         width: 350px;
     }
+    .responsive-iframe {
+        width: 32%;
+    }
 }
 
 
@@ -606,7 +618,9 @@ and (max-width : 992px) {
     .main-upcoming-ws-item {
         width: 250px;
     }
-
+    .responsive-iframe {
+        width: 49%;
+    }
 }
 
 @media only screen
@@ -633,6 +647,9 @@ and (max-width : 768px) {
     }
     .main-upcoming-ws-item {
         width: 230px;
+    }
+    .responsive-iframe {
+        width: 49%;
     }
 
 }
@@ -700,6 +717,10 @@ and (max-width : 576px) {
     flex-direction: column;
     align-items: center;
     height: 30vh;
+    }
+    .responsive-iframe {
+        width: 100%;
+    }
 }
 
 #classroom-hero {

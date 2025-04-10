@@ -11,7 +11,7 @@ load_dotenv()
 
 
 def send_email_school(subject, recipients, body, html, image_dict):
-    message = Message(subject, sender=("Writart Gurukul", "admin@writart.com"), recipients=recipients)
+    message = Message(subject, sender=("Writart Gurukul", 'writartstudios@gmail.com'), recipients=recipients)
     message.body = body
     if html:
         message.html = html
@@ -27,7 +27,7 @@ def send_email_school(subject, recipients, body, html, image_dict):
 
 
 def send_email_studio(subject, recipients, body, html, image_dict):
-    message = Message(subject, sender=("Writart Studio", "shwetabh@writart.com"), recipients=recipients)
+    message = Message(subject, sender=("Writart Studio", 'writartstudios@gmail.com'), recipients=recipients)
     message.body = body
     if html:
         message.html = html
@@ -43,7 +43,7 @@ def send_email_studio(subject, recipients, body, html, image_dict):
 
 
 def send_email_support(subject, recipients, body, html, image_dict):
-    message = Message(subject, sender=("Writart Support", "shwetabh@writart.com"), recipients=recipients)
+    message = Message(subject, sender=("Writart Support", "writartstudios@gmail.com"), recipients=recipients)
     message.body = body
     if html:
         message.html = html
