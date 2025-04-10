@@ -16,63 +16,84 @@
     </div>
 </div>
 
-<div>
-    <div class="row justify-content-center align-items-center" style="padding: 0% 2%;">
-        <div class="col-md-9 align-items-center" style="background-color: #edcce9; padding: 2%;">
-            <div class="col">
-                <div>
-                    <div class="row justify-content-center" style="text-align: center;">
-                        <div class="col heading">
-                            <h4><b>UPCOMING WORKSHOPS</b></h4>
-                            {% with messages = get_flashed_messages(with_categories=true) %}
-                                {% if messages %}
-                                    {% for category, message in messages %}
-                                        <div class="{{category}}">{{ message }}</div>
-                                    {% endfor %}
-                                {% endif %}
-                            {% endwith %}
-                        </div>
-                    </div>
-                    <div class="wrapper-ws">
-                        <div class="container-upcoming-ws">
-                            {% for workshop in upcoming_workshop_list %}
-                            <div class="upcoming_ws_thumbnail">
-                                <div class="upcoming_ws_content">
-                                    <img src="../static/images/workshops/{{workshop}}/thumbnail.jpg" width="100%" height="100%">
-                                    <div style="display: flex; justify-content: stretch;">
-                                    <div class="form-popup3 box" id="interested-form">
-                                        <form class="popup-form-container" action="{{url_for('school.home')}}" name="interested-form" method="post">
-                                            <div style="display: flex; justify-content: right; width: 95%;">
-                                                <a style="opacity: 0.5;" type="button" onclick="closeFormInterested()">close <img src="../static/images/icons/cross-sign.png" width="10px"></a>
-                                            </div>
-                                            <h3 style="color: #c9c9c9;">INTERESTED</h3>
-                                            <p>We'll notify you when enrollment of the selected workshop opens</p>
-                                            {% if not logged_in %}
-                                            <input type="text" placeholder="Name" name="name" required>
-                                            <input type="email" placeholder="Email" name="email" required>
-                                            <input type="text" placeholder="Phone" name="phone" required>
-                                            <input type="text" placeholder="Whatsapp (skip if same whatsapp)" name="whatsapp">
-                                            {% endif %}
-                                            <input type="hidden" id="interested-form-hidden-workshop" name="interested-form-hidden-workshop" required>
-                                            <input type="text" maxlength="300" placeholder="Any message for us? (optional)" name="message">
-                                            <input type="submit" name="submit" class="btn btn-primary" onclick="closeFormInterested()" value="SUBMIT">
-                                        </form>
-                                     </div>
-                                        <button class="btn btn-primary btn-large" style="width: 50%;" onclick="openInterestedForm('{{workshop}}')">INTERESTED</button>
-                                        <form action="{{url_for('school.upcoming_workshop')}}" method="post" style="width: 50%">
-                                             <input type="hidden" name="know-more" value="know-more">
-                                             <button class="btn btn-primary btn-large" type="submit" name="submit" value="{{workshop}}" style="width: 100%">KNOW MORE</button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<!--<div>-->
+<!--    <div class="row justify-content-center align-items-center" style="padding: 0% 0%;">-->
+<!--        <div class="col-md-12 align-items-center" style="background-color: #edcce9; padding: 2%;">-->
+<!--            <div class="col">-->
+<!--                <div>-->
+<!--                    <div class="row justify-content-center" style="text-align: center;">-->
+<!--                        <div class="col heading">-->
+<!--                            <h4><b>UPCOMING WORKSHOPS</b></h4>-->
+<!--                            {% with messages = get_flashed_messages(with_categories=true) %}-->
+<!--                                {% if messages %}-->
+<!--                                    {% for category, message in messages %}-->
+<!--                                        <div class="{{category}}">{{ message }}</div>-->
+<!--                                    {% endfor %}-->
+<!--                                {% endif %}-->
+<!--                            {% endwith %}-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="wrapper-ws">-->
+<!--                        <div class="container-upcoming-ws">-->
+<!--                            {% for workshop in upcoming_workshop_list %}-->
+<!--                            <div class="upcoming_ws_thumbnail">-->
+<!--                                <div class="upcoming_ws_content">-->
+<!--                                    <img src="../static/images/workshops/{{workshop}}/thumbnail.jpg" width="100%" height="100%">-->
+<!--                                    <div style="display: flex; justify-content: stretch;">-->
+<!--                                    <div class="form-popup3 box" id="interested-form">-->
+<!--                                        <form class="popup-form-container" action="{{url_for('school.home')}}" name="interested-form" method="post">-->
+<!--                                            <div style="display: flex; justify-content: right; width: 95%;">-->
+<!--                                                <a style="opacity: 0.5;" type="button" onclick="closeFormInterested()">close <img src="../static/images/icons/cross-sign.png" width="10px"></a>-->
+<!--                                            </div>-->
+<!--                                            <h3 style="color: #c9c9c9;">INTERESTED</h3>-->
+<!--                                            <p>We'll notify you when enrollment of the selected workshop opens</p>-->
+<!--                                            {% if not logged_in %}-->
+<!--                                            <input type="text" placeholder="Name" name="name" required>-->
+<!--                                            <input type="email" placeholder="Email" name="email" required>-->
+<!--                                            <input type="text" placeholder="Phone" name="phone" required>-->
+<!--                                            <input type="text" placeholder="Whatsapp (skip if same whatsapp)" name="whatsapp">-->
+<!--                                            {% endif %}-->
+<!--                                            <input type="hidden" id="interested-form-hidden-workshop" name="interested-form-hidden-workshop" required>-->
+<!--                                            <input type="text" maxlength="300" placeholder="Any message for us? (optional)" name="message">-->
+<!--                                            <input type="submit" name="submit" class="btn btn-primary" onclick="closeFormInterested()" value="SUBMIT">-->
+<!--                                        </form>-->
+<!--                                     </div>-->
+<!--                                        <button class="btn btn-primary btn-large" style="width: 50%;" onclick="openInterestedForm('{{workshop}}')">INTERESTED</button>-->
+<!--                                        <form action="{{url_for('school.upcoming_workshop')}}" method="post" style="width: 50%">-->
+<!--                                             <input type="hidden" name="know-more" value="know-more">-->
+<!--                                             <button class="btn btn-primary btn-large" type="submit" name="submit" value="{{workshop}}" style="width: 100%">KNOW MORE</button>-->
+<!--                                        </form>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            {% endfor %}-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+
+<h4 style="padding:5% 0% 2% 0%; text-align:center;"><b>UPCOMING WORKSHOPS</b></h4>
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="{{category}}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+<div class="main-upcoming-ws-wrapper">
+    {% for workshop in upcoming_workshop_list %}
+    <div class="main-upcoming-ws-item">
+       <a href="{{url_for('school.upcoming_workshop',workshop=workshop)}}"><img src="static/images/workshops/{{workshop}}/thumbnail.jpg" width="100%" height="100%"></a>
     </div>
+
+    {% endfor %}
+</div>
+
+<div style="padding: 5%;">
+
 </div>
 
 <script src="../static/js/school.js"></script>
