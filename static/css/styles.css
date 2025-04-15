@@ -751,7 +751,7 @@ and (max-width : 576px) {
         width: 100%;
     }
     .delete-btn {
-        width: 50%;
+        width: 100%;
     }
 }
 
