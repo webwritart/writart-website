@@ -459,7 +459,7 @@ def delete_account():
 
                     db.session.delete(current_user)
                     db.session.commit()
-                    return redirect('https://writart.com/')
+                    return render_template('delete_account.html')
 
                 except Exception as e:
                     flash("Some problem occured! Please contact the admins at +91-8920351265 or mail us at "
@@ -468,4 +468,4 @@ def delete_account():
                 flash("Wrong password! Please try again!", "error")
         else:
             flash("Wrong word! Type only 'DELETE' in the box!", "error")
-    return redirect(url_for('account.home'))
+    return render_template('delete_account.html')
