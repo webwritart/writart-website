@@ -25,121 +25,123 @@ def home():
     admin = db.session.query(Role).filter_by(name='admin').one_or_none()
     client = db.session.query(Role).filter_by(name='client').one_or_none()
     animation_admin = db.session.query(Role).filter_by(name='animation_admin').one_or_none()
+    if current_user.is_authenticated:
+        if len(current_user.participated) > 0:
+            certificate = True
+        else:
+            certificate = False
 
-    if len(current_user.participated) > 0:
-        certificate = True
-    else:
-        certificate = False
+        if request.method == 'POST':
+            if request.form.get('whatsapp'):
+                current_user.whatsapp = request.form.get("whatsapp")
+            if request.form.get('profession'):
+                current_user.profession = request.form.get("profession")
+            if request.form.get('name'):
+                current_user.name = request.form.get("name")
+            if request.form.get('state'):
+                current_user.state = request.form.get('state')
+            if request.form.get('phone'):
+                phone = request.form.get('phone')
+                result = db.session.execute(db.select(Member).where(Member.phone == phone))
+                user = result.scalar()
+                if user:
+                    flash("Couldn't update number as there's already an account with this number", category="error")
+                else:
+                    current_user.phone = request.form.get("phone")
+            if request.form.get('email'):
+                mail_ = request.form.get('email')
+                result2 = db.session.execute(db.select(Member).where(Member.email == mail_))
+                user2 = result2.scalar()
+                if user2:
+                    flash("Couldn't update email as there's already an account with this email", category="error")
+                else:
+                    current_user.email = request.form.get("email")
 
-    if request.method == 'POST':
-        if request.form.get('whatsapp'):
-            current_user.whatsapp = request.form.get("whatsapp")
-        if request.form.get('profession'):
-            current_user.profession = request.form.get("profession")
-        if request.form.get('name'):
-            current_user.name = request.form.get("name")
-        if request.form.get('state'):
-            current_user.state = request.form.get('state')
-        if request.form.get('phone'):
-            phone = request.form.get('phone')
-            result = db.session.execute(db.select(Member).where(Member.phone == phone))
-            user = result.scalar()
-            if user:
-                flash("Couldn't update number as there's already an account with this number", category="error")
-            else:
-                current_user.phone = request.form.get("phone")
-        if request.form.get('email'):
-            mail_ = request.form.get('email')
-            result2 = db.session.execute(db.select(Member).where(Member.email == mail_))
-            user2 = result2.scalar()
-            if user2:
-                flash("Couldn't update email as there's already an account with this email", category="error")
-            else:
-                current_user.email = request.form.get("email")
+            if request.form.get('old-pwd'):
+                old_pwd = request.form.get('old-pwd')
+                if not check_password_hash(current_user.password, old_pwd):
+                    flash("Please enter the correct old password", category="error")
+                else:
+                    hash_and_salted_password = generate_password_hash(
+                        request.form.get('new-pwd'),
+                        method='pbkdf2:sha256',
+                        salt_length=8
+                    )
+                    current_user.password = hash_and_salted_password
+                    flash("Password changed successfully", category="success")
+            if request.form.get('fb-url'):
+                if 'https://' not in request.form.get('fb-url'):
+                    fb_url = 'https://' + request.form.get('fb-url')
+                else:
+                    fb_url = request.form.get('fb-url')
+                current_user.fb_url = fb_url
+            if request.form.get('insta-url'):
+                if 'https://' not in request.form.get('insta-url'):
+                    insta_url = 'https://' + request.form.get('insta-url')
+                else:
+                    insta_url = request.form.get('fb-url')
+                current_user.insta_url = insta_url
+            if request.form.get('web-url'):
+                if 'https://' not in request.form.get('web-url'):
+                    website = 'https://' + request.form.get('web-url')
+                else:
+                    website = request.form.get('web-url')
+                current_user.website = website
 
-        if request.form.get('old-pwd'):
-            old_pwd = request.form.get('old-pwd')
-            if not check_password_hash(current_user.password, old_pwd):
-                flash("Please enter the correct old password", category="error")
-            else:
-                hash_and_salted_password = generate_password_hash(
-                    request.form.get('new-pwd'),
-                    method='pbkdf2:sha256',
-                    salt_length=8
-                )
-                current_user.password = hash_and_salted_password
-                flash("Password changed successfully", category="success")
-        if request.form.get('fb-url'):
-            if 'https://' not in request.form.get('fb-url'):
-                fb_url = 'https://' + request.form.get('fb-url')
-            else:
-                fb_url = request.form.get('fb-url')
-            current_user.fb_url = fb_url
-        if request.form.get('insta-url'):
-            if 'https://' not in request.form.get('insta-url'):
-                insta_url = 'https://' + request.form.get('insta-url')
-            else:
-                insta_url = request.form.get('fb-url')
-            current_user.insta_url = insta_url
-        if request.form.get('web-url'):
-            if 'https://' not in request.form.get('web-url'):
-                website = 'https://' + request.form.get('web-url')
-            else:
-                website = request.form.get('web-url')
-            current_user.website = website
+            db.session.commit()
 
-        db.session.commit()
+            if request.form.get('submit') == 'download-certificate':
+                folder_name = current_user.name.split()[0] + str(current_user.id)
+                last_workshop_name = current_user.participated[len(current_user.participated) - 1].name
+                second_last_workshop_name = current_user.participated[len(current_user.participated) - 2].name
+                topic = current_user.participated[len(current_user.participated) - 1].topic
+                topic2 = current_user.participated[len(current_user.participated) - 2].topic
+                file_name = f"{last_workshop_name}-{current_user.name.split()[0]}.pdf"
+                file_name_2 = f"{second_last_workshop_name}-{current_user.name.split()[0]}.pdf"
+                path = f"../static/files/users/{folder_name}/certificates/{file_name}"
+                path2 = f"../static/files/users/{folder_name}/certificates/{file_name_2}"
+                if os.path.exists(path):
+                    return send_file(path_or_file=path, as_attachment=True,
+                                     download_name=f"Certificate - {topic} - Writart Gurukul.pdf")
+                elif os.path.exists(path2):
+                    return send_file(path_or_file=path2, as_attachment=True,
+                                     download_name=f"Certificate - {topic2} - Writart Gurukul.pdf")
+                else:
+                    flash('The Certificate is to be uploaded soon!', 'error')
 
-        if request.form.get('submit') == 'download-certificate':
-            folder_name = current_user.name.split()[0] + str(current_user.id)
-            last_workshop_name = current_user.participated[len(current_user.participated) - 1].name
-            second_last_workshop_name = current_user.participated[len(current_user.participated) - 2].name
-            topic = current_user.participated[len(current_user.participated) - 1].topic
-            topic2 = current_user.participated[len(current_user.participated) - 2].topic
-            file_name = f"{last_workshop_name}-{current_user.name.split()[0]}.pdf"
-            file_name_2 = f"{second_last_workshop_name}-{current_user.name.split()[0]}.pdf"
-            path = f"../static/files/users/{folder_name}/certificates/{file_name}"
-            path2 = f"../static/files/users/{folder_name}/certificates/{file_name_2}"
-            if os.path.exists(path):
+            topic_list = []
+            result = current_user.participated
+            for r in result:
+                topic_list.append(r.topic)
+            if request.form.get('submit') in topic_list:
+                index = topic_list.index(request.form.get('submit'))
+                ws = db.session.query(Workshop).filter_by(topic=topic_list[index]).one()
+                folder_name = current_user.name.split()[0] + str(current_user.id)
+                file_name = f"{ws.name}-{current_user.name.split()[0]}.pdf"
+                path = f"../static/files/users/{folder_name}/certificates/{file_name}"
                 return send_file(path_or_file=path, as_attachment=True,
-                                 download_name=f"Certificate - {topic} - Writart Gurukul.pdf")
-            elif os.path.exists(path2):
-                return send_file(path_or_file=path2, as_attachment=True,
-                                 download_name=f"Certificate - {topic2} - Writart Gurukul.pdf")
-            else:
-                flash('The Certificate is to be uploaded soon!', 'error')
+                                 download_name=f"Certificate - {topic_list[index]} - Writart Gurukul.pdf")
 
-        topic_list = []
-        result = current_user.participated
-        for r in result:
-            topic_list.append(r.topic)
-        if request.form.get('submit') in topic_list:
-            index = topic_list.index(request.form.get('submit'))
-            ws = db.session.query(Workshop).filter_by(topic=topic_list[index]).one()
-            folder_name = current_user.name.split()[0] + str(current_user.id)
-            file_name = f"{ws.name}-{current_user.name.split()[0]}.pdf"
-            path = f"../static/files/users/{folder_name}/certificates/{file_name}"
-            return send_file(path_or_file=path, as_attachment=True,
-                             download_name=f"Certificate - {topic_list[index]} - Writart Gurukul.pdf")
+            return redirect(url_for('account.home'))
 
-        return redirect(url_for('account.home'))
+        certificate_list = []
+        if len(current_user.participated) > 0:
+            for workshop in current_user.participated:
+                file_name = f"{workshop.name}-{current_user.name.split()[0]}.pdf"
+                folder_name = current_user.name.split()[0] + str(current_user.id)
+                path = f"../static/files/users/{folder_name}/certificates/{file_name}"
+                if os.path.exists(path):
+                    certificate_list.append(workshop.topic)
 
-    certificate_list = []
-    if len(current_user.participated) > 0:
-        for workshop in current_user.participated:
-            file_name = f"{workshop.name}-{current_user.name.split()[0]}.pdf"
-            folder_name = current_user.name.split()[0] + str(current_user.id)
-            path = f"../static/files/users/{folder_name}/certificates/{file_name}"
-            if os.path.exists(path):
-                certificate_list.append(workshop.topic)
-
-    role_result = current_user.role
-    roles = []
-    for role in role_result:
-        roles.append(role.name)
-    return render_template('my_account.html', certificate_list=certificate_list, certificate=certificate,
-                           name=current_user.name, logged_in=current_user.is_authenticated, admin=admin, client=client,
-                           animation_admin=animation_admin, roles=roles)
+        role_result = current_user.role
+        roles = []
+        for role in role_result:
+            roles.append(role.name)
+        return render_template('my_account.html', certificate_list=certificate_list, certificate=certificate,
+                               name=current_user.name, logged_in=current_user.is_authenticated, admin=admin, client=client,
+                               animation_admin=animation_admin, roles=roles)
+    else:
+        render_template('my_account.html')
 
 
 @account.route('/update_details', methods=['GET', 'POST'])
@@ -445,7 +447,6 @@ def delete_account():
         confirmation = request.form.get('confirmation')
         if confirmation == 'DELETE' or confirmation == "'DELETE'":
             if check_password_hash(user.password, password):
-                print('password checked successfully!')
                 try:
                     for ws in current_user.participated:
                         current_user.participated.remove(ws)
@@ -455,12 +456,10 @@ def delete_account():
                         current_user.demo.remove(demo)
                     for project in current_user.project:
                         current_user.project.remove(project)
-                    print('All enrollments deleted successfully!')
 
                     db.session.delete(current_user)
-                    print('User deleted successfully')
                     db.session.commit()
-                    return redirect(url_for('main.home'))
+                    return redirect('https://writart.com/')
 
                 except Exception as e:
                     flash("Some problem occured! Please contact the admins at +91-8920351265 or mail us at "
