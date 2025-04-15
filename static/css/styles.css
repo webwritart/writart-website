@@ -778,14 +778,9 @@ hr {
 /* ---------------------------------------------------------------------------------- YOUTUBE VIDEOS FAST LOADING ------------------------------------------------------------------------------------- */
 
 lite-youtube {
-    background-color: #000;
-    position: relative;
-    display: block;
-    contain: content;
-    background-position: center center;
-    background-size: cover;
-    cursor: pointer;
-    max-width: 720px;
+    width: 80%;
+    overflow: auto;
+    height: 100%;
 }
 
 /* gradient */
