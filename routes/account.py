@@ -445,27 +445,16 @@ def delete_account():
         user = current_user
         password = request.form.get('password')
         confirmation = request.form.get('confirmation')
+        feedback = request.form.get('message')
         if confirmation == 'DELETE' or confirmation == "'DELETE'":
             if check_password_hash(user.password, password):
-                try:
-                    for ws in current_user.participated:
-                        current_user.participated.remove(ws)
-                    for role in current_user.role:
-                        current_user.role.remove(role)
-                    for demo in current_user.demo:
-                        current_user.demo.remove(demo)
-                    for project in current_user.project:
-                        current_user.project.remove(project)
-
-                    db.session.delete(current_user)
-                    db.session.commit()
-                    return render_template('delete_account.html')
-
-                except Exception as e:
-                    flash("Some problem occured! Please contact the admins at +91-8920351265 or mail us at "
-                          "writartstudios@gmail.com", 'error')
+                message = f'Dear Admin\n\nThe user below has requested their account deletion\n\nUser name: {user.name}' \
+                          f'\nUser_ID: {user.id}\nEmail: {user.email}\nPhone: {user.phone}\nMessage: {feedback}'
+                send_email_support('Account Deletion Request', 'writartstudios@gmail.com', message, '', '')
+                flash("Your account deletion request successfully submitted to the Admin! Your account will be deleted "
+                      "soon!", "success")
             else:
                 flash("Wrong password! Please try again!", "error")
         else:
             flash("Wrong word! Type only 'DELETE' in the box!", "error")
-    return render_template('delete_account.html')
+    return redirect(url_for('account.home'))
