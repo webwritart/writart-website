@@ -11,6 +11,7 @@ from datetime import date
 import random
 from operations.miscellaneous import calculate_age, allowed_file
 from models.artist_data import ArtistData
+from routes import main
 
 account = Blueprint('account', __name__, static_folder='static', template_folder='templates/account')
 
@@ -434,3 +435,38 @@ def logout():
     if 'url' in session:
         return redirect(session['url'])
     return redirect(url_for('main.home'))
+
+
+@account.route('/delete_account', methods=['GET', 'POST'])
+def delete_account():
+    if request.method == 'POST':
+        user = current_user
+        password = request.form.get('password')
+        confirmation = request.form.get('confirmation')
+        if confirmation == 'DELETE' or confirmation == "'DELETE'":
+            if check_password_hash(user.password, password):
+                print('password checked successfully!')
+                try:
+                    for ws in current_user.participated:
+                        current_user.participated.remove(ws)
+                    for role in current_user.role:
+                        current_user.role.remove(role)
+                    for demo in current_user.demo:
+                        current_user.demo.remove(demo)
+                    for project in current_user.project:
+                        current_user.project.remove(project)
+                    print('All enrollments deleted successfully!')
+
+                    db.session.delete(current_user)
+                    print('User deleted successfully')
+                    db.session.commit()
+                    return render_template('index.html')
+
+                except Exception as e:
+                    flash("Some problem occured! Please contact the admins at +91-8920351265 or mail us at "
+                          "writartstudios@gmail.com", 'error')
+            else:
+                flash("Wrong password! Please try again!", "error")
+        else:
+            flash("Wrong word! Type only 'DELETE' in the box!", "error")
+    return redirect(url_for('account.home'))

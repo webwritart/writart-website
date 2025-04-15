@@ -53,6 +53,17 @@ function closeCertificateList() {
     document.getElementById("certificate_list").style.display = "none";
 }
 
+function deleteAccountPopup() {
+    document.getElementById("delete-account").style.display = "block";
+    closeForm();
+    closeForm2();
+    closeForm3();
+    closeCertificateList();
+}
+function closeDeleteAccountPopup() {
+    document.getElementById("delete-account").style.display = "none";
+}
+
 function validateForm2() {
     let newPwd = document.forms['set-password']['password'].value;
     let retypedPwd = document.forms['set-password']['reenter-password'].value;
