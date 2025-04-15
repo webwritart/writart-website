@@ -16,6 +16,7 @@ school = Blueprint('school', __name__, static_folder='static', template_folder='
 
 @school.route('/', )
 def home():
+    session['url'] = url_for('school.home')
     admin = db.session.query(Role).filter_by(name='admin').first()
 
     current_workshop_name = db.session.query(Tools).filter_by(keyword='current_workshop').scalar().data
@@ -75,6 +76,7 @@ def home():
 
 @school.route('/upcoming_workshop', methods=['GET', 'POST'])
 def upcoming_workshop():
+    session['url'] = url_for('school.upcoming_workshop')
     upcoming_workshop_list = []
     admin = db.session.query(Role).filter_by(name='admin').first()
     if request.args:
@@ -252,6 +254,7 @@ def upcoming_workshop():
 
 @school.route('/classroom')
 def classroom():
+    session['url'] = url_for('school.classroom')
     admin = db.session.query(Role).filter_by(name='admin').one_or_none()
     all_recorded_video_urls = []
     vid_caption_list = []

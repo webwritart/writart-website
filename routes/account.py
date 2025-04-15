@@ -431,4 +431,6 @@ def set_new_password():
 @login_required
 def logout():
     logout_user()
+    if 'url' in session:
+        return redirect(session['url'])
     return redirect(url_for('main.home'))
