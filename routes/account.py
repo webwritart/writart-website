@@ -146,10 +146,11 @@ def home():
                 if check_password_hash(user.password, password):
                     message = f'Dear Admin\n\nThe user below has requested their account deletion\n\nUser name: {user.name}' \
                               f'\nUser_ID: {user.id}\nEmail: {user.email}\nPhone: {user.phone}\nMessage: {feedback}'
-                    send_email_support('Account Deletion Request', 'writartstudios@gmail.com', message, '', '')
+                    send_email_support('Account Deletion Request', ['writartstudios@gmail.com'], message, '', '')
                     flash(
                         "Your account deletion request successfully submitted to the Admin! Your account will be deleted "
                         "soon!", "success")
+                    return redirect(url_for('account.home'))
                 else:
                     flash("Wrong password! Please try again!", "error")
             else:
