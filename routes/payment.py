@@ -14,8 +14,9 @@ load_dotenv()
 
 payment = Blueprint('payment', __name__, static_folder='static', template_folder='templates/payment')
 
-KEY_ID = os.environ.get('RAZORPAY_KEY_ID_LIVE')
-KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET_LIVE')
+KEY_ID = os.environ.get('RAZORPAY_KEY_ID_TEST')
+KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET_TEST')
+
 client = razorpay.Client(auth=(KEY_ID, KEY_SECRET))
 
 today_date = date.today()
