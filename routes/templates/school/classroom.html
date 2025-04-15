@@ -66,16 +66,16 @@
             {% endif %}
             {% if video_count > 0 %}
                 {% for n in range(video_count) %}
-<!--         <iframe class="responsive-iframe" src="https://www.youtube.com/embed/{{ yt_vid_id_list[n] }}?si=2BVYS-0QHsxcX4f5"-->
-<!--                    title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write;-->
-<!--                    encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"-->
-<!--                    allowfullscreen></iframe>-->
+         <iframe class="responsive-iframe" src="https://www.youtube.com/embed/{{ yt_vid_id_list[n] }}?si=2BVYS-0QHsxcX4f5"
+                    title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write;
+                    encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
 <!--                    <div class="video">-->
 <!--                        <div class="content">-->
-                            <lite-youtube class= 'responsive-iframe' videoid="{{ yt_vid_id_list[n] }}"
+<!--                            <lite-youtube videoid="{{ yt_vid_id_list[n] }}"-->
 
-                                      params="controls=1"></lite-youtube>
-                            <p>{{ vid_caption_list[n] }}</p>
+<!--                                      params="controls=1"></lite-youtube>-->
+<!--                            <p>{{ vid_caption_list[n] }}</p>-->
 <!--                        </div>-->
 <!--                     </div>-->
                 {% endfor %}
