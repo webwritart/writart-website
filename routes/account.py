@@ -137,6 +137,23 @@ def home():
         roles = []
         for role in role_result:
             roles.append(role.name)
+        if request.form.get('submit') == 'DELETE-ACCOUNT':
+            user = current_user
+            password = request.form.get('password')
+            confirmation = request.form.get('confirmation')
+            feedback = request.form.get('message')
+            if confirmation == 'DELETE' or confirmation == "'DELETE'":
+                if check_password_hash(user.password, password):
+                    message = f'Dear Admin\n\nThe user below has requested their account deletion\n\nUser name: {user.name}' \
+                              f'\nUser_ID: {user.id}\nEmail: {user.email}\nPhone: {user.phone}\nMessage: {feedback}'
+                    send_email_support('Account Deletion Request', 'writartstudios@gmail.com', message, '', '')
+                    flash(
+                        "Your account deletion request successfully submitted to the Admin! Your account will be deleted "
+                        "soon!", "success")
+                else:
+                    flash("Wrong password! Please try again!", "error")
+            else:
+                flash("Wrong word! Type only 'DELETE' in the box!", "error")
         return render_template('my_account.html', certificate_list=certificate_list, certificate=certificate,
                                name=current_user.name, logged_in=current_user.is_authenticated, admin=admin, client=client,
                                animation_admin=animation_admin, roles=roles)
@@ -439,22 +456,4 @@ def logout():
     return redirect(url_for('main.home'))
 
 
-@account.route('/delete_account', methods=['GET', 'POST'])
-def delete_account():
-    if request.method == 'POST':
-        user = current_user
-        password = request.form.get('password')
-        confirmation = request.form.get('confirmation')
-        feedback = request.form.get('message')
-        if confirmation == 'DELETE' or confirmation == "'DELETE'":
-            if check_password_hash(user.password, password):
-                message = f'Dear Admin\n\nThe user below has requested their account deletion\n\nUser name: {user.name}' \
-                          f'\nUser_ID: {user.id}\nEmail: {user.email}\nPhone: {user.phone}\nMessage: {feedback}'
-                send_email_support('Account Deletion Request', 'writartstudios@gmail.com', message, '', '')
-                flash("Your account deletion request successfully submitted to the Admin! Your account will be deleted "
-                      "soon!", "success")
-            else:
-                flash("Wrong password! Please try again!", "error")
-        else:
-            flash("Wrong word! Type only 'DELETE' in the box!", "error")
-    return redirect(url_for('account.home'))
+

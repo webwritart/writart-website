@@ -287,7 +287,7 @@
 </div>
 <div class="form-popup box" id="delete-account">
     <div style="border: 2px solid black; background-color: white; margin: auto; text-align: center;padding:10%;">
-        <form action="{{url_for('account.delete_account')}}" name="delete-account" method="post">
+        <form action="{{url_for('account.home')}}" name="delete-account" method="post">
             <div style="display: flex; justify-content: right; width: 95%;">
                 <a style="opacity: 0.5;padding:0%0%5%0%;" type="button" onclick="closeDeleteAccountPopup()">close <img src="../static/images/icons/cross-sign.png" width="10px"></a>
             </div>
@@ -296,7 +296,7 @@
             <input style="background:#7a7a7a;" type="text" placeholder="Type 'DELETE' here" name="confirmation" required>
             <input style="background:#7a7a7a" type="text" placeholder="Reason for deleting (Optional)" name="message">
             <label>ARE YOU SURE YOU WANT TO DELETE THE ACCOUNT PERMANENTLY?</label>
-            <input style="background:red;" type="submit" class="btn btn-primary" value="DELETE-ACCOUNT">
+            <input style="background:red;" type="submit" name="submit" class="btn btn-primary" value="DELETE-ACCOUNT">
         </form>
 
     </div>
