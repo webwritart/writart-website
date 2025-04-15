@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div style="display:flex;height:90vh;justify-content:center;align-items:center;font-weight:300;">
+    <p>Your account has been successfully deleted! You can create your account again
+    at <a href="{{ url_for('account.login') }}">Login/Register page</a></p>
+</div>
+
+
+{% endblock %}
