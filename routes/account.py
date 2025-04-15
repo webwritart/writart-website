@@ -460,7 +460,7 @@ def delete_account():
                     db.session.delete(current_user)
                     print('User deleted successfully')
                     db.session.commit()
-                    return render_template('index.html')
+                    return redirect(url_for('main.home'))
 
                 except Exception as e:
                     flash("Some problem occured! Please contact the admins at +91-8920351265 or mail us at "
