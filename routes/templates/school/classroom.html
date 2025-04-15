@@ -11,39 +11,31 @@
         <p style="color: gray">Revisions and Practice make an artist perfect. Therefore, welcome to your classroom! Take Notes, Draw at least more than 5 rough drawings/sketches every day. Keep showing your work</p>
     </div>
 </div>
-<div id="video-wrapper4">
-    <div id="video-wrapper-container4">
+<div class="video-wrapper">
+    <div class="video-wrapper-container">
         <h3 style="color:#b38fc2;">Art Demonstrations</h3>
         {% for n in range(demo_count) %}
-            <div class="video">
-                <div class="content">
-                    <lite-youtube videoid="{{ all_demo_url_list[n] }}"
-                                  params="controls=1"></lite-youtube>
-                    <p><b>{{ title_list[n] }}{{ part_list[n] }}</b><br>{{ demo_caption_list[n] }}</p>
-                </div>
-            </div>
+        <iframe class="responsive-iframe" src="https://www.youtube.com/embed/{{ all_demo_url_list[n] }}?si=2BVYS-0QHsxcX4f5"
+                    title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write;
+                    encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
+<!--            <div class="video">-->
+<!--                <div class="content">-->
+<!--                    <lite-youtube videoid="{{ all_demo_url_list[n] }}"-->
+<!--                                  params="controls=1"></lite-youtube>-->
+<!--                    <p><b>{{ title_list[n] }}{{ part_list[n] }}</b><br>{{ demo_caption_list[n] }}</p>-->
+<!--                </div>-->
+<!--            </div>-->
         {% endfor %}
     </div>
 </div>
 <hr/>
 
-<div id="video-wrapper2">
-    <div id="video-wrapper-container2">
+<div class="video-wrapper">
+    <div class="video-wrapper-container">
         <h3 style="color:#b38fc2;">Doubt Solving Sessions</h3>
         {% for n in range(qa_video_count) %}
             <iframe class="responsive-iframe" src="https://www.youtube.com/embed/{{vid_id_list[n]}}?si=2BVYS-0QHsxcX4f5"
-                    title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write;
-                    encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
-                    allowfullscreen></iframe>
-        <iframe class="responsive-iframe" src="https://www.youtube.com/embed/{{vid_id_list[n]}}?si=2BVYS-0QHsxcX4f5"
-                    title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write;
-                    encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
-                    allowfullscreen></iframe>
-        <iframe class="responsive-iframe" src="https://www.youtube.com/embed/{{vid_id_list[n]}}?si=2BVYS-0QHsxcX4f5"
-                    title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write;
-                    encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
-                    allowfullscreen></iframe>
-        <iframe class="responsive-iframe" src="https://www.youtube.com/embed/{{vid_id_list[n]}}?si=2BVYS-0QHsxcX4f5"
                     title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write;
                     encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
                     allowfullscreen></iframe>
@@ -62,8 +54,8 @@
 
 <hr/>
 
-<div id="video-wrapper">
-    <div id="video-wrapper-container">
+<div class="video-wrapper">
+    <div class="video-wrapper-container">
         <h3 style="color:#b38fc2;">Workshops</h3>
         {% if logged_in %}
             {% if video_count == 0 %}
@@ -74,14 +66,18 @@
             {% endif %}
             {% if video_count > 0 %}
                 {% for n in range(video_count) %}
-                    <div class="video">
-                        <div class="content">
-                            <lite-youtube videoid="{{ yt_vid_id_list[n] }}"
+         <iframe class="responsive-iframe" src="https://www.youtube.com/embed/{{ yt_vid_id_list[n] }}?si=2BVYS-0QHsxcX4f5"
+                    title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write;
+                    encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
+<!--                    <div class="video">-->
+<!--                        <div class="content">-->
+<!--                            <lite-youtube videoid="{{ yt_vid_id_list[n] }}"-->
 
-                                      params="controls=1"></lite-youtube>
-                            <p>{{ vid_caption_list[n] }}</p>
-                        </div>
-                     </div>
+<!--                                      params="controls=1"></lite-youtube>-->
+<!--                            <p>{{ vid_caption_list[n] }}</p>-->
+<!--                        </div>-->
+<!--                     </div>-->
                 {% endfor %}
             {% endif %}
         {% endif %}
