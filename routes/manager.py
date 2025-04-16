@@ -81,50 +81,54 @@ def home():
 
             if request.form.get('category'):
                 ws_name = request.form.get('ws_name')
-                workshop = db.session.query(Workshop).filter_by(name=ws_name).first()
-                details = workshop.details
-                details.category = request.form.get('category')
-                details.brief = request.form.get('brief')
-                details.sessions = request.form.get('sessions')
-                details.subtopic1 = request.form.get('st1')
-                details.subtopic2 = request.form.get('st2')
-                details.subtopic3 = request.form.get('st3')
-                details.subtopic4 = request.form.get('st4')
-                details.subtopic5 = request.form.get('st5')
-                details.subtopic6 = request.form.get('st6')
-                details.subtopic7 = request.form.get('st7')
-                details.subtopic8 = request.form.get('st8')
-                details.subtopic9 = request.form.get('st9')
-                details.description = request.form.get('description')
-                details.req1 = request.form.get('req1')
-                details.req2 = request.form.get('req2')
-                details.req3 = request.form.get('req3')
-                details.req4 = request.form.get('req4')
-                details.req5 = request.form.get('req5')
-                details.req6 = request.form.get('req6')
-                details.req7 = request.form.get('req7')
-                details.req8 = request.form.get('req8')
-                details.req9 = request.form.get('req9')
-                details.result1 = request.form.get('result1')
-                details.result2 = request.form.get('result2')
-                details.result3 = request.form.get('result3')
-                details.result4 = request.form.get('result4')
-                details.result5 = request.form.get('result5')
-                details.result6 = request.form.get('result6')
-                details.result7 = request.form.get('result7')
-                details.result8 = request.form.get('result8')
-                details.result9 = request.form.get('result9')
-                details.cover = f"{current_ws_name}/cover.jpg"
-                details.thumbnail = f"{ws_name}/thumbnail.jpg"
-                details.photo1 = f'{ws_name}/p1'
-                details.photo2 = f'{ws_name}/p2'
-                details.photo3 = f'{ws_name}/p3'
-                try:
+                description = request.form.get('description')
+                if len(description) > 500:
+                    flash("Description exceeds the character limit of 500!", "error")
+                else:
+                    workshop = db.session.query(Workshop).filter_by(name=ws_name).first()
+                    details = workshop.details
+                    details.category = request.form.get('category')
+                    details.brief = request.form.get('brief')
+                    details.sessions = request.form.get('sessions')
+                    details.subtopic1 = request.form.get('st1')
+                    details.subtopic2 = request.form.get('st2')
+                    details.subtopic3 = request.form.get('st3')
+                    details.subtopic4 = request.form.get('st4')
+                    details.subtopic5 = request.form.get('st5')
+                    details.subtopic6 = request.form.get('st6')
+                    details.subtopic7 = request.form.get('st7')
+                    details.subtopic8 = request.form.get('st8')
+                    details.subtopic9 = request.form.get('st9')
+                    details.description = request.form.get('description')
+                    details.req1 = request.form.get('req1')
+                    details.req2 = request.form.get('req2')
+                    details.req3 = request.form.get('req3')
+                    details.req4 = request.form.get('req4')
+                    details.req5 = request.form.get('req5')
+                    details.req6 = request.form.get('req6')
+                    details.req7 = request.form.get('req7')
+                    details.req8 = request.form.get('req8')
+                    details.req9 = request.form.get('req9')
+                    details.result1 = request.form.get('result1')
+                    details.result2 = request.form.get('result2')
+                    details.result3 = request.form.get('result3')
+                    details.result4 = request.form.get('result4')
+                    details.result5 = request.form.get('result5')
+                    details.result6 = request.form.get('result6')
+                    details.result7 = request.form.get('result7')
+                    details.result8 = request.form.get('result8')
+                    details.result9 = request.form.get('result9')
+                    details.cover = f"{ws_name}/cover.jpg"
+                    details.thumbnail = f"{ws_name}/thumbnail.jpg"
+                    details.photo1 = f'{ws_name}/p1.jpg'
+                    details.photo2 = f'{ws_name}/p2.jpg'
+                    details.photo3 = f'{ws_name}/p3.jpg'
+                    try:
 
-                    db.session.commit()
-                    flash('Workshop details added successfully, Chief!', 'success')
-                except:
-                    flash("Sorry, Couldn't add, Chief!", "error")
+                        db.session.commit()
+                        flash('Workshop details added successfully, Chief!', 'success')
+                    except:
+                        flash("Sorry, Couldn't add, Chief!", "error")
 
             if request.form.get('submit') and request.form.get('submit') == 'upload_photos':
                 allowed_extensions = {'png', 'jpg'}
