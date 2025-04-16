@@ -122,6 +122,25 @@ def home():
                 return send_file(path_or_file=path, as_attachment=True,
                                  download_name=f"Certificate - {topic_list[index]} - Writart Gurukul.pdf")
 
+            if request.form.get('submit') == 'DELETE-ACCOUNT':
+                user = current_user
+                password = request.form.get('password')
+                confirmation = request.form.get('confirmation')
+                feedback = request.form.get('message')
+                if confirmation == 'DELETE' or confirmation == "'DELETE'":
+                    if check_password_hash(user.password, password):
+                        message = f'Dear Admin\n\nThe user below has requested their account deletion\n\nUser name: {user.name}' \
+                                  f'\nUser_ID: {user.id}\nEmail: {user.email}\nPhone: {user.phone}\nMessage: {feedback}'
+                        send_email_support('Account Deletion Request', ['writartstudios@gmail.com'], message, '', '')
+                        flash(
+                            "Your account deletion request successfully submitted to the Admin! Your account will be deleted "
+                            "soon!", "success")
+                        return redirect(url_for('account.home'))
+                    else:
+                        flash("Wrong password! Please try again!", "error")
+                else:
+                    flash("Wrong word! Type only 'DELETE' in the box!", "error")
+
             return redirect(url_for('account.home'))
 
         certificate_list = []
@@ -137,26 +156,10 @@ def home():
         roles = []
         for role in role_result:
             roles.append(role.name)
-        if request.form.get('submit') == 'DELETE-ACCOUNT':
-            user = current_user
-            password = request.form.get('password')
-            confirmation = request.form.get('confirmation')
-            feedback = request.form.get('message')
-            if confirmation == 'DELETE' or confirmation == "'DELETE'":
-                if check_password_hash(user.password, password):
-                    message = f'Dear Admin\n\nThe user below has requested their account deletion\n\nUser name: {user.name}' \
-                              f'\nUser_ID: {user.id}\nEmail: {user.email}\nPhone: {user.phone}\nMessage: {feedback}'
-                    send_email_support('Account Deletion Request', ['writartstudios@gmail.com'], message, '', '')
-                    flash(
-                        "Your account deletion request successfully submitted to the Admin! Your account will be deleted "
-                        "soon!", "success")
-                    return redirect(url_for('account.home'))
-                else:
-                    flash("Wrong password! Please try again!", "error")
-            else:
-                flash("Wrong word! Type only 'DELETE' in the box!", "error")
+
         return render_template('my_account.html', certificate_list=certificate_list, certificate=certificate,
-                               name=current_user.name, logged_in=current_user.is_authenticated, admin=admin, client=client,
+                               name=current_user.name, logged_in=current_user.is_authenticated, admin=admin,
+                               client=client,
                                animation_admin=animation_admin, roles=roles)
     else:
         render_template('my_account.html')
@@ -254,33 +257,37 @@ def register():
 
         login_user(new_user)
 
-        if artist_account == 'yes':
-            artist = db.session.query(Role).filter_by(name='artist').one()
-
-            current_user.role.append(artist)
-            db.session.commit()
-            entry = ArtistData(
-                artist=current_user.name,
-                watermarked_artworks=0,
-                gallery_artworks=0,
-                all_collections=0,
-                commission_collections=0,
-                sold_artworks=0,
-                queried_artworks=0,
-                shipped_artworks=0,
-                contracted_artworks=0,
-                sold_commissions=0,
-                memory_occupied_total=0,
-                memory_occupied_gallery=0,
-                member=current_user,
-            )
-            db.session.add(entry)
-            db.session.commit()
+        # if artist_account == 'yes':
+        #     artist = db.session.query(Role).filter_by(name='artist').one()
+        #
+        #     current_user.role.append(artist)
+        #     db.session.commit()
+        #     entry = ArtistData(
+        #         artist=current_user.name,
+        #         watermarked_artworks=0,
+        #         gallery_artworks=0,
+        #         all_collections=0,
+        #         commission_collections=0,
+        #         sold_artworks=0,
+        #         queried_artworks=0,
+        #         shipped_artworks=0,
+        #         contracted_artworks=0,
+        #         sold_commissions=0,
+        #         memory_occupied_total=0,
+        #         memory_occupied_gallery=0,
+        #         member=current_user,
+        #     )
+        #     db.session.add(entry)
+        #     db.session.commit()
 
         mail = render_template('mails/registration_success.html')
-        send_email_school('Registration success!', [email],
-                          '',
-                          mail, image_dict)
+        send_email_support('Registration success!', [email],
+                           '',
+                           mail, image_dict)
+        mail_message = f'New Registration:\n\nName: {request.form.get("name")}\nEmail: {request.form.get("email")}\n' \
+                       f'Sex: {request.form.get("sex")}\nProfession: {request.form.get("profession")}\n' \
+                       f'State: {request.form.get("state")}\n\n'
+        send_email_support('New Registration!', ['writartstudios@gmail.com'], mail_message, '', '')
         return redirect(url_for('account.home', name=current_user.name.split()[0]))
     return render_template("register.html", logged_in=current_user.is_authenticated)
 
@@ -390,7 +397,7 @@ def forgot_password():
             email = request.form.get('email')
             email_list.clear()
             email_list.append(email)
-            token = random.randint(1000,9999)
+            token = random.randint(1000, 9999)
             results = db.session.query(Member)
             for result in results:
                 if email == result.email:
@@ -399,7 +406,8 @@ def forgot_password():
                     send_email_support(subject="Password reset",
                                        recipients=email_list, body='',
                                        html=render_template('mails/password_reset_link.html',
-                                                            link=f"https://writart.com/account/set_new_password?token={str(token)}&email={email}"), image_dict='')
+                                                            link=f"https://writart.com/account/set_new_password?token={str(token)}&email={email}"),
+                                       image_dict='')
                     return render_template('check_mail_notification.html')
             else:
                 flash('No account found with the entered email!', 'error')
@@ -443,7 +451,8 @@ def set_new_password():
     if str(token) == str(entered_token):
         return render_template('set_new_password.html', email=email)
     else:
-        send_email_support('ERROR!!!', ['shwetabh@writart.com'], f'Problem forget password reset for {email_list[0]}', '', '')
+        send_email_support('ERROR!!!', ['shwetabh@writart.com'], f'Problem forget password reset for {email_list[0]}',
+                           '', '')
         print("Error mail sent!")
         return redirect(url_for("account.login"))
 
@@ -455,6 +464,3 @@ def logout():
     if 'url' in session:
         return redirect(session['url'])
     return redirect(url_for('main.home'))
-
-
-
