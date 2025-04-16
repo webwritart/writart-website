@@ -141,7 +141,9 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 
   .cover-container {
     padding: 10% 0%;
-    background-color: rgba(0,0,0,0.6);
+    background-color: rgba(0,0,0,0);
+    background: url('../images/cover.jpg');
+    background-repeat: no-repeat;
     background-size: cover;
     height: 600px;
 }
@@ -150,6 +152,7 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     display: block;
     padding: 0% 20%;
     text-align: center;
+
 }
 .hero-content h1{
     font: 3.5em sans-serif;
