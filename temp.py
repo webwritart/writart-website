@@ -33,3 +33,4 @@ from flask_login import login_required, current_user
 #     user.participated.append(ws3)
 #
 #     db.session.commit()
+
