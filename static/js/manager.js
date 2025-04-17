@@ -15,6 +15,8 @@ function closeAll() {
     document.getElementById("overview-content").style.display = 'none';
     document.getElementById("gallery").style.display = 'none';
     document.getElementById("open-demo").style.display = 'none';
+    document.getElementById("send-email").style.display = 'none';
+    document.getElementById("send-wa").style.display = 'none';
 
 
 }
@@ -95,10 +97,31 @@ function gallery()  {
     closeAll();
     document.getElementById("gallery").style.display = 'block';
 }
+function sendEmail() {
+    closeAll();
+    document.getElementById("send-email").style.display = "block";
+}
+function sendWa() {
+    closeAll();
+    document.getElementById("send-wa").style.display = "block";
+}
 function openDemo() {
     closeAll();
-    document.getElementById("open-demo").style.display = 'block';
+    document.getElementById("open-demo").style.display = "block";
 }
+function recipientPopup() {
+    if (document.getElementById("recipient").value == "workshop") {
+        document.getElementById("workshop-recipient").style.display = "block";
+        document.getElementById("workshop-list").style.display = "block";
+    }else if(document.getElementById("recipient").value == "manual") {
+        document.getElementById("manual-recipients").style.display = "block";
+    }else {
+        document.getElementById("workshop-recipient").style.display = "none";
+        document.getElementById("workshop-list").style.display = "none";
+        document.getElementById("manual-recipients").style.display = "none";
+    }
+}
+
 
 function    workshopDetails(n, count_list) {
     var list = count_list
@@ -118,6 +141,7 @@ function    closeAllOptions() {
     document.getElementById("query-opt").style.display = 'none';
     document.getElementById("accountant-opt").style.display = 'none';
     document.getElementById("gst-opt").style.display = 'none';
+
 }
 
 function user() {
@@ -144,3 +168,4 @@ function gst() {
     closeAllOptions();
     document.getElementById("gst-opt").style.display = 'block';
 }
+

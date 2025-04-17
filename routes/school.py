@@ -14,10 +14,12 @@ import webbrowser
 school = Blueprint('school', __name__, static_folder='static', template_folder='templates/school')
 
 
-@school.route('/', )
+@school.route('/', methods=['GET', 'POST'])
 def home():
     session['url'] = url_for('school.home')
     admin = db.session.query(Role).filter_by(name='admin').first()
+    upcoming_workshop_list = []
+    all_interested_emails = []
 
     current_workshop_name = db.session.query(Tools).filter_by(keyword='current_workshop').scalar().data
     current_workshop = db.session.query(Workshop).filter_by(name=current_workshop_name).scalar()
@@ -61,7 +63,101 @@ def home():
     date = current_workshop.date
     time = current_workshop.time
 
-    upcoming_workshop_list = []
+    if request.method == 'POST':
+        if request.form.get('interested-form-hidden-workshop'):
+            ws_name = request.form.get('interested-form-hidden-workshop')
+            try:
+                name = current_user.name
+                email = current_user.email
+                phone = current_user.phone
+                whatsapp = current_user.whatsapp
+            except Exception as e:
+                print(e)
+                name = request.form.get('name')
+                email = request.form.get('email')
+                phone = request.form.get('phone')
+                whatsapp = request.form.get('whatsapp')
+            message = request.form.get('message')
+            all_interested = db.session.query(Query).filter_by(interested_ws=ws_name)
+
+            for i in all_interested:
+                all_interested_emails.clear()
+                all_interested_emails.append(i.email)
+
+            if email not in all_interested_emails:
+                entry = Query(
+                    name=name,
+                    email=email,
+                    phone=phone,
+                    whatsapp=whatsapp,
+                    interested_ws=ws_name,
+                    message=message
+                )
+                db.session.add(entry)
+                db.session.commit()
+                flash("Successfully saved details. We'll notify you when time comes!", "success")
+            else:
+                print('email found!')
+
+        if request.form.get('know-more') == 'know-more':
+            ws = request.form.get('submit')
+            main_ws_on_page = db.session.query(Workshop).filter_by(name=ws).first()
+            workshop = db.session.query(Workshop).filter_by(name=ws).first()
+            workshop_details = workshop.details
+
+            category = workshop_details.category
+            sessions = workshop_details.sessions
+            topic = workshop.topic
+            brief = workshop_details.brief
+            sub1 = workshop_details.subtopic1
+            sub2 = workshop_details.subtopic2
+            sub3 = workshop_details.subtopic3
+            sub4 = workshop_details.subtopic4
+            sub5 = workshop_details.subtopic5
+            sub6 = workshop_details.subtopic6
+            sub7 = workshop_details.subtopic7
+            sub8 = workshop_details.subtopic8
+            sub9 = workshop_details.subtopic9
+            sub_list = [sub1, sub2, sub3, sub4, sub5, sub6, sub7, sub8, sub9]
+            description = workshop_details.description
+            rq1 = workshop_details.req1
+            rq2 = workshop_details.req2
+            rq3 = workshop_details.req3
+            rq4 = workshop_details.req4
+            rq5 = workshop_details.req5
+            rq6 = workshop_details.req6
+            rq7 = workshop_details.req7
+            rq8 = workshop_details.req8
+            rq9 = workshop_details.req9
+            req_list = [rq1, rq2, rq3, rq4, rq5, rq6, rq7, rq8, rq9]
+            r1 = workshop_details.result1
+            r2 = workshop_details.result2
+            r3 = workshop_details.result3
+            r4 = workshop_details.result4
+            r5 = workshop_details.result5
+            r6 = workshop_details.result6
+            r7 = workshop_details.result7
+            r8 = workshop_details.result8
+            r9 = workshop_details.result9
+            result_list = [r1, r2, r3, r4, r5, r6, r7, r8, r9]
+            date = workshop.date
+            time = workshop.time
+
+            workshops = db.session.query(Workshop)
+            for workshop in workshops:
+                if not workshop.reg_start and not workshop.reg_close and workshop.name != ws:
+                    upcoming_workshop_list.append(workshop.name)
+            upcoming_workshop_list.append(main_ws_on_page.name)
+            cover_path = f"../static/images/workshops/{ws}/cover.jpg"
+
+            return render_template('workshops_second.html', category=category, topic=topic, sessions=sessions,
+                                   brief=brief,
+                                   sub_list=sub_list, description=description, req_list=req_list,
+                                   result_list=result_list,
+                                   logged_in=current_user.is_authenticated,
+                                   upcoming_workshop_list=upcoming_workshop_list, date=date, cover_path=cover_path,
+                                   time=time, admin=admin, ws=ws)
+
     workshops = db.session.query(Workshop)
     reg_status = db.session.query(Tools).filter_by(keyword='reg_status').one().data
     for workshop in workshops:
@@ -71,7 +167,8 @@ def home():
     return render_template('workshops_main.html', category=category, topic=topic, sessions=sessions, brief=brief,
                            sub_list=sub_list, description=description, req_list=req_list, result_list=result_list,
                            logged_in=current_user.is_authenticated, upcoming_workshop_list=upcoming_workshop_list,
-                           date=date, time=time, admin=admin, reg_status=reg_status, cover_path=cover_path)
+                           date=date, time=time, admin=admin, reg_status=reg_status, cover_path=cover_path,
+                           current_workshop_name=current_workshop_name)
 
 
 @school.route('/upcoming_workshop', methods=['GET', 'POST'])
@@ -138,118 +235,7 @@ def upcoming_workshop():
                                upcoming_workshop_list=upcoming_workshop_list, date=date, cover_path=cover_path,
                                time=time, admin=admin, ws=ws,)
 
-    if request.method == 'POST':
-        if request.form.get('interested-form-hidden-workshop2'):
-            ws_name = request.form.get('interested-form-hidden-workshop2')
-            try:
-                name = current_user.name
-                email = current_user.email
-                phone = current_user.phone
-                whatsapp = current_user.whatsapp
-            except Exception as e:
-                print(e)
-                name = request.form.get('name')
-                email = request.form.get('email')
-                phone = request.form.get('phone')
-                whatsapp = request.form.get('whatsapp')
-            message = request.form.get('message')
 
-            entry = Query(
-                name=name,
-                email=email,
-                phone=phone,
-                whatsapp=whatsapp,
-                interested_ws=ws_name,
-                message=message
-            )
-            db.session.add(entry)
-            db.session.commit()
-            flash("Successfully saved details. We'll notify you when time comes!", "success")
-
-        if request.form.get('interested-form-hidden-workshop'):
-            ws_name = request.form.get('interested-form-hidden-workshop')
-            try:
-                name = current_user.name
-                email = current_user.email
-                phone = current_user.phone
-                whatsapp = current_user.whatsapp
-            except:
-                name = request.form.get('name')
-                email = request.form.get('email')
-                phone = request.form.get('phone')
-                whatsapp = request.form.get('whatsapp')
-            message = request.form.get('message')
-
-            entry = Query(
-                name=name,
-                email=email,
-                phone=phone,
-                whatsapp=whatsapp,
-                interested_ws=ws_name,
-                message=message
-            )
-            db.session.add(entry)
-            db.session.commit()
-            flash("Successfully saved details. We'll notify you when time comes!", "success")
-
-        if request.form.get('know-more') == 'know-more':
-            ws = request.form.get('submit')
-            main_ws_on_page = db.session.query(Workshop).filter_by(name=ws).first()
-            workshop = db.session.query(Workshop).filter_by(name=ws).first()
-            workshop_details = workshop.details
-
-            category = workshop_details.category
-            sessions = workshop_details.sessions
-            topic = workshop.topic
-            brief = workshop_details.brief
-            sub1 = workshop_details.subtopic1
-            sub2 = workshop_details.subtopic2
-            sub3 = workshop_details.subtopic3
-            sub4 = workshop_details.subtopic4
-            sub5 = workshop_details.subtopic5
-            sub6 = workshop_details.subtopic6
-            sub7 = workshop_details.subtopic7
-            sub8 = workshop_details.subtopic8
-            sub9 = workshop_details.subtopic9
-            sub_list = [sub1, sub2, sub3, sub4, sub5, sub6, sub7, sub8, sub9]
-            description = workshop_details.description
-            rq1 = workshop_details.req1
-            rq2 = workshop_details.req2
-            rq3 = workshop_details.req3
-            rq4 = workshop_details.req4
-            rq5 = workshop_details.req5
-            rq6 = workshop_details.req6
-            rq7 = workshop_details.req7
-            rq8 = workshop_details.req8
-            rq9 = workshop_details.req9
-            req_list = [rq1, rq2, rq3, rq4, rq5, rq6, rq7, rq8, rq9]
-            r1 = workshop_details.result1
-            r2 = workshop_details.result2
-            r3 = workshop_details.result3
-            r4 = workshop_details.result4
-            r5 = workshop_details.result5
-            r6 = workshop_details.result6
-            r7 = workshop_details.result7
-            r8 = workshop_details.result8
-            r9 = workshop_details.result9
-            result_list = [r1, r2, r3, r4, r5, r6, r7, r8, r9]
-            date = workshop.date
-            time = workshop.time
-
-            workshops = db.session.query(Workshop)
-            for workshop in workshops:
-                if not workshop.reg_start and not workshop.reg_close and workshop.name != ws:
-                    upcoming_workshop_list.append(workshop.name)
-            upcoming_workshop_list.append(main_ws_on_page.name)
-            cover_path = f"../static/images/workshops/{ws}/cover.jpg"
-
-            return render_template('workshops_second.html', category=category, topic=topic, sessions=sessions,
-                                   brief=brief,
-                                   sub_list=sub_list, description=description, req_list=req_list,
-                                   result_list=result_list,
-                                   logged_in=current_user.is_authenticated,
-                                   upcoming_workshop_list=upcoming_workshop_list, date=date, cover_path=cover_path,
-                                   time=time, admin=admin, ws=ws)
 
 
 @school.route('/classroom')

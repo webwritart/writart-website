@@ -958,9 +958,12 @@ lite-youtube.lyt-activated > .lty-playbtn {
     background-color: rgba(107, 72, 35, 0.5);
     padding: 5% 10%;
 }
-
-#export {
+#communication {
     background-color: rgba(84, 56, 27, 0.5);
+    padding: 5% 10%;
+}
+#export {
+    background-color: rgba(107, 72, 35, 0.5);
     padding: 5% 10%;
 }
 
@@ -1032,6 +1035,21 @@ lite-youtube.lyt-activated > .lty-playbtn {
 }
 
 #session-reminder {
+    display: none;
+}
+#send-email {
+    display: none;
+}
+#send-wa {
+    display: none;
+}
+#workshop-recipient {
+    display: none;
+}
+#workshop-list {
+    display: none;
+}
+#manual-recipients {
     display: none;
 }
 

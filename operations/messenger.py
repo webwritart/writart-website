@@ -186,8 +186,9 @@ def send_wa_msg_by_list(wa_msg, num_list, name_list):
                     print(f"Failed to send message to: {num}, retry ({i + 1}/3)....................")
                 else:
                     msg_box = driver.find_element(By.XPATH,
-                                                  '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div['
-                                                  '1]/div/div[1]/p')
+                                                  '//*[@id="main"]/footer/div[1]/div/span/div/div[2]/div[1]/div['
+                                                  '2]/div[1]'
+                                                  '/p')
 
                     msg_box.send_keys(message)
                     sent = True

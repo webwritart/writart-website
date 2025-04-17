@@ -25,6 +25,11 @@
                 <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="sessionReminder()" value="Session Reminder">Session Reminder</button>
                 <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="certificateDistribution()" value="Certificate Distribution">Certificate Distribution</button>
             </div>
+            <div id="communication">
+                <h5>COMMUNICATION</h5>
+                <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="sendEmail()" value="New Workshop Promotion">Email</button>
+                <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="sendWa()" value="Last Date Reminder">Whatsapp</button>
+            </div>
             <div id="export">
                 <h5>EXPORTS</h5>
                 <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="csvForCertificates()" value="CSV for Certificate">CSV for Certificates</button>
@@ -378,6 +383,50 @@
                         <button type="submit" name="submit" id="file-btn" class="btn btn-primary btn-block btn-large" value="upload_files">Upload Files</button>
                     </form>
                 </div>
+            </div>
+            <div id="send-email">
+                <form action="{{ url_for('manager.home') }}" method="post">
+                    <h2>Send Email</h2>
+                    <select name="sender-mail">
+                        <option value="default">Choose mail</option>
+                        <option value="school">School</option>
+                        <option value="studio">Studio</option>
+                        <option value="support">Support</option>
+                    </select>
+                    <select name="recipient" id="recipient" onchange="recipientPopup()">
+                        <option value="default">Choose recipient</option>
+                        <option value="all-students-interested">All students + Interested</option>
+                        <option value="all-students">All Students</option>
+                        <option value="all-enrolled">All enrolled</option>
+                        <option value="all-interested">All interested</option>
+                        <option value="workshop">Workshop</option>
+                        <option value="course">Course</option>
+                        <option value="manual">Enter manually</option>
+                    </select>
+                    <select id="workshop-list" name="workshop-list">
+                        <option value="default">Choose workshop</option>
+                        {% for ws in all_workshops %}
+                        <option value="{{ ws.id }}">{{ ws.topic }}</option>
+                        {% endfor %}
+                    </select>
+                    <select id="workshop-recipient" name="workshop-recipient">
+                        <option value="default">Choose recipient category</option>
+                        <option value="all">All</option>
+                        <option value="enrolled">Enrolled</option>
+                        <option value="interested">Interested</option>
+                    </select>
+                    <input id="manual-recipients" type="text" name="manual-recipients" placeholder="manual-recipients separated by comma if multiple">
+                    <input type="text" name="subject" placeholder="Subject">
+                    <label>Mail body (use 'Enter' for line break)</label>
+                    <textarea style="width:100%; height:20vh;" name="message"></textarea>
+                    <button type="submit" name="submit" id="send-email-btn" class="btn btn-primary btn-block btn-large" value="send-email">Send Mail</button>
+                </form>
+            </div>
+            <div id="send-wa">
+                <form action="{{ url_for('manager.home') }}" method="post">
+                    <h2>Send Whatsapp Message</h2>
+
+                </form>
             </div>
             <div id="gallery">
                 <div id="gallery-content">

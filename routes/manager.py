@@ -5,7 +5,7 @@ from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
 from extensions import db, admin_only
 from models.videos import Demo
-from operations.messenger import send_email_school, send_wa_msg_by_list, send_email_school_and_wa_msg_by_list
+from operations.messenger import send_email_school, send_wa_msg_by_list, send_email_school_and_wa_msg_by_list, send_email_studio, send_email_support
 from models.payment import Payment
 from models.query import Query
 from models.tool import Tools
@@ -834,11 +834,88 @@ def home():
         for i in range(count):
             count_list.append(i)
 
+# ------------------------------------------------ SEND MAIL --------------------------------------- #
+
+        if request.form.get('submit') and request.form.get('submit') == 'send-email':
+            recipient_list = []
+            students = db.session.query(Member).all()
+            interested = db.session.query(Query).all()
+            sender = request.form.get('sender-mail')
+            if sender != 'default':
+                recipient = request.form.get('manual-recipients')
+                if recipient == '':
+                    recipient = request.form.get('recipient')
+                    if recipient == 'all-students-interested':
+                        recipient_list.clear()
+                        for s in students:
+                            recipient_list.append(s.email)
+                        for i in interested:
+                            recipient_list.append(i.email)
+                        recipient_list = list(set(recipient_list))
+                    elif recipient == 'all-students':
+                        recipient_list.clear()
+                        for s in students:
+                            recipient_list.append(s.email)
+                    elif recipient == 'all-enrolled':
+                        recipient_list.clear()
+                        for s in students:
+                            if s.participated:
+                                recipient_list.append(s.email)
+                    elif recipient == 'all-interested':
+                        recipient_list.clear()
+                        for s in interested:
+                            recipient_list.append(s.email)
+                        recipient_list = list(set(recipient_list))
+                    elif recipient == 'workshop':
+                        ws_id = request.form.get('workshop-list')
+                        if ws_id != 'default':
+                            workshop_recipient_category = request.form.get('workshop-recipient')
+                            if ws_id != 'default' and workshop_recipient_category != 'default':
+                                workshop = db.session.query(Workshop).filter_by(id=ws_id).one()
+                                if workshop_recipient_category == 'all':
+                                    recipient_list.clear()
+                                    enrolled = workshop.participants
+                                    for e in enrolled:
+                                        recipient_list.append(e.email)
+                                    for i in interested:
+                                        if i.interested_ws == workshop.name:
+                                            recipient_list.append(i.email)
+                                    recipient_list = list(set(recipient_list))
+                                elif workshop_recipient_category == 'enrolled':
+                                    recipient_list.clear()
+                                    enrolled = workshop.participants
+                                    for e in enrolled:
+                                        recipient_list.append(e.email)
+                                elif workshop_recipient_category == 'interested':
+                                    recipient_list.clear()
+                                    for i in interested:
+                                        if i.interested_ws == workshop.name:
+                                            recipient_list.append(i.email)
+                            else:
+                                flash("Please choose workshop and recipient category to send email.", "error")
+                else:
+                    recipient_list = recipient.split(",")
+                subject = request.form.get('subject')
+                body = request.form.get('message')
+                if len(recipient_list) > 0:
+                    if sender == 'school':
+                        send_email_school(subject, recipient_list, body, '', '')
+                    elif sender == 'studio':
+                        send_email_studio(subject, recipient_list, body, '', '')
+                    elif sender == 'support':
+                        send_email_support(subject, recipient_list, body, '', '')
+                else:
+                    flash("No recipients to send email to!", "error")
+            else:
+                flash("Please choose sender email to send email", "error")
+
+        all_workshops = db.session.query(Workshop).all()
+
         return render_template('manager.html', logged_in=current_user.is_authenticated,
                                current_ws_name=current_ws_name, open_reg=open_reg, promotion=promotion,
                                reminder=reminder, close_reg=close_reg,
                                certificate_distribution=certificate_distribution, upcoming_ws_dict=upcoming_ws_dict,
-                               count=count, count_list=count_list)
+                               count=count, count_list=count_list, all_workshops=all_workshops)
     else:
         return render_template('admin_area.html', logged_in=current_user.is_authenticated)
 

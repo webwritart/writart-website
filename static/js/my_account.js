@@ -64,6 +64,7 @@ function closeDeleteAccountPopup() {
     document.getElementById("delete-account").style.display = "none";
 }
 
+
 function validateForm2() {
     let newPwd = document.forms['set-password']['password'].value;
     let retypedPwd = document.forms['set-password']['reenter-password'].value;

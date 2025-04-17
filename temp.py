@@ -5,6 +5,7 @@ from models.tool import Tools
 from models.workshop_details import WorkshopDetails
 import pandas as pd
 from flask_login import login_required, current_user
+from operations.messenger import send_wa_msg_by_list
 
 # df = pd.read_csv('role.csv')
 # df = df.reset_index()
@@ -34,3 +35,9 @@ from flask_login import login_required, current_user
 #
 #     db.session.commit()
 
+
+num_list = ['918920351265', '918920351265']
+name_list = ['Shwetabh', 'Shwetabh']
+wa_msg = 'Dear [name] The class is to begin soon\nfasten your belt to hop in!'
+
+send_wa_msg_by_list(wa_msg, num_list, name_list)
