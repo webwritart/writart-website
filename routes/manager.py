@@ -909,6 +909,136 @@ def home():
             else:
                 flash("Please choose sender email to send email", "error")
 
+# ----------------------------------------- SEND WHATSAPP MESSAGE --------------------------------------------------- #
+
+        if request.form.get('submit') and request.form.get('submit') == 'send-wa':
+            recipient_list = []
+            receiver_name_list = []
+
+            def process_number(recipient_number):
+                try:
+                    recipient_number.replace("+", "")
+                    if len(recipient_number) == 10:
+                        n = "91" + recipient_number
+                        recipient_list.append(n)
+                    else:
+                        recipient_list.append(recipient_number)
+                except Exception as e:
+                    pass
+                print(f'successfully added to recipient_list: {recipient_list}')
+
+            students = db.session.query(Member).all()
+            interested = db.session.query(Query).all()
+            recipients = request.form.get('manual-recipients')
+            if recipients == '':
+                recipient = request.form.get('recipient')
+                if recipient == 'all-students-interested':
+                    recipient_list.clear()
+                    receiver_name_list.clear()
+                    for s in students:
+                        if s.whatsapp:
+                            process_number(s.whatsapp)
+                        else:
+                            process_number(s.phone)
+                        receiver_name_list.append(s.name[0])
+                    for i in interested:
+                        if i.whatsapp:
+                            process_number(i.whatsapp)
+                        else:
+                            process_number(i.phone)
+                        receiver_name_list.append(i.name[0])
+                    recipient_list = list(set(recipient_list))
+                    receiver_name_list = list(set(receiver_name_list))
+                elif recipient == 'all-students':
+                    recipient_list.clear()
+                    receiver_name_list.clear()
+                    for s in students:
+                        if s.whatsapp:
+                            process_number(s.whatsapp)
+                        else:
+                            process_number(s.phone)
+                        receiver_name_list.append(s.name[0])
+                elif recipient == 'all-enrolled':
+                    recipient_list.clear()
+                    receiver_name_list.clear()
+                    for s in students:
+                        if s.participated:
+                            if s.whatsapp:
+                                process_number(s.whatsapp)
+                            else:
+                                process_number(s.phone)
+                            receiver_name_list.append(s.name[0])
+                elif recipient == 'all-interested':
+                    recipient_list.clear()
+                    receiver_name_list.clear()
+                    for s in interested:
+                        if s.whatsapp:
+                            process_number(s.whatsapp)
+                        else:
+                            process_number(s.phone)
+                        receiver_name_list.append(s.name[0])
+                    recipient_list = list(set(recipient_list))
+                    receiver_name_list = list(set(receiver_name_list))
+                elif recipient == 'workshop':
+                    ws_id = request.form.get('workshop-list')
+                    workshop_recipient_category = request.form.get('workshop-recipient')
+                    if ws_id != 'default' and workshop_recipient_category != 'default':
+                        workshop = db.session.query(Workshop).filter_by(id=ws_id).one()
+                        if workshop_recipient_category == 'all':
+                            recipient_list.clear()
+                            receiver_name_list.clear()
+                            enrolled = workshop.participants
+                            for e in enrolled:
+                                if e.whatsapp:
+                                    process_number(e.whatsapp)
+                                else:
+                                    process_number(e.phone)
+                                receiver_name_list.append(e.name[0])
+                            for i in interested:
+                                if i.interested_ws == workshop.name:
+                                    if i.whatsapp:
+                                        process_number(i.whatsapp)
+                                    else:
+                                        process_number(i.phone)
+                                    receiver_name_list.append(i.name[0])
+                            recipient_list = list(set(recipient_list))
+                            receiver_name_list = list(set(receiver_name_list))
+                        elif workshop_recipient_category == 'enrolled':
+                            recipient_list.clear()
+                            receiver_name_list.clear()
+                            enrolled = workshop.participants
+                            for e in enrolled:
+                                if e.whatsapp:
+                                    process_number(e.whatsapp)
+                                else:
+                                    process_number(e.phone)
+                                receiver_name_list.append(e.name[0])
+                        elif workshop_recipient_category == 'interested':
+                            recipient_list.clear()
+                            receiver_name_list.clear()
+                            for i in interested:
+                                if i.interested_ws == workshop.name:
+                                    if i.whatsapp:
+                                        process_number(i.whatsapp)
+                                    else:
+                                        process_number(i.phone)
+                                    receiver_name_list.append(i.name[0])
+                    else:
+                        flash("Please choose workshop and recipient category to send email.", "error")
+            else:
+                recipient_list.clear()
+                receiver_name_list.clear()
+                recipient_no = recipients.split(",")
+                for no in recipient_no:
+                    process_number(no)
+                recipient_names = request.form.get("manual-names")
+                receiver_name_list = recipient_names.split(",")
+            wa_msg = request.form.get('message')
+            if len(recipient_list) > 0:
+                send_wa_msg_by_list(wa_msg, recipient_list, receiver_name_list)
+            else:
+                flash("No recipients to send whatsapp message to!", "error")
+
         all_workshops = db.session.query(Workshop).all()
 
         return render_template('manager.html', logged_in=current_user.is_authenticated,

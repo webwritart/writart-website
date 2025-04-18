@@ -1,11 +1,18 @@
 import time
-import os
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.wait import WebDriverWait
+from datetime import datetime
+import pytz
 from extensions import db, Message, mail
 from dotenv import load_dotenv
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+# from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+from time import sleep
+from urllib.parse import quote
+import os
+from flask import flash
 
 load_dotenv()
 
@@ -59,149 +66,111 @@ def send_email_support(subject, recipients, body, html, image_dict):
     print("Mail sent")
 
 
-def send_wa_message_by_db(wa_message, db_table_name):
-    wa_num_list = []
-    name_list = []
-    mail_list = []
-
-    wa_num_list.insert(0, '918920351265')
-    wa_num_list.insert(1, '918920351265')
-    name_list.insert(0, 'Test')
-    name_list.insert(1, 'Test2')
-    mail_list.insert(0, 'test@mail.com')
-    mail_list.insert(1, 'test2@gmail.com')
-    users = db.session.query(db_table_name)
-    success_count = 0
-    # ----------------------------------- Filtering Duplicates out ------------------------------------------ #
-
-    for user in users:
-        if user.email not in mail_list:
-            mail_list.append(user.email)
-            if user.whatsapp:
-                if len(user.whatsapp) == 10:
-                    wa_num_list.append(f'91{user.whatsapp}')
-                elif len(user.whatsapp) == 11 and user.whatsapp[0] == '0':
-                    wa_num_list.append(f'91{user.whatsapp[1:]}')
-                elif len(user.whatsapp) == 12 and user.whatsapp[:2] == '91':
-                    wa_num_list.append(user.whatsapp)
-                elif user.whatsapp[:1] == '+':
-                    wa_num_list.append(user.whatsapp[1:])
-                else:
-                    wa_num_list.append(user.whatsapp)
-            elif len(user.phone) == 10:
-                wa_num_list.append(f'91{user.phone}')
-            elif len(user.phone) == 11 and user.phone[0] == '0':
-                wa_num_list.append(f'91{user.phone[1:]}')
-            elif len(user.phone) == 12 and user.phone[:2] == '91':
-                wa_num_list.append(user.phone)
-            elif user.phone[:1] == '+':
-                wa_num_list.append(user.phone[1:])
-            else:
-                wa_num_list.append(user.phone)
-
-            name_list.append(user.name.split()[0])
-
-    driver = webdriver.Chrome()
-    delay = 35
-
-    for n in range(len(wa_num_list)):
-        num = wa_num_list[n]
-        message = wa_message
-        url = f"https://web.whatsapp.com/send?phone={num}"
-        sent = False
-        time.sleep(5)
-        for i in range(3):
-            if not sent:
-                driver.get(url)
-                try:
-                    click_btn = WebDriverWait(driver, delay).until(
-                        EC.element_to_be_clickable((By.XPATH, '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/di'
-                                                              'v[2]/button/span'))
-                    )
-                except Exception as e:
-                    print(f"Failed to send message to: {num}, retry ({i + 1}/3)....................")
-                else:
-                    msg_box = driver.find_element(By.XPATH,
-                                                  '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[1]/div/div[1]/p')
-
-                    msg_box.send_keys(message)
-                    sent = True
-                    time.sleep(2)
-                    print(f'Message sent to: {num} -------- {name_list[n]}')
-
-        if sent:
-            if n > 1:
-                success_count += 1
-    driver.quit()
-    print(f"Total receivers to receive message successfully: {success_count}")
-
-
 def send_wa_msg_by_list(wa_msg, num_list, name_list):
-    wa_msg = wa_msg
-    num_list = num_list
-    name_list = name_list
-    wa_num_list = []
-    unique_num_list = []
+    options = webdriver.ChromeOptions()
+    options.add_experimental_option("excludeSwitches", ["enable-logging"])
+    options.add_argument("--profile-directory=Default")
+    # options.add_argument("--user-data-dir=/var/tmp/chrome_user_data")
+    # options.add_argument("--user-data-dir=/var/tmp/chrome_user_data")
 
-    for n in num_list:
-        if len(n) == 10:
-            wa_num_list.append(f'91{n}')
-        elif len(n) == 11 and n[0] == '0':
-            wa_num_list.append(f'91{n[1:]}')
-        elif len(n) == 12 and n[:2] == '91':
-            wa_num_list.append(n)
-        elif n[:1] == '+':
-            wa_num_list.append(n[1:])
-        else:
-            wa_num_list.append(n)
+    os.system("")
+    os.environ["WDM_LOG_LEVEL"] = "0"
 
-    unique_num_list.insert(0, '918920351265')
-    unique_num_list.insert(1, '918920351265')
-    name_list.insert(0, 'Test')
-    name_list.insert(1, 'Test2')
+    class style():
+        BLACK = '\033[30m'
+        RED = '\033[31m'
+        GREEN = '\033[32m'
+        YELLOW = '\033[33m'
+        BLUE = '\033[34m'
+        MAGENTA = '\033[35m'
+        CYAN = '\033[36m'
+        WHITE = '\033[37m'
+        UNDERLINE = '\033[4m'
+        RESET = '\033[0m'
 
-    for num in wa_num_list:
-        if num not in unique_num_list:
-            unique_num_list.append(num)
+    print(style.BLUE)
+    print("**********************************************************")
+    print("**********************************************************")
+    print("*****                                               ******")
+    print("*****  THANK YOU FOR USING WHATSAPP BULK MESSENGER  ******")
+    print("*****      This tool was built by Anirudh Bagri     ******")
+    print("*****           www.github.com/anirudhbagri         ******")
+    print("*****                                               ******")
+    print("**********************************************************")
+    print("**********************************************************")
+    print(style.RESET)
 
-    driver = webdriver.Chrome()
-    delay = 35
-    success_count = 0
-    for n in range(len(unique_num_list)):
-        num = unique_num_list[n]
-        message = wa_msg.replace("[name]", name_list[n])
-        url = f"https://web.whatsapp.com/send?phone={num}"
-        sent = False
-        time.sleep(5)
+    msg_path = "../routes/templates/wa_messages/"
+    # msg_file = msg_path + msg_filename
 
-        for i in range(3):
-            if not sent:
-                driver.get(url)
-                try:
-                    click_btn = WebDriverWait(driver, delay).until(
-                        EC.element_to_be_clickable((By.XPATH, '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/di'
-                                                              'v[2]/button/span'))
-                    )
-                except Exception as e:
-                    print(f"Failed to send message to: {num}, retry ({i + 1}/3)....................")
-                else:
-                    msg_box = driver.find_element(By.XPATH,
-                                                  '//*[@id="main"]/footer/div[1]/div/span/div/div[2]/div[1]/div['
-                                                  '2]/div[1]'
-                                                  '/p')
+    # f = open(msg_file, "r", encoding="utf8")
+    # message = f.read()
+    # f.close()
+    msg = wa_msg
+    print(style.YELLOW + '\nThis is your message-')
+    print(style.GREEN + msg)
+    print("\n" + style.RESET)
+    numbers = num_list
+    # numbers = []
+    # f = open("numbers.txt", "r")
+    # for line in f.read().splitlines():
+    #     if line.strip() != "":
+    #         numbers.append(line.strip())
+    # f.close()
+    total_number = len(numbers)
+    print(style.RED + 'We found ' + str(total_number) + ' numbers in the file' + style.RESET)
+    delay = 30
 
-                    msg_box.send_keys(message)
-                    sent = True
-                    time.sleep(2)
-                    print(f'Message sent to: {num} -------- {name_list[n]}')
+    # driver = webdriver.Chrome(executable_path='C:\drivers\chromedriver.exe', options=options)
+    driver = webdriver.Chrome(options=options)
+    print('Once your browser opens up sign in to web whatsapp')
+    driver.get('https://web.whatsapp.com')
+    # input(
+    #     style.MAGENTA + "AFTER logging into Whatsapp Web is complete and your chats are visible, press ENTER..." + style.RESET)
+    time.sleep(20)
+    for idx, number in enumerate(numbers):
+        number = number.strip()
+        if number == "":
+            continue
+        print(style.YELLOW + '{}/{} => Sending message to {}.'.format((idx + 1), total_number, number) + style.RESET)
+        try:
+            message = msg.replace("[name]", name_list[idx])
+            message = message.replace("|", "\n")
+            print(message)
+            message = quote(message)
+            url = 'https://web.whatsapp.com/send?phone=' + number + '&text=' + message
+            sent = False
+            for i in range(3):
+                if not sent:
+                    driver.get(url)
+                    try:
+                        click_btn = WebDriverWait(driver, delay).until(
+                            EC.element_to_be_clickable(
+                                (By.XPATH, '//*[@id="main"]/footer/div[1]/div/span/div/div[2]/div[2]/button/spa')))
+                        message = msg
+                    except Exception as e:
+                        print(style.RED + f"\nFailed to send message to: {number}, retry ({i + 1}/3)")
+                        print("Make sure your phone and computer is connected to the internet.")
+                        print("If there is an alert, please dismiss it." + style.RESET)
+                        if i == 2:
+                            indiatz = pytz.timezone("Asia/Kolkata")
+                            now = datetime.now(indiatz)
+                            with open('wa_log.txt', 'a') as the_file:
+                                the_file.write(f' --- Failed to send message to\n')
+                            print("The problem logged")
+                    else:
+                        sleep(1)
+                        click_btn.click()
+                        sent = True
+                        sleep(3)
+                        print(style.GREEN + 'Message sent to: ' + number + style.RESET)
+        except Exception as e:
+            print(style.RED + 'Failed to send message to ' + number + str(e) + style.RESET)
 
-        if sent:
-            if n > 1:
-                success_count += 1
-    driver.quit()
-    print(f"Total receivers to receive message successfully: {success_count}")
+    driver.close()
 
 
 def send_email_school_and_wa_msg_by_list(subject, recipients, body, html, image_dict, wa_msg, num_list, name_list):
-    send_wa_msg_by_list(wa_msg, num_list, name_list)
     send_email_school(subject, recipients, body, html, image_dict)
+    send_wa_msg_by_list(wa_msg, num_list, name_list)
+

@@ -17,8 +17,6 @@ function closeAll() {
     document.getElementById("open-demo").style.display = 'none';
     document.getElementById("send-email").style.display = 'none';
     document.getElementById("send-wa").style.display = 'none';
-
-
 }
 
 function addNewWs() {
@@ -113,12 +111,33 @@ function recipientPopup() {
     if (document.getElementById("recipient").value == "workshop") {
         document.getElementById("workshop-recipient").style.display = "block";
         document.getElementById("workshop-list").style.display = "block";
+        document.getElementById("manual-recipients").style.display = "none";
     }else if(document.getElementById("recipient").value == "manual") {
         document.getElementById("manual-recipients").style.display = "block";
+        document.getElementById("workshop-list").style.display = "none";
+        document.getElementById("workshop-recipient").style.display = "none";
     }else {
         document.getElementById("workshop-recipient").style.display = "none";
         document.getElementById("workshop-list").style.display = "none";
         document.getElementById("manual-recipients").style.display = "none";
+    }
+}
+function waRecipientPopup() {
+    if (document.getElementById("wa-recipient").value == "workshop") {
+        document.getElementById("wa-workshop-list").style.display = "block";
+        document.getElementById("wa-workshop-recipient").style.display = "block";
+        document.getElementById("wa-manual-recipients").style.display = "none";
+        document.getElementById("wa-manual-names").style.display = "none";
+    }else if(document.getElementById("wa-recipient").value == "manual") {
+        document.getElementById("wa-manual-recipients").style.display = "block";
+        document.getElementById("wa-manual-names").style.display = "block";
+        document.getElementById("wa-workshop-list").style.display = "none";
+        document.getElementById("wa-workshop-recipient").style.display = "none";
+    }else {
+        document.getElementById("wa-workshop-list").style.display = "none";
+        document.getElementById("wa-workshop-recipient").style.display = "none";
+        document.getElementById("wa-manual-recipients").style.display = "none";
+        document.getElementById("wa-manual-names").style.display = "none";
     }
 }
 

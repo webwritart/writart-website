@@ -1,0 +1,94 @@
+2025-04-19 03:16:45.966608+05:30 --- Failed to send message to 2list index out of range
+2025-04-19 03:16:45.966608+05:30 --- Failed to send message to 0list index out of range
+2025-04-19 03:16:45.967612+05:30 --- Failed to send message to 3list index out of range
+2025-04-19 03:16:45.967612+05:30 --- Failed to send message to 5list index out of range
+2025-04-19 03:16:45.967612+05:30 --- Failed to send message to 1list index out of range
+2025-04-19 03:16:45.968617+05:30 --- Failed to send message to 2list index out of range
+2025-04-19 03:16:45.968617+05:30 --- Failed to send message to 6list index out of range
+2025-04-19 03:16:45.968617+05:30 --- Failed to send message to 5list index out of range
+2025-04-19 03:16:45.969622+05:30 --- Failed to send message to 8list index out of range
+2025-04-19 03:16:45.970622+05:30 --- Failed to send message to 9list index out of range
+2025-04-19 03:16:45.970622+05:30 --- Failed to send message to 2list index out of range
+2025-04-19 03:16:45.970622+05:30 --- Failed to send message to 0list index out of range
+2025-04-19 03:16:45.971627+05:30 --- Failed to send message to 3list index out of range
+2025-04-19 03:16:45.971627+05:30 --- Failed to send message to 5list index out of range
+2025-04-19 03:16:45.971627+05:30 --- Failed to send message to 1list index out of range
+2025-04-19 03:16:45.972630+05:30 --- Failed to send message to 2list index out of range
+2025-04-19 03:16:45.972630+05:30 --- Failed to send message to 6list index out of range
+2025-04-19 03:16:45.972630+05:30 --- Failed to send message to 5list index out of range
+2025-04-19 03:57:15.514757+05:30 --- Failed to send message to 8920351Message: 
+Stacktrace:
+	GetHandleVerifier [0x00007FF79DAE5355+78597]
+	GetHandleVerifier [0x00007FF79DAE53B0+78688]
+	(No symbol) [0x00007FF79D8991AA]
+	(No symbol) [0x00007FF79D8EF149]
+	(No symbol) [0x00007FF79D8EF3FC]
+	(No symbol) [0x00007FF79D942467]
+	(No symbol) [0x00007FF79D91712F]
+	(No symbol) [0x00007FF79D93F2BB]
+	(No symbol) [0x00007FF79D916EC3]
+	(No symbol) [0x00007FF79D8E03F8]
+	(No symbol) [0x00007FF79D8E1163]
+	GetHandleVerifier [0x00007FF79DD8EF0D+2870973]
+	GetHandleVerifier [0x00007FF79DD896B8+2848360]
+	GetHandleVerifier [0x00007FF79DDA6993+2967875]
+	GetHandleVerifier [0x00007FF79DB0019A+188746]
+	GetHandleVerifier [0x00007FF79DB0847F+222255]
+	GetHandleVerifier [0x00007FF79DAED2D4+111236]
+	GetHandleVerifier [0x00007FF79DAED482+111666]
+	GetHandleVerifier [0x00007FF79DAD35A9+5465]
+	BaseThreadInitThunk [0x00007FFAD5A37374+20]
+	RtlUserThreadStart [0x00007FFAD5DDCC91+33]
+
+2025-04-19 03:59:57.849274+05:30 --- Failed to send message to 918920351265Message: 
+Stacktrace:
+	GetHandleVerifier [0x00007FF79DAE5355+78597]
+	GetHandleVerifier [0x00007FF79DAE53B0+78688]
+	(No symbol) [0x00007FF79D8991AA]
+	(No symbol) [0x00007FF79D8EF149]
+	(No symbol) [0x00007FF79D8EF3FC]
+	(No symbol) [0x00007FF79D942467]
+	(No symbol) [0x00007FF79D91712F]
+	(No symbol) [0x00007FF79D93F2BB]
+	(No symbol) [0x00007FF79D916EC3]
+	(No symbol) [0x00007FF79D8E03F8]
+	(No symbol) [0x00007FF79D8E1163]
+	GetHandleVerifier [0x00007FF79DD8EF0D+2870973]
+	GetHandleVerifier [0x00007FF79DD896B8+2848360]
+	GetHandleVerifier [0x00007FF79DDA6993+2967875]
+	GetHandleVerifier [0x00007FF79DB0019A+188746]
+	GetHandleVerifier [0x00007FF79DB0847F+222255]
+	GetHandleVerifier [0x00007FF79DAED2D4+111236]
+	GetHandleVerifier [0x00007FF79DAED482+111666]
+	GetHandleVerifier [0x00007FF79DAD35A9+5465]
+	BaseThreadInitThunk [0x00007FFAD5A37374+20]
+	RtlUserThreadStart [0x00007FFAD5DDCC91+33]
+
+2025-04-19 04:01:34.023107+05:30 --- Failed to send message to 8920351265Message: 
+Stacktrace:
+	GetHandleVerifier [0x00007FF79DAE5355+78597]
+	GetHandleVerifier [0x00007FF79DAE53B0+78688]
+	(No symbol) [0x00007FF79D8991AA]
+	(No symbol) [0x00007FF79D8EF149]
+	(No symbol) [0x00007FF79D8EF3FC]
+	(No symbol) [0x00007FF79D942467]
+	(No symbol) [0x00007FF79D91712F]
+	(No symbol) [0x00007FF79D93F2BB]
+	(No symbol) [0x00007FF79D916EC3]
+	(No symbol) [0x00007FF79D8E03F8]
+	(No symbol) [0x00007FF79D8E1163]
+	GetHandleVerifier [0x00007FF79DD8EF0D+2870973]
+	GetHandleVerifier [0x00007FF79DD896B8+2848360]
+	GetHandleVerifier [0x00007FF79DDA6993+2967875]
+	GetHandleVerifier [0x00007FF79DB0019A+188746]
+	GetHandleVerifier [0x00007FF79DB0847F+222255]
+	GetHandleVerifier [0x00007FF79DAED2D4+111236]
+	GetHandleVerifier [0x00007FF79DAED482+111666]
+	GetHandleVerifier [0x00007FF79DAD35A9+5465]
+	BaseThreadInitThunk [0x00007FFAD5A37374+20]
+	RtlUserThreadStart [0x00007FFAD5DDCC91+33]
+
+2025-04-19 04:05:16.028124+05:30 --- Failed to send message to 918920351265
+2025-04-19 04:08:15.632166+05:30 --- Failed to send message to 918920351265
+2025-04-19 04:09:50.199753+05:30 --- Failed to send message to 918920351265
+ --- Failed to send message to

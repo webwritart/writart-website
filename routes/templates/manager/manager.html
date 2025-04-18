@@ -425,7 +425,34 @@
             <div id="send-wa">
                 <form action="{{ url_for('manager.home') }}" method="post">
                     <h2>Send Whatsapp Message</h2>
-
+                    <select name="recipient" id="wa-recipient" onchange="waRecipientPopup()">
+                        <option value="default">Choose recipient</option>
+                        <option value="all-students-interested">All students + Interested</option>
+                        <option value="all-students">All Students</option>
+                        <option value="all-enrolled">All enrolled</option>
+                        <option value="all-interested">All interested</option>
+                        <option value="workshop">Workshop</option>
+                        <option value="course">Course</option>
+                        <option value="manual">Enter manually</option>
+                    </select>
+                    <select id="wa-workshop-list" name="workshop-list">
+                        <option value="default">Choose workshop</option>
+                        {% for ws in all_workshops %}
+                        <option value="{{ ws.id }}">{{ ws.topic }}</option>
+                        {% endfor %}
+                    </select>
+                    <select id="wa-workshop-recipient" name="workshop-recipient">
+                        <option value="default">Choose recipient category</option>
+                        <option value="all">All</option>
+                        <option value="enrolled">Enrolled</option>
+                        <option value="interested">Interested</option>
+                    </select>
+                    <input id="wa-manual-recipients" type="text" name="manual-recipients" placeholder="Recipient numbers separated by comma if multiple">
+                    <input id="wa-manual-names" type="text" name="manual-names" placeholder="Recipient names separated by comma if multiple">
+                    <label>Whatsapp Msg (enter '|' for line break)</label>
+                    <textarea style="width:100%; height:20vh;" name="message"></textarea>
+<!--                    <input type="text" style="width:100%; height:20vh;" name="message">-->
+                    <button type="submit" name="submit" id="send-wa-btn" class="btn btn-primary btn-block btn-large" value="send-wa">Send Whatsapp Message</button>
                 </form>
             </div>
             <div id="gallery">

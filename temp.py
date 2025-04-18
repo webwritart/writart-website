@@ -6,6 +6,9 @@ from models.workshop_details import WorkshopDetails
 import pandas as pd
 from flask_login import login_required, current_user
 from operations.messenger import send_wa_msg_by_list
+from urllib.parse import quote
+from datetime import datetime,timezone
+import pytz
 
 # df = pd.read_csv('role.csv')
 # df = df.reset_index()
@@ -38,6 +41,9 @@ from operations.messenger import send_wa_msg_by_list
 
 num_list = ['918920351265', '918920351265']
 name_list = ['Shwetabh', 'Shwetabh']
-wa_msg = 'Dear [name] The class is to begin soon\nfasten your belt to hop in!'
-
-send_wa_msg_by_list(wa_msg, num_list, name_list)
+wa_msg = f"Dear [name],\nClass has begun!\nPlease hop in!\nlink: https://writart.com"
+# send_wa_msg_by_list(wa_msg, num_list, name_list)
+indiatz = pytz.timezone("Asia/Kolkata")
+now = datetime.now(indiatz)
+with open('operations/wa_log.txt', 'a') as the_file:
+    the_file.write(f'{now} --- Failed to send message to number\n')
