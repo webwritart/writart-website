@@ -1,6 +1,7 @@
 function    openInterestedForm2(workshop) {
     document.getElementById("interested-form2").style.display = 'block';
     document.getElementById("interested-form-hidden-workshop2").value = workshop;
+    document.getElementById("interested-form").style.display = 'none';
 }
 
 function    closeFormInterested2() {
@@ -17,6 +18,7 @@ function    closeFormInterested3() {
 function    openInterestedForm(workshop) {
     document.getElementById("interested-form").style.display = 'block';
     document.getElementById("interested-form-hidden-workshop").value = workshop;
+    document.getElementById("interest-form2").style.display = 'none';
 }
 
 function    closeFormInterested() {
