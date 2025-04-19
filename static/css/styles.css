@@ -136,6 +136,24 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     color: #FFFFFF;
     opacity: 1;/* Firefox */
 }
+#footer {
+    height: 15vh;
+    background: #031f29;
+    color: #387287;
+    display: flex;
+    padding: 2% 5% 0% 5%;
+    flex-direction: column;
+}
+#footer_links {
+    display: flex;
+    justify-content: space-around;
+}
+#copyright {
+    padding-top: 1%;
+    display: flex;
+    justify-content: center;
+    opacity: 0.7;
+}
 
 /*  --------------------------------------------------------------------- HOME ----------------------------------------------------------------------------------------------------------------------  */
 

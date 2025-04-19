@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, request, flash, send_file, redirec
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from operations.artist_tools import add_watermark
-from extensions import db, image_dict
+from extensions import db, image_dict, current_year
 from operations.messenger import send_email_school, send_email_support
 from models.member import Member, Workshop, Role
 from flask_login import current_user, login_required, login_user, logout_user
@@ -160,9 +160,9 @@ def home():
         return render_template('my_account.html', certificate_list=certificate_list, certificate=certificate,
                                name=current_user.name, logged_in=current_user.is_authenticated, admin=admin,
                                client=client,
-                               animation_admin=animation_admin, roles=roles)
+                               animation_admin=animation_admin, roles=roles, current_year=current_year)
     else:
-        render_template('my_account.html')
+        render_template('my_account.html', current_year=current_year)
 
 
 @account.route('/update_details', methods=['GET', 'POST'])
@@ -289,7 +289,7 @@ def register():
                        f'State: {request.form.get("state")}\n\n'
         send_email_support('New Registration!', ['writartstudios@gmail.com'], mail_message, '', '')
         return redirect(url_for('account.home', name=current_user.name.split()[0]))
-    return render_template("register.html", logged_in=current_user.is_authenticated)
+    return render_template("register.html", logged_in=current_user.is_authenticated, current_year=current_year)
 
 
 @account.route('/login', methods=['GET', 'POST'])
@@ -384,7 +384,7 @@ def login():
                 return redirect(url_for('payment.home'))
             return redirect(url_for('account.home', name=current_user.name.split()[0]))
 
-    return render_template("login.html", instruction='login')
+    return render_template("login.html", instruction='login', current_year=current_year)
 
 
 email_list = []
@@ -437,7 +437,7 @@ def forgot_password():
                                mail, image_dict)
             return redirect(url_for('account.home'))
 
-    return render_template("forgot_password.html")
+    return render_template("forgot_password.html", current_year=current_year)
 
 
 @account.route('/set_new_password', methods=['GET', 'POST'])

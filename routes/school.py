@@ -2,7 +2,7 @@ import os
 
 from flask import Blueprint, render_template, request, redirect, flash, send_file, session, url_for
 from flask_login import current_user
-from extensions import db
+from extensions import db, current_year
 from models.query import Query
 from models.tool import Tools
 from models.member import Workshop, Role

@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, sessio
 import os
 from flask_login import current_user
 from werkzeug.utils import secure_filename
-from extensions import db
+from extensions import db, current_year
 from models.member import Member
 from operations.miscellaneous import allowed_file
 from operations.artist_tools import add_watermark, delete_single_watermarked_image, delete_all_from_user

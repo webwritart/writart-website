@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template
 import os
+from extensions import current_year
 
 
 gallery = Blueprint('gallery', __name__, static_folder='static', template_folder='templates')
@@ -9,4 +10,4 @@ gallery = Blueprint('gallery', __name__, static_folder='static', template_folder
 def home():
     folder_dir = "static/files/users/Shwetabh1/artworks"
     image_list = os.listdir(folder_dir)
-    return render_template('gallery.html', img_list=image_list)
+    return render_template('gallery.html', img_list=image_list, current_year=current_year)

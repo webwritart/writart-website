@@ -1,18 +1,82 @@
 {% extends "base.html" %} {% block content %}
 
+<style>
+    .homepage_cover {
+        background: url(static/images/workshops/{{current_ws}}/cover.jpg);
+        padding: 2% 4% 1% 4%;
+        color: white;
+        margin-top: 4%;
+    }
+    .homepage_cover_header {
+        display: flex;
+        justify-content: space-between;
+    }
+    .homepage_cover_title {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .homepage_cover_title h4 {
+        padding: 2% 0%;
+    }
+    .homepage_cover_title h6 {
+        margin: 1% 0%;
+    }
+    .homepage_cover_button {
+        display:flex;
+        justify-content:space-around;
+        align-items:center;
+        padding: 2% 10%;
+        width: 100%;
+    }
+    .homepage_cover_button button {
+        width: 30%;
+        background: white;
+        color: #ad166d;
+        padding: 0.5%;
+        font-weight: 400;
+        font-size: 1.3rem;
+    }
+    .homepage_cover_button button:hover {
+        background: #fcd2b4;
+        color: black;
+    }
+
+</style>
+
 <div class="container-fluid cover-container">
     <div class="row cover">
         <div class="col">
-          <div class="hero-content">
-            <h1><b>Art & Illustration</b></h1>
-            <h4>Training for Traditional, Animation, Gaming, Illustration Industry</h4>
-            <p>We, at Writart Gurukul provide art workshops and other art activities and training which is directly applicable in professional art field.
-            The skills we train here can be applied in traditional painting, Designing, Digital art, photography, Concept art and Illustration in Animation and Gaming field.<br>
-                We have 'Pay what you want' fee system inspired from ancient Indian Gurukul system.
-              </p>
-              <a type="button" href="{{url_for('school.home')}}">WORKSHOPS</a>
-          </div>
+            <div class="hero-content">
+                <h1><b>Art & Illustration</b></h1>
+                <h4>Training for Traditional, Animation, Gaming, Illustration Industry</h4>
+                <p>We, at Writart Gurukul provide art workshops and other art activities and training which is directly applicable in professional art field.
+                    The skills we train here can be applied in traditional painting, Designing, Digital art, photography, Concept art and Illustration in Animation and Gaming field.<br>
+                    We have 'Pay what you want' fee system inspired from ancient Indian Gurukul system.
+                 </p>
+                <a type="button" href="{{url_for('school.home')}}">WORKSHOPS</a>
+             </div>
         </div>
+    </div>
+</div>
+
+
+<div class="homepage_cover">
+    <div class="homepage_cover_header">
+        <h3>CURRENT PROGRAM</h3>
+        <h4>{{current_ws_category}}</h4>
+    </div>
+    <div class="homepage_cover_title">
+        <h1><b>{{current_ws_topic}}</b></h1>
+        <h3>{{ current_ws_brief }}</h3>
+        <h4>Fee: Pay what you can!</h4>
+        <h6>Date: {{current_ws_date}}</h6>
+        <h6>Time: {{current_ws_time}}</h6>
+    </div>
+    <div class="homepage_cover_button">
+        <button>Know More</button>
+        <button>Enroll Now</button>
     </div>
 </div>
 

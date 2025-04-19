@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash, send_file
-from extensions import db
+from extensions import db, current_year
 from operations.miscellaneous import allowed_file
 from flask_login import login_required, current_user
 from models.member import Member, Role, Project
@@ -92,6 +92,6 @@ def home():
             flash('Access revoked successfully!', 'success')
             return redirect(url_for('animation_admin.home', destination='assign_project'))
 
-        return render_template('animation_admin_home.html', logged_in=current_user.is_authenticated)
+        return render_template('animation_admin_home.html', logged_in=current_user.is_authenticated, current_year=current_year)
     else:
         return render_template('admin_area.html')

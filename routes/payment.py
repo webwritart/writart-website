@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for
 from flask_login import current_user, login_required
-from extensions import image_dict
+from extensions import image_dict, current_year
 from dotenv import load_dotenv
 from datetime import date
 import razorpay

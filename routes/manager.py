@@ -5,7 +5,7 @@ import pandas as pd
 from flask import Blueprint, render_template, request, flash, redirect, url_for, send_file, jsonify
 from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
-from extensions import db, admin_only
+from extensions import db, admin_only, current_year
 from models.videos import Demo
 from operations.messenger import send_email_school, send_email_school_and_wa_msg_by_list, send_email_studio, send_email_support
 from models.payment import Payment
@@ -292,7 +292,6 @@ def home():
                     else:
                         number_list.append(q.phone)
                     name_list.append(q.name.split()[0])
-                send_wa_msg_by_list(message, number_list, name_list)
                 db.session.query(Tools).filter_by(keyword='promotion').one().data = 'Done'
 
             if request.form.get('submit') and request.form.get('submit') == 'wa-mail-promo':
@@ -426,7 +425,6 @@ def home():
                             number_list.append(user.phone)
                         name_list.append(user.name.split()[0])
 
-                send_wa_msg_by_list(message, number_list, name_list)
                 db.session.query(Tools).filter_by(keyword='reminder').one().data = 'Done'
 
             if request.form.get('submit') and request.form.get('submit') == 'wa-mail-last-rem':
@@ -543,8 +541,6 @@ def home():
                         num_list.append(user.phone)
                     names_list.append(user.name.split()[0])
 
-                send_wa_msg_by_list(wa_msg, num_list, names_list)
-
             if request.form.get('submit') and request.form.get('submit') == 'wa-mail-link':
 
                 if not current_workshop.joining_link2 or current_workshop.joining_link2 == '':
@@ -617,7 +613,6 @@ def home():
                         num_list = [user.whatsapp]
                     else:
                         num_list = [user.phone]
-                    send_wa_msg_by_list(wa_msg, num_list, name_list)
 
             if request.form.get('submit') and request.form.get('submit') == 'wa-mail-s-rem':
                 if not current_workshop.joining_link2 or current_workshop.joining_link2 == '':
@@ -917,9 +912,10 @@ def home():
                                current_ws_name=current_ws_name, open_reg=open_reg, promotion=promotion,
                                reminder=reminder, close_reg=close_reg,
                                certificate_distribution=certificate_distribution, upcoming_ws_dict=upcoming_ws_dict,
-                               count=count, count_list=count_list, all_workshops=all_workshops)
+                               count=count, count_list=count_list, all_workshops=all_workshops,
+                               current_year=current_year)
     else:
-        return render_template('admin_area.html', logged_in=current_user.is_authenticated)
+        return render_template('admin_area.html', logged_in=current_user.is_authenticated, current_year=current_year)
 
 
 @login_required
@@ -927,7 +923,8 @@ def home():
 @manager.route('/adv_operations')
 def adv_operations():
     admin = db.session.query(Role).filter_by(name='admin').one_or_none()
-    return render_template('advanced_operations.html', logged_in=current_user.is_authenticated, admin=admin)
+    return render_template('advanced_operations.html', logged_in=current_user.is_authenticated, admin=admin,
+                           current_year=current_year)
 
 
 @login_required
@@ -935,7 +932,8 @@ def adv_operations():
 @manager.route('/visualization')
 def visualization():
     admin = db.session.query(Role).filter_by(name='admin').one_or_none()
-    return render_template('visualization.html', logged_in=current_user.is_authenticated, admin=admin)
+    return render_template('visualization.html', logged_in=current_user.is_authenticated, admin=admin,
+                           current_year=current_year)
 
 
 @login_required
@@ -1015,7 +1013,9 @@ def role_management():
         db.session.commit()
         return redirect(url_for('manager.role_management'))
     admin = db.session.query(Role).filter_by(name='admin').one_or_none()
-    return render_template('role_management.html', logged_in=current_user.is_authenticated, admin=admin)
+    return render_template('role_management.html', logged_in=current_user.is_authenticated, admin=admin,
+                           current_year=current_year)
+
 
 @login_required
 @admin_only
@@ -1046,139 +1046,14 @@ def modifications():
         row = query.filter_by(filter_key).one()
 
     admin = db.session.query(Role).filter_by(name='admin').one_or_none()
-    return render_template('modifications.html', admin=admin, logged_in=current_user.is_authenticated)
+    return render_template('modifications.html', admin=admin, logged_in=current_user.is_authenticated,
+                           current_year=current_year)
 
 
 @manager.route('/log')
 def log():
-    return render_template('log.html')
+    return render_template('log.html', current_year=current_year)
 
-
-@manager.route('/manager-api', methods=['GET', 'POST'])
-def manager_api():
-    authentication_token = 'grghrh74th**hfrgUFUgeg8430h(*h349(hHGr84('
-
-    client_token = request.args.get('token')
-    data = request.args.get('data')
-    all_members = db.session.query(Member).all()
-    all_interested = db.session.query(Query).all()
-    all_workshops = db.session.query(Workshop).all()
-
-    members = {}
-    all_students_and_interested = {}
-    all_enrolled = {}
-    all_interested_dict = {}
-    workshops = {}
-
-    all_members_phone = []
-    all_interested_phone = []
-
-    for m in all_members:
-        all_members_phone.append(m.phone)
-        member_dict = {
-            'id': m.id,
-            'name': m.name,
-            'email': m.email,
-            'phone': m.phone,
-            'whatsapp': m.whatsapp,
-        }
-        members[m.id] = member_dict
-        all_students_and_interested[m.id] = member_dict
-
-    for i in all_interested:
-        if i.phone not in all_interested_phone:
-            all_interested_phone.append(i.phone)
-            interested_dict = {
-                'id': i.id,
-                'name': i.name,
-                'email': i.email,
-                'whatsapp': i.whatsapp,
-                'phone': i.phone,
-            }
-            all_interested_dict[i.id] = interested_dict
-            if i.phone not in all_members_phone:
-                all_students_and_interested[i.id] = interested_dict
-
-    for a in all_members:
-        if a.participated:
-            enrolled = {
-                'id': a.id,
-                'name': a.name,
-                'email': a.email,
-                'phone': a.phone,
-                'whatsapp': a.whatsapp
-            }
-            all_enrolled[a.id] = enrolled
-
-    for w in all_workshops:
-        students = w.participants
-        enrolled_phone_list = []
-        enrolled_list = []
-        interested_list = []
-        all_list = []
-        for s in students:
-            enrolled_phone_list.append(s.phone)
-            student = {
-                'id': s.id,
-                'name': s.name,
-                'email': s.email,
-                'whatsapp': s.whatsapp,
-                'phone': s.phone
-            }
-            enrolled_list.append(student)
-            all_list.append(student)
-        for i in all_interested:
-            if i.interested_ws == w.name:
-                interested = {
-                    'id': i.id,
-                    'name': i.name,
-                    'email': i.email,
-                    'whatsapp': i.whatsapp,
-                    'phone': i.phone
-                }
-                interested_list.append(interested)
-                if i.phone not in enrolled_phone_list:
-                    all_list.append(interested)
-        workshop_dict = {
-            'id': w.id,
-            'name': w.name,
-            'topic': w.topic,
-            'date': w.date,
-            'time': w.time,
-            'instructor': w.instructor,
-            'strength': w.strength,
-            'gross_revenue': w.gross_revenue,
-            'joining_link': w.joining_link,
-            'joining_link2': w.joining_link2,
-            'joining_link3': w.joining_link3,
-            'joining_link4': w.joining_link4,
-            'yt_p1_id': w.yt_p1_id,
-            'yt_p2_id': w.yt_p2_id,
-            'yt_p3_id': w.yt_p3_id,
-            'yt_p4_id': w.yt_p4_id,
-            'reg_start': w.reg_start,
-            'reg_close': w.reg_close,
-            'enrolled_students': enrolled_list,
-            'interested_students': interested_list,
-            'all_students': all_list
-        }
-        workshops[w.id] = workshop_dict
-
-    if client_token == authentication_token:
-        if data == 'members':
-            return jsonify(members)
-        elif data == 'interested':
-            return jsonify(all_interested_dict)
-        elif data == 'members_interested':
-            return jsonify(all_students_and_interested)
-        elif data == 'enrolled':
-            return jsonify(all_enrolled)
-        elif data == 'workshops':
-            return jsonify(workshops)
-        else:
-            return jsonify('Wrong data type!')
-    else:
-        return jsonify('Authentication error!')
 
 
 
