@@ -81,9 +81,9 @@
 
 <div id="footer">
     <div id="footer_links">
-      <a href=""></a><p>Privacy Policy</p></a>
-      <a href=""></a><p>Terms & Conditions</p></a>
-      <a href=""></a><p>FAQ</p></a>
+      <a href="{{ url_for('main.privacy_policy') }}" target="_blank"><p>Privacy Policy</p></a>
+      <a href="{{ url_for('school.terms_and_conditions_school') }}" target="_blank"><p>Terms & Conditions</p></a>
+      <a href=""><p>FAQ</p></a>
     </div>
     <div id="copyright">
       <p>&#169 {{ current_year }} | writart.com | All rights reserved | Any sort of infringement may attract legal consequences.</p>

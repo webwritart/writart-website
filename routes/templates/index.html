@@ -30,17 +30,18 @@
         padding: 2% 10%;
         width: 100%;
     }
-    .homepage_cover_button button {
+    .homepage_cover_button a {
         width: 30%;
         background: white;
-        color: #ad166d;
+        color: #ad166d !important;
         padding: 0.5%;
         font-weight: 400;
         font-size: 1.3rem;
+        text-decoration: none;
     }
-    .homepage_cover_button button:hover {
+    .homepage_cover_button a:hover {
         background: #fcd2b4;
-        color: black;
+        color: black !important;
     }
 
 </style>
@@ -61,7 +62,6 @@
     </div>
 </div>
 
-
 <div class="homepage_cover">
     <div class="homepage_cover_header">
         <h3>CURRENT PROGRAM</h3>
@@ -74,10 +74,44 @@
         <h6>Date: {{current_ws_date}}</h6>
         <h6>Time: {{current_ws_time}}</h6>
     </div>
+
     <div class="homepage_cover_button">
-        <button>Know More</button>
-        <button>Enroll Now</button>
+        <a href="{{ url_for('school.home') }}">Know More</a>
+        {% if reg_status == 'pending' %}
+        <a onclick="openInterestedForm4()">Interested</a>
+        {% elif reg_status == 'open' %}
+        <a href="{{url_for('payment.home')}}">Enroll Now</a>
+        {% elif reg_status == 'close' %}
+        <a style="background:gray;color:black !important;">Registration Closed</a>
+        {% endif %}
+        <div class="form-popup3 box-popup" id="interested-form4">
+            <form class="popup-form-container" action="{{url_for('main.home')}}" name="interested-form" method="post">
+                <div style="display: flex; justify-content: right; width: 95%;">
+                    <a style="opacity: 0.5;" type="button" onclick="closeFormInterested4()">close <img src="../static/images/icons/cross-sign.png" width="10px"></a>
+                </div>
+                <h3 style="color: #c9c9c9;">INTERESTED</h3>
+                <p>We'll notify you when enrollment of the selected workshop opens</p>
+                {% if not logged_in %}
+                <input type="text" placeholder="Name" name="name" required>
+                <input type="email" placeholder="Email" name="email" required>
+                <input type="text" placeholder="Phone" name="phone" required>
+                <input type="text" placeholder="Whatsapp (skip if same whatsapp)" name="whatsapp">
+                {% endif %}
+                <input type="hidden" id="interested-form-hidden-workshop4" name="interested-form-hidden-workshop" required>
+                <input type="text" maxlength="300" placeholder="Any message for us? (optional)" name="message">
+                <input type="submit" name="submit" class="btn btn-primary" onclick="closeFormInterested4()" value="SUBMIT">
+            </form>
+        </div>
     </div>
+</div>
+<div style="display:flex; justify-content:center;">
+ {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="{{category}}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
 </div>
 
 <!--<div>-->
@@ -156,10 +190,6 @@
     {% endfor %}
 </div>
 
-<div style="padding: 5%;">
-
-</div>
-
-<script src="../static/js/school.js"></script>
+<script src="../static/js/main.js"></script>
 
 {% endblock %}

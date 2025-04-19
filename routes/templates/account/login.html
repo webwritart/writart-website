@@ -1,7 +1,6 @@
 {% extends "base.html" %} {% block content %}
 <div class="background">
   <div class="box">
-    <h1 style="color: gray;">{{ instruction }}</h1>
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
               {% for category, message in messages %}
@@ -10,6 +9,7 @@
         {% endif %}
     {% endwith %}
     <form action="{{ url_for('account.login') }}" method="post">
+      <h2>{{ instruction }}</h2>
       {% if prev_page == 'enroll' %}
         <input type="hidden" id="prev-page" name="prev-page" value="enroll">
       {% endif %}

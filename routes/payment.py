@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for, session
 from flask_login import current_user, login_required
 from extensions import image_dict, current_year
 from dotenv import load_dotenv
@@ -26,6 +26,7 @@ payment_ = ''
 @login_required
 @payment.route('/')
 def home():
+    session['url'] = url_for('payment.home')
     global current_ws, current_ws_name, current_ws_topic, student
 
     try:
