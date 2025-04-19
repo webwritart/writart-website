@@ -3,10 +3,10 @@ from models.member import Member, Workshop
 from models.query import Query
 from extensions import db
 
-api = Blueprint('api', __name__, static_folder='static', template_folder='templates/api')
+api_page = Blueprint('api', __name__, static_folder='static', template_folder='templates/api')
 
 
-@api.route('/', methods=['GET', 'POST'])
+@api_page.route('/', methods=['GET', 'POST'])
 def api():
     authentication_token = 'grghrh74th**hfrgUFUgeg8430h(*h349(hHGr84('
 

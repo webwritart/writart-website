@@ -13,7 +13,7 @@ from routes.gallery import gallery
 from routes.studio import studio
 from routes.animation_admin import animation_admin
 from routes.client_section import client_section
-from routes.api import api
+from routes.api import api_page
 from apscheduler.schedulers.background import BackgroundScheduler
 from operations.artist_tools import delete_watermarked_images
 from models.artist_data import ArtistData
@@ -44,7 +44,7 @@ app.register_blueprint(gallery, url_prefix='/gallery')
 app.register_blueprint(studio, url_prefix='/studio')
 app.register_blueprint(client_section, url_prefix='/client_section')
 app.register_blueprint(animation_admin, url_prefix='/animation_admin')
-app.register_blueprint(api, url_prefix='/api')
+app.register_blueprint(api_page, url_prefix='/api')
 
 with app.app_context():
     db.create_all()
