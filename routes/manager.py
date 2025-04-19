@@ -7,7 +7,7 @@ from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
 from extensions import db, admin_only
 from models.videos import Demo
-from operations.messenger import send_email_school, send_wa_msg_by_list, send_email_school_and_wa_msg_by_list, send_email_studio, send_email_support
+from operations.messenger import send_email_school, send_email_school_and_wa_msg_by_list, send_email_studio, send_email_support
 from models.payment import Payment
 from models.query import Query
 from models.tool import Tools
