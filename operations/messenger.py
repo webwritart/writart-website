@@ -67,9 +67,3 @@ def send_email_support(subject, recipients, body, html, image_dict):
 
 
 
-
-
-def send_email_school_and_wa_msg_by_list(subject, recipients, body, html, image_dict, wa_msg, num_list, name_list):
-    send_email_school(subject, recipients, body, html, image_dict)
-    send_wa_msg_by_list(wa_msg, num_list, name_list)
-

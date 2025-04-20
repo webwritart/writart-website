@@ -7,7 +7,7 @@ from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
 from extensions import db, admin_only, current_year
 from models.videos import Demo
-from operations.messenger import send_email_school, send_email_school_and_wa_msg_by_list, send_email_studio, send_email_support
+from operations.messenger import send_email_school, send_email_studio, send_email_support
 from models.payment import Payment
 from models.query import Query
 from models.tool import Tools
@@ -126,7 +126,6 @@ def home():
                     details.photo2 = f'{ws_name}/p2.jpg'
                     details.photo3 = f'{ws_name}/p3.jpg'
                     try:
-
                         db.session.commit()
                         flash('Workshop details added successfully, Chief!', 'success')
                     except:
@@ -235,10 +234,10 @@ def home():
             if request.form.get('submit') and request.form.get('submit') == 'mail-promo':
                 recipients = []
                 current_workshop = db.session.query(Workshop)[db.session.query(Workshop).count() - 1]
-                result = db.session.query(Member)
+                result = db.session.query(Member).all()
                 for user in result:
                     recipients.append(user.email)
-                result2 = db.session.query(Query)
+                result2 = db.session.query(Query).all()
                 if result2.count() > 0:
                     for user in result2:
                         if user.email not in recipients:
@@ -270,88 +269,6 @@ def home():
                     flash('Mailed successfully, Chief!', 'success')
                 else:
                     flash('No workshop-details found, Chief!', 'error')
-
-            if request.form.get('submit') and request.form.get('submit') == 'wa-promo':
-                message = f"Dear [name],\nEnrollment/Registration to the new workshop: {current_ws_topic} is open.\n" \
-                          f"Know more and get enrolled/registered at {url_for('workshops')}\n"
-                number_list = []
-                name_list = []
-
-                users = db.session.query(Member)
-                query = db.session.query(Query)
-
-                for user in users:
-                    if user.whatsapp:
-                        number_list.append(user.whatsapp)
-                    else:
-                        number_list.append(user.phone)
-                    name_list.append(user.name.split()[0])
-                for q in query:
-                    if q.whatsapp:
-                        number_list.append(q.whatsapp)
-                    else:
-                        number_list.append(q.phone)
-                    name_list.append(q.name.split()[0])
-                db.session.query(Tools).filter_by(keyword='promotion').one().data = 'Done'
-
-            if request.form.get('submit') and request.form.get('submit') == 'wa-mail-promo':
-                message = f"Dear [name],\nEnrollment/Registration to the new workshop: {current_ws_topic} is open.\n" \
-                          f"Know more and get enrolled/registered at {url_for('workshops')}\n"
-                number_list = []
-                name_list = []
-
-                users = db.session.query(Member)
-                query = db.session.query(Query)
-
-                for user in users:
-                    if user.whatsapp:
-                        number_list.append(user.whatsapp)
-                    else:
-                        number_list.append(user.phone)
-                    name_list.append(user.name.split()[0])
-                if query.count() > 0:
-                    for q in query:
-                        if q.whatsapp:
-                            number_list.append(q.whatsapp)
-                        else:
-                            number_list.append(q.phone)
-                        name_list.append(q.name.split()[0])
-
-                recipients = []
-                subject = 'NEW WORKSHOP ENROLLMENT OPEN'
-                result = db.session.query(Member)
-                for user in result:
-                    recipients.append(user.email)
-                result2 = db.session.query(Query)
-                for user in result2:
-                    if user.email not in recipients:
-                        recipients.append(user.email)
-                if current_workshop.details:
-                    d = current_workshop.details
-                    html = render_template('mails/ws_promotion.html',
-                                           cat=d.category,
-                                           topic=current_ws_topic,
-                                           brief=d.brief,
-                                           sessions=d.sessions,
-                                           st1=d.subtopic1,
-                                           st2=d.subtopic2,
-                                           st3=d.subtopic3,
-                                           st4=d.subtopic4,
-                                           st5=d.subtopic5,
-                                           st6=d.subtopic6,
-                                           st7=d.subtopic7,
-                                           st8=d.subtopic8,
-                                           st9=d.subtopic9,
-                                           des=d.description
-                                           )
-                    image_dict = {
-                        'file': ['fb.png', 'insta.png', 'twitter.png'],
-                        'path': ['social-icons', 'social-icons', 'social-icons'],
-                    }
-                    send_email_school_and_wa_msg_by_list(subject, recipients, '', html, '', message,
-                                                         number_list, name_list)
-                    db.session.query(Tools).filter_by(keyword='promotion').one().data = 'Done'
-                    flash('Mailed and messaged successfully, Chief!', 'success')
 
             if request.form.get('submit') and request.form.get('submit') == 'mail-last-rem':
                 if current_workshop.details:
@@ -394,115 +311,7 @@ def home():
                     send_email_school(subject, recipients, '', html, '')
                     db.session.query(Tools).filter_by(keyword='reminder').one().data = 'Done'
 
-            if request.form.get('submit') and request.form.get('submit') == 'wa-last-rem':
-                message = f"Dear [name],\n Today is the last day for enrollment/registration to the workshop: {current_ws_topic}.\n" \
-                          f"Know more and get enrolled/registered now at {url_for('workshops')}\n"
-                number_list = []
-                name_list = []
-                enrolled_numbers = []
-
-                result = current_workshop.participants
-                for user in result:
-                    if user.whatsapp:
-                        enrolled_numbers.append(user.whatsapp)
-                    else:
-                        enrolled_numbers.append(user.phone)
-                users = db.session.query(Member)
-                query = db.session.query(Query)
-
-                for user in users:
-                    if user.whatsapp and user.whatsapp not in number_list and user.whatsapp not in enrolled_numbers:
-                        number_list.append(user.whatsapp)
-                    elif user.phone not in number_list and user.phone not in enrolled_numbers:
-                        number_list.append(user.phone)
-                        name_list.append()
-                    name_list.append(user.name.split()[0])
-                if query.count() > 0:
-                    for user in query:
-                        if user.whatsapp and user.whatsapp not in number_list and user.whatsapp not in enrolled_numbers:
-                            number_list.append(user.whatsapp)
-                        elif user.phone not in number_list and user.phone not in enrolled_numbers:
-                            number_list.append(user.phone)
-                        name_list.append(user.name.split()[0])
-
-                db.session.query(Tools).filter_by(keyword='reminder').one().data = 'Done'
-
-            if request.form.get('submit') and request.form.get('submit') == 'wa-mail-last-rem':
-                # current_workshop = db.session.query(Workshop)[db.session.query(Workshop).count() - 1]
-                if current_workshop.details:
-                    d = current_workshop.details
-                    html = render_template('mails/enrollment_reminder.html',
-                                           cat=d.category,
-                                           topic=current_ws_topic,
-                                           brief=d.brief,
-                                           sessions=d.sessions,
-                                           st1=d.subtopic1,
-                                           st2=d.subtopic2,
-                                           st3=d.subtopic3,
-                                           st4=d.subtopic4,
-                                           st5=d.subtopic5,
-                                           st6=d.subtopic6,
-                                           st7=d.subtopic7,
-                                           st8=d.subtopic8,
-                                           st9=d.subtopic9,
-                                           des=d.description
-                                           )
-                    image_dict = {
-                        'file': ['fb.png', 'insta.png', 'twitter.png'],
-                        'path': ['social-icons', 'social-icons', 'social-icons'],
-                    }
-                    subject = 'LAST DAY'
-                    enrolled_user_list = []
-                    recipients = []
-                    enrolled_users = current_workshop.participants
-                    for user in enrolled_users:
-                        enrolled_user_list.append(user.email)
-                    result = db.session.query(Member)
-                    result2 = db.session.query(Query)
-                    for user in result:
-                        if user.email not in enrolled_user_list and user.email not in recipients:
-                            recipients.append(user.email)
-                    if result2.count() > 0:
-                        for user in result2:
-                            if user.email not in enrolled_user_list and user.email not in recipients:
-                                recipients.append(user.email)
-
-                    message = f"Dear [name],\n Today is the last day for enrollment/registration to the workshop: {current_ws_topic}.\n" \
-                              f"Know more and get enrolled/registered now at {url_for('workshops')}\n"
-                    number_list = []
-                    name_list = []
-                    enrolled_numbers = []
-
-                    result = current_workshop.participants
-                    for user in result:
-                        if user.whatsapp:
-                            enrolled_numbers.append(user.whatsapp)
-                        else:
-                            enrolled_numbers.append(user.phone)
-                    users = db.session.query(Member)
-                    query = db.session.query(Query)
-
-                    for user in users:
-                        if user.whatsapp and user.whatsapp not in number_list and user.whatsapp not in enrolled_numbers:
-                            number_list.append(user.whatsapp)
-                        elif user.phone not in number_list and user.phone not in enrolled_numbers:
-                            number_list.append(user.phone)
-                            name_list.append(user.name.split()[0])
-                        name_list.append(user.name.split()[0])
-                    if query.count() > 0:
-                        for user in query:
-                            if user.whatsapp and user.whatsapp not in number_list and user.whatsapp not in enrolled_numbers:
-                                number_list.append(user.whatsapp)
-                            elif user.phone not in number_list and user.phone not in enrolled_numbers:
-                                number_list.append(user.phone)
-                            name_list.append(user.name.split()[0])
-
-                send_email_school_and_wa_msg_by_list(subject, recipients, '', html, '', message, number_list,
-                                                     name_list)
-                db.session.query(Tools).filter_by(keyword='reminder').one().data = 'Done'
-
             if request.form.get('submit') and request.form.get('submit') == 'mail-link':
-
                 if not current_workshop.joining_link2 or current_workshop.joining_link2 == '':
                     joining_link = current_workshop.joining_link
                 elif not current_workshop.joining_link3 or current_workshop.joining_link3 == '':
@@ -519,59 +328,7 @@ def home():
                 recipients = list(set(recipients))
                 body = f"The Workshop session joining link is below:\n{joining_link}"
                 send_email_school(subject, recipients, body, '', '')
-
-            if request.form.get('submit') and request.form.get('submit') == 'wa-link':
-                if not current_workshop.joining_link2 or current_workshop.joining_link2 == '':
-                    joining_link = current_workshop.joining_link
-                elif not current_workshop.joining_link3 or current_workshop.joining_link3 == '':
-                    joining_link = current_workshop.joining_link2
-                elif not current_workshop.joining_link4 or current_workshop.joining_link4 == '':
-                    joining_link = current_workshop.joining_link3
-                else:
-                    joining_link = current_workshop.joining_link4
-                wa_msg = f"The workshop session joining link is below:\n{joining_link}\n"
-                num_list = []
-                names_list = []
-                result = current_workshop.participants
-                result = list(set(result))
-                for user in result:
-                    if user.whatsapp:
-                        num_list.append(user.whatsapp)
-                    else:
-                        num_list.append(user.phone)
-                    names_list.append(user.name.split()[0])
-
-            if request.form.get('submit') and request.form.get('submit') == 'wa-mail-link':
-
-                if not current_workshop.joining_link2 or current_workshop.joining_link2 == '':
-                    joining_link = current_workshop.joining_link
-                elif not current_workshop.joining_link3 or current_workshop.joining_link3 == '':
-                    joining_link = current_workshop.joining_link2
-                elif not current_workshop.joining_link4 or current_workshop.joining_link4 == '':
-                    joining_link = current_workshop.joining_link3
-                else:
-                    joining_link = current_workshop.joining_link4
-                subject = 'JOINING LINK'
-                recipients = []
-                result = current_workshop.participants
-                for user in result:
-                    recipients.append(user.email)
-                recipients = list(set(recipients))
-                body = f"The Workshop session joining link is below:\n{joining_link}"
-
-                wa_msg = f"The workshop session joining link is below:\n{joining_link}\n"
-                num_list = []
-                names_list = []
-                result = current_workshop.participants
-                result = list(set(result))
-                for user in result:
-                    if user.whatsapp:
-                        num_list.append(user.whatsapp)
-                    else:
-                        num_list.append(user.phone)
-                    names_list.append(user.name.split()[0])
-
-                send_email_school_and_wa_msg_by_list(subject, recipients, body, '', '', wa_msg, num_list, names_list)
+                flash("Chief! Session link send successfully!", "success")
 
             if request.form.get('submit') and request.form.get('submit') == 'mail-s-rem':
                 students = current_workshop.participants
@@ -593,55 +350,6 @@ def home():
                     recipients = [user.email]
                     html = render_template('mails/session_joining_reminder.html', name=name, joining_link=joining_link)
                     send_email_school(subject, recipients, '', html, '')
-
-            if request.form.get('submit') and request.form.get('submit') == 'wa-s-rem':
-                # current_workshop = db.session.query(Workshop)[db.session.query(Workshop).count() - 1]
-                students = current_workshop.participants
-                if not current_workshop.joining_link2 or current_workshop.joining_link2 == '':
-                    joining_link = current_workshop.joining_link
-                elif not current_workshop.joining_link3 or current_workshop.joining_link3 == '':
-                    joining_link = current_workshop.joining_link2
-                elif not current_workshop.joining_link4 or current_workshop.joining_link4 == '':
-                    joining_link = current_workshop.joining_link3
-                else:
-                    joining_link = current_workshop.joining_link4
-                for user in students:
-                    name_list = [user.name.split()[0]]
-                    wa_msg = f"Dear{user.name.split()[0]},\nThe workshop session has started. If you've not joined " \
-                             f"yet please join it by clicking below.\n{joining_link}\n"
-                    if user.whatsapp:
-                        num_list = [user.whatsapp]
-                    else:
-                        num_list = [user.phone]
-
-            if request.form.get('submit') and request.form.get('submit') == 'wa-mail-s-rem':
-                if not current_workshop.joining_link2 or current_workshop.joining_link2 == '':
-                    joining_link = current_workshop.joining_link
-                elif not current_workshop.joining_link3 or current_workshop.joining_link3 == '':
-                    joining_link = current_workshop.joining_link2
-                elif not current_workshop.joining_link4 or current_workshop.joining_link4 == '':
-                    joining_link = current_workshop.joining_link3
-                else:
-                    joining_link = current_workshop.joining_link4
-                subject = 'WORKSHOP SESSION STARTED'
-                image_dict = {
-                    'file': ['fb.png', 'insta.png', 'twitter.png'],
-                    'path': ['social-icons', 'social-icons', 'social-icons'],
-                }
-
-                for user in students:
-                    name = user.name.split()[0]
-                    name_list = [name]
-                    if user.whatsapp:
-                        num_list = [user.whatsapp]
-                    else:
-                        num_list = [user.phone]
-                    recipients = [user.email]
-                    wa_msg = f"Dear{user.name.split()[0]},\nThe workshop session has started. If you've not joined " \
-                             f"yet please join it by clicking below.\n{joining_link}\n"
-                    html = render_template('mails/session_joining_reminder.html', name=name, joining_link=joining_link)
-                    send_email_school_and_wa_msg_by_list(subject, recipients, '', html, '', wa_msg, num_list,
-                                                         name_list)
 
             if request.form.get('submit') and request.form.get('submit') == 'certificate-dist':
                 participants = current_workshop.participants
