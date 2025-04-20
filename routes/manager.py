@@ -233,12 +233,13 @@ def home():
 
             if request.form.get('submit') and request.form.get('submit') == 'mail-promo':
                 recipients = []
-                current_workshop = db.session.query(Workshop)[db.session.query(Workshop).count() - 1]
+                current_ws = db.session.query(Tools).filter_by(keyword='current_workshop').one_or_none().data
+                current_workshop = db.session.query(Workshop).filter_by(name=current_ws).one_or_none()
                 result = db.session.query(Member).all()
                 for user in result:
                     recipients.append(user.email)
-                result2 = db.session.query(Query).all()
-                if result2.count() > 0:
+                result2 = db.session.query(Query).filter_by(interested_ws=current_ws).all()
+                if len(result2) > 0:
                     for user in result2:
                         if user.email not in recipients:
                             recipients.append(user.email)
@@ -264,8 +265,12 @@ def home():
                         'file': ['fb.png', 'insta.png', 'twitter.png'],
                         'path': ['social-icons', 'social-icons', 'social-icons'],
                     }
-                    send_email_school('NEW WORKSHOP ENROLLMENT OPEN', recipients, '', html, '')
+                    try:
+                        send_email_school('NEW ART WORKSHOP ENROLLMENT OPEN', recipients, '', html, '')
+                    except Exception as e:
+                        print(f'Mail not sent! error = {e}')
                     db.session.query(Tools).filter_by(keyword='promotion').one().data = 'Done'
+                    db.session.commit()
                     flash('Mailed successfully, Chief!', 'success')
                 else:
                     flash('No workshop-details found, Chief!', 'error')
@@ -293,23 +298,25 @@ def home():
                         'file': ['fb.png', 'insta.png', 'twitter.png'],
                         'path': ['social-icons', 'social-icons', 'social-icons'],
                     }
-                    subject = 'LAST DAY'
+                    subject = 'LAST DAY!'
                     enrolled_user_list = []
                     recipients = []
                     enrolled_users = current_workshop.participants
+                    print(enrolled_users)
                     for user in enrolled_users:
                         enrolled_user_list.append(user.email)
                     result = db.session.query(Member)
-                    result2 = db.session.query(Query)
+                    result2 = db.session.query(Query).filter_by(interested_ws=current_ws_name).all()
                     for user in result:
                         if user.email not in enrolled_user_list and user.email not in recipients:
                             recipients.append(user.email)
-                    if result2.count() > 0:
+                    if len(result2) > 0:
                         for user in result2:
                             if user.email not in enrolled_user_list and user.email not in recipients:
                                 recipients.append(user.email)
                     send_email_school(subject, recipients, '', html, '')
                     db.session.query(Tools).filter_by(keyword='reminder').one().data = 'Done'
+                    db.session.commit()
 
             if request.form.get('submit') and request.form.get('submit') == 'mail-link':
                 if not current_workshop.joining_link2 or current_workshop.joining_link2 == '':
@@ -320,15 +327,15 @@ def home():
                     joining_link = current_workshop.joining_link3
                 else:
                     joining_link = current_workshop.joining_link4
-                subject = 'JOINING LINK'
+                subject = 'ART SESSION JOINING LINK'
                 recipients = []
                 result = current_workshop.participants
                 for user in result:
                     recipients.append(user.email)
                 recipients = list(set(recipients))
-                body = f"The Workshop session joining link is below:\n{joining_link}"
+                body = f"The Workshop session joining link is below:\n{joining_link}\nPlease join at the specified time."
                 send_email_school(subject, recipients, body, '', '')
-                flash("Chief! Session link send successfully!", "success")
+                flash("Chief! Session link sent successfully!", "success")
 
             if request.form.get('submit') and request.form.get('submit') == 'mail-s-rem':
                 students = current_workshop.participants
@@ -350,6 +357,7 @@ def home():
                     recipients = [user.email]
                     html = render_template('mails/session_joining_reminder.html', name=name, joining_link=joining_link)
                     send_email_school(subject, recipients, '', html, '')
+                    flash("Chief! Session joining reminder sent successfully!", "success")
 
             if request.form.get('submit') and request.form.get('submit') == 'certificate-dist':
                 participants = current_workshop.participants

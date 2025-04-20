@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from flask_login import current_user, login_required
 from extensions import image_dict, current_year
 from dotenv import load_dotenv
@@ -45,20 +45,24 @@ def home():
 @payment.route('/checkout', methods=['POST'])
 def checkout():
     global payment_, msg
+    current_ws_name = db.session.query(Tools).filter_by(keyword='current_workshop').first().data
+    current_workshop = db.session.query(Workshop).filter_by(name=current_ws_name).one_or_none()
     name = current_user.name
     email = current_user.email
     phone = current_user.phone
     amt = request.form.get('amount')
     amount = f"{amt}00"
     msg = request.form.get('message')
+    if current_workshop not in current_user.participated:
+        data = {"amount": amount, "currency": "INR", "receipt": "#105"}
+        payment_ = client.order.create(data=data)
+        return render_template('checkout.html', payment=payment_, name=name, email=email, phone=phone, key_id=KEY_ID,
+                               ws_name=current_ws_name, logged_in=current_user.is_authenticated)
+    else:
+        flash("You have already enrolled to this program!", "error")
+        return redirect(url_for('payment.home'))
 
-    data = {"amount": amount, "currency": "INR", "receipt": "#105"}
-    payment_ = client.order.create(data=data)
 
-    current_ws_name = db.session.query(Tools).filter_by(keyword='current_workshop').first()
-
-    return render_template('checkout.html', payment=payment_, name=name, email=email, phone=phone, key_id=KEY_ID,
-                           ws_name=current_ws_name, logged_in=current_user.is_authenticated)
 
 
 @login_required
