@@ -67,6 +67,7 @@ def api():
                         quarter_payments[payment.id] = invoice
                 elif end_month_name == 'december':
                     if month == '10' or month == '11' or month == '12':
+                        print(month)
                         invoice = {
                             'id': payment.id,
                             'name': payment.name,
@@ -76,6 +77,7 @@ def api():
                         }
                         quarter_payments[payment.id] = invoice
         return quarter_payments
+
     for m in all_members:
         all_members_phone.append(m.phone)
         member_dict = {

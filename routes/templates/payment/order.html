@@ -5,6 +5,47 @@
     <form action="{{ url_for('payment.checkout') }}" method="post">
         <h2>Enroll</h2>
         <input name="amount" placeholder="Enter any amount you want to offer" type="text" required><br>
+        <select name="state" id="state" required>
+            <option value="default">Choose State</option>
+            <option value="01-Jammu & Kashmir">Jammu & Kashmir</option>
+            <option value="02-Himachal Pradesh">Himachal Pradesh</option>
+            <option value="03-Punjab">Punjab</option>
+            <option value="04-Chandigarh">Chandigarh</option>
+            <option value="05-Uttarakhand">Uttarakhand</option>
+            <option value="06-Haryana">Haryana</option>
+            <option value="07-Delhi">Delhi</option>
+            <option value="08-Rajasthan">Rajasthan</option>
+            <option value="09-Uttar Pradesh">Uttar Pradesh</option>
+            <option value="10-Bihar">Bihar</option>
+            <option value="11-Sikkim">Sikkim</option>
+            <option value="12-Arunachal Pradesh">Arunachal Pradesh</option>
+            <option value="13-Nagaland">Nagaland</option>
+            <option value="14-Manipur">Manipur</option>
+            <option value="15-Mizoram">Mizoram</option>
+            <option value="16-Tripura">Tripura</option>
+            <option value="17-Meghalaya">Meghalaya</option>
+            <option value="18-Assam">Assam</option>
+            <option value="19-West Bengal">West Bengal</option>
+            <option value="20-Jharkhand">Jharkhand</option>
+            <option value="21-Odisha">Odisha</option>
+            <option value="22-Chhattisgarh">Chhattisgarh</option>
+            <option value="23-Madhya Pradesh">Madhya Pradesh</option>
+            <option value="24-Gujarat">Gujarat</option>
+            <option value="25-Daman & Diu">Daman & Diu</option>
+            <option value="26-Dadra & Nagar Haveli & Daman & Diu">Dadra & Nagar Haveli & Daman & Diu</option>
+            <option value="27-Maharashtra">Maharashtra</option>
+            <option value="29-Karnataka">Karnataka</option>
+            <option value="30-Goa">Goa</option>
+            <option value="31-Lakshdweep">Lakshdweep</option>
+            <option value="32-Kerala">Kerala</option>
+            <option value="33-Tamil Nadu">Tamil Nadu</option>
+            <option value="34-Puducherry">Puducherry</option>
+            <option value="35-Andaman & Nicobar Islands">Andaman & Nicobar Islands</option>
+            <option value="36-Telangana">Telangana</option>
+            <option value="37-Andhra Pradesh">Andhra Pradesh</option>
+            <option value="38-Ladakh">Ladakh</option>
+            <option value="97-Other Territory">Other Territory</option>
+        </select>
         <input name="message" placeholder="Any message for us?" type="text"><br>
         By clicking CONTINUE button you agree to our school's <a href="{{url_for('school.terms_and_conditions_school')}}">terms and conditions</a>
         <button type="submit" class="btn btn-primary btn-block btn-large">CONTINUE</button>

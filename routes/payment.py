@@ -1,3 +1,5 @@
+import pprint
+
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from flask_login import current_user, login_required
 from extensions import image_dict, current_year
@@ -14,8 +16,8 @@ load_dotenv()
 
 payment = Blueprint('payment', __name__, static_folder='static', template_folder='templates/payment')
 
-KEY_ID = os.environ.get('RAZORPAY_KEY_ID_LIVE')
-KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET_LIVE')
+KEY_ID = os.environ.get('RAZORPAY_KEY_ID_TEST')
+KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET_TEST')
 
 client = razorpay.Client(auth=(KEY_ID, KEY_SECRET))
 
@@ -50,19 +52,18 @@ def checkout():
     name = current_user.name
     email = current_user.email
     phone = current_user.phone
+    state = request.form.get('state')
     amt = request.form.get('amount')
     amount = f"{amt}00"
     msg = request.form.get('message')
     if current_workshop not in current_user.participated:
-        data = {"amount": amount, "currency": "INR", "receipt": "#105"}
+        data = {"amount": amount, "currency": "INR", "receipt": "#105", "notes": [state]}
         payment_ = client.order.create(data=data)
         return render_template('checkout.html', payment=payment_, name=name, email=email, phone=phone, key_id=KEY_ID,
-                               ws_name=current_ws_name, logged_in=current_user.is_authenticated)
+                               ws_name=current_ws_name, state=state, logged_in=current_user.is_authenticated)
     else:
         flash("You have already enrolled to this program!", "error")
         return redirect(url_for('payment.home'))
-
-
 
 
 @login_required
@@ -77,6 +78,7 @@ def verify():
     }
     amount = payment_['amount']
     order_id = payment_['id']
+    state = payment_['notes'][0]
 
     if client.utility.verify_payment_signature(response_data):
         client.payment.capture(response_data["razorpay_payment_id"], amount)
@@ -98,7 +100,7 @@ def verify():
             name=current_user.name,
             email=current_user.email,
             phone=phone,
-            state=current_user.state,
+            state=state,
             amount=str(payment_['amount'])[:-2],
             message=msg,
             order_id=order_id,
