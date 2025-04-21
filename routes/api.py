@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, jsonify
 from models.member import Member, Workshop
 from models.query import Query
+from models.payment import Payment
 from extensions import db
 
 api_page = Blueprint('api', __name__, static_folder='static', template_folder='templates/api')
@@ -25,6 +26,56 @@ def api():
     all_members_phone = []
     all_interested_phone = []
 
+    def payments_by_quarter(end_month_name, year):
+        quarter_payments = {}
+        all_payments = db.session.query(Payment).all()
+
+        for payment in all_payments:
+            payment_year = payment.date.split('-')[0]
+            month = payment.date.split('-')[1]
+
+            if payment_year == year:
+                if end_month_name == 'march':
+                    if month == '01' or month == '02' or month == '03':
+                        invoice = {
+                            'id': payment.id,
+                            'name': payment.name,
+                            'state': payment.state,
+                            'amount': payment.amount,
+                            'date': payment.date
+                        }
+                        quarter_payments[payment.id] = invoice
+                elif end_month_name == 'june':
+                    if month == '04' or month == '05' or month == '06':
+                        invoice = {
+                            'id': payment.id,
+                            'name': payment.name,
+                            'state': payment.state,
+                            'amount': payment.amount,
+                            'date': payment.date
+                        }
+                        quarter_payments[payment.id] = invoice
+                elif end_month_name == 'september':
+                    if month == '07' or month == '08' or month == '09':
+                        invoice = {
+                            'id': payment.id,
+                            'name': payment.name,
+                            'state': payment.state,
+                            'amount': payment.amount,
+                            'date': payment.date
+                        }
+                        quarter_payments[payment.id] = invoice
+                elif end_month_name == 'december':
+                    if month == '10' or month == '11' or month == '12':
+                        invoice = {
+                            'id': payment.id,
+                            'name': payment.name,
+                            'state': payment.state,
+                            'amount': payment.amount,
+                            'date': payment.date
+                        }
+                        quarter_payments[payment.id] = invoice
+        return quarter_payments
     for m in all_members:
         all_members_phone.append(m.phone)
         member_dict = {
@@ -127,6 +178,10 @@ def api():
             return jsonify(all_enrolled)
         elif data == 'workshops':
             return jsonify(workshops)
+        elif data == 'payments':
+            end_month_name = request.args.get('end_month_name')
+            year = request.args.get('year')
+            return jsonify(payments_by_quarter(end_month_name, year))
         else:
             return jsonify('Wrong data type!')
     else:
