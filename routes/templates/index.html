@@ -11,17 +11,31 @@
         display: flex;
         justify-content: space-between;
     }
+    .homepage_cover_header h3 {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+    }
     .homepage_cover_title {
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
     }
+    .homepage_cover_title h1{
+        font-size: 1.5rem;
+    }
+    .homepage_cover_title h3 {
+        font-size: 1rem;
+    }
     .homepage_cover_title h4 {
         padding: 2% 0%;
+        color: #6eb661;
+        font-size: 0.8rem;
     }
     .homepage_cover_title h6 {
-        margin: 1% 0%;
+        font-size: 0.8rem;
+        padding-top: 1.5%;
+        color: #f58233;
     }
     .homepage_cover_button {
         display:flex;
@@ -36,13 +50,114 @@
         color: #ad166d !important;
         padding: 0.5%;
         font-weight: 400;
-        font-size: 1.3rem;
+        font-size: 0.9rem;
         text-decoration: none;
     }
     .homepage_cover_button a:hover {
         background: #fcd2b4;
         color: black !important;
     }
+
+@media (min-width: 600px) {
+    .homepage_cover_header h3 {
+        font-size: 1rem;
+    }
+    .homepage_cover_title h1{
+        font-size: 1.7rem;
+    }
+    .homepage_cover_title h3 {
+        font-size: 1.2rem;
+    }
+    .homepage_cover_title h4 {
+        font-size: 0.9rem;
+    }
+    .homepage_cover_title h6 {
+        font-size: 0.9rem;
+    }
+    .homepage_cover_button a {
+        font-size: 1rem;
+    }
+}
+@media (min-width: 768px) {
+    .homepage_cover_header h3 {
+        font-size: 1.2rem;
+    }
+    .homepage_cover_title h1{
+        font-size: 1.9rem;
+    }
+    .homepage_cover_title h3 {
+        font-size: 1.3rem;
+    }
+    .homepage_cover_title h4 {
+        font-size: 1.1rem;
+    }
+    .homepage_cover_title h6 {
+        font-size: 1rem;
+    }
+    .homepage_cover_button a {
+        font-size: 1.2rem;
+    }
+}
+@media (min-width: 1200px) {
+    .homepage_cover_header h3 {
+        font-size: 1.4rem;
+    }
+    .homepage_cover_title h1{
+        font-size: 2.3rem;
+    }
+    .homepage_cover_title h3 {
+        font-size: 1.5rem;
+    }
+    .homepage_cover_title h4 {
+        font-size: 1.3rem;
+    }
+    .homepage_cover_title h6 {
+        font-size: 1.2rem;
+    }
+    .homepage_cover_button a {
+        font-size: 1.4rem;
+    }
+}
+@media (min-width: 1900px) {
+    .homepage_cover_header h3 {
+        font-size: 1.7rem;
+    }
+    .homepage_cover_title h1{
+        font-size: 3rem;
+    }
+    .homepage_cover_title h3 {
+        font-size: 1.7rem;
+    }
+    .homepage_cover_title h4 {
+        font-size: 1.5rem;
+    }
+    .homepage_cover_title h6 {
+        font-size: 1.5rem;
+    }
+    .homepage_cover_button a {
+        font-size: 1.8rem;
+    }
+}
+@media (min-width: 2500px) {
+    .homepage_cover_header h3 {
+        font-size: 2rem;
+    }
+    .homepage_cover_title h1{
+        font-size: 3.8rem;
+    }
+    .homepage_cover_title h3 {
+        font-size: 2rem;
+    }
+    .homepage_cover_title h4 {
+        font-size: 1.9rem;
+    }
+    .homepage_cover_title h6 {
+        font-size: 2rem;
+    }
+    .homepage_cover_button a {
+        font-size: 2.3rem;
+    }
+}
 
 </style>
 
@@ -65,7 +180,7 @@
 <div class="homepage_cover">
     <div class="homepage_cover_header">
         <h3>CURRENT PROGRAM</h3>
-        <h4>{{current_ws_category}}</h4>
+        <h3>{{current_ws_category}}</h3>
     </div>
     <div class="homepage_cover_title">
         <h1><b>{{current_ws_topic}}</b></h1>

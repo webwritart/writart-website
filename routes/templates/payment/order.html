@@ -4,7 +4,7 @@
 <div class="box">
     <form action="{{ url_for('payment.checkout') }}" method="post">
         <h2>Enroll</h2>
-        <input name="amount" placeholder="Enter any amount you want to offer" type="text" required><br>
+        <input style="background:#ac7ab7;" name="amount" placeholder="Enter any amount you want to offer" type="text" required><br>
         <select name="state" id="state" required>
             <option value="default">Choose State</option>
             <option value="01-Jammu & Kashmir">Jammu & Kashmir</option>
@@ -46,7 +46,7 @@
             <option value="38-Ladakh">Ladakh</option>
             <option value="97-Other Territory">Other Territory</option>
         </select>
-        <input name="message" placeholder="Any message for us?" type="text"><br>
+        <input style="background:#ac7ab7;" name="message" placeholder="Any message for us? (optional)" type="text"><br>
         By clicking CONTINUE button you agree to our school's <a href="{{url_for('school.terms_and_conditions_school')}}">terms and conditions</a>
         <button type="submit" class="btn btn-primary btn-block btn-large">CONTINUE</button>
         {% with messages = get_flashed_messages(with_categories=true) %}
