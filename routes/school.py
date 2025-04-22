@@ -62,7 +62,12 @@ def home():
     result_list = [r1, r2, r3, r4, r5, r6, r7, r8, r9]
     date = current_workshop.date
     time = current_workshop.time
-
+    s2_date = current_workshop.s2_date
+    s3_date = current_workshop.s3_date
+    s4_date = current_workshop.s4_date
+    s2_time = current_workshop.s2_time
+    s3_time = current_workshop.s3_time
+    s4_time = current_workshop.s4_time
     if request.method == 'POST':
         if request.form.get('interested-form-hidden-workshop'):
             ws_name = request.form.get('interested-form-hidden-workshop')

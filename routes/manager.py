@@ -51,14 +51,41 @@ def home():
                     name = request.form.get('name')
                     topic = request.form.get('topic')
                     dt = request.form.get('date')
+                    s2_dt = request.form.get('s2_date')
+                    s3_dt = request.form.get('s3_date')
+                    s4_dt = request.form.get('s4_date')
                     if len(dt) < 2:
                         dt = "0" + dt
+                    if len(s2_dt) < 2:
+                        s2_dt = "0" + s2_dt
+                    if len(s3_dt) < 2:
+                        s3_dt = "0" + s3_dt
+                    if len(s4_dt) < 2:
+                        s4_dt = "0" + s4_dt
                     month = request.form.get('month')
+                    s2_month = request.form.get('s2_month')
+                    s3_month = request.form.get('s3_month')
+                    s4_month = request.form.get('s4_month')
                     if len(month) < 2:
                         month = "0" + month
+                    if len(s2_month) < 2:
+                        s2_month = "0" + s2_month
+                    if len(s3_month) < 2:
+                        s3_month = "0" + s3_month
+                    if len(s4_month) < 2:
+                        s4_month = "0" + s4_month
                     year = request.form.get('year')
+                    s2_year = request.form.get('s2_year')
+                    s3_year = request.form.get('s3_year')
+                    s4_year = request.form.get('s4_year')
                     date_ = f"{year}-{month}-{dt}"
+                    s2_date = f"{s2_year}-{s2_month}-{s2_dt}"
+                    s3_date = f"{s3_year}-{s3_month}-{s3_dt}"
+                    s4_date = f"{s4_year}-{s4_month}-{s4_dt}"
                     time = request.form.get('time')
+                    s2_time = request.form.get('s2_time')
+                    s3_time = request.form.get('s3_time')
+                    s4_time = request.form.get('s4_time')
                     instructor_ = request.form.get('instructor')
                     session_link = request.form.get('link')
                     entry = Workshop(
@@ -66,6 +93,12 @@ def home():
                         topic=topic,
                         date=date_,
                         time=time,
+                        s2_date=s2_date,
+                        s3_date=s3_date,
+                        s4_date=s4_date,
+                        s2_time=s2_time,
+                        s3_time=s3_time,
+                        s4_time=s4_time,
                         instructor=instructor_,
                         joining_link=session_link,
                     )
@@ -245,6 +278,7 @@ def home():
                             recipients.append(user.email)
                 if current_workshop.details:
                     d = current_workshop.details
+                    print(d.sessions)
                     html = render_template('mails/ws_promotion.html',
                                            cat=d.category,
                                            topic=current_ws_topic,
