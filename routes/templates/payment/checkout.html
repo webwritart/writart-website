@@ -12,7 +12,7 @@
             "name": "WRITART GURUKUL",
             "description": "{{ ws_name }}",
             "image": "https://example.com/your_logo",
-            "order_id": "{{payment['id']}}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+            "order_id": "{{order_id}}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
             "callback_url": "{{url_for('payment.verify')}}",
             "prefill": {
                 "name": "{{name}}",
