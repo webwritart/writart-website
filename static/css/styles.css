@@ -689,9 +689,6 @@ and (max-width : 1440px) {
     #footer {
         font-size: 1.1rem;
     }
-    .session_schedule p {
-            width: 80%;
-        }
 }
 
 
@@ -716,6 +713,9 @@ and (max-width : 992px) {
     #footer {
         font-size: 0.9rem;
     }
+    .session_schedule p {
+            width: 80%;
+        }
 }
 
 @media only screen
