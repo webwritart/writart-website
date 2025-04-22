@@ -121,6 +121,31 @@
                         </div>
                         <div class="col button-container">
                             <a class="btn btn-primary btn-large btn-block button" type="button" onclick="openInterestedForm3('{{ws}}')">INTERESTED</a>
+                            {% with messages = get_flashed_messages(with_categories=true) %}
+                                {% if messages %}
+                                    {% for category, message in messages %}
+                                        <div class="{{category}}">{{ message }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endwith %}
+                            <div class="form-popup3 box-popup" id="interested-form3">
+                                <form class="popup-form-container" action="{{url_for('school.home')}}" name="interested-form" method="post">
+                                    <div style="display: flex; justify-content: right; width: 95%;">
+                                        <a style="opacity: 0.5;" type="button" onclick="closeFormInterested3()">close <img src="../static/images/icons/cross-sign.png" width="10px"></a>
+                                    </div>
+                                    <h3 style="color: #c9c9c9;">INTERESTED</h3>
+                                    <p>We'll notify you when enrollment of the selected workshop opens</p>
+                                    {% if not logged_in %}
+                                    <input type="text" placeholder="Name" name="name" required>
+                                    <input type="email" placeholder="Email" name="email" required>
+                                    <input type="text" placeholder="Phone" name="phone" required>
+                                    <input type="text" placeholder="Whatsapp (skip if same whatsapp)" name="whatsapp">
+                                    {% endif %}
+                                    <input type="hidden" id="interested-form-hidden-workshop3" name="interested-form-hidden-workshop" required>
+                                    <input type="text" maxlength="300" placeholder="Any message for us? (optional)" name="message">
+                                    <input type="submit" name="submit" class="btn btn-primary" onclick="closeFormInterested3()" value="SUBMIT">
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
