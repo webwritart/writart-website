@@ -20,30 +20,22 @@
     <div class="row justify-content-center align-items-center" id="ws-content" style="padding: 0% 2%;">
         <div class="col-md-9 align-items-center" style="background-color: #d2eafb; padding: 5%;">
             <div class="cover" style="padding-top: 2%;">
-                <div class="row justify-content-between align-items-center">
-                    <div class="col-md-2" style="text-align: center;">
+                <div class="ws_page_category">
                         <h6>{{category}}</h6>
-                    </div>
-                    <div class="col-md-2" style="text-align: center;">
                         <h6>SESSIONS- {{sessions}}</h6>
-                    </div>
                 </div>
-                <div class="row justify-content-center">
-                    <div class="col" style="text-align: center; padding: 10% 0% 0% 0%;">
+                    <div class="ws_page_title">
                         <h1>{{topic}}</h1>
                         <h6>{{brief}}</h6>
                     </div>
-                </div>
             </div>
-            <div class="row">
-                <div class="col" style="text-align: center; padding: 5% 0%;">
-                    <h5>Date: {{date}}</h5>
-                    <h5>Time: {{time}}</h5>
-                    <h5>Mode: Online (Google Meet)</h5>
-                </div>
+            <div class="ws-main-schedule">
+                <h5>Date: {{date}}</h5>
+                <h5>Time: {{time}}</h5>
+                <h5>Mode: Online (Google Meet)</h5>
             </div>
             <div>
-                <div class="col heading">
+                <div class="ws-main-subheading">
                     <h5>Session Schedule</h5>
                 </div>
                 <div class="session_schedule">
@@ -55,16 +47,14 @@
             </div>
             <div class="col">
                 <div id="topics">
-                    <div class="row justify-content-center" style="text-align: center;">
-                        <div class="col heading">
+                        <div class="ws-main-subheading">
                             <h5>Topics we'll cover</h5>
                         </div>
-                    </div>
                     <div class="wrapper-ws">
                         <div class="container-ws">
                             {% for item in sub_list %}
                             <div class="point">
-                                <div class="content">
+                                <div class="ws-main-content">
                                     {{item}}
                                 </div>
                             </div>
@@ -72,42 +62,34 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col heading">
-                        <h5>About the Session</h5>
-                    </div>
+                <div class="ws-main-subheading">
+                    <h5>About the Session</h5>
                 </div>
-                <div class="row description">
-                    <div class="col">
-                        <p>{{description}}</p>
-                    </div>
+                <div class="description">
+                    <p>{{description}}</p>
                 </div>
-                <div class="row justify-content-center" style="text-align: center;">
-                    <div class="col heading">
-                        <h5>Requirements</h5>
-                    </div>
+                <div class="ws-main-subheading">
+                    <h5>Requirements</h5>
                 </div>
                 <div class="wrapper-ws">
                     <div class="container-ws">
                         {% for item in req_list %}
                         <div class="point">
-                            <div class="content">
+                            <div class="ws-main-content">
                                 {{item}}
                             </div>
                         </div>
                         {% endfor %}
                     </div>
                 </div>
-                <div class="row justify-content-center" style="text-align: center;">
-                    <div class="col heading">
-                        <h5>Whom & How it'll help</h5>
-                    </div>
+                <div class="ws-main-subheading">
+                    <h5>Whom & How it'll help</h5>
                 </div>
                 <div class="wrapper-ws">
                     <div class="container-ws">
                         {% for item in result_list %}
                         <div class="point">
-                            <div class="content">
+                            <div class="ws-main-content">
                                 {{item}}
                             </div>
                         </div>
@@ -149,15 +131,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col heading">
-                        <h5>Our Vision</h5>
-                    </div>
+                <div class="ws-main-subheading">
+                    <h5>Our Vision</h5>
                 </div>
                 <div class="row">
                     <div class="col" style="text-align:center;">
-                        <h3 style="opacity:0.5; padding-bottom:2%;"><i>" Education is our RIGHT! Not a luxury. "</i></h3>
-                        <p style="opacity:0.7;">Inspired from the beautiful ‘Guru Dakshina’  model of school, ours is an art school , Writart Gurukul where you can pay whatever you want and learn in depth practically applicable art skills which are used in the actual art production industry. <br><br>The trainer is a full time artist working on several Hollywood animation projects and global indie animation, film-making projects. More about the Trainer <a href="{{ url_for('school.instructor') }}">here.</a><br><br>
+                        <h3 class="ws-main-vision-quote"><i>" Education is our RIGHT! Not a luxury. "</i></h3>
+                        <p class="ws-main-vision-description">Inspired from the beautiful ‘Guru Dakshina’  model of school, ours is an art school , Writart Gurukul where you can pay whatever you want and learn in depth practically applicable art skills which are used in the actual art production industry. <br><br>The trainer is a full time artist working on several Hollywood animation projects and global indie animation, film-making projects. More about the Trainer <a href="{{ url_for('school.instructor') }}">here.</a><br><br>
 Your Guru Dakshina is used in purchasing website hosting, domain, google meet plan, books and other learning tools so that our this learning community keeps improving. More about Our Dakshina model <a href="{{ url_for('school.vision') }}">here.</a>
 <br><br>
 Let’s Learn together!
