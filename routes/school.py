@@ -189,6 +189,71 @@ def upcoming_workshop():
     session['url'] = url_for('school.upcoming_workshop')
     upcoming_workshop_list = []
     admin = db.session.query(Role).filter_by(name='admin').first()
+    if request.form.get('submit'):
+        ws = request.form.get('submit')
+        main_ws_on_page = db.session.query(Workshop).filter_by(name=ws).first()
+        workshop = db.session.query(Workshop).filter_by(name=ws).first()
+        workshop_details = workshop.details
+
+        category = workshop_details.category
+        sessions = workshop_details.sessions
+        topic = workshop.topic
+        brief = workshop_details.brief
+        sub1 = workshop_details.subtopic1
+        sub2 = workshop_details.subtopic2
+        sub3 = workshop_details.subtopic3
+        sub4 = workshop_details.subtopic4
+        sub5 = workshop_details.subtopic5
+        sub6 = workshop_details.subtopic6
+        sub7 = workshop_details.subtopic7
+        sub8 = workshop_details.subtopic8
+        sub9 = workshop_details.subtopic9
+        sub_list = [sub1, sub2, sub3, sub4, sub5, sub6, sub7, sub8, sub9]
+        description = workshop_details.description
+        rq1 = workshop_details.req1
+        rq2 = workshop_details.req2
+        rq3 = workshop_details.req3
+        rq4 = workshop_details.req4
+        rq5 = workshop_details.req5
+        rq6 = workshop_details.req6
+        rq7 = workshop_details.req7
+        rq8 = workshop_details.req8
+        rq9 = workshop_details.req9
+        req_list = [rq1, rq2, rq3, rq4, rq5, rq6, rq7, rq8, rq9]
+        r1 = workshop_details.result1
+        r2 = workshop_details.result2
+        r3 = workshop_details.result3
+        r4 = workshop_details.result4
+        r5 = workshop_details.result5
+        r6 = workshop_details.result6
+        r7 = workshop_details.result7
+        r8 = workshop_details.result8
+        r9 = workshop_details.result9
+        result_list = [r1, r2, r3, r4, r5, r6, r7, r8, r9]
+        date = workshop.date
+        time = workshop.time
+        s2_date = workshop.s2_date
+        s3_date = workshop.s3_date
+        s4_date = workshop.s4_date
+        s2_time = workshop.s2_time
+        s3_time = workshop.s3_time
+        s4_time = workshop.s4_time
+
+        workshops = db.session.query(Workshop)
+        for workshop in workshops:
+            if not workshop.reg_start and not workshop.reg_close and workshop.name != ws:
+                upcoming_workshop_list.append(workshop.name)
+        upcoming_workshop_list.append(main_ws_on_page.name)
+        cover_path = f"../static/images/workshops/{ws}/cover.jpg"
+
+        return render_template('workshops_second.html', category=category, topic=topic, sessions=sessions,
+                               brief=brief,
+                               sub_list=sub_list, description=description, req_list=req_list,
+                               result_list=result_list,
+                               logged_in=current_user.is_authenticated,
+                               upcoming_workshop_list=upcoming_workshop_list, date=date, cover_path=cover_path,
+                               time=time, admin=admin, ws=ws, s2_date=s2_date, s3_date=s3_date, s4_date=s4_date,
+                               s2_time=s2_time, s3_time=s3_time, s4_time=s4_time)
     if request.args:
         ws = request.args.get('workshop')
         main_ws_on_page = db.session.query(Workshop).filter_by(name=ws).first()
@@ -254,7 +319,6 @@ def upcoming_workshop():
                                upcoming_workshop_list=upcoming_workshop_list, date=date, cover_path=cover_path,
                                time=time, admin=admin, ws=ws, s2_date=s2_date, s3_date=s3_date, s4_date=s4_date,
                                s2_time=s2_time, s3_time=s3_time, s4_time=s4_time)
-    return redirect(url_for('school.home'))
 
 
 @school.route('/classroom')
