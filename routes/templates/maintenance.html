@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+    #maintenance-message-btn {
+        width: 100%;
+    }
+    #maintenance-message-btn button {
+        background:#7241ad;
+        color:white;
+        padding:0.5% 5%;
+    }
+    #maintenance-message-btn button:hover {
+        background:#4f2581;
+    }
+    #maintenance-img {
+        width:70%;
+    }
+    @media only screen and (min-width : 600px) {
+        #maintenance-img {
+            width:50%;
+        }
+    }
+    @media only screen and (min-width : 900px) {
+        #maintenance-img {
+            width:40%;
+        }
+    }
+    @media only screen and (min-width : 1200px) {
+        #maintenance-img {
+            width:30%;
+        }
+    }
+    @media only screen and (min-width : 1900px) {
+        #maintenance-img {
+            width:20%;
+        }
+    }
+
+</style>
+
+<div style="display:flex;flex-direction:column;height: 90vh; justify-content: center;align-items:center;
+padding: 0% 5%;">
+    <img id="maintenance-img" src="https://www.pngkey.com/png/detail/264-2646182_be-it-new-build-from-the-ground-up.png" alt="Be It New
+    Build From The Ground Up, Or A Revamp To - Website Maintenance Support Icon@pngkey.com">
+    <h5 style="line-height: normal; text-align:center;">
+        This page is under maintenance. <br><span style="color:#713daf;"><b>Please Try after some time.</b></span><br>
+        We are very sorry for your inconvenience! Meanwhile, if you want to say/ask something please send us.
+    </h5>
+    <a id="maintenance-message-btn" href="https://wa.link/hoquqp"><button>SEND MESSAGE</button></a>
+</div>
+
+{% endblock %}

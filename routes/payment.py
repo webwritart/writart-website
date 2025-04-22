@@ -30,17 +30,18 @@ payment_ = ''
 def home():
     session['url'] = url_for('payment.home')
     global current_ws, current_ws_name, current_ws_topic, student
+    return render_template('maintenance.html')
 
-    try:
-        if current_user.name:
-            current_ws_name = db.session.query(Tools).filter_by(keyword='current_workshop').one().data
-            current_ws = db.session.query(Workshop).filter_by(name=current_ws_name).one()
-            current_ws_topic = current_ws.topic
-            student = db.session.query(Role).filter_by(name='student').one()
-            return render_template('order.html', logged_in=current_user.is_authenticated)
-    except Exception as e:
-        instruction = 'Please login to continue'
-        return render_template('account/login.html', prev_page='enroll', instruction=instruction)
+    # try:
+    #     if current_user.name:
+    #         current_ws_name = db.session.query(Tools).filter_by(keyword='current_workshop').one().data
+    #         current_ws = db.session.query(Workshop).filter_by(name=current_ws_name).one()
+    #         current_ws_topic = current_ws.topic
+    #         student = db.session.query(Role).filter_by(name='student').one()
+    #         return render_template('order.html', logged_in=current_user.is_authenticated)
+    # except Exception as e:
+    #     instruction = 'Please login to continue'
+    #     return render_template('account/login.html', prev_page='enroll', instruction=instruction)
 
 
 @login_required
