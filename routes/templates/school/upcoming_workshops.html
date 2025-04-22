@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div>
+    <div class="row justify-content-center align-items-center" style="padding: 0% 2%;">
+        <div class="col-md-9 align-items-center" style="background-color: #d2eafb; padding: 2%;">
+            <div class="col">
+                <div>
+                    <div class="row justify-content-center" style="text-align: center;">
+                        <div class="col heading">
+                            <h4><b>UPCOMING WORKSHOPS</b></h4>
+                            {% with messages = get_flashed_messages(with_categories=true) %}
+                                {% if messages %}
+                                    {% for category, message in messages %}
+                                        <div class="{{category}}">{{ message }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endwith %}
+                        </div>
+                    </div>
+                    <div class="wrapper-ws">
+                        <div class="container-upcoming-ws">
+                            {% for i in upcoming_workshop_dict %}
+                            <div class="upcoming_ws_thumbnail">
+                                <div class="upcoming_ws_content">
+                                    <img src="../static/images/workshops/{{i}}/thumbnail.jpg" width="100%" height="100%">
+                                    <div style="display: flex; justify-content: stretch;">
+                                        <button class="btn btn-primary btn-large" style="width: 50%;" onclick="openInterestedForm4('{{i}}','{{upcoming_workshop_dict[i]}}')">INTERESTED</button>
+                                        <form action="{{url_for('school.upcoming_workshop')}}" method="post" style="width: 50%">
+                                             <input type="hidden" name="know-more" value="know-more">
+                                             <button class="btn btn-primary btn-large" type="submit" name="submit" value="{{i}}" style="width: 100%">KNOW MORE</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            <div class="form-popup3 box-popup" id="interested-form4">
+                                        <form class="popup-form-container" action="{{url_for('school.home')}}" name="interested-form" method="post">
+                                            <div style="display: flex; justify-content: right; width: 95%;">
+                                                <a style="opacity: 0.5;" type="button" onclick="closeFormInterested4()">close <img src="../static/images/icons/cross-sign.png" width="10px"></a>
+                                            </div>
+                                            <h3 style="color: #c9c9c9;">INTERESTED</h3>
+                                            <p style="color:#7a28bf;font-weight:600;" id="workshop_name"></p>
+                                            <p>We'll notify you when enrollment of the selected workshop opens</p>
+                                            {% if not logged_in %}
+                                            <input type="text" placeholder="Name" name="name" required>
+                                            <input type="email" placeholder="Email" name="email" required>
+                                            <input type="text" placeholder="Phone" name="phone" required>
+                                            <input type="text" placeholder="Whatsapp (skip if same whatsapp)" name="whatsapp">
+                                            {% endif %}
+                                            <input type="hidden" id="interested-form-hidden-workshop4" name="interested-form-hidden-workshop" required>
+                                            <input type="text" maxlength="300" placeholder="Any message for us? (optional)" name="message">
+                                            <input type="submit" name="submit" class="btn btn-primary" onclick="closeFormInterested4()" value="SUBMIT">
+                                        </form>
+                                     </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../static/js/school.js"></script>
+
+{% endblock %}

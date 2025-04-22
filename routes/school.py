@@ -71,38 +71,38 @@ def home():
     if request.method == 'POST':
         if request.form.get('interested-form-hidden-workshop'):
             ws_name = request.form.get('interested-form-hidden-workshop')
-            try:
-                name = current_user.name
-                email = current_user.email
-                phone = current_user.phone
-                whatsapp = current_user.whatsapp
-            except Exception as e:
-                print(e)
-                name = request.form.get('name')
-                email = request.form.get('email')
-                phone = request.form.get('phone')
-                whatsapp = request.form.get('whatsapp')
-            message = request.form.get('message')
-            all_interested = db.session.query(Query).filter_by(interested_ws=ws_name)
-
-            for i in all_interested:
-                all_interested_emails.clear()
-                all_interested_emails.append(i.email)
-
-            if email not in all_interested_emails:
-                entry = Query(
-                    name=name,
-                    email=email,
-                    phone=phone,
-                    whatsapp=whatsapp,
-                    interested_ws=ws_name,
-                    message=message
-                )
-                db.session.add(entry)
-                db.session.commit()
-                flash("Successfully saved details. We'll notify you when time comes!", "success")
-            else:
-                print('email found!')
+            # try:
+            #     name = current_user.name
+            #     email = current_user.email
+            #     phone = current_user.phone
+            #     whatsapp = current_user.whatsapp
+            # except Exception as e:
+            #     print(e)
+            #     name = request.form.get('name')
+            #     email = request.form.get('email')
+            #     phone = request.form.get('phone')
+            #     whatsapp = request.form.get('whatsapp')
+            # message = request.form.get('message')
+            # all_interested = db.session.query(Query).filter_by(interested_ws=ws_name)
+            #
+            # for i in all_interested:
+            #     all_interested_emails.clear()
+            #     all_interested_emails.append(i.email)
+            #
+            # if email not in all_interested_emails:
+            #     entry = Query(
+            #         name=name,
+            #         email=email,
+            #         phone=phone,
+            #         whatsapp=whatsapp,
+            #         interested_ws=ws_name,
+            #         message=message
+            #     )
+            #     db.session.add(entry)
+            #     db.session.commit()
+            #     flash("Successfully saved details. We'll notify you when time comes!", "success")
+            # else:
+            #     print('email found!')
 
         if request.form.get('know-more') == 'know-more':
             ws = request.form.get('submit')
@@ -319,6 +319,15 @@ def upcoming_workshop():
                                upcoming_workshop_list=upcoming_workshop_list, date=date, cover_path=cover_path,
                                time=time, admin=admin, ws=ws, s2_date=s2_date, s3_date=s3_date, s4_date=s4_date,
                                s2_time=s2_time, s3_time=s3_time, s4_time=s4_time)
+    upcoming_workshop_dict = {}
+    workshops = db.session.query(Workshop)
+    for workshop in workshops:
+        if not workshop.reg_start:
+            ws_name = workshop.name
+            ws_topic = workshop.topic
+            upcoming_workshop_dict[ws_name] = ws_topic
+    return render_template('upcoming_workshops.html', upcoming_workshop_dict=upcoming_workshop_dict,
+                           logged_in=current_user.is_authenticated)
 
 
 @school.route('/classroom')
