@@ -192,7 +192,7 @@
 
     <div class="homepage_cover_button">
         <a href="{{ url_for('school.home') }}">Know More</a>
-        {% if reg_status == 'pending' %}
+        {% if reg_status == 'Pending' %}
         <a onclick="openInterestedForm4()">Interested</a>
         {% elif reg_status == 'open' %}
         <a href="{{url_for('payment.home')}}">Enroll Now</a>
