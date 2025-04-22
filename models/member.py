@@ -67,10 +67,16 @@ class Workshop(db.Model):
     yt_p4_id = db.Column(db.String(100))
     reg_start = db.Column(db.String(50))
     reg_close = db.Column(db.String(50))
+    s2_date = db.Column(db.String(100))
+    s2_time = db.Column(db.String(100))
+    s3_date = db.Column(db.String(100))
+    s3_time = db.Column(db.String(100))
+    s4_date = db.Column(db.String(100))
+    s4_time = db.Column(db.String(100))
     details = db.relationship('WorkshopDetails', backref='workshop', uselist=False)
 
     def __repr__(self):
-        return f'{self.name}, {self.topic}, {self.date}'
+        return f'{self.name}, {self.topic}, {self.date}, {self.s2_date}, {self.s3_date}, {self.s4_date}'
 
 
 class Role(db.Model):
