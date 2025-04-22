@@ -23,7 +23,7 @@ KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET_LIVE')
 client = razorpay.Client(auth=(KEY_ID, KEY_SECRET))
 
 today_date = date.today()
-payment_ = ''
+payment_ = {}
 
 
 @login_required
@@ -75,6 +75,7 @@ def verify():
     resp = request.get_data()
     response = resp.decode('utf-8').split('&')
     amount = payment_['amount']
+    amount_paid = payment_['amount_paid']
     order_id = payment_['id']
     state = payment_['notes'][0]
 

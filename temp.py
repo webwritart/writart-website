@@ -53,4 +53,3 @@ import pytz
 
 
 # with app.app_context():
-
