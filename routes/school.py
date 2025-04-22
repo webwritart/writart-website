@@ -232,6 +232,12 @@ def upcoming_workshop():
         result_list = [r1, r2, r3, r4, r5, r6, r7, r8, r9]
         date = workshop.date
         time = workshop.time
+        s2_date = workshop.s2_date
+        s3_date = workshop.s3_date
+        s4_date = workshop.s4_date
+        s2_time = workshop.s2_time
+        s3_time = workshop.s3_time
+        s4_time = workshop.s4_time
 
         workshops = db.session.query(Workshop)
         for workshop in workshops:
@@ -246,9 +252,8 @@ def upcoming_workshop():
                                result_list=result_list,
                                logged_in=current_user.is_authenticated,
                                upcoming_workshop_list=upcoming_workshop_list, date=date, cover_path=cover_path,
-                               time=time, admin=admin, ws=ws,)
-
-
+                               time=time, admin=admin, ws=ws, s2_date=s2_date, s3_date=s3_date, s4_date=s4_date,
+                               s2_time=s2_time, s3_time=s3_time, s4_time=s4_time)
 
 
 @school.route('/classroom')
