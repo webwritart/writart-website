@@ -129,7 +129,7 @@ def verify():
             email=current_user.email,
             phone=phone,
             state=state,
-            amount=str(payment_['amount'])[:-2],
+            amount=str(amount)[:-2],
             message=msg,
             order_id=order_id,
             invoice_no=invoice,
