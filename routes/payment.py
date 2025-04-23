@@ -62,6 +62,7 @@ def checkout():
     amt = request.form.get('amount')
     amount = int(f"{amt}00")
     msg = request.form.get('message')
+    session['msg'] = msg
     if current_workshop not in current_user.participated:
         data = {"amount": amount, "currency": "INR", "receipt": "#105", "notes": [state]}
         session['payment_data'] = client.order.create(data=data)
@@ -130,7 +131,7 @@ def verify():
             phone=phone,
             state=state,
             amount=str(amount)[:-2],
-            message=msg,
+            message=session['msg'],
             order_id=order_id,
             invoice_no=invoice,
             payment_id=response[0].split('=')[1],
