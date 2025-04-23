@@ -64,8 +64,8 @@ def checkout():
     msg = request.form.get('message')
     if current_workshop not in current_user.participated:
         data = {"amount": amount, "currency": "INR", "receipt": "#105", "notes": [state]}
-        payment_ = client.order.create(data=data)
-        order_id = payment_['id']
+        session['payment_data'] = client.order.create(data=data)
+        order_id = session['payment_data']['id']
         return render_template('checkout.html', order_id=order_id, name=name, email=email, phone=phone, key_id=KEY_ID,
                                ws_name=current_ws_name, state=state, logged_in=current_user.is_authenticated)
     else:
@@ -78,10 +78,10 @@ def checkout():
 def verify():
     resp = request.get_data()
     response = resp.decode('utf-8').split('&')
-    amount = payment_['amount']
-    amount_paid = payment_['amount_paid']
-    order_id = payment_['id']
-    state = payment_['notes'][0]
+    amount = session['payment_data']['amount']
+    amount_paid = session['payment_data']['amount_paid']
+    order_id = session['payment_data']['id']
+    state = session['payment_data']['notes'][0]
     current_workshop_name = db.session.query(Tools).filter_by(keyword='current_workshop').one_or_none().data
 
     response_data = {
