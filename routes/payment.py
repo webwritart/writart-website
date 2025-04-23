@@ -1,3 +1,4 @@
+import csv
 import pprint
 import hmac
 import hashlib
@@ -12,6 +13,9 @@ from operations.messenger import send_email_support
 from models.payment import Payment
 from models.tool import Tools
 from models.member import *
+from datetime import datetime
+
+now = datetime.now()
 
 load_dotenv()
 
@@ -104,63 +108,80 @@ def verify():
     #     print("signature verified successfully!")
     # if client.utility.verify_payment_signature(parameters):
         # client.payment.capture(response_data["razorpay_payment_id"], amount)
-    month = str(today_date).split('-')[1]
-    year = str(today_date).split('-')[0]
-    inv_n = db.session.query(Tools).filter_by(keyword='last invoice').one().data
-    if len(inv_n) == 1:
-        inv_no = f"00{inv_n}"
-    elif len(inv_n) == 2:
-        inv_no = f"0{inv_n}"
-    else:
-        inv_no = inv_n
-    invoice = f"INV-{year}-{month}-{inv_no}"
-    if current_user.whatsapp:
-        phone = current_user.whatsapp
-    else:
-        phone = current_user.phone
-    entry = Payment(
-        name=current_user.name,
-        email=current_user.email,
-        phone=phone,
-        state=state,
-        amount=str(payment_['amount'])[:-2],
-        message=msg,
-        order_id=order_id,
-        invoice_no=invoice,
-        payment_id=response[0].split('=')[1],
-        date=today_date,
-        ws_name=current_ws_name
-    )
-    db.session.add(entry)
-    if inv_n == '999':
-        db.session.query(Tools).filter_by(keyword='last invoice').one().data = '1'
-    else:
-        db.session.query(Tools).filter_by(keyword='last invoice').one().data = str(int(inv_no) + 1)
-    db.session.commit()
-    topic = current_ws_topic
-    date_time = current_ws.date
-    session_link = current_ws.joining_link
-    mail = render_template('mails/enrollment_success.html', topic=topic, date_time=date_time,
-                           session_link=session_link)
+    if resp:
+        month = str(today_date).split('-')[1]
+        year = str(today_date).split('-')[0]
+        inv_n = db.session.query(Tools).filter_by(keyword='last invoice').one().data
+        if len(inv_n) == 1:
+            inv_no = f"00{inv_n}"
+        elif len(inv_n) == 2:
+            inv_no = f"0{inv_n}"
+        else:
+            inv_no = inv_n
+        invoice = f"INV-{year}-{month}-{inv_no}"
+        if current_user.whatsapp:
+            phone = current_user.whatsapp
+        else:
+            phone = current_user.phone
+        entry = Payment(
+            name=current_user.name,
+            email=current_user.email,
+            phone=phone,
+            state=state,
+            amount=str(payment_['amount'])[:-2],
+            message=msg,
+            order_id=order_id,
+            invoice_no=invoice,
+            payment_id=response[0].split('=')[1],
+            date=today_date,
+            ws_name=current_ws_name
+        )
+        db.session.add(entry)
+        if inv_n == '999':
+            db.session.query(Tools).filter_by(keyword='last invoice').one().data = '1'
+        else:
+            db.session.query(Tools).filter_by(keyword='last invoice').one().data = str(int(inv_no) + 1)
+        db.session.commit()
+        file_path = "log.txt"
+        f = open(file_path, "a")
+        f.write(f'Added Payment! - {now}\n')
+        f.close()
+        topic = current_ws_topic
+        date_time = current_ws.date
+        session_link = current_ws.joining_link
+        mail = render_template('mails/enrollment_success.html', topic=topic, date_time=date_time,
+                               session_link=session_link)
+        f = open(file_path, "a")
+        f.write(f'Mailed! - {now}\n')
+        f.close()
 
-    try:
-        current_user.role.append(student)
-        db.session.commit()
-    except:
-        pass
-    try:
-        current_user.participated.append(current_ws)
-        db.session.commit()
-    except:
-        pass
-    try:
-        send_email_support('Enrolled', [current_user.email],
-                           '',
-                           mail,
-                           image_dict)
-    except:
-        pass
-    return redirect(url_for('payment.ws_registration_success'))
+        try:
+            current_user.role.append(student)
+            db.session.commit()
+            f = open(file_path, "a")
+            f.write(f'Assigned student role! - {now}\n')
+            f.close()
+        except:
+            pass
+        try:
+            current_user.participated.append(current_ws)
+            db.session.commit()
+            f = open(file_path, "a")
+            f.write(f'Enrolled! - {now}\n')
+            f.close()
+        except:
+            pass
+        try:
+            send_email_support('Enrolled', [current_user.email],
+                               '',
+                               mail,
+                               image_dict)
+            f = open(file_path, "a")
+            f.write(f'sent mail again! - {now}\n')
+            f.close()
+        except:
+            pass
+        return redirect(url_for('payment.ws_registration_success'))
     # except Exception as e:
     #     send_email_support('Payment capture failed', ['writartstudios@gmail.com', 'shwetabhartist@gmail.com'], f'{amount} - {current_user.name}\nRazorpay_payment_id: {response_data["razorpay_payment_id"]}','', '')
 

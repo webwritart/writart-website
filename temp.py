@@ -12,6 +12,8 @@ from flask_login import login_required, current_user
 from urllib.parse import quote
 from datetime import datetime,timezone
 import pytz
+from datetime import datetime
+now = datetime.now()
 
 # df = pd.read_csv('role.csv')
 # df = df.reset_index()
@@ -53,3 +55,7 @@ import pytz
 
 
 # with app.app_context():
+# file_path = "log.txt"
+# f = open(file_path, "a")
+# f.write(f'Added Payment! - {now}\n')
+# f.close()

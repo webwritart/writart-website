@@ -1,10 +1,28 @@
 {% extends "base.html" %}
 {% block content %}
+<style>
+    .artworks-container {
+        display:flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        padding: 2% 5%;
+        background: black;
+        margin: 2% 0%;
+        text-align: center;
+        color: gray;
+    }
+    .artworks img {
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+        margin: 1%;
+    }
+</style>
 <div class="container" style="margin-top: 0px;">
     <div class="row">
         <div class="trunk">
             <img src="../../static/images/profile-pic.jpg" width="300px">
-            <h2>Shwetabh Suman</h2><br>
+            <h2>{{dict['name']}}</h2><br>
             <h6>Artist, Illustrator, Animator</h6><br>
             <h6 style="padding-top: 2%;"><i>Education - </i>MFA, JJ College of Arts</i></h6><br>
             <h6><i>Specialization - </i>Storyboard, Previz, Book Illustrions</i></h6><br>
@@ -20,6 +38,15 @@
                 <a class="btn btn-primary btn-large btn-two" type="button" href=""> SEND MESSAGE</a>
             </div>
         </div>
+    </div>
+</div>
+
+<div class="artworks-container">
+    <h1>ILLUSTRATIONS</h1>
+    <div class="artworks">
+    {% for img in dict['artworks'] %}
+    <img  src="{{img}}">
+    {% endfor %}
     </div>
 </div>
 

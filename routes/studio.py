@@ -8,7 +8,6 @@ from operations.miscellaneous import allowed_file
 from operations.artist_tools import add_watermark, delete_single_watermarked_image, delete_all_from_user
 from models.artist_data import ArtistData
 
-
 studio = Blueprint('studio', __name__, static_folder="static", template_folder='templates/studio/')
 
 
@@ -21,27 +20,26 @@ def home():
         # print(member.sex)
 
     if request.method == 'POST':
-        artist_dict = {
-            'name': '',
-            'sex': '',
-            'dob': '',
-            'state': ''
-        }
+
         member_id = request.form.get('portfolio-link')
         member = db.session.query(Member).filter_by(id=member_id).one()
-        artist_dict['name'] = member.name
-        artist_dict['sex'] = member.sex
-        artist_dict['dob'] = member.dob
-        artist_dict['state'] = member.state
 
-        session['dict'] = artist_dict
-        return redirect(url_for('studio.portfolio', member=member.name.split()[0]))
+        return redirect(url_for('studio.portfolio', member_id=member_id))
     return render_template('studio.html', members=members)
 
 
-@studio.route('/portfolio/<member>')
-def portfolio(member):
-    artist_dict = session['dict']
+@studio.route('/portfolio/<member_id>')
+def portfolio(member_id):
+    member_id = member_id
+    member = db.session.query(Member).filter_by(id=member_id).one_or_none()
+    first_name = member.name.split(' ')[0]
+    artist_dict = {}
+    artworks = []
+    artworks_dir = f'static/files/users/{first_name}{member_id}/artworks/'
+    for entry in os.scandir(artworks_dir):
+        if entry.is_file():
+            artworks.append(f'/{artworks_dir}{entry.name}')
+    artist_dict['artworks'] = artworks
     return render_template('portfolio.html', dict=artist_dict)
 
 
@@ -132,5 +130,3 @@ def artist_tools():
 
     return render_template('artist_tools.html', folder_name=folder_name, photo_list=photo_list,
                            logged_in=current_user.is_authenticated, total_watermarked=total_watermarked_photos)
-
-
