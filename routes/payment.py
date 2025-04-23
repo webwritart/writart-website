@@ -84,6 +84,7 @@ def verify():
     order_id = session['payment_data']['id']
     state = session['payment_data']['notes'][0]
     current_workshop_name = db.session.query(Tools).filter_by(keyword='current_workshop').one_or_none().data
+    current_ws = db.session.query(Workshop).filter_by(name=current_workshop_name).one_or_none()
 
     response_data = {
         "razorpay_payment_id": response[0].split('=')[1],
