@@ -806,9 +806,11 @@ def modifications():
         try:
             if operation == 'append':
                 member.participated.append(workshop)
+                db.session.commit()
                 flash("Workshop appended to the Student successfully!", "success")
             elif operation == 'remove':
                 member.participated.remove(workshop)
+                db.session.commit()
                 flash("Student removed from the Workshop successfully!", "success")
         except Exception as e:
             flash("Either email or workshop not found or operation is wrong!", "error")
