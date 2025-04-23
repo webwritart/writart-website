@@ -82,6 +82,7 @@ def verify():
     amount_paid = payment_['amount_paid']
     order_id = payment_['id']
     state = payment_['notes'][0]
+    current_workshop_name = db.session.query(Tools).filter_by(keyword='current_workshop').one_or_none().data
 
     response_data = {
         "razorpay_payment_id": response[0].split('=')[1],
@@ -134,7 +135,7 @@ def verify():
             invoice_no=invoice,
             payment_id=response[0].split('=')[1],
             date=today_date,
-            ws_name=current_ws_name
+            ws_name=current_workshop_name
         )
         db.session.add(entry)
         if inv_n == '999':
