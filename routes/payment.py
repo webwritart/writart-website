@@ -50,7 +50,7 @@ def home():
 
 
 @login_required
-@payment.route('/checkout', methods=['GET','POST'])
+@payment.route('/checkout', methods=['POST'])
 def checkout():
     global payment_, msg
     current_ws_name = db.session.query(Tools).filter_by(keyword='current_workshop').first().data
@@ -60,7 +60,7 @@ def checkout():
     phone = current_user.phone
     state = request.form.get('state')
     amt = request.form.get('amount')
-    amount = f"{amt}00"
+    amount = int(f"{amt}00")
     msg = request.form.get('message')
     if current_workshop not in current_user.participated:
         data = {"amount": amount, "currency": "INR", "receipt": "#105", "notes": [state]}
