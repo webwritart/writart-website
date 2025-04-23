@@ -805,20 +805,15 @@ def modifications():
             member = db.session.query(Member).filter_by(email=member_email).one_or_none()
             workshop = db.session.query(Workshop).filter_by(name=ws_name).one_or_none()
             if operation == 'append':
-                print('append operation entered!')
-                try:
+                if workshop not in member.participated:
                     member.participated.append(workshop)
                     db.session.commit()
                     flash("Workshop appended to the Student successfully!", "success")
-                except Exception as e:
-                    flash("Couldn't append workshop!", "error")
             elif operation == 'remove':
-                try:
+                if workshop in member.participated:
                     member.participated.remove(workshop)
                     db.session.commit()
                     flash("Student removed from the Workshop successfully!", "success")
-                except Exception as e:
-                    flash("Couldn't remove workshop!", "error")
     admin = db.session.query(Role).filter_by(name='admin').one_or_none()
     return render_template('modifications.html', admin=admin, logged_in=current_user.is_authenticated,
                            current_year=current_year)
