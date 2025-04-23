@@ -147,7 +147,7 @@ def verify():
         f = open(file_path, "a")
         f.write(f'Added Payment! - {now}\n')
         f.close()
-        topic = current_ws_topic
+        topic = db.session.query(Workshop).filter_by(name=current_workshop_name).one_or_none().topic
         date_time = current_ws.date
         session_link = current_ws.joining_link
         mail = render_template('mails/enrollment_success.html', topic=topic, date_time=date_time,
