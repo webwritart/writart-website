@@ -30,7 +30,8 @@ def home():
     if db.session.query(Role).filter(Role.name == 'admin').scalar() in current_user.role:
         if request.method == 'POST':
             if request.form.get('current_ws'):
-                db.session.query(Tools).filter_by(keyword='current_workshop').first().data = request.form.get('current_ws')
+                db.session.query(Tools).filter_by(keyword='current_workshop').first().data = request.form.get(
+                    'current_ws')
                 db.session.commit()
             if request.form.get('open-reg'):
                 db.session.query(Tools).filter_by(keyword='open_reg').one().data = 'Done'
@@ -403,7 +404,8 @@ def home():
                 }
                 for participant in participants:
                     html = render_template('mails/certificate_download.html', name=participant.name.split()[0],
-                                           download_link='https://writart.com/school/certificate_download', category=cat)
+                                           download_link='https://writart.com/school/certificate_download',
+                                           category=cat)
                     recipients = [participant.email]
                     send_email_school(subject, recipients, '', html, '')
                     db.session.query(Tools).filter_by(keyword='certificate_distribution').one().data = 'Done'
@@ -581,7 +583,7 @@ def home():
         for i in range(count):
             count_list.append(i)
 
-# ------------------------------------------------ SEND MAIL --------------------------------------- #
+        # ------------------------------------------------ SEND MAIL --------------------------------------- #
 
         if request.form.get('submit') and request.form.get('submit') == 'send-email':
             recipient_list = []
@@ -795,6 +797,21 @@ def modifications():
         filter_key = f"{filter_by}='{keyword}'"
         row = query.filter_by(filter_key).one()
 
+    if request.method == 'POST' and request.form.get('submit') == 'member-workshop':
+        member_email = request.form.get('email')
+        ws_name = request.form.get('ws_name')
+        operation = request.form.get('operation')
+        member = db.session.query(Member).filter_by(email=member_email).one_or_none()
+        workshop = db.session.query(Workshop).filter_by(name=ws_name).one_or_none()
+        try:
+            if operation == 'append':
+                member.participated.append(workshop)
+                flash("Workshop appended to the Student successfully!", "success")
+            elif operation == 'remove':
+                member.participated.remove(workshop)
+                flash("Student removed from the Workshop successfully!", "success")
+        except Exception as e:
+            flash("Either email or workshop not found or operation is wrong!", "error")
     admin = db.session.query(Role).filter_by(name='admin').one_or_none()
     return render_template('modifications.html', admin=admin, logged_in=current_user.is_authenticated,
                            current_year=current_year)
@@ -803,7 +820,3 @@ def modifications():
 @manager.route('/log')
 def log():
     return render_template('log.html', current_year=current_year)
-
-
-
-

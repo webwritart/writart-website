@@ -30,6 +30,18 @@
             <input type="submit" class="btn btn-primary btn-block btn-large" value="Modify">
        </form>
     </div>
+    <div class="box2">
+        <form action="{{ url_for('manager.modifications') }}" method="post">
+            <input type="text" name="email" placeholder="Type member Email here" required>
+            <input type="text" name="ws_name" placeholder="Type Workshop name here (like ws1)" required>
+            <select name="operation" required>
+                <option value="default">Operation</option>
+                <option value="append">Append</option>
+                <option value="remove">Remove</option>
+            </select>
+            <input type="submit" class="btn btn-primary btn-block btn-large" value="member-workshop">
+       </form>
+    </div>
 </div>
 
 
