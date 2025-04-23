@@ -21,8 +21,8 @@ load_dotenv()
 
 payment = Blueprint('payment', __name__, static_folder='static', template_folder='templates/payment')
 
-KEY_ID = os.environ.get('RAZORPAY_KEY_ID_LIVE')
-KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET_LIVE')
+KEY_ID = os.environ.get('RAZORPAY_KEY_ID_TEST')
+KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET_TEST')
 
 client = razorpay.Client(auth=(KEY_ID, KEY_SECRET))
 
@@ -50,7 +50,7 @@ def home():
 
 
 @login_required
-@payment.route('/checkout', methods=['POST'])
+@payment.route('/checkout', methods=['GET','POST'])
 def checkout():
     global payment_, msg
     current_ws_name = db.session.query(Tools).filter_by(keyword='current_workshop').first().data
