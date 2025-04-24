@@ -148,7 +148,7 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 }
 #footer {
     height: 15vh;
-    background: #031f29;
+    background: black;
     color: #387287;
     display: flex;
     padding: 2% 5% 0% 5%;
@@ -230,7 +230,7 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     flex-wrap: nowrap;
     overflow: auto;
     padding: 1% 5%;
-    background:#0f2b3f;
+    background:#FFC6C6;
 }
 .main-upcoming-ws-item {
     flex: 0 0 auto;
@@ -290,10 +290,11 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     }
     .button {
         width: 80%;
-        background: #163953;
+        background: #644A07;
+        border:none;
     }
     .button:hover {
-        background: #051d2e;
+        background: #402e01;
     }
 
     .description {
@@ -359,6 +360,13 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 }
 .ws-main-schedule h5{
     font-size: 1.6rem;
+}
+.ws-main-green p {
+    text-align: center;
+    color:#6eb661;
+    font-size:1.8rem;
+    background:black;
+    padding: 1% 0%;
 }
 .ws-main-subheading {
     text-align:center;
@@ -994,9 +1002,9 @@ and (max-width : 576px) {
 #classroom-hero {
     width: 100%;
     height: 0%;
-    background: black;
+    background: #dbaaaa;
     color: white;
-    opacity: 0.6;
+    opacity: 1;
     margin-bottom: 3%;
     display: flex;
     align-items: center;

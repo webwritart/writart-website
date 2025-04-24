@@ -19,7 +19,7 @@
 
 <div class="master-container">
     <div class="row justify-content-center align-items-center" id="ws-content" style="padding: 0% 2%;">
-        <div class="col-md-9 align-items-center" style="background-color: #d2eafb; padding: 5%;">
+        <div class="col-md-9 align-items-center" style="background-color: #FFDBDB; padding: 5%;">
             <div class="cover" style="padding-top: 2%;">
                     <div class="ws_page_category">
                         <h6>{{category}}</h6>
@@ -30,11 +30,14 @@
                     <h6>{{brief}}</h6>
                 </div>
             </div>
-                <div class="ws-main-schedule">
-                    <h5>Date: {{date}}</h5>
-                    <h5>Time: {{time}}</h5>
-                    <h5>Mode: Online (Google Meet)</h5>
-                </div>
+            <div class="ws-main-schedule">
+                <h5>Date: {{date}}</h5>
+                <h5>Time: {{time}}</h5>
+                <h5>Mode: Online (Google Meet)</h5>
+            </div>
+            <div class="ws-main-green">
+                <p>(Recorded session video available to enrolled students)</p>
+            </div>
             <div>
                 <div class="ws-main-subheading">
                     <h5>Session Schedule</h5>
@@ -158,7 +161,7 @@ Let’s Learn together!
 </div>
 <div>
     <div class="row justify-content-center align-items-center" style="padding: 0% 2%;">
-        <div class="col-md-9 align-items-center" style="background-color: #d2eafb; padding: 2%;">
+        <div class="col-md-9 align-items-center" style="background-color: #FFC6C6; padding: 2%;">
             <div class="col">
                 <div>
                     <div class="row justify-content-center" style="text-align: center;">
@@ -199,10 +202,10 @@ Let’s Learn together!
                                         </form>
                                      </div>
 
-                                        <button class="btn btn-primary btn-large" style="width: 50%;" onclick="openInterestedForm('{{workshop}}')">INTERESTED</button>
+                                        <button class="btn btn-primary btn-large button" style="width: 50%;" onclick="openInterestedForm('{{workshop}}')">INTERESTED</button>
                                         <form action="{{url_for('school.upcoming_workshop')}}" method="post" style="width: 50%">
                                              <input type="hidden" name="know-more" value="know-more">
-                                             <button class="btn btn-primary btn-large" type="submit" name="submit" value="{{workshop}}" style="width: 100%">KNOW MORE</button>
+                                             <button class="btn btn-primary btn-large button" type="submit" name="submit" value="{{workshop}}" style="width: 100%">KNOW MORE</button>
                                         </form>
                                     </div>
                                 </div>
