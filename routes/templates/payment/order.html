@@ -1,10 +1,22 @@
 {% extends "base.html" %}
 {% block content %}
+<style>
+    ::placeholder {
+        color:black;
+        opacity: 0.6;
+    }
+    .b {
+        background:#644A07;
+    }
+    .b:hover {
+        background: #402e01;
+    }
+</style>
 
 <div class="box">
     <form action="{{ url_for('payment.checkout') }}" method="post">
         <h2>Enroll</h2>
-        <input style="background:#ac7ab7;" name="amount" placeholder="Enter any amount you want to offer" type="number" required><br>
+        <input style="background:#FFDBDB;" name="amount" placeholder="Enter any amount you want to offer" type="number" required><br>
         <select name="state" id="state" required>
             <option value="default">Choose State</option>
             <option value="01-Jammu & Kashmir">Jammu & Kashmir</option>
@@ -46,9 +58,9 @@
             <option value="38-Ladakh">Ladakh</option>
             <option value="97-Other Territory">Other Territory</option>
         </select>
-        <input style="background:#ac7ab7;" name="message" placeholder="Any message for us? (optional)" type="text"><br>
+        <input style="background:#FFDBDB;" name="message" placeholder="Any message for us? (optional)" type="text"><br>
         By clicking CONTINUE button you agree to our school's <a href="{{url_for('school.terms_and_conditions_school')}}">terms and conditions</a>
-        <button type="submit" class="btn btn-primary btn-block btn-large">CONTINUE</button>
+        <button type="submit" class="btn btn-primary btn-block btn-large b">CONTINUE</button>
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
