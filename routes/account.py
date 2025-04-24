@@ -288,6 +288,8 @@ def register():
                        f'Sex: {request.form.get("sex")}\nProfession: {request.form.get("profession")}\n' \
                        f'State: {request.form.get("state")}\n\n'
         send_email_support('New Registration!', ['writartstudios@gmail.com'], mail_message, '', '')
+        if 'url' in session:
+            return redirect(session['url'])
         return redirect(url_for('account.home', name=current_user.name.split()[0]))
     return render_template("register.html", logged_in=current_user.is_authenticated, current_year=current_year)
 

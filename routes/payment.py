@@ -45,7 +45,7 @@ def home():
             student = db.session.query(Role).filter_by(name='student').one()
             return render_template('order.html', logged_in=current_user.is_authenticated)
     except Exception as e:
-        instruction = 'Please login to continue'
+        instruction = 'Please first login to enroll'
         return render_template('account/login.html', prev_page='enroll', instruction=instruction)
 
 
