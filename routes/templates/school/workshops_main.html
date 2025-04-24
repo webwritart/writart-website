@@ -159,8 +159,18 @@ Let’s Learn together!
         </div>
     </div>
 </div>
+<div class="instructor-artwork-slide-section">
+    <p>INSTRUCTOR'S ARTWORKS</p>
+    <div class="instructor-artwork-slide-container">
+        <div class="instructor-artwork-slide">
+            {% for img_path in artworks %}
+                <img src="{{img_path}}">
+            {% endfor %}
+        </div>
+    </div>
+</div>
 <div>
-    <div class="row justify-content-center align-items-center" style="padding: 0% 2%;">
+    <div class="row justify-content-center align-items-center" style="padding: 2% 2%;">
         <div class="col-md-9 align-items-center" style="background-color: #FFC6C6; padding: 2%;">
             <div class="col">
                 <div>

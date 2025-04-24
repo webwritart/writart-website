@@ -54,21 +54,15 @@
             background-color: #f0c7ea;">
             <div class="body" style="display: block;
             text-align: center;">
-                <div style="display: flex; justify-content:space-between;">
-                    <div style="display: flex; justify-content: start; width: 25%;">
-                        <h2 style="opacity: 0.2;">WRITART GURUKUL</h2>
-                    </div>
-                    <div style="width: 25%;"></div>
-                    <div style="width: 25%;"></div>
-                    <div style="display: flex; justify-content: end; width: 25%;">
-                        <h2 style="opacity: 0.5;">www.writart.com</h2>
-                    </div>
-
+                <div style="display: flex;flex-direction:column;align-items:center;justify-content: center; width: 100%;">
+                    <h2 style="opacity: 0.2; width:50%; font-size: 0.8rem;">WRITART GURUKUL</h2>
+                    <h2 style="opacity: 0.2; width:50%; font-size: 0.8rem;">www.writart.com</h2>
                 </div>
                 
                 <div class="block" style="display: block;">
                     <h3 style="opacity: 0.4;">Dear {{current_user.name}}</h3>
                     <h2>Congratulation!</h2>
+                    <p>You have been enrolled!</p>
                     <h4 style="opacity: 0.7;"></h4>
                 </div>
                 <div class="block" style="display: block; width: 100%; justify-content: center;">
@@ -76,13 +70,13 @@
                 </div>
                 <div class="details" style="display: block;background: #501549; padding: 1% 0%;">
                     <div>
-                        <h4>Topic: {{ topic }}</h4>
+                        <h4 style="color:white;">Topic: {{ topic }}</h4>
                     </div>
                     <div>
-                        <h4>Date & Time: {{ date_time }}</h4>
+                        <h4 style="color:white;">Date & Time: {{ date_time }}</h4>
                     </div>
                     <div>
-                        <h4>Mode: Online - Google Meet</h4>
+                        <h4 style="color:white;">Mode: Online - Google Meet</h4>
                     </div>
                 </div>
                 <div class="block description" style="display: block; text-align: center;">
@@ -98,47 +92,47 @@
                 </div>
             </div>
         </div>
-        <div class="footer" style="width: 100%;
-            color: #e3bca6;
-            background-color: #6e2f64;
-            display: flex;
-            justify-content: center;
-            border: solid 1px #6e2f64;
-            border-radius: 20%;">
-            <div style="width: 25%;"></div>
-            <div class="inner-box" style="display: flex;
-            justify-content: center;
-            width: 50%;">
-                <div style="width: 100%;
-                    display: flex;
-                    padding: 3% 5%;">
-                    <div style="width: 33.3%"></div>
-                    <a href="https://www.facebook.com/writartstudio">
-                        <img src="cid:fb" height="40px" width="40px">
-                    </a>
-                    <div style="width: 33.3%"></div>
-                </div>
-                <div style="width: 100%;
-                    display: flex;
-                    padding: 3% 5%;">
-                    <div style="width: 33.3%"></div>
-                     <a href="https://www.instagram.com/writartstudios/">
-                        <img src="cid:insta" height="40px" width="40px">
-                    </a>
-                    <div style="width: 33.3%"></div>
-                </div>
-                <div style="width: 100%;
-                    display: flex;
-                    padding: 3% 5%;">
-                    <div style="width: 33.3%"></div>
-                     <a href="https://twitter.com/writart_studio">
-                        <img src="cid:twitter" height="40px" width="40px">
-                    </a>
-                    <div style="width: 33.3%"></div>
-                </div>
-            </div>
-            <div style="width:25%;"></div>
-        </div>
+<!--        <div class="footer" style="width: 100%;-->
+<!--            color: #e3bca6;-->
+<!--            background-color: #6e2f64;-->
+<!--            display: flex;-->
+<!--            justify-content: center;-->
+<!--            border: solid 1px #6e2f64;-->
+<!--            border-radius: 20%;">-->
+<!--            <div style="width: 25%;"></div>-->
+<!--            <div class="inner-box" style="display: flex;-->
+<!--            justify-content: center;-->
+<!--            width: 50%;">-->
+<!--                <div style="width: 100%;-->
+<!--                    display: flex;-->
+<!--                    padding: 3% 5%;">-->
+<!--                    <div style="width: 33.3%"></div>-->
+<!--                    <a href="https://www.facebook.com/writartstudio">-->
+<!--                        <img src="cid:fb" height="40px" width="40px">-->
+<!--                    </a>-->
+<!--                    <div style="width: 33.3%"></div>-->
+<!--                </div>-->
+<!--                <div style="width: 100%;-->
+<!--                    display: flex;-->
+<!--                    padding: 3% 5%;">-->
+<!--                    <div style="width: 33.3%"></div>-->
+<!--                     <a href="https://www.instagram.com/writartstudios/">-->
+<!--                        <img src="cid:insta" height="40px" width="40px">-->
+<!--                    </a>-->
+<!--                    <div style="width: 33.3%"></div>-->
+<!--                </div>-->
+<!--                <div style="width: 100%;-->
+<!--                    display: flex;-->
+<!--                    padding: 3% 5%;">-->
+<!--                    <div style="width: 33.3%"></div>-->
+<!--                     <a href="https://twitter.com/writart_studio">-->
+<!--                        <img src="cid:twitter" height="40px" width="40px">-->
+<!--                    </a>-->
+<!--                    <div style="width: 33.3%"></div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div style="width:25%;"></div>-->
+<!--        </div>-->
     </div>
     
 </body>

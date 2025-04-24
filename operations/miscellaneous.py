@@ -1,4 +1,6 @@
 import datetime
+
+from PIL.Image import Image
 from flask_sqlalchemy import table
 from extensions import db
 
@@ -34,3 +36,44 @@ def log(text, category):
         f.write(contents)
         f.close()
     print("logged into log.txt successfully")
+
+    def resize_image(img, size_f_t):
+        global new_height
+
+        if img.endswith(".jpg"):
+
+            fixed_full_height = 800
+            fixed_thumbnail_height = 200
+
+            if size_f_t == 'f':
+                new_height = fixed_full_height
+            elif size_f_t == 't':
+                new_height = fixed_thumbnail_height
+            else:
+                log("Wrong image size(f/t), miscellaneous", "error")
+
+            try:
+                image = Image.open(img)
+
+                width = image.width
+                height = image.height
+                filename = image.filename
+                new_filename = filename.split('.')
+                extension = new_filename.pop()
+                new_filename = "".join(new_filename)
+                if size_f_t == 'f':
+                    new_filename = f"{new_filename}-f.webp"
+                elif size_f_t == 't':
+                    new_filename = f"{new_filename}-t.webp"
+
+                ratio = (new_height / float(height))
+                new_width = int(float(width * ratio))
+
+                image = image.resize((new_width, new_height))
+                image = image.convert('RGB')
+                image.save(new_filename, 'webp')
+
+            except Exception as e:
+                log("failed to open image", 'error')
+        else:
+            log("Not JPG format", 'error')

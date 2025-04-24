@@ -110,7 +110,7 @@ def verify():
     # if result:
     #     print("signature verified successfully!")
     # if client.utility.verify_payment_signature(parameters):
-        # client.payment.capture(response_data["razorpay_payment_id"], amount)
+    # client.payment.capture(response_data["razorpay_payment_id"], amount)
     if resp:
         month = str(today_date).split('-')[1]
         year = str(today_date).split('-')[0]
@@ -149,8 +149,11 @@ def verify():
         f = open(file_path, "a")
         f.write(f'Added Payment! - {now}\n')
         f.close()
+        current_workshop = db.session.query(Workshop).filter_by(name=current_ws_name).one_or_none()
         topic = db.session.query(Workshop).filter_by(name=current_workshop_name).one_or_none().topic
-        date_time = current_ws.date
+        dt = current_workshop.date
+        time = current_workshop.time
+        date_time = f'{dt} ({time})'
         session_link = current_ws.joining_link
         mail = render_template('mails/enrollment_success.html', topic=topic, date_time=date_time,
                                session_link=session_link)
@@ -164,7 +167,7 @@ def verify():
             f = open(file_path, "a")
             f.write(f'Assigned student role! - {now}\n')
             f.close()
-        except:
+        except Exception as e:
             pass
         try:
             current_user.participated.append(current_ws)
@@ -172,17 +175,17 @@ def verify():
             f = open(file_path, "a")
             f.write(f'Enrolled! - {now}\n')
             f.close()
-        except:
+        except Exception as e:
             pass
         try:
             send_email_support('Enrolled', [current_user.email],
                                '',
                                mail,
-                               image_dict)
+                               '')
             f = open(file_path, "a")
             f.write(f'sent mail again! - {now}\n')
             f.close()
-        except:
+        except Exception as e:
             pass
         return redirect(url_for('payment.ws_registration_success'))
     # except Exception as e:

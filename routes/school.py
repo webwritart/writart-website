@@ -1,11 +1,12 @@
 import os
+import random
 
 from flask import Blueprint, render_template, request, redirect, flash, send_file, session, url_for
 from flask_login import current_user
 from extensions import db, current_year
 from models.query import Query
 from models.tool import Tools
-from models.member import Workshop, Role
+from models.member import Workshop, Role, Member
 from models.videos import Demo
 from models.workshop_details import WorkshopDetails
 from operations.messenger import *
@@ -161,6 +162,18 @@ def home():
             upcoming_workshop_list.append(main_ws_on_page.name)
             cover_path = f"../static/images/workshops/{ws}/cover.jpg"
 
+            # ------------------------------------------ INSTRUCTOR ARTWORKS ----------------------------------------- #
+
+            member_id = 1
+            teacher = db.session.query(Member).filter_by(id=member_id).one_or_none()
+            first_name = teacher.name.split(' ')[0]
+            artworks = []
+            artworks_dir = f'static/files/users/{first_name}{member_id}/artworks/'
+            for entry in os.scandir(artworks_dir):
+                if entry.is_file():
+                    artworks.append(f'/{artworks_dir}{entry.name}')
+            random.shuffle(artworks)
+
             return render_template('workshops_second.html', category=category, topic=topic, sessions=sessions,
                                    brief=brief,
                                    sub_list=sub_list, description=description, req_list=req_list,
@@ -168,7 +181,7 @@ def home():
                                    logged_in=current_user.is_authenticated,
                                    upcoming_workshop_list=upcoming_workshop_list, date=date, cover_path=cover_path,
                                    time=time, admin=admin, ws=ws, s2_date=s2_date, s3_date=s3_date, s4_date=s4_date,
-                                   s2_time=s2_time, s3_time=s3_time, s4_time=s4_time)
+                                   s2_time=s2_time, s3_time=s3_time, s4_time=s4_time, artworks=artworks)
 
     workshops = db.session.query(Workshop)
     reg_status = db.session.query(Tools).filter_by(keyword='reg_status').one().data
@@ -176,12 +189,24 @@ def home():
         if not workshop.reg_start:
             upcoming_workshop_list.append(workshop.name)
     cover_path = f"../static/images/workshops/{current_workshop_name}/cover.jpg"
+
+    # ------------------------------------------------ INSTRUCTOR ARTWORKS ----------------------------------------- #
+
+    member_id = 1
+    teacher = db.session.query(Member).filter_by(id=member_id).one_or_none()
+    first_name = teacher.name.split(' ')[0]
+    artworks = []
+    artworks_dir = f'static/files/users/{first_name}{member_id}/artworks/'
+    for entry in os.scandir(artworks_dir):
+        if entry.is_file():
+            artworks.append(f'/{artworks_dir}{entry.name}')
+    random.shuffle(artworks)
     return render_template('workshops_main.html', category=category, topic=topic, sessions=sessions, brief=brief,
                            sub_list=sub_list, description=description, req_list=req_list, result_list=result_list,
                            logged_in=current_user.is_authenticated, upcoming_workshop_list=upcoming_workshop_list,
                            date=date, time=time, admin=admin, reg_status=reg_status, cover_path=cover_path,
                            current_workshop_name=current_workshop_name, s2_date=s2_date, s3_date=s3_date,
-                           s4_date=s4_date, s2_time=s2_time, s3_time=s3_time, s4_time=s4_time)
+                           s4_date=s4_date, s2_time=s2_time, s3_time=s3_time, s4_time=s4_time, artworks=artworks)
 
 
 @school.route('/upcoming_workshop', methods=['GET', 'POST'])
@@ -189,6 +214,18 @@ def upcoming_workshop():
     session['url'] = url_for('school.upcoming_workshop')
     upcoming_workshop_list = []
     admin = db.session.query(Role).filter_by(name='admin').first()
+    # ---------------------------------------------- INSTRUCTOR ARTWORKS ----------------------------------------- #
+
+    member_id = 1
+    teacher = db.session.query(Member).filter_by(id=member_id).one_or_none()
+    first_name = teacher.name.split(' ')[0]
+    artworks = []
+    artworks_dir = f'static/files/users/{first_name}{member_id}/artworks/'
+    for entry in os.scandir(artworks_dir):
+        if entry.is_file():
+            artworks.append(f'/{artworks_dir}{entry.name}')
+    random.shuffle(artworks)
+
     if request.form.get('submit'):
         ws = request.form.get('submit')
         main_ws_on_page = db.session.query(Workshop).filter_by(name=ws).first()
@@ -253,7 +290,7 @@ def upcoming_workshop():
                                logged_in=current_user.is_authenticated,
                                upcoming_workshop_list=upcoming_workshop_list, date=date, cover_path=cover_path,
                                time=time, admin=admin, ws=ws, s2_date=s2_date, s3_date=s3_date, s4_date=s4_date,
-                               s2_time=s2_time, s3_time=s3_time, s4_time=s4_time)
+                               s2_time=s2_time, s3_time=s3_time, s4_time=s4_time, artworks=artworks)
     if request.args:
         ws = request.args.get('workshop')
         main_ws_on_page = db.session.query(Workshop).filter_by(name=ws).first()
@@ -311,6 +348,7 @@ def upcoming_workshop():
         upcoming_workshop_list.append(main_ws_on_page.name)
         cover_path = f"../static/images/workshops/{ws}/cover.jpg"
 
+
         return render_template('workshops_second.html', category=category, topic=topic, sessions=sessions,
                                brief=brief,
                                sub_list=sub_list, description=description, req_list=req_list,
@@ -318,7 +356,7 @@ def upcoming_workshop():
                                logged_in=current_user.is_authenticated,
                                upcoming_workshop_list=upcoming_workshop_list, date=date, cover_path=cover_path,
                                time=time, admin=admin, ws=ws, s2_date=s2_date, s3_date=s3_date, s4_date=s4_date,
-                               s2_time=s2_time, s3_time=s3_time, s4_time=s4_time)
+                               s2_time=s2_time, s3_time=s3_time, s4_time=s4_time, artworks=artworks)
     upcoming_workshop_dict = {}
     workshops = db.session.query(Workshop)
     for workshop in workshops:

@@ -55,47 +55,63 @@
             <div class="body" style="display: block;
             text-align: center;">
                 <div class="block" style="display: block;">
-                    <div style="display: flex; justify-content:space-between;">
-                        <div style="display: flex; justify-content: start; width: 25%;">
-                        <h2 style="opacity: 0.2;">WRITART GURUKUL</h2>
-                    </div>
-                    <div style="width: 25%;"></div>
-                    <div style="width: 25%;"></div>
-                    <div style="display: flex; justify-content: end; width: 25%;">
-                        <h2 style="opacity: 0.5;">www.writart.com</h2>
-                    </div>
+                    <div style="display: flex;flex-direction:column;align-items:center;justify-content: center; width: 100%;">
+                        <h2 style="opacity: 0.2; width:50%; font-size: 0.8rem;">WRITART GURUKUL</h2>
+                        <h2 style="opacity: 0.2; width:50%; font-size: 0.8rem;">www.writart.com</h2>
                     </div>
                     <h1 style="color: red;">LAST DAY TO ENROLL!</h1>
-                    <h3 style="opacity: 0.4;">WORKSHOP</h3>
-                    <h1>MAGIC - LIGHT & SHADOW</h1>
-                    <h4 style="opacity: 0.7;">This is a subtitle - a brief description</h4>
-                    <h4 style="opacity: 1;">Total Sessions: 2</h4>
+                    <h3 style="opacity: 0.4;">{{cat}}</h3>
+                    <h1>{{topic}}</h1>
+                    <h4 style="opacity: 0.7;">{{brief}}</h4>
+                    <h4 style="opacity: 1;">Total Sessions: {{sessions}}</h4>
                 </div>
                 <div class="block" style="display: block;">
                     <h3 id="topics" style="opacity: 0.4; padding-top: 2%;">Topics we'll cover</h3>
                 </div>
                 <div class="inline" style="display: flex;">
+                    {% if st1 or st2 or st3 %}
                     <div class="row" style="width: 100%;">
-                        <h5>Feature 1</h5>
-                        <h5>Feature 2</h5>
-                        <h5>Feature 3</h5>
+                        {% if st1 %}
+                        <h5>{{st1}}</h5>
+                        {% endif %}
+                        {% if st1 %}
+                        <h5>{{st2}}</h5>
+                        {% endif %}
+                        {% if st1 %}
+                        <h5>{{st3}}</h5>
+                        {% endif %}
                     </div>
+                    {% endif %}
+                    {% if st4 or st5 or st6 %}
                     <div class="row" style="width: 100%;">
-                        <h5>Feature 4</h5>
-                        <h5>Feature 5</h5>
-                        <h5>Feature 6</h5>
+                        {% if st1 %}
+                        <h5>{{st4}}</h5>
+                        {% endif %}
+                        {% if st1 %}
+                        <h5>{{st5}}</h5>
+                        {% endif %}
+                        {% if st1 %}
+                        <h5>{{st6}}</h5>
+                        {% endif %}
                     </div>
+                    {% endif %}
+                    {% if st7 or st8 or st9 %}
                     <div class="row" style="width: 100%;">
-                        <h5>Feature 4</h5>
-                        <h5>Feature 5</h5>
-                        <h5>Feature 6</h5>
+                        {% if st1 %}
+                        <h5>{{st7}}</h5>
+                        {% endif %}
+                        {% if st1 %}
+                        <h5>{{st8}}</h5>
+                        {% endif %}
+                        {% if st1 %}
+                        <h5>{{st9}}</h5>
+                        {% endif %}
                     </div>
+                    {% endif %}
                 </div>
                 <div class="block description" style="display: block; text-align: left;">
                     <h3 style="color: #c756b6; opacity: 1; text-align: center;">PAY WHAT YOU LIKE</h3>
-                    <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-                         magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                          consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+                    <p>{{des}}</p>
                 </div>
                 <div class="block btn" style="padding-top: 2%; display: block;">
                     <a type="button" style="background-color: #8f0b7b;
@@ -106,47 +122,47 @@
                 </div>
             </div>
         </div>
-        <div class="footer" style="width: 100%;
-            color: #e3bca6;
-            background-color: #6e2f64;
-            display: flex;
-            justify-content: center;
-            border: solid 1px #6e2f64;
-            border-radius: 20%;">
-            <div style="width: 25%;"></div>
-            <div class="inner-box" style="display: flex;
-            justify-content: center;
-            width: 50%;">
-                <div style="width: 100%;
-                    display: flex;
-                    padding: 3% 5%;">
-                    <div style="width: 33.3%"></div>
-                    <a href="https://www.facebook.com/writartstudio">
-                        <img src="cid:fb" height="40px" width="40px">
-                    </a>
-                    <div style="width: 33.3%"></div>
-                </div>
-                <div style="width: 100%;
-                    display: flex;
-                    padding: 3% 5%;">
-                    <div style="width: 33.3%"></div>
-                     <a href="https://www.instagram.com/writartstudios/">
-                        <img src="cid:insta" height="40px" width="40px">
-                    </a>
-                    <div style="width: 33.3%"></div>
-                </div>
-                <div style="width: 100%;
-                    display: flex;
-                    padding: 3% 5%;">
-                    <div style="width: 33.3%"></div>
-                     <a href="https://twitter.com/writart_studio">
-                        <img src="cid:twitter" height="40px" width="40px">
-                    </a>
-                    <div style="width: 33.3%"></div>
-                </div>
-            </div>
-            <div style="width:25%;"></div>
-        </div>
+<!--        <div class="footer" style="width: 100%;-->
+<!--            color: #e3bca6;-->
+<!--            background-color: #6e2f64;-->
+<!--            display: flex;-->
+<!--            justify-content: center;-->
+<!--            border: solid 1px #6e2f64;-->
+<!--            border-radius: 20%;">-->
+<!--            <div style="width: 25%;"></div>-->
+<!--            <div class="inner-box" style="display: flex;-->
+<!--            justify-content: center;-->
+<!--            width: 50%;">-->
+<!--                <div style="width: 100%;-->
+<!--                    display: flex;-->
+<!--                    padding: 3% 5%;">-->
+<!--                    <div style="width: 33.3%"></div>-->
+<!--                    <a href="https://www.facebook.com/writartstudio">-->
+<!--                        <img src="cid:fb" height="40px" width="40px">-->
+<!--                    </a>-->
+<!--                    <div style="width: 33.3%"></div>-->
+<!--                </div>-->
+<!--                <div style="width: 100%;-->
+<!--                    display: flex;-->
+<!--                    padding: 3% 5%;">-->
+<!--                    <div style="width: 33.3%"></div>-->
+<!--                     <a href="https://www.instagram.com/writartstudios/">-->
+<!--                        <img src="cid:insta" height="40px" width="40px">-->
+<!--                    </a>-->
+<!--                    <div style="width: 33.3%"></div>-->
+<!--                </div>-->
+<!--                <div style="width: 100%;-->
+<!--                    display: flex;-->
+<!--                    padding: 3% 5%;">-->
+<!--                    <div style="width: 33.3%"></div>-->
+<!--                     <a href="https://twitter.com/writart_studio">-->
+<!--                        <img src="cid:twitter" height="40px" width="40px">-->
+<!--                    </a>-->
+<!--                    <div style="width: 33.3%"></div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div style="width:25%;"></div>-->
+<!--        </div>-->
     </div>
     
 </body>

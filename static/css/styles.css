@@ -349,6 +349,36 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     right: 25%;
     z-index: 9;
 }
+.instructor-artwork-slide-section {
+    background:black;
+    padding-top:2%;
+}
+.instructor-artwork-slide-section p {
+    text-align:center;
+    color:white;
+    font-size: 2rem;
+    opacity: 0.6;
+}
+.instructor-artwork-slide-container {
+    display:flex;
+    background:black;
+    justify-content:center;
+    align-content: center;
+    background:black;
+    padding: 1% 0% 2% 2%;
+}
+.instructor-artwork-slide {
+    display:flex;
+    flex-wrap: nowrap;
+    height:30vh;
+    overflow: auto;
+    width: 80%;
+}
+.instructor-artwork-slide img {
+    position:cover;
+    repeat:no-repeat;
+    padding: 0% 1%;
+}
 .ws_page_category {
     display:flex;
     justify-content: space-between;
@@ -596,7 +626,15 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 .delete-btn p:hover {
     background:#656565;
 }
-
+.default-form {
+    display:flex;
+    justify-content:center;
+    height: 80vh;
+    align-items:center;
+}
+.default-form div {
+    width: 40%;
+}
 /* --------------------------------------------------------------------- CLASSROOM VIDEOS DISPLAY ------------------------------------------------------------------------ */
 * {
     padding: 0;
@@ -763,6 +801,12 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     .ws-main-green p {
         font-size:1.4rem;
     }
+    .instructor-artwork-slide-section p {
+        font-size: 1.6rem;
+    }
+    .default-form div {
+    width: 40%;
+}
 }
 
 @media only screen
@@ -822,6 +866,12 @@ and (max-width : 1440px) {
     .ws-main-green p {
         font-size:1.2rem;
     }
+    .instructor-artwork-slide-section p {
+        font-size: 1.4rem;
+    }
+    .default-form div {
+    width: 50%;
+}
 }
 
 
@@ -880,6 +930,9 @@ and (max-width : 992px) {
     .ws-main-green p {
         font-size:1.2rem;
     }
+    .instructor-artwork-slide-section p {
+        font-size: 1.2rem;
+    }
 }
 
 @media only screen
@@ -919,6 +972,9 @@ and (max-width : 768px) {
     .ws_page_category h6 {
          font-size: 1rem;
     }
+    .default-form div {
+    width: 60%;
+}
 }
 
 @media only screen
@@ -1028,6 +1084,12 @@ and (max-width : 576px) {
     .ws-main-green p {
         font-size:1rem;
     }
+    .instructor-artwork-slide-section p {
+        font-size: 1rem;
+    }
+    .default-form div {
+    width: 80%;
+}
 }
 
 #classroom-hero {

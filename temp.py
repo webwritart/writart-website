@@ -1,5 +1,5 @@
 import pprint
-from flask import jsonify
+from flask import jsonify, render_template
 from app import app
 from extensions import db
 from models.member import Member, Role, Workshop
@@ -10,9 +10,12 @@ from models.payment import Payment
 import pandas as pd
 from flask_login import login_required, current_user
 from urllib.parse import quote
-from datetime import datetime,timezone
+from datetime import datetime, timezone
 import pytz
 from datetime import datetime
+
+from operations.messenger import send_email_school, send_email_support
+
 now = datetime.now()
 
 # df = pd.read_csv('role.csv')

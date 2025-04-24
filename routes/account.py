@@ -415,10 +415,8 @@ def forgot_password():
                 flash('No account found with the entered email!', 'error')
 
         if request.form.get('password'):
-            print('new password data received successfully!')
             new_pwd = request.form.get('password')
             email = request.form.get('mail')
-            print(f'{new_pwd} : {email}')
             hash_and_salted_password = generate_password_hash(
                 new_pwd,
                 method='pbkdf2:sha256',
@@ -426,17 +424,15 @@ def forgot_password():
             )
             result = db.session.execute(db.select(Member).where(Member.email == email))
             user = result.scalar()
-            print(f'User : {user}')
             user.password = hash_and_salted_password
 
             db.session.commit()
             login_user(user)
-            print('login successful!')
             flash('New password set successfully!', 'success')
             mail = render_template('mails/password_reset_notification.html')
             send_email_support('Password Reset', [current_user.email],
                                '',
-                               mail, image_dict)
+                               mail, '')
             return redirect(url_for('account.home'))
 
     return render_template("forgot_password.html", current_year=current_year)
@@ -466,3 +462,22 @@ def logout():
     if 'url' in session:
         return redirect(session['url'])
     return redirect(url_for('main.home'))
+
+
+@account.route('/breach-report', methods=['GET','POST'])
+def breach_report():
+    if request.method == 'POST':
+        message = request.form.get('message')
+        email_phone = request.form.get('email_phone')
+        if '@' in email_phone:
+            body = f"Dear member,\nWe have received your breach report.\nRelax! We'll help in your account " \
+                   f"recovery({email_phone}).\nWe will reach you soon to verify and recover your account!\n"
+            send_email_support('Account Breach Report', [email_phone], body, '', '')
+        else:
+            pass
+        mail_body = f"Dear Admin,\nWe received breach report for this account.\n\nAccount details:\nEmail or Phone: " \
+                    f"{email_phone}\nMessage: {message}\n"
+        send_email_support('Account Breach Report', ['writartstudios@gmail.com', 'writart11@gmail.com'], mail_body, '',
+                           '')
+        flash("Breach-report sent to admin successfully!", "success")
+    return render_template('breach-report.html')

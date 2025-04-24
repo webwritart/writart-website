@@ -337,7 +337,6 @@ def home():
                     enrolled_user_list = []
                     recipients = []
                     enrolled_users = current_workshop.participants
-                    print(enrolled_users)
                     for user in enrolled_users:
                         enrolled_user_list.append(user.email)
                     result = db.session.query(Member)

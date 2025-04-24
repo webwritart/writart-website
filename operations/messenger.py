@@ -31,6 +31,7 @@ def send_email_school(subject, recipients, body, html, image_dict):
                                'inline')
                 # headers=[['content-ID', '<' + image_dict['file'][n].split('.')[0] + '>'], ])
     mail.send(message)
+    print("Mail sent")
 
 
 def send_email_studio(subject, recipients, body, html, image_dict):
@@ -47,6 +48,7 @@ def send_email_studio(subject, recipients, body, html, image_dict):
                                'inline')
                 # headers=[['content-ID', '<' + image_dict['file'][n].split('.')[0] + '>'], ])
     mail.send(message)
+    print("Mail sent")
 
 
 def send_email_support(subject, recipients, body, html, image_dict):
