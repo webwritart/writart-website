@@ -28,6 +28,14 @@ def api():
     all_members_phone = []
     all_interested_phone = []
 
+    def total_collection_current_workshop():
+        collection = 0
+        current_ws_name = db.session.query(Tools).filter_by(keyword='current_workshop').one_or_none().data
+        payments = db.session.query(Payment).filter_by(ws_name=current_ws_name).all()
+        for p in payments:
+            collection += int(p.amount)
+        return collection
+
     def payments_by_quarter(end_month_name, year):
         quarter_payments = {}
         all_payments = db.session.query(Payment).all()
@@ -204,6 +212,8 @@ def api():
             return jsonify(payments_by_quarter(end_month_name, year))
         elif data == 'current_ws_enrolled':
             return jsonify(all_enrolled_current_workshop())
+        elif data == 'collection':
+            return jsonify(total_collection_current_workshop())
         else:
             return jsonify('Wrong data type!')
     else:
