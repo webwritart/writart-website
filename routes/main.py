@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash
+from flask import Blueprint, render_template, request, flash, session, url_for
 from extensions import login_manager, db, current_year
 from models.member import Member, Workshop, Role
 from models.query import Query
@@ -13,6 +13,7 @@ main = Blueprint('main', __name__, static_folder='static', template_folder='temp
 
 @main.route('/', methods=['GET', 'POST'])
 def home():
+    session['url'] = url_for('main.home')
     upcoming_workshop_list = []
     current_ws = db.session.query(Tools).filter_by(keyword='current_workshop').one().data
     admin = db.session.query(Role).filter_by(name='admin').one_or_none()

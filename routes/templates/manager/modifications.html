@@ -12,6 +12,7 @@
     {% endwith %}
 
     <div class="box2">
+        <h3>Modify user data</h3>
         <form action="{{ url_for('manager.modifications') }}" method="post">
             <select id="table" name="table">
                 <option value="table">Table</option>
@@ -31,6 +32,7 @@
        </form>
     </div>
     <div class="box2">
+        <h3>Append or remove member - workshop</h3>
         <form action="{{ url_for('manager.modifications') }}" method="post">
             <input type="text" name="email" placeholder="Type member Email here" required>
             <input type="text" name="ws_name" placeholder="Type Workshop name here (like ws1)" required>
@@ -40,6 +42,14 @@
                 <option value="remove">Remove</option>
             </select>
             <input type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="member-workshop">
+       </form>
+    </div>
+    <div class="box2">
+        <h3>Change user password</h3>
+        <form action="{{ url_for('manager.modifications') }}" method="post">
+            <input type="text" name="email-phone" placeholder="Type member Email or phone here" required>
+            <input type="text" name="password" placeholder="Type New Password here" required>
+            <input type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="change-password">
        </form>
     </div>
 </div>

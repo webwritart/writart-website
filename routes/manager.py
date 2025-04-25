@@ -4,6 +4,7 @@ import pprint
 import pandas as pd
 from flask import Blueprint, render_template, request, flash, redirect, url_for, send_file, jsonify
 from flask_login import login_required, current_user
+from werkzeug.security import generate_password_hash
 from werkzeug.utils import secure_filename
 from extensions import db, admin_only, current_year
 from models.videos import Demo
@@ -813,6 +814,52 @@ def modifications():
                     member.participated.remove(workshop)
                     db.session.commit()
                     flash("Student removed from the Workshop successfully!", "success")
+        if request.form.get('submit') == 'change-password':
+            all_members = db.session.query(Member).all()
+            members_mail_list = []
+            members_phone_list = []
+
+            for m in all_members:
+                members_mail_list.append(m.email)
+                members_phone_list.append(m.phone)
+
+            email_phone = request.form.get('email-phone')
+            pwd = request.form.get('password')
+            hash_and_salted_password = generate_password_hash(
+                        pwd,
+                        method='pbkdf2:sha256',
+                        salt_length=8
+                    )
+            if '@' in email_phone:
+                if email_phone in members_mail_list:
+                    user = db.session.query(Member).filter_by(email=email_phone).scalar()
+                    user.password = hash_and_salted_password
+                    db.session.commit()
+                    user_name = user.name.split(' ')[0]
+                    mail_body = f"Dear {user_name},\n\nYour password is changed successfully!\n\nNew Password is: {pwd}\n\n" \
+                                f"Please click the link below to log in with the new password and then change your " \
+                                f"password.\n\n" \
+                                f"Change Password Link: https://writart.com/account/change-password"
+                    send_email_support('PASSWORD RESET',[email_phone], mail_body, '', '')
+                    flash("Chief! Password changed successfully!", "success")
+                else:
+                    flash("Chief! Member account doesn't exist", "error")
+            else:
+                if email_phone in members_phone_list:
+                    user = db.session.query(Member).filter_by(phone=email_phone).scalar()
+                    user.password = hash_and_salted_password
+                    db.session.commit()
+                    user_name = user.name.split(' ')[0]
+                    user_email = user.email
+                    mail_body = f"Dear {user_name},\n\nYour password is changed successfully!\n\nNew Password is: {pwd}\n\n" \
+                                f"Please click the link below to log in with the new password and then change your " \
+                                f"password.\n\n" \
+                                f"Change Password Link: https://writart.com/account/change-password"
+                    send_email_support('PASSWORD RESET', [user_email], mail_body, '', '')
+                    flash("Chief! Password changed successfully!", "success")
+                else:
+                    flash("Chief! Member account doesn't exist", "error")
+
     admin = db.session.query(Role).filter_by(name='admin').one_or_none()
     return render_template('modifications.html', admin=admin, logged_in=current_user.is_authenticated,
                            current_year=current_year)
