@@ -1,5 +1,7 @@
 import pprint
 from flask import jsonify, render_template
+from werkzeug.security import generate_password_hash
+
 from app import app
 from extensions import db
 from models.member import Member, Role, Workshop
@@ -66,4 +68,10 @@ now = datetime.now()
 #
 # with app.app_context():
 #
-
+# password = '12345'
+# hash_and_salted_password = generate_password_hash(
+#             password,
+#             method='pbkdf2:sha256',
+#             salt_length=8
+#         )
+# print(hash_and_salted_password)

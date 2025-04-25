@@ -68,6 +68,7 @@ def home():
                         salt_length=8
                     )
                     current_user.password = hash_and_salted_password
+                    db.session.commit()
                     flash("Password changed successfully", category="success")
             if request.form.get('fb-url'):
                 if 'https://' not in request.form.get('fb-url'):
@@ -384,6 +385,9 @@ def login():
             if request.form.get('prev-page') == 'enroll':
                 flash("You are successfully logged in. Now proceed to enroll", "success")
                 return redirect(url_for('payment.home'))
+            if request.form.get('prev-page') == 'change-password':
+                flash("You are successfully logged in. Now proceed to change password", "success")
+                return redirect(url_for('account.change_password'))
             return redirect(url_for('account.home', name=current_user.name.split()[0]))
 
     return render_template("login.html", instruction='login', current_year=current_year)
@@ -481,3 +485,26 @@ def breach_report():
                            '')
         flash("Breach-report sent to admin successfully!", "success")
     return render_template('breach-report.html')
+
+
+@account.route('/change-password', methods=['GET','POST'])
+def change_password():
+    session['url'] = url_for('account.change_password')
+    if request.method == 'POST':
+        old_pwd = request.form.get('old-pwd')
+        if not check_password_hash(current_user.password, old_pwd):
+            flash("Please enter the correct old password", category="error")
+        else:
+            hash_and_salted_password = generate_password_hash(
+                request.form.get('new-pwd'),
+                method='pbkdf2:sha256',
+                salt_length=8
+            )
+            current_user.password = hash_and_salted_password
+            db.session.commit()
+            flash("Password changed successfully", category="success")
+    if current_user.is_authenticated:
+        return render_template('change-password.html', logged_in=current_user.is_authenticated)
+    else:
+        instruction = 'Please first login to change password'
+        return render_template('account/login.html', prev_page='change-password', instruction=instruction)

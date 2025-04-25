@@ -230,9 +230,9 @@
 
  <!--  ---------------------------------------------------------------------- UPDATE RECORDS POPUP -------------------------------------------------------------------------------- -->
 
-<div class="form-popup box" id="change-password">
+<div class="form-popup" style="" id="change-password">
     <form action="{{url_for('account.home')}}" class="popup-form-container" name="change-password" onsubmit="return validateForm()" method="post">
-        <div style="display: flex; justify-content: right; width: 95%;">
+        <div style="display: flex; justify-content: center; width: 95%;">
             <a style="opacity: 0.5;" type="button" onclick="closeForm()">close <img src="../static/images/icons/cross-sign.png" width="10px"></a>
         </div>
         <h3 style="color: #c9c9c9;">Change Password</h3>
@@ -243,7 +243,7 @@
     </form>
 </div>
 
-<div class="form-popup2 box" id="update-profile-details">
+<div class="form-popup box" id="update-profile-details">
     <form class="popup-form-container" action="{{url_for('account.home')}}" name="update-profile" method="post">
         <div style="display: flex; justify-content: right; width: 95%;">
             <a style="opacity: 0.5;" type="button" onclick="closeForm2()">close <img src="../static/images/icons/cross-sign.png" width="10px"></a>

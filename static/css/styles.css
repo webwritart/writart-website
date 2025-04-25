@@ -545,7 +545,9 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     display: none;
     position: fixed;
     bottom: 35%;
-    right: 35%;
+    right: 20%;
+    left: 20%;
+    z-index: 9;
     z-index: 9;
 }
 .form-popup2 {
@@ -634,6 +636,13 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 }
 .default-form div {
     width: 40%;
+}
+.change-password-container {
+    display: flex;
+    justify-content: center;
+    height: 90vh;
+    align-items: center;
+
 }
 /* --------------------------------------------------------------------- CLASSROOM VIDEOS DISPLAY ------------------------------------------------------------------------ */
 * {
@@ -933,6 +942,9 @@ and (max-width : 992px) {
     .instructor-artwork-slide-section p {
         font-size: 1.2rem;
     }
+    .change-password-container form{
+        width: 60%;
+    }
 }
 
 @media only screen
@@ -1054,7 +1066,12 @@ and (max-width : 576px) {
         width: 100%;
     }
     .box {
-        padding: 0% 10%;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        margin: -150px 0 0 -150px;
+        width: 100px;
+        height: 100px;
     }
     .ws_page_category h6 {
          font-size: 0.8rem;
@@ -1090,6 +1107,13 @@ and (max-width : 576px) {
     .default-form div {
     width: 80%;
 }
+.form-popup {
+    right: 10%;
+    left: 10%;
+}
+.change-password-container form{
+        width: 80%;
+    }
 }
 
 #classroom-hero {
