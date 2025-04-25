@@ -72,38 +72,38 @@ def home():
     if request.method == 'POST':
         if request.form.get('interested-form-hidden-workshop'):
             ws_name = request.form.get('interested-form-hidden-workshop')
-            # try:
-            #     name = current_user.name
-            #     email = current_user.email
-            #     phone = current_user.phone
-            #     whatsapp = current_user.whatsapp
-            # except Exception as e:
-            #     print(e)
-            #     name = request.form.get('name')
-            #     email = request.form.get('email')
-            #     phone = request.form.get('phone')
-            #     whatsapp = request.form.get('whatsapp')
-            # message = request.form.get('message')
-            # all_interested = db.session.query(Query).filter_by(interested_ws=ws_name)
-            #
-            # for i in all_interested:
-            #     all_interested_emails.clear()
-            #     all_interested_emails.append(i.email)
-            #
-            # if email not in all_interested_emails:
-            #     entry = Query(
-            #         name=name,
-            #         email=email,
-            #         phone=phone,
-            #         whatsapp=whatsapp,
-            #         interested_ws=ws_name,
-            #         message=message
-            #     )
-            #     db.session.add(entry)
-            #     db.session.commit()
-            #     flash("Successfully saved details. We'll notify you when time comes!", "success")
-            # else:
-            #     print('email found!')
+            try:
+                name = current_user.name
+                email = current_user.email
+                phone = current_user.phone
+                whatsapp = current_user.whatsapp
+            except Exception as e:
+                print(e)
+                name = request.form.get('name')
+                email = request.form.get('email')
+                phone = request.form.get('phone')
+                whatsapp = request.form.get('whatsapp')
+            message = request.form.get('message')
+            all_interested = db.session.query(Query).filter_by(interested_ws=ws_name)
+
+            for i in all_interested:
+                all_interested_emails.clear()
+                all_interested_emails.append(i.email)
+
+            if email not in all_interested_emails:
+                entry = Query(
+                    name=name,
+                    email=email,
+                    phone=phone,
+                    whatsapp=whatsapp,
+                    interested_ws=ws_name,
+                    message=message
+                )
+                db.session.add(entry)
+                db.session.commit()
+                flash("Successfully saved details. We'll notify you when time comes!", "success")
+            else:
+                print('email found!')
 
         if request.form.get('know-more') == 'know-more':
             ws = request.form.get('submit')
@@ -168,7 +168,7 @@ def home():
             teacher = db.session.query(Member).filter_by(id=member_id).one_or_none()
             first_name = teacher.name.split(' ')[0]
             artworks = []
-            artworks_dir = f'static/files/users/{first_name}{member_id}/artworks/'
+            artworks_dir = f'static/files/users/{first_name}{member_id}/artworks/thumbnail/'
             for entry in os.scandir(artworks_dir):
                 if entry.is_file():
                     artworks.append(f'/{artworks_dir}{entry.name}')
@@ -196,7 +196,7 @@ def home():
     teacher = db.session.query(Member).filter_by(id=member_id).one_or_none()
     first_name = teacher.name.split(' ')[0]
     artworks = []
-    artworks_dir = f'static/files/users/{first_name}{member_id}/artworks/'
+    artworks_dir = f'static/files/users/{first_name}{member_id}/artworks/thumbnail/'
     for entry in os.scandir(artworks_dir):
         if entry.is_file():
             artworks.append(f'/{artworks_dir}{entry.name}')
@@ -220,7 +220,7 @@ def upcoming_workshop():
     teacher = db.session.query(Member).filter_by(id=member_id).one_or_none()
     first_name = teacher.name.split(' ')[0]
     artworks = []
-    artworks_dir = f'static/files/users/{first_name}{member_id}/artworks/'
+    artworks_dir = f'static/files/users/{first_name}{member_id}/artworks/thumbnail/'
     for entry in os.scandir(artworks_dir):
         if entry.is_file():
             artworks.append(f'/{artworks_dir}{entry.name}')
