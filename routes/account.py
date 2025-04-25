@@ -284,8 +284,9 @@ def register():
         mail = render_template('mails/registration_success.html')
         send_email_support('Registration success!', [email],
                            '',
-                           mail, image_dict)
+                           mail, '')
         mail_message = f'New Registration:\n\nName: {request.form.get("name")}\nEmail: {request.form.get("email")}\n' \
+                       f'Phone: {request.form.get("phone")}' \
                        f'Sex: {request.form.get("sex")}\nProfession: {request.form.get("profession")}\n' \
                        f'State: {request.form.get("state")}\n\n'
         send_email_support('New Registration!', ['writartstudios@gmail.com'], mail_message, '', '')

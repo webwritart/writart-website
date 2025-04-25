@@ -182,6 +182,10 @@ def verify():
                                '',
                                mail,
                                '')
+            mail_body = f"Dear Chief\n\nNew enrollment! Hooray!\n\nDetails:\nname: {current_user.name}\n" \
+                        f"Email: {current_user.email}\nPhone: {current_user.phone}\nState: {state}\nAmount: {str(amount)[:-2]}\n" \
+                        f"Message: {session['msg']}\nWorkshop: {current_workshop_name}\n\n"
+            send_email_support('New Enrollment', ['writartstudios@gmail.com'], mail_body, '', '')
             f = open(file_path, "a")
             f.write(f'sent mail again! - {now}\n')
             f.close()
