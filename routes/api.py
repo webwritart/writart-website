@@ -1,8 +1,10 @@
+import pprint
 from flask import Blueprint, render_template, request, jsonify
 from models.member import Member, Workshop
 from models.query import Query
 from models.payment import Payment
 from extensions import db
+from models.tool import Tools
 
 api_page = Blueprint('api', __name__, static_folder='static', template_folder='templates/api')
 
@@ -77,6 +79,22 @@ def api():
                         }
                         quarter_payments[payment.id] = invoice
         return quarter_payments
+
+    def all_enrolled_current_workshop():
+        current_ws_name = db.session.query(Tools).filter_by(keyword='current_workshop').one_or_none().data
+        current_ws_enrolled = db.session.query(Workshop).filter_by(name=current_ws_name).one_or_none().participants
+        current_ws_enrolled_students = {}
+
+        for st in current_ws_enrolled:
+            es = {
+                'id': st.id,
+                'name': st.name,
+                'email': st.email,
+                'phone': st.phone,
+                'whatsapp': st.whatsapp,
+            }
+            current_ws_enrolled_students[st.id] = es
+        return current_ws_enrolled_students
 
     for m in all_members:
         all_members_phone.append(m.phone)
@@ -184,6 +202,8 @@ def api():
             end_month_name = request.args.get('end_month_name')
             year = request.args.get('year')
             return jsonify(payments_by_quarter(end_month_name, year))
+        elif data == 'current_ws_enrolled':
+            return jsonify(all_enrolled_current_workshop())
         else:
             return jsonify('Wrong data type!')
     else:

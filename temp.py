@@ -18,6 +18,7 @@ from operations.messenger import send_email_school, send_email_support
 
 now = datetime.now()
 
+
 # df = pd.read_csv('role.csv')
 # df = df.reset_index()
 # with app.app_context():
@@ -62,3 +63,7 @@ now = datetime.now()
 # f = open(file_path, "a")
 # f.write(f'Added Payment! - {now}\n')
 # f.close()
+#
+# with app.app_context():
+#
+
