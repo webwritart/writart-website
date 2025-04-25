@@ -775,6 +775,21 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 .full-size-img {
     display:none;
 }
+.box {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        margin: -150px 0 0 -150px;
+        width: 100px;
+        height: 100px;
+    }
+.enroll-form {
+    display:flex;
+    height: 90vh;
+    justify-content: center;
+    align-items:center;
+    width: 100%;
+}
 
 @media only screen and (min-width : 1900px) {
     #video-wrapper-container .video {
@@ -987,6 +1002,9 @@ and (max-width : 768px) {
     .default-form div {
     width: 60%;
 }
+.enroll-form form{
+    width: 80%;
+}
 }
 
 @media only screen
@@ -1065,14 +1083,7 @@ and (max-width : 576px) {
     .main-upcoming-ws-item {
         width: 100%;
     }
-    .box {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        margin: -150px 0 0 -150px;
-        width: 100px;
-        height: 100px;
-    }
+
     .ws_page_category h6 {
          font-size: 0.8rem;
     }

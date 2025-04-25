@@ -11,9 +11,10 @@
     .b:hover {
         background: #402e01;
     }
+
 </style>
 
-<div class="box">
+<div class="enroll-form">
     <form action="{{ url_for('payment.checkout') }}" method="post">
         <h2>Enroll</h2>
         <input style="background:#FFDBDB;" name="amount" placeholder="Enter any amount you want to offer" type="number" required><br>
