@@ -790,6 +790,13 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     align-items:center;
     width: 100%;
 }
+.login {
+    display:flex;
+    height: 90vh;
+    justify-content:center;
+    align-items:center;
+    width:100%;
+}
 
 @media only screen and (min-width : 1900px) {
     #video-wrapper-container .video {
@@ -1125,6 +1132,9 @@ and (max-width : 576px) {
 .change-password-container form{
         width: 80%;
     }
+ .login form{
+    width:80%;
+ }
 }
 
 #classroom-hero {
