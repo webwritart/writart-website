@@ -372,8 +372,8 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 }
 .instructor-artwork-slide {
     display:flex;
-    height:50vh;
-    width: 80%;
+    height:100%;
+    width: 100%;
     justify-content:center;
     align-items:center;
 }
@@ -381,6 +381,8 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     position:cover;
     repeat:no-repeat;
     padding: 0% 1%;
+    max-width: 100%;
+    height: 100%;
 }
 .ws_page_category {
     display:flex;
@@ -976,12 +978,8 @@ and (max-width : 992px) {
 .instructor-artwork-slide-container {
     padding: 4% 0% 6% 0%;
 }
-.instructor-artwork-slide {
-    height:40vh;
-}
-.instructor-artwork-slide img {
-    height: 100%;
-}
+
+
 }
 
 @media only screen
@@ -1145,13 +1143,7 @@ and (max-width : 576px) {
     .instructor-artwork-slide-container {
         padding: 8% 0% 10% 0%;
 }
-.instructor-artwork-slide {
-    width: 90%;
-}
-.instructor-artwork-slide img {
-    max-width: 100%;
-    height:auto;
-}
+
     .default-form div {
     height:
 }
