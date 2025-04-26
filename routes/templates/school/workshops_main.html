@@ -163,9 +163,7 @@ Let’s Learn together!
     <p>INSTRUCTOR'S ARTWORKS</p>
     <div class="instructor-artwork-slide-container">
         <div class="instructor-artwork-slide">
-            {% for img_path in artworks %}
-                <img src="{{img_path}}">
-            {% endfor %}
+            <img name="slide">
         </div>
     </div>
 </div>
@@ -232,5 +230,23 @@ Let’s Learn together!
 
 
 <script src="../static/js/school.js"></script>
+<script>
+var i = 0;
+var time = 3000;
+const images = {{artworks | tojson}};
+
+function changeImg(){
+    document.slide.src = images[i];
+
+    if(i < images.length - 1){
+        i++;
+    } else {
+        i = 0;
+    }
+    setTimeout("changeImg()", time);
+}
+
+window.onload = changeImg;
+</script>
 {% endblock %}
 
