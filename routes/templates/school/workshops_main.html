@@ -109,7 +109,7 @@
                             {% if reg_status == 'open' %}
                                 <a class="btn btn-primary btn-block btn-large button" href="{{url_for('payment.home')}}">ENROLL NOW</a>
                             {% elif reg_status == 'close' %}
-                                <a style="background:gray;color:black !important;">REGISTRATION CLOSED</a>
+                                <a class="btn btn-primary btn-block btn-large button" style="background:gray;color:black !important;">REGISTRATION CLOSED</a>
                             {% elif reg_status == 'Pending' %}
                                 <a class="btn btn-primary btn-block btn-large button" onclick="openInterestedForm2('{{current_workshop_name}}')">INTERESTED</a>
                             {% endif %}
