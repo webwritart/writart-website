@@ -149,7 +149,7 @@ def verify():
         f = open(file_path, "a")
         f.write(f'Added Payment! - {now}\n')
         f.close()
-        current_workshop = db.session.query(Workshop).filter_by(name=current_ws_name).one_or_none()
+        current_workshop = db.session.query(Workshop).filter_by(name=current_workshop_name).one_or_none()
         topic = db.session.query(Workshop).filter_by(name=current_workshop_name).one_or_none().topic
         dt = current_workshop.date
         time = current_workshop.time
