@@ -85,9 +85,9 @@
         {% if not logged_in %}
             <div class="course-btn">
                 <div class="text-button-center">
-                    <p style="color: black;">To watch our Art workshop recorded videos on various creative topics you need to first join our workshops.</p>
+                    <p style="color: black;">Please Login to watch</p>
                     <div style="display: flex; justify-content: center;">
-                        <a href="{{url_for('school.home')}}" class="btn btn-primary btn-block btn-large button_medium button" role="button">OUR WORKSHOPS</a>
+                        <a href="{{url_for('account.login')}}" class="btn btn-primary btn-block btn-large button_medium button" role="button">LOG IN</a>
                     </div>
                 </div>
             </div>
