@@ -96,26 +96,26 @@
         {% endif %}
     </div>
 </div>
-<div class="study-material-wrapper">
-    <div class="width-80-container">
-        <h3 style="width:100%;">Study Materials</h3>
-        <div class="study-material-wrapper">
-            <div class="category-list">
-                {% for n in ws_dict %}
-                <form method="post" action="{{ url_for('school.classroom') }}">
-                    <button type="submit" name="submit" value="{{ws_dict[n]['name']}}" >{{ws_dict[n]['topic']}}</button>
-                </form>
-                {% endfor %}
-            </div>
-            <div class="category-content">
-                {% for f in files_path_dict %}
-                <a  type="submit" name="download_file" value="{{files_path_dict[f]['name']}}" formmethod="post" formaction="{{url_for('school.classroom')}}">
-                    {{files_path_dict[f]['name']}}</a>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-</div>
+<!--<div class="study-material-wrapper">-->
+<!--    <div class="width-80-container">-->
+<!--        <h3 style="width:100%;">Study Materials</h3>-->
+<!--        <div class="study-material-wrapper">-->
+<!--            <div class="category-list">-->
+<!--                {% for n in ws_dict %}-->
+<!--                <form method="post" action="{{ url_for('school.classroom') }}">-->
+<!--                    <button type="submit" name="submit" value="{{ws_dict[n]['name']}}" >{{ws_dict[n]['topic']}}</button>-->
+<!--                </form>-->
+<!--                {% endfor %}-->
+<!--            </div>-->
+<!--            <div class="category-content">-->
+<!--                {% for f in files_path_dict %}-->
+<!--                <a  type="submit" name="download_file" value="{{files_path_dict[f]['name']}}" formmethod="post" formaction="{{url_for('school.classroom')}}">-->
+<!--                    {{files_path_dict[f]['name']}}</a>-->
+<!--                {% endfor %}-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
 
 <script src="../static/lite-yt-embed.js"></script>
 
