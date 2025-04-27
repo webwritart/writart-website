@@ -455,8 +455,7 @@ def forgot_password():
                 method='pbkdf2:sha256',
                 salt_length=8
             )
-            result = db.session.execute(db.select(Member).where(Member.email == email))
-            user = result.scalar()
+            user = db.session.query(Member).filter_by(email=email).scalar()
             user.password = hash_and_salted_password
 
             db.session.commit()
