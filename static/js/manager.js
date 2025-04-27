@@ -16,6 +16,7 @@ function closeAll() {
     document.getElementById("gallery").style.display = 'none';
     document.getElementById("open-demo").style.display = 'none';
     document.getElementById("send-email").style.display = 'none';
+    document.getElementById("add-ws-files").style.display = 'none';
 }
 
 function addNewWs() {
@@ -66,6 +67,11 @@ function sessionLink() {
 function sessionReminder() {
     closeAll();
     document.getElementById("session-reminder").style.display = 'block';
+}
+
+function addWsFiles() {
+    closeAll();
+    document.getElementById("add-ws-files").style.display = 'block';
 }
 
 function certificateDistribution() {

@@ -166,7 +166,7 @@ def home():
                     except:
                         flash("Sorry, Couldn't add, Chief!", "error")
 
-            if request.form.get('submit') and request.form.get('submit') == 'upload_photos':
+            if request.form.get('submit') == 'upload_photos':
                 allowed_extensions = {'png', 'jpg'}
 
                 if 'file' not in request.files:
@@ -231,6 +231,25 @@ def home():
                 db.session.query(Tools).filter_by(keyword='reg_status').one().data = 'close'
                 db.session.query(Tools).filter_by(keyword='close_reg').one().data = 'Done'
                 db.session.commit()
+
+            if request.form.get('submit') == 'add_ws_files':
+                if 'file' not in request.files:
+                    flash('No file part', 'error')
+                    return redirect(request.url)
+                files = request.files.getlist('file')
+
+                folder_name = request.form.get('ws-name')
+                folder = f"./static/files/workshops/{folder_name}"
+                if not os.path.exists(folder):
+                    os.makedirs(folder)
+                for file in files:
+                    if file.filename == '':
+                        flash('No selected file', 'error')
+                        return redirect(request.url)
+                    if file:
+                        filename = secure_filename(file.filename)
+                        file.save(f"{folder}/{filename}")
+                        flash('Chief! Files uploaded successfully!', 'success')
 
             if request.form.get('add_demo') == 'demo':
                 title = request.form.get('title')

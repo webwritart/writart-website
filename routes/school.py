@@ -368,7 +368,7 @@ def upcoming_workshop():
                            logged_in=current_user.is_authenticated)
 
 
-@school.route('/classroom')
+@school.route('/classroom', methods=['GET', 'POST'])
 def classroom():
     session['url'] = url_for('school.classroom')
     admin = db.session.query(Role).filter_by(name='admin').one_or_none()
@@ -456,12 +456,41 @@ def classroom():
 
     demo_count = len(all_demo_url_list)
 
+    ws_dict = {}
+    enrolled_ws = current_user.participated
+    for n in enrolled_ws:
+        entry = {
+            "name": n.name,
+            "topic": n.topic
+        }
+        ws_dict[n.name] = entry
+    if request.method == 'POST':
+        workshop_folder_name = request.form.get('submit')
+        workshop_path = f'static/files/workshops/{workshop_folder_name}'
+        files_list = os.listdir(workshop_path)
+        files_path_dict = {}
+        for f in files_list:
+            if os.path.isfile(workshop_path+'/'+f):
+                entry = {
+                    'name': f
+                }
+                files_path_dict[f] = entry
+
+        return render_template('classroom.html', vid_id_list=qa_recorded_video_urls, qa_caption_list=qa_vid_caption_list
+                               , qa_video_count=q_a_video_count, yt_vid_id_list=all_recorded_video_urls,
+                               vid_caption_list=vid_caption_list, video_count=video_count,
+                               logged_in=current_user.is_authenticated, admin=admin,
+                               all_demo_url_list=all_demo_url_list,
+                               demo_caption_list=demo_caption_list, part_list=part_list, demo_count=demo_count,
+                               title_list=title_list, ws_dict=ws_dict, workshop_folder_name=workshop_folder_name,
+                               files_path_dict=files_path_dict)
+
     return render_template('classroom.html', vid_id_list=qa_recorded_video_urls, qa_caption_list=qa_vid_caption_list
                            , qa_video_count=q_a_video_count, yt_vid_id_list=all_recorded_video_urls,
                            vid_caption_list=vid_caption_list, video_count=video_count,
                            logged_in=current_user.is_authenticated, admin=admin, all_demo_url_list=all_demo_url_list,
                            demo_caption_list=demo_caption_list, part_list=part_list, demo_count=demo_count,
-                           title_list=title_list)
+                           title_list=title_list, ws_dict=ws_dict)
 
 
 @school.route('/certificate_download', methods=['GET', 'POST'])
@@ -506,3 +535,14 @@ def vision():
 @school.route('/t&c_school')
 def terms_and_conditions_school():
     return render_template('t&c_school.html')
+
+
+@school.errorhandler(404)
+def page_not_found(e):
+    return "This is error 404!"
+
+
+@school.errorhandler(500)
+def internal_error(e):
+    return "This is internal error!"
+
