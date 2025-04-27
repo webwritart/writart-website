@@ -402,7 +402,6 @@ def forgot_password():
         if request.form.get('email_phone'):
             results = db.session.query(Member)
             token = random.randint(1000, 9999)
-            # email_list.clear()
 
             if '@' in request.form.get('email_phone'):
                 email = request.form.get('email_phone')
@@ -465,6 +464,8 @@ def forgot_password():
             send_email_support('Password Reset', [current_user.email],
                                '',
                                mail, '')
+            if 'url' in session:
+                return redirect(session['url'])
 
             return redirect(url_for('account.home'))
 
@@ -479,6 +480,7 @@ def set_new_password():
     if str(token) == str(entered_token):
         return render_template('set_new_password.html', email=email)
     else:
+        flash("Some error occured!", "error")
         send_email_support('ERROR!!!', ['writartstudios@gmail.com'], f'Problem forget password reset for {email}',
                            '', '')
         return redirect(url_for("account.login"))
