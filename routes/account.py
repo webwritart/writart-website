@@ -402,36 +402,50 @@ def forgot_password():
         if request.form.get('email_phone'):
             results = db.session.query(Member)
             token = random.randint(1000, 9999)
+            # email_list.clear()
 
             if '@' in request.form.get('email_phone'):
-                print('entered email if loop')
                 email = request.form.get('email_phone')
                 for result in results:
                     if email == result.email:
-                        email_list.clear()
                         email_list.append(email)
                         result.token = token
                         db.session.commit()
+                        send_email_support(subject="Password reset",
+                                           recipients=email_list, body='',
+                                           html=render_template('mails/password_reset_link.html',
+                                                                link=f"https://writart.com/account/set_new_password?token={str(token)}&email={email_list[0]}"),
+                                           image_dict='')
+                        return render_template('check_mail_notification.html')
+
+                    else:
+                        flash('No account found with the entered email!', 'error')
 
             else:
-                print('entered phone if loop')
                 phone = request.form.get('email_phone')
+                if len(phone) == 11 and phone[0] == '0':
+                    phone = phone[1:]
+                elif phone[0] == '+':
+                    phone = phone[1:]
                 for result in results:
-                    if phone == result.phone:
+                    r_phone = result.phone
+                    if len(r_phone) == 11 and r_phone[0] == '0':
+                        r_phone = r_phone[1:]
+                    elif r_phone[0] == '+':
+                        r_phone = r_phone[1:]
+                    if phone == r_phone:
                         email = result.email
-                        email_list.clear()
                         email_list.append(email)
                         result.token = token
                         db.session.commit()
-            print(email_list)
-            send_email_support(subject="Password reset",
-                               recipients=email_list, body='',
-                               html=render_template('mails/password_reset_link.html',
-                                                    link=f"https://writart.com/account/set_new_password?token={str(token)}&email={email_list[0]}"),
-                               image_dict='')
-            return render_template('check_mail_notification.html')
-        else:
-            flash('No account found with the entered email!', 'error')
+                        send_email_support(subject="Password reset",
+                                           recipients=email_list, body='',
+                                           html=render_template('mails/password_reset_link.html',
+                                                                link=f"https://writart.com/account/set_new_password?token={str(token)}&email={email_list[0]}"),
+                                           image_dict='')
+                        return render_template('check_mail_notification.html')
+                    else:
+                        flash("No account found with the entered phone", "error")
 
         if request.form.get('submit') == 'set-password':
             new_pwd = request.form.get('password')
