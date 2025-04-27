@@ -394,11 +394,10 @@ def login():
     return render_template("login.html", instruction='login', current_year=current_year)
 
 
-email_list = []
-
-
 @account.route('/forgot_password', methods=['GET', 'POST'])
 def forgot_password():
+    email_list = []
+
     if request.method == 'POST':
         if request.form.get('email_phone'):
             results = db.session.query(Member)
@@ -406,9 +405,9 @@ def forgot_password():
 
             if '@' in request.form.get('email_phone'):
                 email = request.form.get('email_phone')
-                email_list.clear()
                 for result in results:
                     if email == result.email:
+                        email_list.clear()
                         email_list.append(email)
                         result.token = token
                         db.session.commit()
@@ -465,7 +464,7 @@ def set_new_password():
     if str(token) == str(entered_token):
         return render_template('set_new_password.html', email=email)
     else:
-        send_email_support('ERROR!!!', ['shwetabh@writart.com'], f'Problem forget password reset for {email_list[0]}',
+        send_email_support('ERROR!!!', ['writartstudios@gmail.com'], f'Problem forget password reset for {email}',
                            '', '')
         return redirect(url_for("account.login"))
 
