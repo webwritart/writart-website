@@ -754,7 +754,9 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     width: 100%;
     height: 100%;
 }
-.wrapper {
+
+
+.study-material-wrapper {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -794,9 +796,12 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     overflow: auto;
 }
 .category-content a {
+}
 .ws-flies {
     display: none;
 }
+
+
 .video-wrapper-container .video .content p{
     text-align: center;
     color: black;
