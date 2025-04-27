@@ -404,6 +404,7 @@ def forgot_password():
             token = random.randint(1000, 9999)
 
             if '@' in request.form.get('email_phone'):
+                print('entered email if loop')
                 email = request.form.get('email_phone')
                 for result in results:
                     if email == result.email:
@@ -413,6 +414,7 @@ def forgot_password():
                         db.session.commit()
 
             else:
+                print('entered phone if loop')
                 phone = request.form.get('email_phone')
                 for result in results:
                     if phone == result.phone:
@@ -421,6 +423,7 @@ def forgot_password():
                         email_list.append(email)
                         result.token = token
                         db.session.commit()
+            print(email_list)
             send_email_support(subject="Password reset",
                                recipients=email_list, body='',
                                html=render_template('mails/password_reset_link.html',
