@@ -466,8 +466,7 @@ def forgot_password():
             send_email_support('Password Reset', [current_user.email],
                                '',
                                mail, '')
-            if 'url' in session:
-                return redirect(session['url'])
+
             return redirect(url_for('account.home'))
 
     return render_template("forgot_password.html", current_year=current_year)
