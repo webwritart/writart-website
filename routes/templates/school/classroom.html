@@ -54,20 +54,15 @@
 
 <hr/>
 
-<div class="video-wrapper">
-    <div class="video-wrapper-container">
+<div class="video-wrapper" style="background:#594100; padding: 2% 0%;">
+    <div class="video-wrapper-container" >
         <h3 style="color:#b38fc2;">Workshops</h3>
-        <p>This section contains recorded sessions of all the workshops you get enrolled in.</p>
+        <p style="color:white;opacity:0.5;">This section contains recorded sessions of all the workshops you get enrolled in.</p>
         {% if logged_in %}
-            {% if video_count == 0 %}
-                <div class="course-btn">
-                    <p style="color: black;">To watch our Art workshop recorded videos on various creative topics you need to first join our workshops.</p>
-                    <a href="{{url_for('school.home')}}" class="btn btn-primary btn-block btn-large" role="button">OUR WORKSHOPS</a>
-                </div>
-            {% endif %}
+
             {% if video_count > 0 %}
                 {% for n in range(video_count) %}
-         <iframe class="responsive-iframe" src="https://www.youtube.com/embed/{{ yt_vid_id_list[n] }}?si=2BVYS-0QHsxcX4f5"
+         <iframe style="background:brown;" class="responsive-iframe" src="https://www.youtube.com/embed/{{ yt_vid_id_list[n] }}?si=2BVYS-0QHsxcX4f5"
                     title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write;
                     encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
                     allowfullscreen></iframe>
@@ -80,6 +75,12 @@
 <!--                        </div>-->
 <!--                     </div>-->
                 {% endfor %}
+            {% endif %}
+            {% if video_count == 0 %}
+                <div class="">
+                    <p style="color: white;">If you can't see any video in Workshops section it means you haven't enrolled in any workshop till now. Please check our current workshop and enroll if the registration is open..</p>
+                    <a href="{{url_for('school.home')}}" class="btn btn-primary btn-block btn-large" role="button">OUR WORKSHOPS</a>
+                </div>
             {% endif %}
         {% endif %}
 

@@ -1,57 +1,55 @@
 {% extends "advanced_operations.html" %}
 {% block operation_content %}
 
-<div class="background">
-    <h2>Modifications</h2>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="{{category}}">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
+<h2>Modifications</h2>
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="{{category}}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
 
-    <div class="box2">
-        <h3>Modify user data</h3>
-        <form action="{{ url_for('manager.modifications') }}" method="post">
-            <select id="table" name="table">
-                <option value="table">Table</option>
-                <option value="member">Member</option>
-                <option value="payment">Payment</option>
-                <option value="query">Query</option>
-                <option value="role">Role</option>
-                <option value="tools">Tools</option>
-                <option value="workshop">Workshop</option>
-            </select>
-            <input type="text" placeholder="filter by (column)" name="filter_by" required>
-            <input type="text" placeholder="filter keyword" name="filter_keyword" required>
-            <input type="text" placeholder="to be changed (column)" name="change_column" required>
-            <input type="text" placeholder="data to be added" name="data" required>
+<div class="box2">
+    <h3>Modify user data</h3>
+    <form action="{{ url_for('manager.modifications') }}" method="post">
+        <select id="table" name="table">
+            <option value="table">Table</option>
+            <option value="member">Member</option>
+            <option value="payment">Payment</option>
+            <option value="query">Query</option>
+            <option value="role">Role</option>
+            <option value="tools">Tools</option>
+            <option value="workshop">Workshop</option>
+        </select>
+        <input type="text" placeholder="filter by (column)" name="filter_by" required>
+        <input type="text" placeholder="filter keyword" name="filter_keyword" required>
+        <input type="text" placeholder="to be changed (column)" name="change_column" required>
+        <input type="text" placeholder="data to be added" name="data" required>
 
-            <input type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="Modify">
-       </form>
-    </div>
-    <div class="box2">
-        <h3>Append or remove member - workshop</h3>
-        <form action="{{ url_for('manager.modifications') }}" method="post">
-            <input type="text" name="email" placeholder="Type member Email here" required>
-            <input type="text" name="ws_name" placeholder="Type Workshop name here (like ws1)" required>
-            <select name="operation" required>
-                <option value="default">Operation</option>
-                <option value="append">Append</option>
-                <option value="remove">Remove</option>
-            </select>
-            <input type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="member-workshop">
-       </form>
-    </div>
-    <div class="box2">
-        <h3>Change user password</h3>
-        <form action="{{ url_for('manager.modifications') }}" method="post">
-            <input type="text" name="email-phone" placeholder="Type member Email or phone here" required>
-            <input type="text" name="password" placeholder="Type New Password here" required>
-            <input type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="change-password">
-       </form>
-    </div>
+        <input type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="Modify">
+   </form>
+</div>
+<div class="box2">
+    <h3>Append or remove member - workshop</h3>
+    <form action="{{ url_for('manager.modifications') }}" method="post">
+        <input type="text" name="email" placeholder="Type member Email here" required>
+        <input type="text" name="ws_name" placeholder="Type Workshop name here (like ws1)" required>
+        <select name="operation" required>
+            <option value="default">Operation</option>
+            <option value="append">Append</option>
+            <option value="remove">Remove</option>
+        </select>
+        <input type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="member-workshop">
+   </form>
+</div>
+<div class="box2">
+    <h3>Change user password</h3>
+    <form action="{{ url_for('manager.modifications') }}" method="post">
+        <input type="text" name="email-phone" placeholder="Type member Email or phone here" required>
+        <input type="text" name="password" placeholder="Type New Password here" required>
+        <input type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="change-password">
+   </form>
 </div>
 
 

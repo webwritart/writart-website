@@ -2,7 +2,6 @@
 {% block operation_content %}
 <script src="{{ url_for('static', filename='js/manager.js')}}"></script>
 
-<div class="background">
   <h2 style="padding: 0%;">Role Management</h2>
   {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -45,6 +44,5 @@
       </select>
     </form>
   </div>
-</div>
 
 {% endblock %}

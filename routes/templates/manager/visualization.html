@@ -2,7 +2,7 @@
 {% block operation_content %}
 <script src="{{ url_for('static', filename='js/manager.js')}}"></script>
 
-
+<div style="display:flex;flex-direction:column;">
 <h2 style="padding: 0%;">Visualization</h2>
 <table class="submenu">
     <tr>
@@ -60,6 +60,7 @@
             <td width="15%"><button class="btn btn-secondary btn-block ">By Mail</button></td>
         </tr>
     </table>
+</div>
 </div>
 
 {% endblock %}
