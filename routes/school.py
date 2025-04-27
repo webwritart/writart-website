@@ -457,13 +457,17 @@ def classroom():
     demo_count = len(all_demo_url_list)
 
     ws_dict = {}
-    enrolled_ws = current_user.participated
-    for n in enrolled_ws:
-        entry = {
-            "name": n.name,
-            "topic": n.topic
-        }
-        ws_dict[n.name] = entry
+    try:
+        enrolled_ws = current_user.participated
+        for n in enrolled_ws:
+            entry = {
+                "name": n.name,
+                "topic": n.topic
+            }
+            ws_dict[n.name] = entry
+
+    except Exception as e:
+        pass
     if request.method == 'POST':
         workshop_folder_name = request.form.get('submit')
         workshop_path = f'static/files/workshops/{workshop_folder_name}'
@@ -473,8 +477,9 @@ def classroom():
             if os.path.isfile(workshop_path+'/'+f):
                 entry = {
                     'name': f
-                }
+            }
                 files_path_dict[f] = entry
+
 
         return render_template('classroom.html', vid_id_list=qa_recorded_video_urls, qa_caption_list=qa_vid_caption_list
                                , qa_video_count=q_a_video_count, yt_vid_id_list=all_recorded_video_urls,

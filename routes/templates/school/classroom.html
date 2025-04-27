@@ -60,12 +60,15 @@
         <p style="color:white;opacity:0.5;">This section contains recorded sessions of all the workshops you get enrolled in.</p>
         {% if logged_in %}
 
-            {% if video_count > 0 %}
-                {% for n in range(video_count) %}
-         <iframe style="background:brown;" class="responsive-iframe" src="https://www.youtube.com/embed/{{ yt_vid_id_list[n] }}?si=2BVYS-0QHsxcX4f5"
+        {% if video_count > 0 %}
+            {% for n in range(video_count) %}
+
+                    <iframe style="background:brown;" class="responsive-iframe" src="https://www.youtube.com/embed/{{ yt_vid_id_list[n] }}?si=2BVYS-0QHsxcX4f5&;"
                     title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write;
                     encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
                     allowfullscreen></iframe>
+
+
 <!--                    <div class="video">-->
 <!--                        <div class="content">-->
 <!--                            <lite-youtube videoid="{{ yt_vid_id_list[n] }}"-->
@@ -96,26 +99,26 @@
         {% endif %}
     </div>
 </div>
-<!--<div class="study-material-wrapper">-->
-<!--    <div class="width-80-container">-->
-<!--        <h3 style="width:100%;">Study Materials</h3>-->
-<!--        <div class="study-material-wrapper">-->
-<!--            <div class="category-list">-->
-<!--                {% for n in ws_dict %}-->
-<!--                <form method="post" action="{{ url_for('school.classroom') }}">-->
-<!--                    <button type="submit" name="submit" value="{{ws_dict[n]['name']}}" >{{ws_dict[n]['topic']}}</button>-->
-<!--                </form>-->
-<!--                {% endfor %}-->
-<!--            </div>-->
-<!--            <div class="category-content">-->
-<!--                {% for f in files_path_dict %}-->
-<!--                <a  type="submit" name="download_file" value="{{files_path_dict[f]['name']}}" formmethod="post" formaction="{{url_for('school.classroom')}}">-->
-<!--                    {{files_path_dict[f]['name']}}</a>-->
-<!--                {% endfor %}-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
+<div class="wrapper">
+    <div class="width-80-container">
+        <h3 style="width:100%;">Study Materials</h3>
+        <div class="study-material-wrapper">
+            <div class="category-list">
+                {% for n in ws_dict %}
+                <form method="post" action="{{ url_for('school.classroom') }}">
+                    <button type="submit" name="submit" value="{{ws_dict[n]['name']}}" >{{ws_dict[n]['topic']}}</button>
+                </form>
+                {% endfor %}
+            </div>
+            <div class="category-content">
+                {% for f in files_path_dict %}
+                <a  type="submit" name="download_file" value="{{files_path_dict[f]['name']}}" formmethod="post" formaction="{{url_for('school.classroom')}}">
+                    {{files_path_dict[f]['name']}}</a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="../static/lite-yt-embed.js"></script>
 
