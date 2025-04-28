@@ -539,11 +539,3 @@ def terms_and_conditions_school():
     return render_template('t&c_school.html')
 
 
-@school.errorhandler(404)
-def page_not_found(e):
-    return e
-
-
-@school.errorhandler(500)
-def internal_error(e):
-    return e
