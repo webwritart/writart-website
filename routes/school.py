@@ -541,9 +541,9 @@ def terms_and_conditions_school():
 
 @school.errorhandler(404)
 def page_not_found(e):
-    return "This is error 404!"
+    return e
 
 
 @school.errorhandler(500)
 def internal_error(e):
-    return "This is internal error!"
+    return e
