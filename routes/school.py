@@ -463,6 +463,8 @@ def classroom():
             for n in enrolled_ws:
                 all_files_path_dict = {}
                 base_dir = f"static/files/workshops/{n.name}"
+                if not os.path.exists(base_dir):
+                    os.makedirs(base_dir)
                 folder_content = os.listdir(base_dir)
                 for f in folder_content:
                     f_path = base_dir + '/' + f
