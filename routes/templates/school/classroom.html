@@ -99,27 +99,58 @@
         {% endif %}
     </div>
 </div>
-<!--<div class="wrapper">-->
-<!--    <div class="width-80-container">-->
-<!--        <h3 style="width:100%;">Study Materials</h3>-->
-<!--        <div class="study-material-wrapper">-->
-<!--            <div class="category-list">-->
-<!--                {% for n in ws_dict %}-->
-<!--                <form method="post" action="{{ url_for('school.classroom') }}">-->
-<!--                    <button type="submit" name="submit" value="{{ws_dict[n]['name']}}" >{{ws_dict[n]['topic']}}</button>-->
-<!--                </form>-->
-<!--                {% endfor %}-->
-<!--            </div>-->
-<!--            <div class="category-content">-->
-<!--                {% for f in files_path_dict %}-->
-<!--                <a  type="submit" name="download_file" value="{{files_path_dict[f]['name']}}" formmethod="post" formaction="{{url_for('school.classroom')}}">-->
-<!--                    {{files_path_dict[f]['name']}}</a>-->
-<!--                {% endfor %}-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
+{% if logged_in %}
+    {% if ws_count > 0 %}
+    <div class="wrapper">
+        <div class="width-80-container">
+            <h3 style="width:100%;color:white;opacity:0.5;">Study Materials</h3>
+            <div class="study-material-wrapper">
+                <div class="category-list">
+                    {% for n in ws_dict %}
+                    <button style="width:100%;" onclick="showFiles('{{n}}')">{{ws_dict[n]['topic']}}</button>
+                    {% endfor %}
+                </div>
+                <div class="category-content">
+                    {% for w in ws_dict %}
+                        <div class="file-item" id="{{ w }}">
+                        {% for f in ws_dict[w]['files'] %}
+                            <div class="file-item-inner">
+                                <form method="post" action="{{ url_for('school.classroom') }}">
+                                    <input type="hidden" name="file-name" value="{{f}}">
+                                    <button type="submit" name="download-file" value="{{ ws_dict[w]['files'][f]['file_path'] }}">
+                                        <img src="../static/images/pdf_icon.png"></button>
+                                    <p>{{ f }}</p>
+                                </form>
+                            </div>
+                        {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+{% endif %}
 
 <script src="../static/lite-yt-embed.js"></script>
+<script src="../static/js/school.js"></script>
+
+<script>
+let text = "";
+var ws_list = {{ ws_name_list | tojson }};
+
+function showFiles(ws_name) {
+    var list = ws_list.slice();
+    var index = list.indexOf(ws_name);
+    if (index > -1) {
+        list.splice(index, 1);
+    }
+    for (const x of list) {
+        document.getElementById(x).style.display = 'none';
+    }
+    document.getElementById(ws_name).style.display = 'flex';
+}
+</script>
+
 
 {% endblock %}

@@ -760,6 +760,8 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     display: flex;
     align-items: center;
     justify-content: center;
+    background: black;
+    padding:2% 0%;
 }
 .width-80-container {
     width: 80%;
@@ -777,12 +779,21 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 .category-list {
     width:20%;
     height:40vh;
-    background:black;
+    background:#806262;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 2%;
+    padding: 2% 2% 0% 2%;
     overflow: scroll;
+}
+.category-list button {
+    border: none;
+    background: #deacac;
+    margin: 2%;
+    font-size: 1rem;
+}
+.category-list button:focus {
+    background:white;
 }
 .category-list p {
     color:white;
@@ -790,17 +801,34 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 .category-content {
     width:80%;
     height: 40vh;
-    background:yellow;
+    background:#FFC6C6;
     display: flex;
     justify-content: left;
-    overflow: auto;
+    overflow-y: scroll;
+
 }
 .category-content a {
 }
-.ws-flies {
-    display: none;
-}
 
+.file-item {
+    display: none;
+    overflow: auto;
+    flex-wrap: wrap;
+    width: 100%;
+}
+.file-item-inner {
+    display:flex;
+    padding:1%;
+}
+.file-item-inner button {
+    width: 100%;
+}
+.file-item-inner img {
+    width:100%;
+}
+.file-item-inner p {
+    font-size: 1rem;
+}
 
 .video-wrapper-container .video .content p{
     text-align: center;
@@ -889,6 +917,16 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     .default-form div {
     width: 40%;
 }
+.file-item-inner p {
+    font-size: 0.9rem;
+}
+
+.file-item-inner button {
+    width: 90%;
+}
+.category-list button {
+    font-size: 0.9rem;
+}
 }
 
 @media only screen
@@ -957,6 +995,15 @@ and (max-width : 1440px) {
 .instructor-artwork-slide-container {
     padding: 4% 0%;
 }
+.file-item-inner p {
+    font-size: 0.8rem;
+}
+.category-list button {
+    font-size: 0.8rem;
+}
+.category-list {
+    width: 30%;
+}
 }
 
 
@@ -1024,8 +1071,15 @@ and (max-width : 992px) {
 .instructor-artwork-slide-container {
     padding: 4% 0% 6% 0%;
 }
-
-
+.file-item-inner p {
+    font-size: 0.7rem;
+}
+.file-item-inner button {
+    width: 80%;
+}
+.category-list button {
+    font-size: 0.7rem;
+}
 }
 
 @media only screen
@@ -1074,8 +1128,9 @@ and (max-width : 768px) {
 .instructor-artwork-slide-container {
     padding: 6% 0% 8% 0%;
 }
-
-
+.category-list {
+    width: 40%;
+}
 }
 
 @media only screen
@@ -1202,6 +1257,17 @@ and (max-width : 576px) {
     }
  .login form{
     width:80%;
+ }
+ .study-material-wrapper {
+    flex-direction:column;
+    width: 100%;
+ }
+ .category-list {
+    width: 100%;
+    height: 20vh;
+ }
+ .category-content {
+    width: 100%;
  }
 }
 

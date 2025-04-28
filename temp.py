@@ -75,3 +75,14 @@ now = datetime.now()
 #             salt_length=8
 #         )
 # print(hash_and_salted_password)
+
+# a = {
+#     1: 'rgerh',
+#     2: 'gegh',
+#     3: 'rgoir',
+#     4: 'dgoihr',
+#     5: 'dgior',
+#     6: 'doiger'
+# }
+#
+# print(list(a.keys()))

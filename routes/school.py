@@ -1,4 +1,5 @@
 import os
+import pprint
 import random
 
 from flask import Blueprint, render_template, request, redirect, flash, send_file, session, url_for
@@ -348,7 +349,6 @@ def upcoming_workshop():
         upcoming_workshop_list.append(main_ws_on_page.name)
         cover_path = f"../static/images/workshops/{ws}/cover.jpg"
 
-
         return render_template('workshops_second.html', category=category, topic=topic, sessions=sessions,
                                brief=brief,
                                sub_list=sub_list, description=description, req_list=req_list,
@@ -455,47 +455,44 @@ def classroom():
         demo_caption_list.append(r.caption)
 
     demo_count = len(all_demo_url_list)
-
+    ws_name_list = []
     ws_dict = {}
-    try:
+    if current_user.is_authenticated:
         enrolled_ws = current_user.participated
-        for n in enrolled_ws:
-            entry = {
-                "name": n.name,
-                "topic": n.topic
-            }
-            ws_dict[n.name] = entry
+        if len(enrolled_ws) >= 0:
+            for n in enrolled_ws:
+                all_files_path_dict = {}
+                base_dir = f"static/files/workshops/{n.name}"
+                folder_content = os.listdir(base_dir)
+                for f in folder_content:
+                    f_path = base_dir + '/' + f
+                    if os.path.isfile(f_path):
+                        file_dict = {
+                            'file_path': f_path
+                        }
+                        all_files_path_dict[f] = file_dict
 
-    except Exception as e:
-        pass
-    if request.method == 'POST':
-        workshop_folder_name = request.form.get('submit')
-        workshop_path = f'static/files/workshops/{workshop_folder_name}'
-        files_list = os.listdir(workshop_path)
-        files_path_dict = {}
-        for f in files_list:
-            if os.path.isfile(workshop_path+'/'+f):
                 entry = {
-                    'name': f
-            }
-                files_path_dict[f] = entry
+                    "name": n.name,
+                    "topic": n.topic,
+                    "files": all_files_path_dict
+                }
+                ws_dict[n.name] = entry
+        ws_name_list = list(ws_dict.keys())
+    ws_count = len(ws_name_list)
 
-
-        return render_template('classroom.html', vid_id_list=qa_recorded_video_urls, qa_caption_list=qa_vid_caption_list
-                               , qa_video_count=q_a_video_count, yt_vid_id_list=all_recorded_video_urls,
-                               vid_caption_list=vid_caption_list, video_count=video_count,
-                               logged_in=current_user.is_authenticated, admin=admin,
-                               all_demo_url_list=all_demo_url_list,
-                               demo_caption_list=demo_caption_list, part_list=part_list, demo_count=demo_count,
-                               title_list=title_list, ws_dict=ws_dict, workshop_folder_name=workshop_folder_name,
-                               files_path_dict=files_path_dict)
+    if request.method == 'POST':
+        if request.form.get('download-file'):
+            file_path = request.form.get('download-file')
+            file_name = request.form.get('file-name')
+            return send_file(path_or_file=file_path, as_attachment=True, download_name=file_name)
 
     return render_template('classroom.html', vid_id_list=qa_recorded_video_urls, qa_caption_list=qa_vid_caption_list
                            , qa_video_count=q_a_video_count, yt_vid_id_list=all_recorded_video_urls,
                            vid_caption_list=vid_caption_list, video_count=video_count,
                            logged_in=current_user.is_authenticated, admin=admin, all_demo_url_list=all_demo_url_list,
                            demo_caption_list=demo_caption_list, part_list=part_list, demo_count=demo_count,
-                           title_list=title_list, ws_dict=ws_dict)
+                           title_list=title_list, ws_dict=ws_dict, ws_name_list=ws_name_list, ws_count=ws_count)
 
 
 @school.route('/certificate_download', methods=['GET', 'POST'])
@@ -550,4 +547,3 @@ def page_not_found(e):
 @school.errorhandler(500)
 def internal_error(e):
     return "This is internal error!"
-
