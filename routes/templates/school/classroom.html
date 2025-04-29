@@ -8,12 +8,12 @@
 <div id="classroom-hero">
     <div id="title">
         <h1 style="text-align: center;">RECORDED SESSIONS</h1>
-        <p style="color: white;">Revisions and Practice make an artist perfect. Therefore, welcome to your classroom! Take Notes, Draw at least more than 5 rough drawings/sketches every day. Keep showing your work</p>
+        <p style="color: white;text-align:center;">Revisions and Practice make an artist perfect. Therefore, welcome to your classroom! Take Notes, Draw at least more than 5 rough drawings/sketches every day. Keep showing your work</p>
     </div>
 </div>
 <div class="video-wrapper">
     <div class="video-wrapper-container">
-        <h3 style="color:#b38fc2;">Art Demonstrations</h3>
+        <h3 style="color:black;">Art Demonstrations</h3>
         {% for n in range(demo_count) %}
         <iframe class="responsive-iframe" src="https://www.youtube.com/embed/{{ all_demo_url_list[n] }}?si=2BVYS-0QHsxcX4f5"
                     title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write;
@@ -33,7 +33,7 @@
 
 <div class="video-wrapper">
     <div class="video-wrapper-container">
-        <h3 style="color:#b38fc2;">Doubt Solving Sessions</h3>
+        <h3 style="color:black;">Doubt Solving Sessions</h3>
         {% for n in range(qa_video_count) %}
             <iframe class="responsive-iframe" src="https://www.youtube.com/embed/{{vid_id_list[n]}}?si=2BVYS-0QHsxcX4f5"
                     title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write;
@@ -56,7 +56,7 @@
 
 <div class="video-wrapper" style="background:#594100; padding: 2% 0%;">
     <div class="video-wrapper-container" >
-        <h3 style="color:#b38fc2;">Workshops</h3>
+        <h3 style="color:black;">Workshops</h3>
         <p style="color:white;opacity:0.5;">This section contains recorded sessions of all the workshops you get enrolled in.</p>
         {% if logged_in %}
 
