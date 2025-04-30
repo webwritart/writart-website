@@ -876,6 +876,11 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     align-items:center;
     width:100%;
 }
+.section-heading {
+    padding: 1.5% 0% 1.2% 0%;
+    text-align: center;
+    font-size: 1.5rem;
+}
 
 @media only screen and (min-width : 1900px) {
     #video-wrapper-container .video {
@@ -1004,6 +1009,9 @@ and (max-width : 1440px) {
 .category-list {
     width: 30%;
 }
+.section-heading {
+    font-size: 1.3rem;
+}
 }
 
 
@@ -1080,6 +1088,10 @@ and (max-width : 992px) {
 .category-list button {
     font-size: 0.7rem;
 }
+.section-heading {
+    font-size: 1.1rem;
+    padding: 1.8% 0% 1.1% 0%;
+}
 }
 
 @media only screen
@@ -1130,6 +1142,10 @@ and (max-width : 768px) {
 }
 .category-list {
     width: 40%;
+}
+.section-heading {
+    font-size: 1rem;
+    padding: 2.2% 0% 1% 0%;
 }
 }
 
@@ -1195,7 +1211,7 @@ and (max-width : 576px) {
     .main-upcoming-ws-wrapper {
     flex-direction: column;
     align-items: center;
-    height: 30vh;
+    padding: 4% 5%;
     }
     .responsive-iframe {
         width: 100%;
@@ -1269,6 +1285,10 @@ and (max-width : 576px) {
  .category-content {
     width: 100%;
  }
+ .section-heading {
+    font-size: 0.9rem;
+    padding: 3% 0% 1% 0%;
+}
 }
 
 #classroom-hero {
