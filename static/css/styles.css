@@ -205,7 +205,7 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     background: url('../images/cover.jpg');
     background-repeat: no-repeat;
     background-size: cover;
-    height: 600px;
+    height: 40%;
 }
 .hero-content {
     color: white;
@@ -215,11 +215,13 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 
 }
 .hero-content h1{
-    font: 3.5em sans-serif;
+    font-size: 2.5rem;
+    line-height: 1rem;
 }
 .hero-content h4 {
-  font: 1.8em sans-serif;
-  padding-bottom: 2%;
+  font:sans-serif;
+  line-height:normal;
+  font-size: 1.4rem;
 }
 .hero-content a {
   padding: 1% 4%;
@@ -233,7 +235,8 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 }
 .hero-content p {
   opacity: 0.5;
-  padding-bottom: 3%;
+  padding-top:1%;
+  font-size:1rem;
 }
 
 
@@ -244,15 +247,15 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 
 .main-upcoming-ws-wrapper {
     display: flex;
-    flex-wrap: nowrap;
+    flex-wrap:wrap;
     overflow: auto;
-    padding: 1% 5%;
+    padding: 0% 5% 1% 5%;
     background:#FFC6C6;
 }
 .main-upcoming-ws-item {
     flex: 0 0 auto;
     padding: 1%;
-    width: 400px;
+    width: 25%;
 }
 
 
@@ -877,301 +880,6 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     width:100%;
 }
 
-@media only screen and (min-width : 1900px) {
-    #video-wrapper-container .video {
-        width: 25%;}
-        #video-wrapper-container2 .video {
-        width: 25%;}
-        .course-btn {
-        padding: 0% 3%;
-        }
-}
-@media only screen and (max-width : 1900px) {
-    .ws_page_title h1 {
-        font-size: 3rem;
-    }
-    .ws-main-schedule h5 {
-        font-size: 1.4rem;
-    }
-    .ws-main-subheading h5 {
-        font-size: 1.3rem;
-    }
-    .session_schedule p {
-        font-size: 1.1rem;
-    }
-    .ws-main-vision-quote {
-        font-size:2rem;
-    }
-    .ws-main-vision-description {
-        font-size:1rem;
-    }
-    .description p {
-        font-size: 1rem;
-    }
-    .ws-main-green p {
-        font-size:1.4rem;
-    }
-    .instructor-artwork-slide-section p {
-        font-size: 1.6rem;
-    }
-    .default-form div {
-    width: 40%;
-}
-.file-item-inner p {
-    font-size: 0.9rem;
-}
-
-.file-item-inner button {
-    width: 90%;
-}
-.category-list button {
-    font-size: 0.9rem;
-}
-}
-
-@media only screen
-and (max-width : 1440px) {
-    .form-center {
-        width: 40%;
-    }
-    #video-wrapper-container .video {
-    width: 25%;}
-    #video-wrapper-container2 .video {
-    width: 25%;}
-    #video-container {
-    padding-left: 5%;
-    padding-right: 5%;}
-    .main-upcoming-ws-item {
-        width: 350px;
-    }
-    .responsive-iframe {
-        width: 32%;
-    }
-    .delete-btn {
-        width: 25%;
-    }
-    #footer {
-        font-size: 1.1rem;
-    }
-    .ws_page_category h6 {
-         font-size: 1.2rem;
-    }
-    .ws_page_title h1 {
-        font-size: 2.2rem;
-    }
-    .ws_page_title h6 {
-        font-size: 1.2rem;
-    }
-    .ws-main-schedule h5 {
-        font-size: 1.4rem;
-    }
-    .ws-main-subheading h5 {
-        font-size: 1.1rem;
-    }
-    .ws-main-content {
-        font-size: 1rem;
-    }
-    .session_schedule p {
-        font-size: 1rem;
-    }
-    .ws-main-vision-quote {
-        font-size:1.7rem;
-    }
-    .ws-main-vision-description {
-        font-size:1rem;
-    }
-    .description p {
-        font-size: 1rem;
-    }
-    .ws-main-green p {
-        font-size:1.2rem;
-    }
-    .instructor-artwork-slide-section p {
-        font-size: 1.4rem;
-    }
-    .default-form div {
-    width: 50%;
-}
-.instructor-artwork-slide-container {
-    padding: 4% 0%;
-}
-.file-item-inner p {
-    font-size: 0.8rem;
-}
-.category-list button {
-    font-size: 0.8rem;
-}
-.category-list {
-    width: 30%;
-}
-}
-
-
-@media only screen
-and (max-width : 992px) {
-.form-center {
-        width: 100%;
-    }
-    #video-wrapper-container .video {
-    width: 33.33%;}
-    #video-wrapper-container2 .video {
-    width: 33.33%;}
-    .main-upcoming-ws-item {
-        width: 250px;
-    }
-    .responsive-iframe {
-        width: 49%;
-    }
-    .delete-btn {
-        width: 30%;
-    }
-    #footer {
-        font-size: 0.9rem;
-    }
-    .session_schedule p {
-        width: 80%;
-        font-size: 1rem;
-    }
-    .ws_page_category h6 {
-         font-size: 1rem;
-    }
-    .ws_page_title h1 {
-        font-size: 1.8rem;
-    }
-    .ws_page_title h6 {
-        font-size: 1rem;
-    }
-    .ws-main-schedule h5 {
-        font-size: 1.2rem;
-    }
-    .ws-main-subheading h5 {
-        font-size: 1rem;
-    }
-    .ws-main-content {
-        font-size: 0.9rem;
-    }
-    .ws-main-vision-quote {
-        font-size:1.5rem;
-    }
-    .ws-main-vision-description {
-        font-size:0.8rem;
-    }
-    .description p {
-        font-size: 1rem;
-    }
-    .ws-main-green p {
-        font-size:1.2rem;
-    }
-    .instructor-artwork-slide-section p {
-        font-size: 1.2rem;
-    }
-    .change-password-container form{
-        width: 60%;
-    }
-.instructor-artwork-slide-container {
-    padding: 4% 0% 6% 0%;
-}
-.file-item-inner p {
-    font-size: 0.7rem;
-}
-.file-item-inner button {
-    width: 80%;
-}
-.category-list button {
-    font-size: 0.7rem;
-}
-}
-
-@media only screen
-and (max-width : 768px) {
-.form-center {
-        width: 60%;
-    }
-    #video-wrapper-container .video {
-    width: 50%;}
-    #video-wrapper-container2 .video {
-    width: 50%;}
-    .button {
-        font-size: 16px;
-        width: 100%;
-    }
-     .upcoming_ws_thumbnail {
-        width: 50%;
-    }
-    .button_medium {
-    width: 60%%;
-    }
-    .course-btn {
-    padding: 0% 5%;
-    }
-    .main-upcoming-ws-item {
-        width: 230px;
-    }
-    .responsive-iframe {
-        width: 49%;
-    }
-    .delete-btn {
-        width: 40%;
-    }
-    #footer {
-        font-size: 0.8rem;
-    }
-    .ws_page_category h6 {
-         font-size: 1rem;
-    }
-    .default-form div {
-    width: 60%;
-}
-.enroll-form form{
-    width: 80%;
-}
-.instructor-artwork-slide-container {
-    padding: 6% 0% 8% 0%;
-}
-.category-list {
-    width: 40%;
-}
-}
-
-@media only screen
-and (max-width : 576px) {
-    .form-center {
-        width: 80%;
-    }
-    #video-wrapper-container .video {
-    width: 100%;
-    margin-bottom: 25%;
-    padding: 0% 5%;
-    }
-    #video-wrapper-container4 .video {
-    width: 100%;
-    margin-bottom: 25%;
-    padding: 0% 5%;
-    }
-    #video-wrapper-container2 h3 {
-        padding: 0% 5%;
-    }
-    #video-wrapper-container h3 {
-        padding: 0% 5%;
-    }
-    #video-wrapper-container3 h3 {
-        padding: 0% 5%;
-    }
-      #video-wrapper-container4 h3 {
-        padding: 0% 5%;
-    }
-    #video-wrapper-container2 .video {
-    width: 100%;
-    margin-bottom: 25%;
-    padding: 0% 5%;
-    }
-    .hero-content {
-    padding: 0% 5%;}
-    .hero-content h1 {
-    font-size: 36px;}
-    .hero-content h4 {
-    font-size: 24px;
-    }
     .button {
         font-size: 12px;
         width: 100%;
@@ -1192,11 +900,7 @@ and (max-width : 576px) {
     .course-btn {
     padding: 0% 5%;
     }
-    .main-upcoming-ws-wrapper {
-    flex-direction: column;
-    align-items: center;
-    height: 30vh;
-    }
+
     .responsive-iframe {
         width: 100%;
     }
@@ -1206,9 +910,7 @@ and (max-width : 576px) {
     #footer {
         font-size: 0.7rem;
     }
-    .main-upcoming-ws-item {
-        width: 100%;
-    }
+
 
     .ws_page_category h6 {
          font-size: 0.8rem;
@@ -1323,6 +1025,355 @@ hr {
     height:2px;
     background: #400a57;
 }
+.section-heading {
+    padding:2% 0% 2% 0%;
+    text-align:center;
+    font-size: 1.5rem;
+}
+
+@media only screen and (min-width : 1900px) {
+    #video-wrapper-container .video {
+        width: 25%;}
+        #video-wrapper-container2 .video {
+        width: 25%;}
+        .course-btn {
+        padding: 0% 3%;
+        }
+}
+@media only screen and (max-width : 1900px) {
+    .ws_page_title h1 {
+        font-size: 3rem;
+    }
+    .ws-main-schedule h5 {
+        font-size: 1.4rem;
+    }
+    .ws-main-subheading h5 {
+        font-size: 1.3rem;
+    }
+    .session_schedule p {
+        font-size: 1.1rem;
+    }
+    .ws-main-vision-quote {
+        font-size:2rem;
+    }
+    .ws-main-vision-description {
+        font-size:1rem;
+    }
+    .description p {
+        font-size: 1rem;
+    }
+    .ws-main-green p {
+        font-size:1.4rem;
+    }
+    .instructor-artwork-slide-section p {
+        font-size: 1.6rem;
+    }
+    .default-form div {
+    width: 40%;
+}
+.file-item-inner p {
+    font-size: 0.9rem;
+}
+
+.file-item-inner button {
+    width: 90%;
+}
+.category-list button {
+    font-size: 0.9rem;
+}
+.hero-content h1{
+    font-size: 2rem;
+}
+.hero-content h4 {
+  font-size: 1.3rem;
+}
+.section-heading {
+    font-size: 1.3rem;
+}
+}
+
+@media only screen
+and (max-width : 1440px) {
+    .form-center {
+        width: 40%;
+    }
+    #video-wrapper-container .video {
+    width: 25%;}
+    #video-wrapper-container2 .video {
+    width: 25%;}
+    #video-container {
+    padding-left: 5%;
+    padding-right: 5%;}
+    .main-upcoming-ws-item {
+        width: 350px;
+    }
+    .responsive-iframe {
+        width: 32%;
+    }
+    .delete-btn {
+        width: 25%;
+    }
+    #footer {
+        font-size: 1.1rem;
+    }
+    .ws_page_category h6 {
+         font-size: 1.2rem;
+    }
+    .ws_page_title h1 {
+        font-size: 2.2rem;
+    }
+    .ws_page_title h6 {
+        font-size: 1.2rem;
+    }
+    .ws-main-schedule h5 {
+        font-size: 1.4rem;
+    }
+    .ws-main-subheading h5 {
+        font-size: 1.1rem;
+    }
+    .ws-main-content {
+        font-size: 1rem;
+    }
+    .session_schedule p {
+        font-size: 1rem;
+    }
+    .ws-main-vision-quote {
+        font-size:1.7rem;
+    }
+    .ws-main-vision-description {
+        font-size:1rem;
+    }
+    .description p {
+        font-size: 1rem;
+    }
+    .ws-main-green p {
+        font-size:1.2rem;
+    }
+    .instructor-artwork-slide-section p {
+        font-size: 1.4rem;
+    }
+    .default-form div {
+    width: 50%;
+}
+.instructor-artwork-slide-container {
+    padding: 4% 0%;
+}
+.file-item-inner p {
+    font-size: 0.8rem;
+}
+.category-list button {
+    font-size: 0.8rem;
+}
+.category-list {
+    width: 30%;
+}
+.hero-content h1{
+    font-size: 1.7rem;
+}
+.hero-content h4 {
+  font-size: 1.1rem;
+}
+.section-heading {
+    font-size: 1.2rem;
+}
+}
+
+
+@media only screen
+and (max-width : 992px) {
+.form-center {
+        width: 100%;
+    }
+    #video-wrapper-container .video {
+    width: 33.33%;}
+    #video-wrapper-container2 .video {
+    width: 33.33%;}
+    .main-upcoming-ws-item {
+        width: 250px;
+    }
+    .responsive-iframe {
+        width: 49%;
+    }
+    .delete-btn {
+        width: 30%;
+    }
+    #footer {
+        font-size: 0.9rem;
+    }
+    .session_schedule p {
+        width: 80%;
+        font-size: 1rem;
+    }
+    .ws_page_category h6 {
+         font-size: 1rem;
+    }
+    .ws_page_title h1 {
+        font-size: 1.8rem;
+    }
+    .ws_page_title h6 {
+        font-size: 1rem;
+    }
+    .ws-main-schedule h5 {
+        font-size: 1.2rem;
+    }
+    .ws-main-subheading h5 {
+        font-size: 1rem;
+    }
+    .ws-main-content {
+        font-size: 0.9rem;
+    }
+    .ws-main-vision-quote {
+        font-size:1.5rem;
+    }
+    .ws-main-vision-description {
+        font-size:0.8rem;
+    }
+    .description p {
+        font-size: 1rem;
+    }
+    .ws-main-green p {
+        font-size:1.2rem;
+    }
+    .instructor-artwork-slide-section p {
+        font-size: 1.2rem;
+    }
+    .change-password-container form{
+        width: 60%;
+    }
+.instructor-artwork-slide-container {
+    padding: 4% 0% 6% 0%;
+}
+.file-item-inner p {
+    font-size: 0.7rem;
+}
+.file-item-inner button {
+    width: 80%;
+}
+.category-list button {
+    font-size: 0.7rem;
+}
+.hero-content h1{
+    font-size: 1.4rem;
+}
+.hero-content h4 {
+  font-size: 0.9rem;
+}
+.section-heading {
+    font-size: 1.1rem;
+}
+}
+
+@media only screen
+and (max-width : 768px) {
+.form-center {
+        width: 60%;
+    }
+    #video-wrapper-container .video {
+    width: 50%;}
+    #video-wrapper-container2 .video {
+    width: 50%;}
+    .button {
+        font-size: 16px;
+        width: 100%;
+    }
+     .upcoming_ws_thumbnail {
+        width: 50%;
+    }
+    .button_medium {
+    width: 60%%;
+    }
+    .course-btn {
+    padding: 0% 5%;
+    }
+    .main-upcoming-ws-item {
+        width: 230px;
+    }
+    .responsive-iframe {
+        width: 49%;
+    }
+    .delete-btn {
+        width: 40%;
+    }
+    #footer {
+        font-size: 0.8rem;
+    }
+    .ws_page_category h6 {
+         font-size: 1rem;
+    }
+    .default-form div {
+    width: 60%;
+}
+.enroll-form form{
+    width: 80%;
+}
+.instructor-artwork-slide-container {
+    padding: 6% 0% 8% 0%;
+}
+.category-list {
+    width: 40%;
+}
+.section-heading {
+    padding-top: 3%;
+    font-size: 1.1rem;
+}
+}
+
+@media only screen
+and (max-width : 576px) {
+    .form-center {
+        width: 80%;
+    }
+    #video-wrapper-container .video {
+    width: 100%;
+    margin-bottom: 25%;
+    padding: 0% 5%;
+    }
+    #video-wrapper-container4 .video {
+    width: 100%;
+    margin-bottom: 25%;
+    padding: 0% 5%;
+    }
+    #video-wrapper-container2 h3 {
+        padding: 0% 5%;
+    }
+    #video-wrapper-container h3 {
+        padding: 0% 5%;
+    }
+    #video-wrapper-container3 h3 {
+        padding: 0% 5%;
+    }
+      #video-wrapper-container4 h3 {
+        padding: 0% 5%;
+    }
+    #video-wrapper-container2 .video {
+    width: 100%;
+    margin-bottom: 25%;
+    padding: 0% 5%;
+    }
+    .hero-content h1{
+    font-size: 1.2rem;
+    }
+    .hero-content h4 {
+      font-size: 0.8rem;
+    }
+    .hero-content p {
+  font-size:0.9rem;
+}
+.main-upcoming-ws-wrapper {
+    justify-content:center;
+    padding: 4% 5%;
+}
+.main-upcoming-ws-item {
+    flex: 0 0 auto;
+    padding: 1%;
+    width: 100%;
+}
+.section-heading {
+    padding-top: 3%;
+    font-size: 1rem;
+}
+}
+
 /* ---------------------------------------------------------------------------------- YOUTUBE VIDEOS FAST LOADING ------------------------------------------------------------------------------------- */
 
 lite-youtube {

@@ -5,14 +5,16 @@
         background: url(static/images/workshops/{{current_ws}}/cover.jpg);
         padding: 4%;
         color: white;
-        margin-top: 4%;
+        margin-top: 1%;
+        background-size: cover;
+        idth: 100%;
     }
     .homepage_cover_header {
         display: flex;
         justify-content: space-between;
     }
     .homepage_cover_header h3 {
-        font-size: 0.8rem;
+        font-size: 0.6rem;
         text-transform: uppercase;
     }
     .homepage_cover_title {
@@ -22,18 +24,19 @@
         align-items: center;
     }
     .homepage_cover_title h1{
-        font-size: 1.5rem;
+        font-size: 1.2rem;
     }
     .homepage_cover_title h3 {
-        font-size: 1rem;
+        font-size: 0.8rem;
+        line-height: 1rem;
     }
     .homepage_cover_title h4 {
-        padding: 2% 0%;
+        padding: 2% 0% 1% 0%;
         color: #6eb661;
         font-size: 0.8rem;
     }
     .homepage_cover_title h6 {
-        font-size: 0.8rem;
+        font-size: 0.6rem;
         padding-top: 1.5%;
         color: #f58233;
     }
@@ -50,7 +53,7 @@
         color: #644A07 !important;
         padding: 0.5%;
         font-weight: 400;
-        font-size: 0.9rem;
+        font-size: 0.7rem;
         text-decoration: none;
     }
     .homepage_cover_button a:hover {
@@ -60,89 +63,91 @@
 
 @media (min-width: 600px) {
     .homepage_cover_header h3 {
-        font-size: 1rem;
+        font-size: 0.8rem;
     }
     .homepage_cover_title h1{
-        font-size: 1.7rem;
+        font-size: 1.4rem;
     }
     .homepage_cover_title h3 {
-        font-size: 1.2rem;
+        font-size: 0.9rem;
     }
     .homepage_cover_title h4 {
         font-size: 0.9rem;
     }
     .homepage_cover_title h6 {
-        font-size: 0.9rem;
+        font-size: 0.7rem;
     }
     .homepage_cover_button {
         padding: 2% 0%;
     }
     .homepage_cover_button a {
-        font-size: 1rem;
-        width:30%;
+        font-size: 0.8rem;
+        width:35%;
         padding: 0.5% 5%;
     }
 }
 @media (min-width: 768px) {
     .homepage_cover_header h3 {
-        font-size: 1.2rem;
+        font-size: 0.9rem;
     }
     .homepage_cover_title h1{
-        font-size: 1.9rem;
+        font-size: 1.5rem;
     }
     .homepage_cover_title h3 {
-        font-size: 1.3rem;
+        font-size: 1.1rem;
     }
     .homepage_cover_title h4 {
         font-size: 1.1rem;
     }
     .homepage_cover_title h6 {
-        font-size: 1rem;
+        font-size: 0.8rem;
     }
     .homepage_cover_button a {
-        font-size: 1.2rem;
+        font-size: 0.9rem;
         width: 30%;
         padding: 0.5% 5%;
     }
 }
 @media (min-width: 1200px) {
     .homepage_cover_header h3 {
-        font-size: 1.4rem;
+        font-size: 1.1rem;
     }
     .homepage_cover_title h1{
-        font-size: 2.3rem;
+        font-size: 1.7rem;
     }
     .homepage_cover_title h3 {
-        font-size: 1.5rem;
+        font-size: 1.3rem;
     }
     .homepage_cover_title h4 {
         font-size: 1.3rem;
     }
     .homepage_cover_title h6 {
-        font-size: 1.2rem;
+        font-size: 1rem;
     }
     .homepage_cover_button a {
-        font-size: 1.4rem;
+        font-size: 1rem;
+        width: 25%;
     }
 }
 @media (min-width: 1900px) {
     .homepage_cover_header h3 {
-        font-size: 1.7rem;
+        font-size: 1.4rem;
     }
     .homepage_cover_title h1{
-        font-size: 3rem;
+        font-size: 2.2rem;
     }
     .homepage_cover_title h3 {
-        font-size: 1.7rem;
+        font-size: 1.5rem;
     }
     .homepage_cover_title h4 {
         font-size: 1.5rem;
     }
     .homepage_cover_title h6 {
-        font-size: 1.5rem;
+        font-size: 1.2rem;
     }
     .homepage_cover_button a {
-        font-size: 1.8rem;
+        font-size: 1.2rem;
+        width: 20%;
     }
 }
 @media (min-width: 2500px) {
@@ -159,10 +164,11 @@
         font-size: 1.9rem;
     }
     .homepage_cover_title h6 {
-        font-size: 2rem;
+        font-size: 1.7rem;
     }
     .homepage_cover_button a {
-        font-size: 2.3rem;
+        font-size: 1.5rem;
+        width: 20%;
     }
 }
 
@@ -195,7 +201,7 @@
         <h4>Fee: Pay what you can!</h4>
         <h6>Date: {{current_ws_date}}</h6>
         <h6>Time: {{current_ws_time}}</h6>
-        <h6 style="color:#6eb661;padding: 3% 0%; text-align:center;line-height:normal;">(Recorded Session video available to all enrolled Students)</h6>
+        <h6 style="color:#6eb661;padding: 1% 0%; text-align:center;line-height:normal;">(Recorded Session video available to all enrolled Students)</h6>
     </div>
 
     <div class="homepage_cover_button">
@@ -296,7 +302,7 @@
 <!--    </div>-->
 <!--</div>-->
 
-<h4 style="padding:5% 0% 2% 0%; text-align:center;"><b>UPCOMING WORKSHOPS</b></h4>
+<h4 class="section-heading"><b>UPCOMING WORKSHOPS</b></h4>
 {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
         {% for category, message in messages %}
