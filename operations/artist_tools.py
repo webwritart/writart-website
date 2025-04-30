@@ -63,26 +63,27 @@ def add_watermark(input_path, watermark_text, output_path, color, intensity, siz
 
 def delete_watermarked_images():
     all_users = os.listdir("static/files/users")
-    memory_occupied_total = current_user.artist_data.memory_occupied_total
-    file_size = 0
-    for user in all_users:
-        path = f"static/files/users/{user}/watermark_output"
-        all_files = os.listdir(path)
-        try:
-            for file in all_files:
-                file_path = f"{path}/{file}"
-                creation_date = datetime.datetime.fromtimestamp(os.path.getctime(file_path))
-                today = datetime.datetime.today()
-                delta = today - creation_date
-                if delta.days > 7:
-                    file_size += os.path.getsize(file_path)
-                    os.remove(file_path)
-                    log("Watermarked images older than 7 days deleted successfully!", "success")
-            current_user.artist_data.memory_occupied_total = memory_occupied_total - file_size
-            db.session.commit()
+    if current_user.is_authenticated:
+        memory_occupied_total = current_user.artist_data.memory_occupied_total
+        file_size = 0
+        for user in all_users:
+            path = f"static/files/users/{user}/watermark_output"
+            all_files = os.listdir(path)
+            try:
+                for file in all_files:
+                    file_path = f"{path}/{file}"
+                    creation_date = datetime.datetime.fromtimestamp(os.path.getctime(file_path))
+                    today = datetime.datetime.today()
+                    delta = today - creation_date
+                    if delta.days > 7:
+                        file_size += os.path.getsize(file_path)
+                        os.remove(file_path)
+                        log("Watermarked images older than 7 days deleted successfully!", "success")
+                current_user.artist_data.memory_occupied_total = memory_occupied_total - file_size
+                db.session.commit()
 
-        except Exception as e:
-            print(e)
+            except Exception as e:
+                print(e)
 
 
 def delete_single_watermarked_image(path):
