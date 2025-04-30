@@ -212,7 +212,6 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     display: block;
     padding: 0% 20%;
     text-align: center;
-
 }
 .hero-content h1{
     font-size: 2.5rem;
@@ -490,13 +489,13 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     cursor: pointer;
     background-color: #bf6547;
 }
-.proile-rating{
+.profile-rating{
     font-size: 12px;
     color: #818182;
     margin-top: 5%;
     text-align: left;
 }
-.proile-rating span{
+.profile-rating span{
     color: #495057;
     font-size: 15px;
     font-weight: 600;
@@ -778,6 +777,7 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     display:flex;
     width:100%;
     justify-content:left;
+    height: 100%
 }
 .category-list {
     width:20%;
@@ -789,7 +789,7 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     padding: 2% 2% 0% 2%;
     overflow: scroll;
 }
-.category-list button {
+.category
     border: none;
     background: #deacac;
     margin: 2%;
@@ -901,9 +901,6 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     padding: 0% 5%;
     }
 
-    .responsive-iframe {
-        width: 100%;
-    }
     .delete-btn {
         width: 100%;
     }
@@ -918,7 +915,7 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     .ws_page_title h1 {
         font-size: 1.3rem;
     }
-    .ws_page_title h6 {.ws
+    .ws_page_title h6{
         font-size: 0.8rem;
     }
     .ws-main-schedule h5 {
@@ -960,10 +957,7 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
  .login form{
     width:80%;
  }
- .study-material-wrapper {
-    flex-direction:column;
-    width: 100%;
- }
+
  .category-list {
     width: 100%;
     height: 20vh;
@@ -971,7 +965,7 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
  .category-content {
     width: 100%;
  }
-}
+
 
 #classroom-hero {
     width: 100%;
@@ -1034,11 +1028,12 @@ hr {
 @media only screen and (min-width : 1900px) {
     #video-wrapper-container .video {
         width: 25%;}
-        #video-wrapper-container2 .video {
-        width: 25%;}
-        .course-btn {
-        padding: 0% 3%;
+    #video-wrapper-container2 .video {
+        width: 25%;
         }
+    .course-btn {
+        padding: 0% 3%;
+    }
 }
 @media only screen and (max-width : 1900px) {
     .ws_page_title h1 {
@@ -1372,6 +1367,9 @@ and (max-width : 576px) {
     padding-top: 3%;
     font-size: 1rem;
 }
+ .responsive-iframe {
+        width: 100%;
+    }
 }
 
 /* ---------------------------------------------------------------------------------- YOUTUBE VIDEOS FAST LOADING ------------------------------------------------------------------------------------- */
