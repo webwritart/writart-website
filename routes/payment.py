@@ -68,7 +68,8 @@ def checkout():
         session['payment_data'] = client.order.create(data=data)
         order_id = session['payment_data']['id']
         return render_template('checkout.html', order_id=order_id, name=name, email=email, phone=phone, key_id=KEY_ID,
-                               ws_name=current_ws_name, state=state, logged_in=current_user.is_authenticated)
+                               ws_name=current_ws_name, state=state, logged_in=current_user.is_authenticated,
+                               message=msg)
     else:
         flash("You have already enrolled to this program!", "error")
         return redirect(url_for('payment.home'))

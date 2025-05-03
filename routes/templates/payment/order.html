@@ -15,7 +15,7 @@
 </style>
 
 <div class="enroll-form">
-    <form action="{{ url_for('payment.checkout') }}" method="post">
+    <form action="{{ url_for('payment.checkout') }}" method="post" onsubmit="return validatePaymentForm()">
         <h2>Enroll</h2>
         <input style="background:#FFDBDB;" name="amount" placeholder="Enter any amount you want to offer" type="number" required><br>
         <select name="state" id="state" required>
@@ -62,6 +62,7 @@
         <input style="background:#FFDBDB;" name="message" placeholder="Any message for us? (optional)" type="text"><br>
         By clicking CONTINUE button you agree to our school's <a href="{{url_for('school.terms_and_conditions_school')}}">terms and conditions</a>
         <button type="submit" class="btn btn-primary btn-block btn-large b">CONTINUE</button>
+        <h3 id="test"></h3>
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
@@ -72,4 +73,6 @@
     </form>
 </div>
 
+
+<script src="../static/js/payment.js"></script>
 {% endblock %}
