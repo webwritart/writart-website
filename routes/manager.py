@@ -393,7 +393,7 @@ def home():
 
             if request.form.get('submit') and request.form.get('submit') == 'mail-s-rem':
                 students = current_workshop.participants
-                subject = 'WORKSHOP SESSION STARTED'
+                subject = 'WORKSHOP SESSION TO START SOON'
                 image_dict = {
                     'file': ['fb.png', 'insta.png', 'twitter.png'],
                     'path': ['social-icons', 'social-icons', 'social-icons'],
