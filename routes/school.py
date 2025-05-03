@@ -1,7 +1,6 @@
 import os
 import pprint
 import random
-
 from flask import Blueprint, render_template, request, redirect, flash, send_file, session, url_for
 from flask_login import current_user
 from extensions import db, current_year
@@ -12,6 +11,9 @@ from models.videos import Demo
 from models.workshop_details import WorkshopDetails
 from operations.messenger import *
 import webbrowser
+from datetime import datetime
+
+time_now = datetime.now()
 
 school = Blueprint('school', __name__, static_folder='static', template_folder='templates/school')
 
@@ -487,6 +489,9 @@ def classroom():
         if request.form.get('download-file'):
             file_path = request.form.get('download-file')
             file_name = request.form.get('file-name')
+            with open("download_log.txt", "a") as f:
+                f.write(f'{file_path} -- downloaded by -- {current_user.name}--{current_user.email}--'
+                        f'Id: {current_user.id}---Time: {time_now}\n')
             return send_file(path_or_file=file_path, as_attachment=True, download_name=file_name)
 
     return render_template('classroom.html', vid_id_list=qa_recorded_video_urls, qa_caption_list=qa_vid_caption_list
