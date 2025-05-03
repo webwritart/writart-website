@@ -886,6 +886,7 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 .title-workshop-study-materials {
     display:none;
     padding:0.5% 2%;
+    font-size: 1.5rem;
 }
 
 @media only screen and (min-width : 1900px) {
@@ -937,6 +938,9 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 }
 .category-list button {
     font-size: 0.9rem;
+}
+.title-workshop-study-materials {
+    font-size: 1.3rem;
 }
 }
 
@@ -1018,6 +1022,9 @@ and (max-width : 1440px) {
 .section-heading {
     font-size: 1.3rem;
 }
+.title-workshop-study-materials {
+    font-size: 1.1rem;
+}
 }
 
 
@@ -1098,6 +1105,9 @@ and (max-width : 992px) {
     font-size: 1.1rem;
     padding: 1.8% 0% 1.1% 0%;
 }
+.title-workshop-study-materials {
+    font-size: 1rem;
+}
 }
 
 @media only screen
@@ -1152,6 +1162,9 @@ and (max-width : 768px) {
 .section-heading {
     font-size: 1rem;
     padding: 2.2% 0% 1% 0%;
+}
+.title-workshop-study-materials {
+    font-size: 0.9rem;
 }
 }
 
@@ -1294,6 +1307,9 @@ and (max-width : 576px) {
  .section-heading {
     font-size: 0.9rem;
     padding: 3% 0% 1% 0%;
+}
+.title-workshop-study-materials {
+    font-size: 0.8rem;
 }
 }
 
