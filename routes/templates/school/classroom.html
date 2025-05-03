@@ -122,6 +122,7 @@
                 </div>
                 <div class="category-content">
                     {% for w in ws_dict %}
+                        <h5 class="title-workshop-study-materials" id="title-{{w}}">{{ ws_dict[w]['topic'] }} files</h5>
                         <div class="file-item" id="{{ w }}">
                         {% for f in ws_dict[w]['files'] %}
                             <div class="file-item-inner">
@@ -156,8 +157,10 @@ function showFiles(ws_name) {
     }
     for (const x of list) {
         document.getElementById(x).style.display = 'none';
+        document.getElementById('title-'+x).style.display = 'none';
     }
     document.getElementById(ws_name).style.display = 'flex';
+    document.getElementById('title-'+ws_name).style.display = 'block';
 }
 </script>
 

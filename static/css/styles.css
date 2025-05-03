@@ -803,6 +803,7 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     height: 40vh;
     background:#FFC6C6;
     display: flex;
+    flex-direction: column;
     justify-content: left;
     overflow-y: scroll;
 
@@ -881,6 +882,10 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     padding: 1.5% 0% 1.2% 0%;
     text-align: center;
     font-size: 1.5rem;
+}
+.title-workshop-study-materials {
+    display:none;
+    padding:0.5% 2%;
 }
 
 @media only screen and (min-width : 1900px) {

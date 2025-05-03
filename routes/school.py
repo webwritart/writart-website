@@ -489,10 +489,13 @@ def classroom():
         if request.form.get('download-file'):
             file_path = request.form.get('download-file')
             file_name = request.form.get('file-name')
+            ws_name = os.path.basename(os.path.dirname(file_path))
+            ws_topic = db.session.query(Workshop).filter_by(name=ws_name).one_or_none().topic
+            file_full_name = f'{ws_name}__{ws_topic}__{file_name}'
             with open("download_log.txt", "a") as f:
-                f.write(f'{file_path} -- downloaded by -- {current_user.name}--{current_user.email}--'
+                f.write(f'{file_full_name} -- downloaded by -- {current_user.name}--{current_user.email}--'
                         f'Id: {current_user.id}---Time: {time_now}\n')
-            return send_file(path_or_file=file_path, as_attachment=True, download_name=file_name)
+            return send_file(path_or_file=file_path, as_attachment=True, download_name=file_full_name)
 
     return render_template('classroom.html', vid_id_list=qa_recorded_video_urls, qa_caption_list=qa_vid_caption_list
                            , qa_video_count=q_a_video_count, yt_vid_id_list=all_recorded_video_urls,
