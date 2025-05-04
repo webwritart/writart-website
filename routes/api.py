@@ -195,6 +195,20 @@ def api():
         }
         workshops[w.id] = workshop_dict
 
+    def current_session_url():
+        current_ws_name = db.session.query(Tools).filter_by(keyword='current_workshop').one().data
+        current_ws = db.session.query(Workshop).filter_by(name=current_ws_name).one_or_none()
+        url = ''
+        if current_ws.joining_link4:
+            url = current_ws.joining_link4
+        elif current_ws.joining_link3:
+            url = current_ws.joining_link3
+        elif current_ws.joining_link2:
+            url = current_ws.joining_link2
+        elif current_ws.joining_link:
+            url = current_ws.joining_link
+        return url
+
     if client_token == authentication_token:
         if data == 'members':
             return jsonify(members)
@@ -214,6 +228,8 @@ def api():
             return jsonify(all_enrolled_current_workshop())
         elif data == 'collection':
             return jsonify(total_collection_current_workshop())
+        elif data == 'current-session-url':
+            return jsonify(current_session_url())
         else:
             return jsonify('Wrong data type!')
     else:
