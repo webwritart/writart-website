@@ -29,7 +29,7 @@ def add_quiz_data_to_db(file_path, category):
             q = d.split(b';;')[0]
             opt = d.split(b';;')[1].split(b'&')[0]
             opt_list = opt.split(b'*')
-            for idx, opt in enumerate(opt_list)
+            for idx, opt in enumerate(opt_list):
                 opt_idx = option_index[idx]
                 option = f'{opt_idx}. {opt}'
                 option_list.append(option)
