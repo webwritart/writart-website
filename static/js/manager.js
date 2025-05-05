@@ -17,6 +17,7 @@ function closeAll() {
     document.getElementById("open-demo").style.display = 'none';
     document.getElementById("send-email").style.display = 'none';
     document.getElementById("add-ws-files").style.display = 'none';
+    document.getElementById("add-quiz-data").style.display = 'none';
 }
 
 function addNewWs() {
@@ -72,6 +73,10 @@ function sessionReminder() {
 function addWsFiles() {
     closeAll();
     document.getElementById("add-ws-files").style.display = 'block';
+}
+function openQuizData() {
+    closeAll();
+    document.getElementById("add-quiz-data").style.display = 'block';
 }
 
 function certificateDistribution() {

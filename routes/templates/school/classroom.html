@@ -2,25 +2,84 @@
 {% block content %}
 
 <style>
-<!--#classroom-hero {-->
-<!--    width: 100%;-->
-<!--    height: 0%;-->
-<!--    background: #dbaaaa;-->
-<!--    color: white;-->
-<!--    opacity: 1;-->
-<!--    margin-bottom: 3%;-->
-<!--    display: flex;-->
-<!--    align-items: center;-->
-<!--    justify-content: center;-->
-<!--    padding: 5%;-->
-<!--}-->
+#classroom-hero {
+    width: 100%;
+    height: 0%;
+    background: #dbaaaa;
+    color: white;
+    opacity: 1;
+    margin-bottom: 3%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5%;
+}
 </style>
 
 <div id="classroom-hero">
     <div id="title">
-        <h1 style="text-align: center;">RECORDED SESSIONS</h1>
+        <h1 style="text-align: center;">CLASSROOM</h1>
         <p style="color: white;text-align:center;">Revisions and Practice make an artist perfect. Therefore, welcome to your classroom! Take Notes, Draw at least more than 5 rough drawings/sketches every day. Keep showing your work</p>
     </div>
+</div>
+<div style="display:flex;justify-content:center;">
+    <button id="quiz-btn" class="button quiz-btn" onclick="openQuiz()">Play Quiz</button>
+</div>
+<div class="quiz">
+    <form id="quiz">
+        <div class="quiz-close-reset-btn">
+            <div>
+                <a type="button"  class="button" onclick="reset()">RESET</a>
+                <a style="background:#B12C28;" type="button" class="button" onclick="closeQuiz()">CLOSE</a>
+            </div>
+        </div>
+        <h3>ART QUIZ</h3>
+        <p>Let's see how much you know about Art</p>
+        <div id="quiz-select-div">
+            <div id="quiz-select-item-box">
+                <select id="quiz-category" onchange="getCategory()">
+                    <option value="default">Choose Category</option>
+                    {% for c in category_list %}
+                    <option value="{{ c }}">{{ c }}</option>
+                    {% endfor %}
+                </select>
+                <select id="no-question" onchange="openCustom()">
+                    <option value="default">Select no. of Questions</option>
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                    <option value="custom">Custom</option>
+                </select>
+            </div>
+                <label id="no-questions-label"></label>
+                <input id="number-questions" type="number" placeholder="Type the number of questions">
+                <a type="button" id="number-submit" onclick="closeCustomField()" class="button">Submit</a>
+        </div>
+
+        <div><a type="button" id="start-quiz" onclick="startQuiz()" class="button">Start Quiz</a></div>
+        <p id="quiz-score-board"></p>
+        <h2 id="final-score" style="width:100%;text-align:center;"></h2>
+        <p id="logged-in-text" style="color:green;">Quiz result saved succeccfully!</p>
+        <p id="not-logged-in-text"  style="color:red;">Quiz result not saved! Pl Login before playing to save results!</p>
+        <label id="q" style="font-weight:600;"></label><br>
+        <label id="oa"></label><br>
+        <label id="ob"></label><br>
+        <label id="oc"></label><br>
+        <label id="od"></label><br>
+        <label id="oe"></label><br>
+        <div>
+        <input id="quiz-btn1" class="button" onclick="checkAns('a')" type="button" name="a" value="a">
+        <input id="quiz-btn2" class="button" onclick="checkAns('b')" type="button" name="b" value="b">
+        <input id="quiz-btn3" class="button" onclick="checkAns('c')" type="button" name="c" value="c">
+        <input id="quiz-btn4" class="button" onclick="checkAns('d')" type="button" name="d" value="d">
+        <input id="quiz-btn5" class="button" onclick="checkAns('e')" type="button" name="e" value="e">
+        </div>
+        <p id="result" style="font-weight:600;"></p>
+        <div><a type="button" id="next" onclick="next()" class="button" style="text-decoration:none;width:20%;text-align:center;padding:1%;color:white;">NEXT</a></div>
+        <p id="test"></p>
+        <p id="log-in-alert" style="color:red;">Please Login to save save quiz result.</p>
+        <div><a class="button" id="log-in-btn" style="text-decoration:none;text-align:center;color:white;background:red;padding:0.5% 0%;" href="{{url_for('account.login')}}">Log In</a></div>
+    </form>
 </div>
 <div class="video-wrapper">
     <div class="video-wrapper-container">
@@ -162,6 +221,357 @@ function showFiles(ws_name) {
     document.getElementById(ws_name).style.display = 'flex';
     document.getElementById('title-'+ws_name).style.display = 'block';
 }
+var questions = {{ questions | tojson }};
+var loggedIn = {{ current_user.is_authenticated | tojson }};
+var categoryQuestionsKeyList = [];
+var number = 0;
+var noQuestions = null;
+var optA = '';
+var optB = '';
+var optC = '';
+var optD = '';
+var optE = '';
+var q = '';
+var ans = '';
+var answer = '';
+var cat = '';
+var subcat = '';
+var level = '';
+var t_played = '';
+var qIndex = 0;
+var qKeyStock = [];
+var currentQId = null;
+var correctQuestions = 0;
+
+if (loggedIn) {
+    document.getElementById('log-in-btn').style.display = 'none';
+    document.getElementById('log-in-alert').style.display = 'none';
+} else {
+    document.getElementById('log-in-btn').style.display = 'block';
+    document.getElementById('log-in-alert').style.display = 'block';
+}
+
+function createCategoryQuestionsKeyList() {
+    var questionsKeyLists = Object.keys(questions);
+    for (const x of questionsKeyLists) {
+        if (questions[x]['cat'] == cat) {
+            categoryQuestionsKeyList.push(x);
+        }
+    }
+}
+function showStartQuizBtn() {
+    if (number > 0) {
+        document.getElementById('start-quiz').style.display = 'block';
+    } else {
+        document.getElementById('start-quiz').style.display = 'none';
+    }
+}
+
+function init() {
+    createCategoryQuestionsKeyList();
+    var shuffledKeys = shuffleKeys(categoryQuestionsKeyList);
+    qKeyStock = shuffledKeys.slice(0, noQuestions);
+}
+
+function openQuiz() {
+    document.getElementById('quiz').style.display = 'flex';
+    document.getElementById('quiz-btn').style.display = 'none';
+}
+function closeQuiz() {
+    qIndex = 0;
+    number = 0;
+    correctQuestions = 0;
+    cat = '';
+    categoryQuestionsKeyList = [];
+    document.getElementById('quiz').style.display = 'none';
+    document.getElementById('quiz-btn').style.display = 'block';
+    document.getElementById('no-question').value = 'default';
+    document.getElementById('no-questions-label').style.display = 'none';
+    document.getElementById('number-questions').value = '';
+    document.getElementById('number-questions').style.display = 'none';
+    document.getElementById('number-submit').style.display = 'none';
+    document.getElementById('start-quiz').style.display = 'block';
+    document.getElementById('q').style.display = 'none';
+    document.getElementById('oa').style.display = 'none';
+    document.getElementById('ob').style.display = 'none';
+    document.getElementById('oc').style.display = 'none';
+    document.getElementById('od').style.display = 'none';
+    document.getElementById('oe').style.display = 'none';
+    document.getElementById('quiz-score-board').innerHTML = '';
+    document.getElementById('final-score').style.display = 'none';
+    document.getElementById('quiz-btn1').style.display = 'none';
+    document.getElementById('quiz-btn2').style.display = 'none';
+    document.getElementById('quiz-btn3').style.display = 'none';
+    document.getElementById('quiz-btn4').style.display = 'none';
+    document.getElementById('quiz-btn5').style.display = 'none';
+    document.getElementById('start-quiz').style.display = 'none';
+    document.getElementById('next').style.display = 'none';
+    document.getElementById('quiz-category').value = 'default';
+    document.getElementById('logged-in-text').style.display = 'none';
+    document.getElementById('not-logged-in-text').style.display = 'none';
+    document.getElementById('test').style.display = 'none';
+    document.getElementById('result').style.display = 'none';
+}
+function reset() {
+    qIndex = 0;
+    number = 0;
+    correctQuestions = 0;
+    cat = '';
+    categoryQuestionsKeyList = [];
+    document.getElementById('no-question').value = 'default';
+    document.getElementById('no-question').style.display = 'block';
+    document.getElementById('no-questions-label').style.display = 'none';
+    document.getElementById('number-questions').value = '';
+    document.getElementById('number-questions').style.display = 'none';
+    document.getElementById('number-submit').style.display = 'none';
+    document.getElementById('start-quiz').style.display = 'block';
+    document.getElementById('q').style.display = 'none';
+    document.getElementById('oa').style.display = 'none';
+    document.getElementById('ob').style.display = 'none';
+    document.getElementById('oc').style.display = 'none';
+    document.getElementById('od').style.display = 'none';
+    document.getElementById('oe').style.display = 'none';
+    document.getElementById('quiz-score-board').innerHTML = '';
+    document.getElementById('final-score').style.display = 'none';
+    document.getElementById('quiz-btn1').style.display = 'none';
+    document.getElementById('quiz-btn2').style.display = 'none';
+    document.getElementById('quiz-btn3').style.display = 'none';
+    document.getElementById('quiz-btn4').style.display = 'none';
+    document.getElementById('quiz-btn5').style.display = 'none';
+    document.getElementById('start-quiz').style.display = 'none';
+    document.getElementById('next').style.display = 'none';
+    document.getElementById('quiz-category').value = 'default';
+    document.getElementById('logged-in-text').style.display = 'none';
+    document.getElementById('not-logged-in-text').style.display = 'none';
+    document.getElementById('test').style.display = 'none';
+    document.getElementById('result').style.display = 'none';
+}
+function openCustom() {
+    if (document.getElementById('no-question').value == 'custom') {
+        document.getElementById('number-questions').style.display = 'block';
+        document.getElementById('number-submit').style.display = 'block';
+    } else {
+        document.getElementById('number-questions').style.display = 'none';
+        document.getElementById('number-submit').style.display = 'none';
+    }
+}
+function closeCustomField() {
+    document.getElementById('number-questions').style.display = 'none';
+    document.getElementById('number-submit').style.display = 'none';
+    document.getElementById('no-questions-label').style.display = 'block';
+    if (number !== 0) {
+        showStartQuizBtn();
+    } else {
+        alert("Please select number of questions to play");
+    }
+    if (document.getElementById('number-questions').value == '') {
+        document.getElementById('no-questions-label').innerHTML = '';
+        noQuestions = null;
+        qKeyStock = [];
+    }
+    document.getElementById('number-questions').value = '';
+}
+const inputNumberQuestions = document.getElementById('number-questions');
+const inputNumberQuestionsOption = document.getElementById('no-question');
+const category = document.getElementById('quiz-category');
+
+category.addEventListener('change', function(event) {
+    if (event.target.value !== 'default') {
+        cat = event.target.value;
+    } else {
+        cat = '';
+    }
+})
+inputNumberQuestions.addEventListener('input', function(event) {
+    number = 0;
+    number = event.target.value;
+    noQuestions = event.target.value;
+    document.getElementById('no-questions-label').innerHTML = 'Total questions: '+number;
+});
+inputNumberQuestionsOption.addEventListener('change', function(event) {
+    if (event.target.value !== 'custom') {
+        number = event.target.value;
+        document.getElementById('no-questions-label').innerHTML = 'Total questions: '+number;
+        document.getElementById('no-questions-label').style.display = 'block';
+        if (event.target.value !== 'default') {
+            noQuestions = event.target.value;
+            showStartQuizBtn();
+        } else {
+        number = 0;
+        noQuestions = null;
+        qKeyStock = [];
+        showStartQuizBtn();
+
+        }
+    } else {
+        number = 0;
+        document.getElementById('no-questions-label').style.display = 'none';
+        showStartQuizBtn();
+    }
+})
+
+function shuffleKeys(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+	}
+	return array;
+}
+
+function startQuiz() {
+    if (cat !== '') {
+        if (number !== null) {
+            init();
+            next();
+            document.getElementById('start-quiz').style.display = 'none';
+            document.getElementById('next').style.display = 'block';
+        } else {
+            alert("Please select number of question first to start quiz!");
+        }
+    } else {
+        alert("Please select category first!");
+    }
+}
+function next() {
+    if (qIndex <= noQuestions-1) {
+        currentQId = qKeyStock[qIndex];
+        var currentQ = questions[currentQId]
+        q = currentQ['q']
+        oA = currentQ['oa']
+        oB = currentQ['ob']
+        oC = currentQ['oc']
+        oD = currentQ['od']
+        oE = currentQ['oe']
+        ans = currentQ['ans']
+        answer = currentQ['answer']
+        cat = currentQ['cat']
+        subcat = currentQ['subcat']
+        level = currentQ['level']
+        t_played = currentQ['t_played']
+        t_correct = currentQ['t_correct']
+        document.getElementById('q').innerHTML = qIndex+1+ '. ' + JSON.stringify(q).replaceAll('"', '');
+        document.getElementById('oa').innerHTML = JSON.stringify(oA).replaceAll('"', '');
+        document.getElementById('ob').innerHTML = JSON.stringify(oB).replaceAll('"', '');
+        document.getElementById('oc').innerHTML = JSON.stringify(oC).replaceAll('"', '');
+        document.getElementById('od').innerHTML = JSON.stringify(oD).replaceAll('"', '');
+        document.getElementById('oe').innerHTML = JSON.stringify(oE).replaceAll('"', '');
+        document.getElementById('q').style.display = 'block';
+        document.getElementById('oa').style.display = 'block';
+        document.getElementById('ob').style.display = 'block';
+        document.getElementById('oc').style.display = 'block';
+        document.getElementById('od').style.display = 'block';
+        document.getElementById('oe').style.display = 'block';
+        if (oC == '') {
+            document.getElementById('quiz-btn1').style.display = 'block';
+            document.getElementById('quiz-btn2').style.display = 'block';
+            document.getElementById('quiz-btn3').style.display = 'none';
+            document.getElementById('quiz-btn4').style.display = 'none';
+            document.getElementById('quiz-btn5').style.display = 'none';
+        } else if (oD == '') {
+            document.getElementById('quiz-btn1').style.display = 'block';
+            document.getElementById('quiz-btn2').style.display = 'block';
+            document.getElementById('quiz-btn3').style.display = 'block';
+            document.getElementById('quiz-btn4').style.display = 'none';
+            document.getElementById('quiz-btn5').style.display = 'none';
+        } else if (oE == '') {
+            document.getElementById('quiz-btn1').style.display = 'block';
+            document.getElementById('quiz-btn2').style.display = 'block';
+            document.getElementById('quiz-btn3').style.display = 'block';
+            document.getElementById('quiz-btn4').style.display = 'block';
+            document.getElementById('quiz-btn5').style.display = 'none';
+        } else {
+            document.getElementById('quiz-btn1').style.display = 'block';
+            document.getElementById('quiz-btn2').style.display = 'block';
+            document.getElementById('quiz-btn3').style.display = 'block';
+            document.getElementById('quiz-btn4').style.display = 'block';
+            document.getElementById('quiz-btn5').style.display = 'block';
+        }
+
+        document.getElementById('result').style.display = 'none';
+        qIndex += 1;
+        document.getElementById('next').style.visibility = 'hidden';
+    } else {
+        document.getElementById('test').innerHTML = 'Quiz Finished';
+        document.getElementById('test').style.display = 'block';
+        document.getElementById('q').style.display = 'none';
+        document.getElementById('oa').style.display = 'none';
+        document.getElementById('ob').style.display = 'none';
+        document.getElementById('oc').style.display = 'none';
+        document.getElementById('od').style.display = 'none';
+        document.getElementById('oe').style.display = 'none';
+        document.getElementById('quiz-btn1').style.display = 'none';
+        document.getElementById('quiz-btn2').style.display = 'none';
+        document.getElementById('quiz-btn3').style.display = 'none';
+        document.getElementById('quiz-btn4').style.display = 'none';
+        document.getElementById('quiz-btn5').style.display = 'none';
+        document.getElementById('no-question').style.display = 'none';
+        document.getElementById('quiz-score-board').style.display = 'none';
+        document.getElementById('result').style.display = 'none';
+        document.getElementById('next').style.display = 'none';
+        document.getElementById('final-score').innerHTML = 'FINAL SCORE: '+correctQuestions+'/'+qIndex;
+        document.getElementById('final-score').style.display = 'block';
+        document.getElementById('next').style.visibility = 'hidden';
+        if (loggedIn) {
+            document.getElementById('logged-in-text').style.display = 'block';
+        } else {
+            document.getElementById('not-logged-in-text').style.display = 'block';
+        }
+        var memberQuizData = {
+            category: cat,
+            total_correct: correctQuestions,
+            total: qIndex
+        };
+        fetch('http://127.0.0.1:5000/school/save-member-quiz-data', {
+            method: 'POST',
+            headers: {
+                'content-Type': 'application/json',
+            },
+            body: JSON.stringify(memberQuizData),
+        })
+        .then(response => response.json())
+    }
+}
+function checkAns(option) {
+    var ansOption = option;
+    document.getElementById('next').style.visibility = 'visible';
+    if (ansOption == ans ) {
+        document.getElementById('result').innerHTML = '<span style="color:green";>Correct!</span>';
+        document.getElementById('result').style.display = 'block';
+        correctQuestions += 1;
+        document.getElementById('quiz-score-board').innerHTML = 'Score: '+correctQuestions+'/'+qIndex;
+        document.getElementById('quiz-score-board').style.display = 'block';
+        var data = {
+            current_q_id: currentQId,
+            correct: 1
+        };
+        fetch('http://127.0.0.1:5000/school/save-quiz-data', {
+            method: 'POST',
+            headers: {
+                'content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+        .then(response => response.json())
+    } else {
+        document.getElementById('quiz-score-board').innerHTML = 'Score: '+correctQuestions+'/'+qIndex;
+        document.getElementById('result').innerHTML = '<span style="color:red;">Wrong! | Correct Answer : '+'"'+answer+'"</span>';
+        document.getElementById('result').style.display = 'block';
+        document.getElementById('quiz-score-board').style.display = 'block';
+        var data = {
+            current_q_id: currentQId,
+            correct: 0
+        };
+        fetch('http://127.0.0.1:5000/school/save-quiz-data', {
+            method: 'POST',
+            headers: {
+                'content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+        .then(response => response.json())
+    }
+}
+
 </script>
 
 

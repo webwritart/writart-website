@@ -9,6 +9,7 @@ from werkzeug.utils import secure_filename
 from extensions import db, admin_only, current_year
 from models.videos import Demo
 from operations.messenger import send_email_school, send_email_studio, send_email_support
+from operations.quiz import add_quiz_data_to_db
 from models.payment import Payment
 from models.query import Query
 from models.tool import Tools
@@ -250,6 +251,27 @@ def home():
                         filename = secure_filename(file.filename)
                         file.save(f"{folder}/{filename}")
                         flash('Chief! Files uploaded successfully!', 'success')
+
+            if request.form.get('submit') == 'add_quiz_data':
+                category = request.form.get('quiz-category')
+                if 'file' not in request.files:
+                    flash('No file part', 'error')
+                    return redirect(request.url)
+                files = request.files.getlist('file')
+                for file in files:
+                    if file.filename == '':
+                        flash('No selected file', 'error')
+                        return redirect(request.url)
+                    if file:
+                        folder = './static/files/quiz-data'
+                        if not os.path.exists(folder):
+                            os.makedirs(folder)
+                        filename = secure_filename(file.filename)
+                        file.save(folder+'/'+filename)
+
+                        add_quiz_data_to_db(folder+'/'+filename, category)
+                        os.remove(folder+'/'+filename)
+                        flash("Chief! Quiz data added and file deleted successfully!", "success")
 
             if request.form.get('add_demo') == 'demo':
                 title = request.form.get('title')

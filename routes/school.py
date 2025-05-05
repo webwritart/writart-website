@@ -1,17 +1,18 @@
 import os
 import pprint
 import random
-from flask import Blueprint, render_template, request, redirect, flash, send_file, session, url_for
+from flask import Blueprint, render_template, request, redirect, flash, send_file, session, url_for, jsonify
 from flask_login import current_user
 from extensions import db, current_year
 from models.query import Query
 from models.tool import Tools
-from models.member import Workshop, Role, Member
+from models.member import Workshop, Role, Member, QuizList
 from models.videos import Demo
+from models.quiz import Quiz
 from models.workshop_details import WorkshopDetails
 from operations.messenger import *
 import webbrowser
-from datetime import datetime
+from datetime import datetime, date
 
 time_now = datetime.now()
 
@@ -497,12 +498,101 @@ def classroom():
                         f'Id: {current_user.id}---Time: {time_now}\n')
             return send_file(path_or_file=file_path, as_attachment=True, download_name=file_full_name)
 
+    result = db.session.query(Quiz).all()
+    questions = {}
+    category_list = []
+    for r in result:
+        q_id = r.id
+        q = r.question
+        oa = r.option_a.strip()
+        ob = r.option_b.strip()
+        oc = r.option_c.strip()
+        od = r.option_d.strip()
+        oe = r.option_e.strip()
+        ans = r.answer
+        cat = r.category
+        subcat = r.subcategory
+        level = r.level
+        t_played = r.time_played
+        t_correct = r.time_correct
+        answer = ''
+        if oa[0] == ans:
+            answer = oa
+        elif ob[0] == ans:
+            answer = ob
+        elif oc[0] == ans:
+            answer = oc
+        elif od[0] == ans:
+            answer = od
+        elif oe[0] == oe:
+            answer = oe
+
+        if cat not in category_list:
+            category_list.append(cat)
+        entry = {
+            'q': q,
+            'oa': oa,
+            'ob': ob,
+            'oc': oc,
+            'od': od,
+            'oe': oe,
+            'ans': ans,
+            'answer': answer,
+            'cat': cat,
+            'subcat': subcat,
+            'level': level,
+            't_played': t_played,
+            't_correct': t_correct
+        }
+        questions[q_id] = entry
+    date_today = date.today()
     return render_template('classroom.html', vid_id_list=qa_recorded_video_urls, qa_caption_list=qa_vid_caption_list
                            , qa_video_count=q_a_video_count, yt_vid_id_list=all_recorded_video_urls,
                            vid_caption_list=vid_caption_list, video_count=video_count,
                            logged_in=current_user.is_authenticated, admin=admin, all_demo_url_list=all_demo_url_list,
                            demo_caption_list=demo_caption_list, part_list=part_list, demo_count=demo_count,
-                           title_list=title_list, ws_dict=ws_dict, ws_name_list=ws_name_list, ws_count=ws_count)
+                           title_list=title_list, ws_dict=ws_dict, ws_name_list=ws_name_list, ws_count=ws_count,
+                           questions=questions, category_list=category_list)
+
+
+@school.route('/save-quiz-data', methods=['POST'])
+def save_quiz_data():
+    if request.is_json:
+        data = request.get_json()
+        correct = data['correct']
+        current_q_id = data['current_q_id']
+        time_played = db.session.query(Quiz).filter_by(id=current_q_id).one_or_none().time_played
+        time_correct = db.session.query(Quiz).filter_by(id=current_q_id).one_or_none().time_correct
+        time_p = time_played+1
+        time_c = time_correct+correct
+        db.session.query(Quiz).filter_by(id=current_q_id).one_or_none().time_played = time_p
+        db.session.query(Quiz).filter_by(id=current_q_id).one_or_none().time_correct = time_c
+        db.session.commit()
+        return jsonify('success!')
+
+
+@school.route('/save-member-quiz-data', methods=['POST'])
+def save_member_quiz_data():
+    if current_user.is_authenticated:
+        if request.is_json:
+            data = request.get_json()
+            cat = data['category']
+            total = data['total']
+            total_correct = data['total_correct']
+            date_today = date.today()
+
+            entry = QuizList(
+                category=cat,
+                correct=total_correct,
+                total=total,
+                date_played=date_today,
+                player_id=current_user.id
+            )
+            db.session.add(entry)
+            db.session.commit()
+            return jsonify('success!')
+    else:
+        return jsonify('User not logged in!')
 
 
 @school.route('/certificate_download', methods=['GET', 'POST'])

@@ -41,9 +41,22 @@ class Member(UserMixin, db.Model):
     demo = db.relationship('Demo', backref='creator')
     artist_data = db.relationship('ArtistData', backref='member', uselist=False)
     project = db.relationship('Project', secondary=member_project, backref='clients')
+    quizzes = db.relationship('QuizList', backref='player')
 
     def __repr__(self):
         return f'{self.name.split()[0]} -- {self.email}'
+
+
+class QuizList(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    category = db.Column(db.String(255))
+    correct = db.Column(db.Integer)
+    total = db.Column(db.Integer)
+    date_played = db.Column(db.String(10))
+    player_id = db.Column(db.Integer, db.ForeignKey('member.id'))
+
+    def __repr__(self):
+        return f'player_id: {self.player_id}, Correct: {self.correct}, Total: {self.total}'
 
 
 class Workshop(db.Model):

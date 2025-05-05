@@ -17,6 +17,7 @@
                 <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="closeRegistration()" value="Close Registration">Close Registration</button>
                 <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="addWsFiles()" value="Add Workshop files">Add Workshop Files</button>
                 <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="openDemo()" value="add_demo">Add Demo Video</button>
+                <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="openQuizData()" value="add_quiz_data">Add Quiz Data</button>
             </div>
             <div id="notification">
                 <h5>NOTIFICATIONS</h5>
@@ -345,8 +346,17 @@
                 <form action="{{ url_for('manager.home') }}" method="post" enctype="multipart/form-data">
                     <h2>Add Workshop Files</h2>
                     <input type="text" name="ws-name" placeholder="Workshop Name (like ws1)" required>
-                    <input type="file" name="file" id="file4" multiple>
+                    <input type="file" name="file" id="file4" multiple required>
                     <button type="submit" name="submit" id="file-btn4" class="btn btn-primary btn-block btn-large" value="add_ws_files">UPLOAD FILES</button>
+                </form>
+            </div>
+            <div id="add-quiz-data">
+                <form action="{{ url_for('manager.home') }}" method="post" enctype="multipart/form-data">
+                    <h2>Add Quiz Data</h2>
+                    <label>Add txt file or files only</label>
+                    <input type="text" name="quiz-category" placeholder="write quiz category" required>
+                    <input type="file" name="file" id="file5" multiple required>
+                    <button type="submit" name="submit" id="file-btn5" class="btn btn-primary btn-block btn-large" value="add_quiz_data">ADD QUIZ DATA FILE</button>
                 </form>
             </div>
             <div id="open-demo">
