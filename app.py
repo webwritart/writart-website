@@ -16,7 +16,7 @@ from routes.animation_admin import animation_admin
 from routes.client_section import client_section
 from routes.api import api_page
 from apscheduler.schedulers.background import BackgroundScheduler
-from operations.artist_tools import delete_watermarked_images
+# from operations.artist_tools import delete_watermarked_images
 from models.artist_data import ArtistData
 
 
@@ -59,12 +59,12 @@ def load_user(member_id):
 # ------------------------------------------- SCHEDULED TASKS ---------------------------------------------- #
 
 
-with app.app_context():
-    scheduler = BackgroundScheduler(daemon=True)
-    scheduler.add_job(delete_watermarked_images,
-                      'interval',
-                      minutes=1440)
-    scheduler.start()
+# with app.app_context():
+#     scheduler = BackgroundScheduler(daemon=True)
+#     scheduler.add_job(delete_watermarked_images,
+#                       'interval',
+#                       minutes=1440)
+#     scheduler.start()
 
 
 # ---------------------------------------------------------------------------------------------------------- #
