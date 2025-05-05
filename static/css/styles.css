@@ -1101,16 +1101,14 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 .category-list button {
     font-size: 0.9rem;
 }
-<<<<<<< HEAD
 .title-workshop-study-materials {
     font-size: 1.3rem;
-=======
+}
 .quiz-close-reset-btn a {
     font-size: 0.9rem;
 }
 #quiz h3 {
     font-size: 1.4rem;
->>>>>>> quiz
 }
 }
 
@@ -1139,12 +1137,15 @@ and (max-width : 1440px) {
         width: 40%;
     }
     #video-wrapper-container .video {
-    width: 25%;}
+    width: 25%;
+    }
     #video-wrapper-container2 .video {
-    width: 25%;}
+    width: 25%;
+    }
     #video-container {
     padding-left: 5%;
-    padding-right: 5%;}
+    padding-right: 5%;
+    }
     .main-upcoming-ws-item {
         width: 350px;
     }
@@ -1211,16 +1212,14 @@ and (max-width : 1440px) {
 .section-heading {
     font-size: 1.3rem;
 }
-<<<<<<< HEAD
 .title-workshop-study-materials {
     font-size: 1.1rem;
-=======
+}
 .quiz-close-reset-btn a {
     font-size: 0.8rem;
 }
 #quiz h3 {
     font-size: 1.3rem;
->>>>>>> quiz
 }
 }
 
@@ -1328,10 +1327,10 @@ and (max-width : 992px) {
     font-size: 1.1rem;
     padding: 1.8% 0% 1.1% 0%;
 }
-<<<<<<< HEAD
+
 .title-workshop-study-materials {
     font-size: 1rem;
-=======
+}
 .quiz form input {
     width:14%;
     }
@@ -1479,9 +1478,11 @@ and (max-width : 576px) {
     padding: 0% 5%;
     }
     .hero-content {
-    padding: 0% 5%;}
+    padding: 0% 5%;
+    }
     .hero-content h1 {
-    font-size: 36px;}
+    font-size: 36px;
+    }
     .hero-content h4 {
     font-size: 24px;
     }
@@ -1529,7 +1530,7 @@ and (max-width : 576px) {
     .ws_page_title h1 {
         font-size: 1.3rem;
     }
-    .ws_page_title h6 {.ws
+    .ws_page_title h6 {
         font-size: 0.8rem;
     }
     .ws-main-schedule h5 {
@@ -1588,6 +1589,7 @@ and (max-width : 576px) {
 }
 .title-workshop-study-materials {
     font-size: 0.8rem;
+    }
 .quiz-btn {
     width:40%;
     font-size: 0.9rem;
