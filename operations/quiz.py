@@ -10,13 +10,19 @@ def add_quiz_data_to_db(file_path, category):
     with open(f, 'r') as file:
         with open("quiz_data_log.txt", "a") as lf:
             lf.write("quiz data file opened successfully\n")
-        content = file.read()
+        try:
+            content = file.read()
+        except Exception as e:
+            with open("quiz_data_log.txt", "a") as lf:
+                lf.write(f'{e}\n')
+        with open("quiz_data_log.txt", "a") as lf:
+            lf.write("File read successfully.\n")
         data = content.split('\n')
+        with open("quiz_data_log.txt", "a") as lf:
+            lf.write("data extracted successfully!\n")
         data.pop()
         option_index = ['a', 'b', 'c', 'd', 'e']
         file.close()
-        with open("quiz_data_log.txt", "a") as lf:
-            lf.write("data extracted successfully!\n")
 
         for d in data:
             option_list = []
