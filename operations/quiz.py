@@ -49,5 +49,6 @@ def add_quiz_data_to_db(file_path, category):
             )
             db.session.add(entry)
     db.session.commit()
+    return 'Success!'
 
 
