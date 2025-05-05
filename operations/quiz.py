@@ -62,9 +62,10 @@ def add_quiz_data_to_db(file_path, category):
                 time_correct=0
             )
             db.session.add(entry)
+            db.session.commit()
             with open("quiz_data_log.txt", "a") as lf:
                 lf.write("Database 'entry' prepared.\n")
-            db.session.commit()
+
     with open("quiz_data_log.txt", "a") as lf:
         lf.write("Added to database successfully.\n")
     return 'Success!'
