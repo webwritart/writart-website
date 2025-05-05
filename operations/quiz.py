@@ -5,12 +5,18 @@ from models.quiz import Quiz
 def add_quiz_data_to_db(file_path, category):
     f = file_path
     capitalized_category = category.capitalize()
+    with open("quiz_data_log.txt", "a") as lf:
+        lf.write("Entered add_quiz_data_to_db function\n")
     with open(f, 'r') as file:
+        with open("quiz_data_log.txt", "a") as lf:
+            lf.write("quiz data file opened successfully\n")
         content = file.read()
         file.close()
         data = content.split('\n')
         data.pop()
         option_index = ['a', 'b', 'c', 'd', 'e']
+        with open("quiz_data_log.txt", "a") as lf:
+            lf.write("data extracted successfully!\n")
 
         for d in data:
             option_list = []
@@ -32,6 +38,8 @@ def add_quiz_data_to_db(file_path, category):
 
             a_index = int(d.split(';;')[1].split('&')[1])-1
             answer = option_index[a_index]
+            with open("quiz_data_log.txt", "a") as lf:
+                lf.write("Entered data loop.\n")
 
             entry = Quiz(
                 question=q,
@@ -48,7 +56,11 @@ def add_quiz_data_to_db(file_path, category):
                 time_correct=0
             )
             db.session.add(entry)
+            with open("quiz_data_log.txt", "a") as lf:
+                lf.write("Database 'entry' prepared.\n")
     db.session.commit()
+    with open("quiz_data_log.txt", "a") as lf:
+        lf.write("Added to database successfully.\n")
     return 'Success!'
 
 
