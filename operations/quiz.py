@@ -11,13 +11,13 @@ def add_quiz_data_to_db(file_path, category):
         with open("quiz_data_log.txt", "a") as lf:
             lf.write("quiz data file opened successfully\n")
         try:
-            content = file.read()
+            content = file.read().decode('utf-8')
         except Exception as e:
             with open("quiz_data_log.txt", "a") as lf:
                 lf.write(f'{e}\n')
         with open("quiz_data_log.txt", "a") as lf:
             lf.write("File read successfully.\n")
-        data = content.split(b'\n')
+        data = content.split('\n')
         with open("quiz_data_log.txt", "a") as lf:
             lf.write("data extracted successfully!\n")
         data.pop()
@@ -26,9 +26,9 @@ def add_quiz_data_to_db(file_path, category):
 
         for d in data:
             option_list = []
-            q = d.split(b';;')[0]
-            opt = d.split(b';;')[1].split(b'&')[0]
-            opt_list = opt.split(b'*')
+            q = d.split(';;')[0]
+            opt = d.split(';;')[1].split('&')[0]
+            opt_list = opt.split('*')
             for idx, opt in enumerate(opt_list):
                 opt_idx = option_index[idx]
                 option = f'{opt_idx}. {opt}'
@@ -42,7 +42,7 @@ def add_quiz_data_to_db(file_path, category):
             elif len(option_list) == 4:
                 option_list.append('')
 
-            a_index = int(d.split(b';;')[1].split(b'&')[1])-1
+            a_index = int(d.split(';;')[1].split('&')[1])-1
             answer = option_index[a_index]
             with open("quiz_data_log.txt", "a") as lf:
                 lf.write("Entered data loop.\n")
