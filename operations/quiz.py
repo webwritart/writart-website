@@ -11,10 +11,10 @@ def add_quiz_data_to_db(file_path, category):
         with open("quiz_data_log.txt", "a") as lf:
             lf.write("quiz data file opened successfully\n")
         content = file.read()
-        file.close()
         data = content.split('\n')
         data.pop()
         option_index = ['a', 'b', 'c', 'd', 'e']
+        file.close()
         with open("quiz_data_log.txt", "a") as lf:
             lf.write("data extracted successfully!\n")
 
