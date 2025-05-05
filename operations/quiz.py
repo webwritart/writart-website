@@ -7,7 +7,7 @@ def add_quiz_data_to_db(file_path, category):
     capitalized_category = category.capitalize()
     with open("quiz_data_log.txt", "a") as lf:
         lf.write("Entered add_quiz_data_to_db function\n")
-    with open(f, 'r') as file:
+    with open(f, 'rb') as file:
         with open("quiz_data_log.txt", "a") as lf:
             lf.write("quiz data file opened successfully\n")
         try:
