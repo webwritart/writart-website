@@ -8,15 +8,7 @@ def add_quiz_data_to_db(file_path, category):
     with open("quiz_data_log.txt", "a") as lf:
         lf.write("Entered add_quiz_data_to_db function\n")
     with open(f, 'rb') as file:
-        with open("quiz_data_log.txt", "a") as lf:
-            lf.write("quiz data file opened successfully\n")
-        try:
-            content = file.read().decode('utf-8')
-        except Exception as e:
-            with open("quiz_data_log.txt", "a") as lf:
-                lf.write(f'{e}\n')
-        with open("quiz_data_log.txt", "a") as lf:
-            lf.write("File read successfully.\n")
+        content = file.read().decode('utf-8')
         data = content.split('\n')
         with open("quiz_data_log.txt", "a") as lf:
             lf.write("data extracted successfully!\n")
