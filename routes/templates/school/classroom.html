@@ -223,7 +223,7 @@ function showFiles(ws_name) {
 }
 var questions = {{ questions | tojson }};
 var loggedIn = {{ current_user.is_authenticated | tojson }};
-const role = {{ role }};
+const role = {{ role | tojson }};
 var categoryQuestionsKeyList = [];
 var number = 0;
 var noQuestions = null;
