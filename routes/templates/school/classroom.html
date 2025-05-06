@@ -19,7 +19,7 @@
 <div id="classroom-hero">
     <div class="title">
         <h1>CLASSROOM</h1>
-        <p>Revisions and Practice make an artist perfect. Therefore, welcome to your classroom! Take Notes, Draw at least more than 5 rough drawings/sketches every day. Keep showing your work</p>
+        <p>Revisions and Practice make an artist perfect. Therefore, welcome to your classroom! Take Notes, Draw at least 5 rough drawings/sketches every day.</p>
     </div>
 </div>
 <div style="display:flex;justify-content:center;">
@@ -55,11 +55,10 @@
                 <input id="number-questions" type="number" placeholder="Type the number of questions">
                 <a type="button" id="number-submit" onclick="closeCustomField()" class="button">Submit</a>
         </div>
-
         <div><a type="button" id="start-quiz" onclick="startQuiz()" class="button">Start Quiz</a></div>
         <p id="quiz-score-board"></p>
         <h2 id="final-score" style="width:100%;text-align:center;"></h2>
-        <p id="logged-in-text" style="color:green;">Quiz result saved succeccfully!</p>
+        <p id="logged-in-text" style="color:green;">Quiz result saved successfully!</p>
         <p id="not-logged-in-text"  style="color:red;">Quiz result not saved! Pl Login before playing to save results!</p>
         <div id="next-quiz-btn">
             <a type="button" id="next-quiz" class="button" onclick="reset()">NEXT QUIZ</a>
@@ -86,7 +85,7 @@
 </div>
 <div class="video-wrapper">
     <div class="video-wrapper-container">
-        <h3 style="color:black;">Art Demonstrations</h3>
+        <h3>Art Demonstrations</h3>
         {% for n in range(demo_count) %}
         <iframe class="responsive-iframe" src="https://www.youtube.com/embed/{{ all_demo_url_list[n] }}?si=2BVYS-0QHsxcX4f5"
                     title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write;
@@ -106,7 +105,7 @@
 
 <div class="video-wrapper">
     <div class="video-wrapper-container">
-        <h3 style="color:black;">Doubt Solving Sessions</h3>
+        <h3>Doubt Solving Sessions</h3>
         {% for n in range(qa_video_count) %}
             <iframe class="responsive-iframe" src="https://www.youtube.com/embed/{{vid_id_list[n]}}?si=2BVYS-0QHsxcX4f5"
                     title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write;
