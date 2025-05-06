@@ -251,7 +251,20 @@ if (loggedIn) {
     document.getElementById('log-in-btn').style.display = 'block';
     document.getElementById('log-in-alert').style.display = 'block';
 }
-
+function disableAllOptionButtons() {
+    document.getElementById('quiz-btn1').disabled = true;
+    document.getElementById('quiz-btn2').disabled = true;
+    document.getElementById('quiz-btn3').disabled = true;
+    document.getElementById('quiz-btn4').disabled = true;
+    document.getElementById('quiz-btn5').disabled = true;
+}
+function enableAllOptionButtons() {
+    document.getElementById('quiz-btn1').disabled = false;
+    document.getElementById('quiz-btn2').disabled = false;
+    document.getElementById('quiz-btn3').disabled = false;
+    document.getElementById('quiz-btn4').disabled = false;
+    document.getElementById('quiz-btn5').disabled = false;
+}
 function createCategoryQuestionsKeyList() {
     var questionsKeyLists = Object.keys(questions);
     for (const x of questionsKeyLists) {
@@ -434,6 +447,7 @@ function startQuiz() {
     }
 }
 function next() {
+    enableAllOptionButtons();
     if (qIndex <= noQuestions-1) {
         currentQId = qKeyStock[qIndex];
         var currentQ = questions[currentQId]
@@ -533,6 +547,7 @@ function next() {
     }
 }
 function checkAns(option) {
+    disableAllOptionButtons();
     var ansOption = option;
     document.getElementById('next').style.visibility = 'visible';
     if (ansOption == ans ) {
