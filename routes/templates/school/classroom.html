@@ -61,6 +61,9 @@
         <h2 id="final-score" style="width:100%;text-align:center;"></h2>
         <p id="logged-in-text" style="color:green;">Quiz result saved succeccfully!</p>
         <p id="not-logged-in-text"  style="color:red;">Quiz result not saved! Pl Login before playing to save results!</p>
+        <div id="next-quiz-btn">
+            <a type="button" id="next-quiz" class="button" onclick="reset()">NEXT QUIZ</a>
+        </div>
         <label id="q" style="font-weight:600;"></label><br>
         <label id="oa"></label><br>
         <label id="ob"></label><br>
@@ -325,6 +328,7 @@ function closeQuiz() {
     document.getElementById('not-logged-in-text').style.display = 'none';
     document.getElementById('test').style.display = 'none';
     document.getElementById('result').style.display = 'none';
+    document.getElementById('next-quiz-btn').style.display = 'none';
 }
 function reset() {
     qIndex = 0;
@@ -359,6 +363,7 @@ function reset() {
     document.getElementById('not-logged-in-text').style.display = 'none';
     document.getElementById('test').style.display = 'none';
     document.getElementById('result').style.display = 'none';
+    document.getElementById('next-quiz-btn').style.display = 'none';
 }
 function openCustom() {
     if (document.getElementById('no-question').value == 'custom') {
@@ -526,6 +531,7 @@ function next() {
         document.getElementById('final-score').innerHTML = 'FINAL SCORE: '+correctQuestions+'/'+qIndex;
         document.getElementById('final-score').style.display = 'block';
         document.getElementById('next').style.visibility = 'hidden';
+        document.getElementById('next-quiz-btn').style.display = 'flex';
         if (loggedIn) {
             document.getElementById('logged-in-text').style.display = 'block';
         } else {

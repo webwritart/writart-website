@@ -908,6 +908,7 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     display: none;
     background: #FFDBDB;
     padding: 2% 5%;
+    margin-bottom: 1.5%;
 }
 .quiz form p {
     text-align:center;
@@ -1044,6 +1045,16 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 #result {
     display:none;
 }
+#next-quiz {
+    text-decoration: none;
+    color: white;
+    width: 20%;
+    padding: 1% 0%;
+    font-size: 1.3rem;
+}
+#next-quiz-btn {
+    display: none;
+}
 
 @media only screen and (min-width : 1900px) {
     #video-wrapper-container .video {
@@ -1109,6 +1120,9 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 }
 #quiz h3 {
     font-size: 1.4rem;
+}
+.quiz form {
+    margin-bottom: 1.5%;
 }
 }
 
@@ -1221,6 +1235,13 @@ and (max-width : 1440px) {
 #quiz h3 {
     font-size: 1.3rem;
 }
+.quiz form {
+    margin-bottom: 2%;
+}
+#next-quiz {
+    width: 25%;
+    font-size: 1.2rem;
+}
 }
 
 
@@ -1331,6 +1352,10 @@ and (max-width : 992px) {
 .title-workshop-study-materials {
     font-size: 1rem;
 }
+.quiz form {
+    padding: 2% 5%;
+    margin-bottom: 3%;
+}
 .quiz form input {
     width:14%;
     }
@@ -1339,6 +1364,10 @@ and (max-width : 992px) {
 }
 #quiz h3 {
     font-size: 1.2rem;
+}
+#next-quiz {
+    width: 30%;
+    font-size: 1.1rem;
 }
 }
 
@@ -1409,6 +1438,9 @@ and (max-width : 768px) {
 }
 .quiz form {
     width: 80%;
+    padding: 3% 5%;
+    margin-bottom: 3%;
+
     }
 .quiz form input {
     width:12%;
@@ -1597,12 +1629,18 @@ and (max-width : 576px) {
 }
 .quiz form {
     width: 100%;
+    padding: 5% 5%;
+    margin-bottom: 5%;
     }
 .quiz form input {
     width:15%;
     }
 #start-quiz {
     width: 80%;
+}
+#next-quiz {
+    width: 40%;
+    font-size: 1rem;
 }
 }
 
