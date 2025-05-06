@@ -566,7 +566,7 @@ function checkAns(option) {
             correct: 1
         };
         if (role != 'admin') {
-            fetch('http://127.0.0.1:5000/school/save-quiz-data', {
+            fetch('https://writart.com/school/save-quiz-data', {
                 method: 'POST',
                 headers: {
                     'content-Type': 'application/json',
@@ -585,7 +585,7 @@ function checkAns(option) {
             correct: 0
         };
         if (role != 'admin') {
-            fetch('http://127.0.0.1:5000/school/save-quiz-data', {
+            fetch('https://writart.com/school/save-quiz-data', {
                 method: 'POST',
                 headers: {
                     'content-Type': 'application/json',
