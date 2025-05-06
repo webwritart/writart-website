@@ -373,8 +373,12 @@ def upcoming_workshop():
 
 @school.route('/classroom', methods=['GET', 'POST'])
 def classroom():
+    role = ''
     session['url'] = url_for('school.classroom')
     admin = db.session.query(Role).filter_by(name='admin').one_or_none()
+    if current_user.is_authenticated:
+        if admin in current_user.role:
+            role = 'admin'
     all_recorded_video_urls = []
     vid_caption_list = []
     qa_recorded_video_urls = []
@@ -552,7 +556,7 @@ def classroom():
                            logged_in=current_user.is_authenticated, admin=admin, all_demo_url_list=all_demo_url_list,
                            demo_caption_list=demo_caption_list, part_list=part_list, demo_count=demo_count,
                            title_list=title_list, ws_dict=ws_dict, ws_name_list=ws_name_list, ws_count=ws_count,
-                           questions=questions, category_list=category_list)
+                           questions=questions, category_list=category_list,role=role)
 
 
 @school.route('/save-quiz-data', methods=['POST'])
