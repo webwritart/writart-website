@@ -17,12 +17,8 @@
         object-fit: cover;
         margin: 1%;
     }
-    .full-size-img {
-        max-width: 100%;
-        max-height: 100%;
-        display:block;
-        margin:auto;
-    }
+
+
 </style>
 <div class="container" style="margin-top: 0px;">
     <div class="row">
@@ -49,18 +45,25 @@
 
 <div class="artworks-container">
     <h1>ILLUSTRATIONS</h1>
+    <p>Click Image to open in large size</p>
     <div class="artworks">
-    {% for img in dict['artworks'] %}
-    <a type="button" onclick="openFullImage('{{img}}')"><img src="{{img}}"></a>
+    {% for img in dict %}
+    <a type="button" onclick="openFullImage('{{dict[img]['large']}}', '{{dict[img]['title']}}')"><img src="{{dict[img]['thumbnail']}}"></a>
     {% endfor %}
     </div>
 </div>
-<div class="full-size-img-popup img-box-popup" id="full-size-img-box">
-    <div style="display: flex; justify-content: right; width: 95%;">
-        <a style="opacity: 0.5;" type="button" onclick="closeFullImage()">close <img src="/static/images/icons/cross-sign.png" width="10px"></a>
-    </div>
-    <h2>Test</h2>
-    <img id="full-size-img" class="full-size-img" src="">
+<div id="artwork-popup-overlay"></div>
+    <div class="artwork-popup">
+        <div id="artwork-popup">
+            <div style="display:flex; justify-content:space-between; width:100%; background:black; color:gray; padding:1% 2% 0% 2%;">
+                <p>IMAGE VIEWER</p>
+                <a type="button" style="color:white;" onclick="closeFullImage()">Close</a>
+            </div>
+            <div id="full-size-img-box">
+                <h3 id="artwork-title"></h3>
+                <img id="full-size-img" src="">
+            </div>
+        </div>
     </div>
 <!--    <form class="popup-form-container" action="{{url_for('school.home')}}" name="interested-form" method="post">-->
 <!--        <div style="display: flex; justify-content: right; width: 95%;">-->
@@ -78,7 +81,7 @@
 <!--        <input type="text" maxlength="300" placeholder="Any message for us? (optional)" name="message">-->
 <!--        <input type="submit" name="submit" class="btn btn-primary" onclick="closeFormInterested2()" value="SUBMIT">-->
 <!--    </form>-->
-</div>
+<!--</div>-->
 
 <script src="/static/js/studio.js"></script>
 

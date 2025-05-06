@@ -1,3 +1,5 @@
+import pprint
+
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash, send_file
 import os
 from flask_login import current_user
@@ -34,12 +36,21 @@ def portfolio(member_id):
     member = db.session.query(Member).filter_by(id=member_id).one_or_none()
     first_name = member.name.split(' ')[0]
     artist_dict = {}
-    artworks = []
-    artworks_dir = f'static/files/users/{first_name}{member_id}/artworks/'
-    for entry in os.scandir(artworks_dir):
+    artworks_thumbnail_dir = f'static/files/users/{first_name}{member_id}/artworks/thumbnail/'
+    artworks_large_dir = f'static/files/users/{first_name}{member_id}/artworks/large/'
+    index = 1
+    for entry in os.scandir(artworks_thumbnail_dir):
         if entry.is_file():
-            artworks.append(f'/{artworks_dir}{entry.name}')
-    artist_dict['artworks'] = artworks
+            thumbnail_path = f'/{artworks_thumbnail_dir}{entry.name}'
+            large_path = f'/{artworks_large_dir}{entry.name}'
+            title = os.path.splitext(os.path.basename(entry.name))[0]
+            img = {
+                'title': title,
+                'thumbnail': thumbnail_path,
+                'large': large_path
+            }
+            artist_dict[index] = img
+            index += 1
     return render_template('portfolio.html', dict=artist_dict)
 
 
