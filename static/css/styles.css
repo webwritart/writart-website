@@ -282,11 +282,7 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
         padding-top: 5%;
         padding-bottom: 3%;
     }
-    .wrapper-ws {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
+
     .container-ws {
         width: 80%;
         overflow: hidden;
@@ -313,6 +309,9 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     .heading {
         padding: 2% 0%;
         text-align: center;
+    }
+    .heading h4 {
+        font-size:1.5rem;
     }
     .button-container {
         display: flex;
@@ -1093,6 +1092,9 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 .video-wrapper-container p {
     font-size: 1rem;
 }
+.upcoming-ws-btn {
+    font-size:0.9rem;
+}
 
 @media only screen and (min-width : 1900px) {
     #video-wrapper-container .video {
@@ -1104,6 +1106,9 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
         }
 }
 @media only screen and (max-width : 1900px) {
+ .heading h4 {
+        font-size:1.3rem;
+    }
 .video-wrapper-container h3, .width-80-container h3 {
     font-size: 1.4rem;
 }
@@ -1172,6 +1177,16 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 
 @media only screen
 and (max-width : 1440px) {
+.upcoming-ws-btn {
+    font-size:0.76rem;
+}
+.wrapper-ws {
+        padding-left: 0%;
+        padding-right: 0%;
+    }
+ .heading h4 {
+        font-size:1.1rem;
+    }
 .video-wrapper-container h3, .width-80-container h3 {
     font-size: 1.3rem;
 }
@@ -1300,6 +1315,12 @@ and (max-width : 1440px) {
 
 @media only screen
 and (max-width : 992px) {
+.upcoming-ws-btn {
+    font-size:0.65rem;
+}
+.heading h4 {
+        font-size:1rem;
+    }
 .video-wrapper-container h3, .width-80-container h3 {
     font-size: 1.2rem;
 }
@@ -1390,7 +1411,7 @@ and (max-width : 992px) {
         font-size:0.8rem;
     }
     .description p {
-        font-size: 1rem;
+        font-size: 0.9rem;
     }
     .ws-main-green p {
         font-size:1.2rem;
@@ -1524,6 +1545,10 @@ and (max-width : 768px) {
 
 @media only screen
 and (max-width : 576px) {
+.heading h4 {
+    padding-top:2%;
+    font-size:0.9rem;
+    }
 .video-wrapper-container h3, .width-80-container h3 {
     font-size: 1rem;
 }
@@ -1663,7 +1688,7 @@ and (max-width : 576px) {
         font-size:0.8rem;
     }
     .description p {
-        font-size: 0.9rem;
+        font-size: 0.8rem;
     }
     .ws-main-green p {
         font-size:1rem;
