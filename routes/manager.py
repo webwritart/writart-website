@@ -31,23 +31,6 @@ def home():
 
     if db.session.query(Role).filter(Role.name == 'admin').scalar() in current_user.role:
         if request.method == 'POST':
-            if request.form.get('uuid') == 'uuid':
-                uuid_list = []
-                members = db.session.query(Member).all()
-                for m in members:
-                    unique = False
-                    while not unique:
-                        uuid = random.randint(100000, 999999)
-                        if uuid not in uuid_list:
-                            uuid_list.append(uuid)
-                            name = m.name
-                            m.uuid = uuid
-                            db.session.commit()
-                            print(f'saved UUID of {name}')
-                            unique = True
-                        else:
-                            print('not unique')
-                print(uuid_list)
             if request.form.get('current_ws'):
                 db.session.query(Tools).filter_by(keyword='current_workshop').first().data = request.form.get(
                     'current_ws')

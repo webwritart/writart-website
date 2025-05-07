@@ -174,8 +174,11 @@ def update_details():
 @account.route('/register', methods=['GET', 'POST'])
 def register():
     num_list = []
-    result = db.session.query(Member)
+    uuid_list = []
+
+    result = db.session.query(Member).all()
     for user in result:
+        uuid_list.append(user.uuid)
         num = user.phone
         if len(num) == 10:
             user_no = f"91{num}"
@@ -190,109 +193,119 @@ def register():
         num_list.append(user_no)
 
     if request.method == 'POST':
-        ph = request.form.get('phone')
-        if len(ph) == 10:
-            phone = f"91{ph}"
-        elif len(ph) == 11 and ph[0] == '0':
-            phone = f'91{ph[1:]}'
-        elif len(ph) == 12 and ph[:2] == '91':
-            phone = ph
-        elif len(ph) == 13:
-            phone = ph[3:]
-        else:
-            phone = ph
+        if request.form.get('submit') == 'register':
+            ph = request.form.get('phone')
+            if len(ph) == 10:
+                phone = f"91{ph}"
+            elif len(ph) == 11 and ph[0] == '0':
+                phone = f'91{ph[1:]}'
+            elif len(ph) == 12 and ph[:2] == '91':
+                phone = ph
+            elif len(ph) == 13:
+                phone = ph[3:]
+            else:
+                phone = ph
 
-        email = request.form.get('email')
-        state = request.form.get('state')
-        result = db.session.execute(db.select(Member).where(Member.email == email))
-        user = result.scalar()
-        if user:
-            flash("You've already signed up with that email, log in instead!", "error")
-            return redirect(url_for('account.login'))
-        if phone in num_list:
-            flash("Already an account exists with phone number. Please register with different phone number or log in",
-                  "error")
-            return redirect(url_for('account.register'))
-        hash_and_salted_password = generate_password_hash(
-            request.form.get('password'),
-            method='pbkdf2:sha256',
-            salt_length=8
-        )
-        date_ = request.form.get('date')
-        if len(date_) < 2:
-            date_ = "0" + date_
-        month = request.form.get('month')
-        if len(month) < 2:
-            month = "0" + month
-        year = request.form.get('year')
-        dob = f"{year}-{month}-{date_}"
-        age = calculate_age(dob)
+            email = request.form.get('email')
+            state = request.form.get('state')
+            result = db.session.execute(db.select(Member).where(Member.email == email))
+            user = result.scalar()
+            if user:
+                flash("You've already signed up with that email, log in instead!", "error")
+                return redirect(url_for('account.login'))
+            if phone in num_list:
+                flash("Already an account exists with phone number. Please register with different phone number or log in",
+                      "error")
+                return redirect(url_for('account.register'))
+            hash_and_salted_password = generate_password_hash(
+                request.form.get('password'),
+                method='pbkdf2:sha256',
+                salt_length=8
+            )
+            date_ = request.form.get('date')
+            if len(date_) < 2:
+                date_ = "0" + date_
+            month = request.form.get('month')
+            if len(month) < 2:
+                month = "0" + month
+            year = request.form.get('year')
+            dob = f"{year}-{month}-{date_}"
+            age = calculate_age(dob)
 
-        artist_account = request.form.get('artist_account')
+            artist_account = request.form.get('artist_account')
 
-        if age < 13:
-            flash("You're below 13 year. Really very sorry we cannot take you in!", "error")
-            return redirect(request.url)
+            # if age < 13:
+            #     flash("You're below 13 year. Really very sorry we cannot take you in!", "error")
+            #     return redirect(request.url)
 
-        new_user = Member(
-            email=request.form.get('email'),
-            password=hash_and_salted_password,
-            name=request.form.get('name'),
-            phone=request.form.get('phone'),
-            whatsapp=request.form.get('whatsapp'),
-            profession=request.form.get('profession'),
-            sex=request.form.get('sex'),
-            dob=dob,
-            state=state,
-            registration_date=today_date
-        )
-        db.session.add(new_user)
-        db.session.commit()
+            unique = False
+            uuid = ''
+            while not unique:
+                u = random.randint(100000, 999999)
+                if u not in uuid_list:
+                    uuid = u
+                    unique = True
 
-        all_users = db.session.query(Member)
-        admin = db.session.query(Role).filter_by(name='admin').scalar()
-
-        if len(all_users.all()) == 1:
-            all_users[0].role.append(admin)
+            new_user = Member(
+                email=request.form.get('email'),
+                password=hash_and_salted_password,
+                name=request.form.get('name'),
+                phone=request.form.get('phone'),
+                whatsapp=request.form.get('whatsapp'),
+                profession=request.form.get('profession'),
+                sex=request.form.get('sex'),
+                dob=dob,
+                state=state,
+                registration_date=today_date,
+                uuid=uuid
+            )
+            db.session.add(new_user)
             db.session.commit()
 
-        login_user(new_user)
+            all_users = db.session.query(Member)
+            admin = db.session.query(Role).filter_by(name='admin').scalar()
 
-        # if artist_account == 'yes':
-        #     artist = db.session.query(Role).filter_by(name='artist').one()
-        #
-        #     current_user.role.append(artist)
-        #     db.session.commit()
-        #     entry = ArtistData(
-        #         artist=current_user.name,
-        #         watermarked_artworks=0,
-        #         gallery_artworks=0,
-        #         all_collections=0,
-        #         commission_collections=0,
-        #         sold_artworks=0,
-        #         queried_artworks=0,
-        #         shipped_artworks=0,
-        #         contracted_artworks=0,
-        #         sold_commissions=0,
-        #         memory_occupied_total=0,
-        #         memory_occupied_gallery=0,
-        #         member=current_user,
-        #     )
-        #     db.session.add(entry)
-        #     db.session.commit()
+            if len(all_users.all()) == 1:
+                all_users[0].role.append(admin)
+                db.session.commit()
 
-        mail = render_template('mails/registration_success.html')
-        send_email_support('Registration success!', [email],
-                           '',
-                           mail, '')
-        mail_message = f'New Registration:\n\nName: {request.form.get("name")}\nEmail: {request.form.get("email")}\n' \
-                       f'Phone: {request.form.get("phone")}' \
-                       f'Sex: {request.form.get("sex")}\nProfession: {request.form.get("profession")}\n' \
-                       f'State: {request.form.get("state")}\n\n'
-        send_email_support('New Registration!', ['writartstudios@gmail.com'], mail_message, '', '')
-        if 'url' in session:
-            return redirect(session['url'])
-        return redirect(url_for('account.home', name=current_user.name.split()[0]))
+            login_user(new_user)
+
+            # if artist_account == 'yes':
+            #     artist = db.session.query(Role).filter_by(name='artist').one()
+            #
+            #     current_user.role.append(artist)
+            #     db.session.commit()
+            #     entry = ArtistData(
+            #         artist=current_user.name,
+            #         watermarked_artworks=0,
+            #         gallery_artworks=0,
+            #         all_collections=0,
+            #         commission_collections=0,
+            #         sold_artworks=0,
+            #         queried_artworks=0,
+            #         shipped_artworks=0,
+            #         contracted_artworks=0,
+            #         sold_commissions=0,
+            #         memory_occupied_total=0,
+            #         memory_occupied_gallery=0,
+            #         member=current_user,
+            #     )
+            #     db.session.add(entry)
+            #     db.session.commit()
+
+            mail = render_template('mails/registration_success.html')
+            send_email_support('Registration success!', [email],
+                               '',
+                               mail, '')
+            mail_message = f'New Registration:\n\nName: {request.form.get("name")}\nEmail: {request.form.get("email")}\n' \
+                           f'Phone: {request.form.get("phone")}' \
+                           f'Sex: {request.form.get("sex")}\nProfession: {request.form.get("profession")}\n' \
+                           f'State: {request.form.get("state")}\n\n'
+            send_email_support('New Registration!', ['writartstudios@gmail.com'], mail_message, '', '')
+            if 'url' in session:
+                return redirect(session['url'])
+            return redirect(url_for('account.home', name=current_user.name.split()[0]))
     return render_template("register.html", logged_in=current_user.is_authenticated, current_year=current_year)
 
 
