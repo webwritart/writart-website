@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
+<form method="post" action="{{ url_for('manager.home') }}">
+    <input type="submit" name="uuid" value="uuid">
+</form>
 <div class="container manager-page">
     <div class="row">
         <div class="col-md-3" id="menu-list">

@@ -24,6 +24,7 @@ class Member(UserMixin, db.Model):
     __tablename__ = "member"
 
     id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.Integer, unique=True)
     email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(100))
     name = db.Column(db.String(1000))
