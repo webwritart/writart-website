@@ -287,6 +287,9 @@ function init() {
     createCategoryQuestionsKeyList();
     var shuffledKeys = shuffleKeys(categoryQuestionsKeyList);
     qKeyStock = shuffledKeys.slice(0, noQuestions);
+    document.getElementById('no-questions-label').innerHTML = 'Total questions: '+qKeyStock.length;
+    document.getElementById('no-questions-label').style.display = 'block';
+
 }
 
 function openQuiz() {
@@ -376,14 +379,12 @@ function openCustom() {
 function closeCustomField() {
     document.getElementById('number-questions').style.display = 'none';
     document.getElementById('number-submit').style.display = 'none';
-    document.getElementById('no-questions-label').style.display = 'block';
     if (number !== 0) {
         showStartQuizBtn();
     } else {
         alert("Please select number of questions to play");
     }
     if (document.getElementById('number-questions').value == '') {
-        document.getElementById('no-questions-label').innerHTML = '';
         noQuestions = null;
         qKeyStock = [];
     }
@@ -404,13 +405,10 @@ inputNumberQuestions.addEventListener('input', function(event) {
     number = 0;
     number = event.target.value;
     noQuestions = event.target.value;
-    document.getElementById('no-questions-label').innerHTML = 'Total questions: '+number;
 });
 inputNumberQuestionsOption.addEventListener('change', function(event) {
     if (event.target.value !== 'custom') {
         number = event.target.value;
-        document.getElementById('no-questions-label').innerHTML = 'Total questions: '+number;
-        document.getElementById('no-questions-label').style.display = 'block';
         if (event.target.value !== 'default') {
             noQuestions = event.target.value;
             showStartQuizBtn();
@@ -423,7 +421,6 @@ inputNumberQuestionsOption.addEventListener('change', function(event) {
         }
     } else {
         number = 0;
-        document.getElementById('no-questions-label').style.display = 'none';
         showStartQuizBtn();
     }
 })
