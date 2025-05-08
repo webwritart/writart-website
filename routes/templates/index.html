@@ -1,13 +1,22 @@
 {% extends "base.html" %} {% block content %}
 
 <style>
+  .cover-container {
+    padding: 8% 0%;
+    background-color: rgba(0,0,0,0);
+    background: url('/static/images/cover.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    align-items:center;
+    height: 30%;
+}
     .homepage_cover {
         background: url(static/images/workshops/{{current_ws}}/cover.jpg);
         padding: 4%;
         color: white;
         margin-top: 1%;
         background-size: cover;
-        idth: 100%;
+        width: 100%;
     }
     .homepage_cover_header {
         display: flex;
@@ -60,8 +69,31 @@
         background: #FFC6C6;
         color: #644A07 !important;
     }
+    .hero-content{
+        color:white;
+       text-align:center;
+       padding: 0% 15%;
+    }
+    .hero-content h1 {
+        font-size: 1.3rem;
+    }
+    .hero-content h4 {
+        font-size: 0.9rem;
+        line-height:1rem;
+    }
+    .hero-content p {
+        font-size: 0.8rem;
+        opacity:0.7;
+        padding:3% 0% 0% 0%;
+    }
 
 @media (min-width: 600px) {
+.hero-content h4 {
+        font-size: 1rem;
+    }
+     .hero-content h1 {
+        font-size:1.4rem;
+     }
     .homepage_cover_header h3 {
         font-size: 0.8rem;
     }
@@ -87,6 +119,12 @@
     }
 }
 @media (min-width: 768px) {
+.hero-content h4 {
+        font-size: 1.1rem;
+    }
+.hero-content h1 {
+        font-size:1.6rem;
+     }
     .homepage_cover_header h3 {
         font-size: 0.9rem;
     }
@@ -109,6 +147,22 @@
     }
 }
 @media (min-width: 1200px) {
+    .cover-container {
+        background-position-y:25%;
+    }
+  .cover-container {
+    padding: 5% 0%;
+    height: 35vh;
+}
+  .hero-content p {
+        font-size: 0.95rem;
+    }
+.hero-content h4 {
+        font-size: 1.3rem;
+    }
+.hero-content h1 {
+        font-size:1.9rem;
+     }
     .homepage_cover_header h3 {
         font-size: 1.1rem;
     }
@@ -130,6 +184,19 @@
     }
 }
 @media (min-width: 1900px) {
+  .cover-container {
+    padding: 4% 0%;
+    height: 35vh;
+}
+ .hero-content p {
+        font-size: 1.05rem;
+    }
+.hero-content h4 {
+        font-size: 1.5rem;
+    }
+.hero-content h1 {
+        font-size:2.2rem;
+     }
     .homepage_cover_header h3 {
         font-size: 1.4rem;
     }
@@ -151,6 +218,15 @@
     }
 }
 @media (min-width: 2500px) {
+ .hero-content p {
+        font-size: 1.5rem;
+    }
+.hero-content h4 {
+        font-size: 2.2rem;
+    }
+.hero-content h1 {
+        font-size:3.2rem;
+     }
     .homepage_cover_header h3 {
         font-size: 2rem;
     }
@@ -182,7 +258,7 @@
                 <h4>Training for Traditional, Animation, Gaming, Illustration Industry</h4>
                 <p>We, at Writart Gurukul provide art workshops and other art activities and training which is directly applicable in professional art field.
                     The skills we train here can be applied in traditional painting, Designing, Digital art, photography, Concept art and Illustration in Animation and Gaming field.<br>
-                    We have 'Pay what you want' fee system inspired from ancient Indian Gurukul system.
+                    Besides fixed fee courses we also have a 'Pay what you want' model inspired from the ancient Indian Gurukul system.
                  </p>
 <!--                <a type="button" href="{{url_for('school.home')}}">WORKSHOPS</a>-->
              </div>

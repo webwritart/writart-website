@@ -219,44 +219,6 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 
 /*  --------------------------------------------------------------------- HOME ----------------------------------------------------------------------------------------------------------------------  */
 
-  .cover-container {
-    padding: 10% 0%;
-    background-color: rgba(0,0,0,0);
-    background: url('../images/cover.jpg');
-    background-repeat: no-repeat;
-    background-size: cover;
-    height: 600px;
-}
-.hero-content {
-    color: white;
-    display: block;
-    padding: 0% 20%;
-    text-align: center;
-
-}
-.hero-content h1{
-    font: 3.5em sans-serif;
-}
-.hero-content h4 {
-  font: 1.8em sans-serif;
-  padding-bottom: 2%;
-}
-.hero-content a {
-  padding: 1% 4%;
-  background-color: white;
-  border: 0.2rem solid #730d2b ;
-  border-radius: 70px;
-  color: rgb(80, 8, 51);
-  font: 1.5em sans-serif;
-  text-decoration: None;
-  box-shadow: 0px 9px 5px rgba(13, 0, 4, 0.6);
-}
-.hero-content p {
-  opacity: 0.5;
-  padding-bottom: 3%;
-}
-
-
 .text-content {
     display:
     text-align: left;
@@ -274,8 +236,6 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     padding: 1%;
     width: 400px;
 }
-
-
 /*  ----------------------------------------------------------------------  SCHOOL -------------------------------------------------------------------------------------------------------------------  */
 
 .master-container{
@@ -1618,15 +1578,7 @@ and (max-width : 576px) {
     margin-bottom: 25%;
     padding: 0% 5%;
     }
-    .hero-content {
-    padding: 0% 5%;
-    }
-    .hero-content h1 {
-    font-size: 36px;
-    }
-    .hero-content h4 {
-    font-size: 24px;
-    }
+
     .button {
         font-size: 0.8rem;
         width: 100%;
