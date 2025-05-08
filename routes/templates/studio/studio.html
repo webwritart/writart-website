@@ -17,10 +17,16 @@
 
 .artist-card {
     width:fit-content;
-    display:flex;
-    flex-direction:column;
-    padding:3% 4%;
+    display:inline-block;
+    box-sizing:border-box;
+    max-width:500px;
+    padding: 18px;
     border: solid 1px #cccccc;
+    border-radius:2px;
+    margin-bottom:60px;
+    text-align:left;
+    vertical-align:top;
+    background-color:#FFDBDB;
     box-shadow: 0 0 15px 3px rgb(0 0 0 /0.15);
 }
 .artist-brief {
@@ -42,7 +48,6 @@
     justify-content:end;
     padding-left:4%;
 }
-
 .artist-name {
     font-size:1.1rem;
     font-family: "Roboto";
@@ -55,27 +60,30 @@
     font-size: 0.95rem;
 }
 .artist-card-artworks {
-    background:gray;
-    display:flex;
-    margin-top:5%;
+    display:inline-block;
+    width:100%;
+    box-sizing:border-box;
+    margin-top:25px;
+    border:none;
 }
-.artist-card-artworks-large {
-    height: 200px;
-    width: 200px;
-    background: purple;
-    padding:1%;
+.artist-card-artworks img {
+    overflow-clip-margin:content-box;
+    overflow:clip;
+    aspect-ratio:auto 100/100;
 }
-.artist-card-artworks-small-container {
-    display:flex;
+.card-artwork:nth-of-type(1) {
+    float:left;
+    width:39%;
+    margin-left:0%;
 }
-.artist-card-artworks-small {
-    height:100px;
-    width:100px;
-    background:blue;
-    margin:1%;
+.card-artwork {
+    box-sizing:border-box;
+    height:auto;
+    margin-top:1%;
+    background-color:#EEEEEE;
+    box-shadow: 0px 8px 8px -5px rgba(0, 0, 0, 0.20);
 }
 </style>
-<div class="artists">
     {% for member in members %}
     <a class="artist-card" href="{{url_for('studio.portfolio', member_uuid=member.uuid)}}" style="text-decoration:none;color:black;">
         <div class="artist-brief">
@@ -87,19 +95,16 @@
             </div>
         </div>
         <div class="artist-card-artworks">
-            <div class="artist-card-artworks-large">
+            <img class="card-artwork" src="/static/images/square-test.jpg" loading="lazy" width="100" height="100">
+            <img class="card-artwork" src="/static/images/square-test.jpg" loading="lazy" width="100" height="100">
+            <img class="card-artwork" src="/static/images/square-test.jpg" loading="lazy" width="100" height="100">
+            <img class="card-artwork" src="/static/images/square-test.jpg" loading="lazy" width="100" height="100">
+            <img class="card-artwork" src="/static/images/square-test.jpg" loading="lazy" width="100" height="100">
+            <img class="card-artwork" src="/static/images/square-test.jpg" loading="lazy" width="100" height="100">
+            <img class="card-artwork" src="/static/images/square-test.jpg" loading="lazy" width="100" height="100">
 
-            </div>
-            <div class="artist-card-artworks-small-container">
-                {% for i in range(6) %}
-                <div class="artist-card-artworks-small">
-
-                </div>
-                {% endfor %}
-            </div>
         </div>
     </a>
     {% endfor %}
-</div>
 
 {% endblock %}
