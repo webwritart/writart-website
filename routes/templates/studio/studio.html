@@ -1,8 +1,105 @@
 {% extends "base.html" %}
 {% block content %}
+<style>
+<!--a, a:link, a:active, a:visited, a:hover {-->
+<!--    text-decoration:none !important;-->
+<!--}-->
+<!--a p {-->
+<!--    text-decoration:none;-->
+<!--    }-->
+.artists {
+    width:100%;
+    display:flex;
+    justify-content:left;
+    overflow:auto;
+    flex-wrap:wrap;
+}
+
+.artist-card {
+    width:fit-content;
+    display:flex;
+    flex-direction:column;
+    padding:3% 4%;
+    border: solid 1px #cccccc;
+    box-shadow: 0 0 15px 3px rgb(0 0 0 /0.15);
+}
+.artist-brief {
+    display:flex;
+}
+.dp-container {
+    height: 100px;
+    width:100px;
+}
+.dp-container img {
+    object-fit:cover;
+    width:100px;
+    height:100px;
+    border-radius:50%;
+}
+.details {
+    display:flex;
+    flex-direction:column;
+    justify-content:end;
+    padding-left:4%;
+}
+
+.artist-name {
+    font-size:1.1rem;
+    font-family: "Roboto";
+    font-weight:500;
+    line-height:0.9rem;
+}
+.details-text {
+    line-height:0.1rem;
+    font-family:"Roboto";
+    font-size: 0.95rem;
+}
+.artist-card-artworks {
+    background:gray;
+    display:flex;
+    margin-top:5%;
+}
+.artist-card-artworks-large {
+    height: 200px;
+    width: 200px;
+    background: purple;
+    padding:1%;
+}
+.artist-card-artworks-small-container {
+    display:flex;
+}
+.artist-card-artworks-small {
+    height:100px;
+    width:100px;
+    background:blue;
+    margin:1%;
+}
+</style>
+<div class="artists">
     {% for member in members %}
-    <form action="{{url_for('studio.home')}}" method="post">
-        <button type="submit" name="portfolio-link" value="{{member.id}}">View Portfolio of {{member.name.split()[0]}}</button><br>
-    </form>
+    <a class="artist-card" href="{{url_for('studio.portfolio', member_uuid=member.uuid)}}" style="text-decoration:none;color:black;">
+        <div class="artist-brief">
+            <div class="dp-container"><img src="/static/files/users/{{member.id}}/profile/dp.jpg"></div>
+            <div class="details">
+                <p class="artist-name">{{member.name}}</p>
+                <p class="details-text">{{member.state}}</p>
+                <p class="details-text">{{member.profession}}</p>
+            </div>
+        </div>
+        <div class="artist-card-artworks">
+            <div class="artist-card-artworks-large">
+
+            </div>
+            <div class="artist-card-artworks-small-container">
+                {% for i in range(6) %}
+                <div class="artist-card-artworks-small">
+
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </a>
     {% endfor %}
+</div>
+
 {% endblock %}
