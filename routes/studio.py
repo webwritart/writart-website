@@ -36,8 +36,8 @@ def portfolio(member_id):
     member = db.session.query(Member).filter_by(id=member_id).one_or_none()
     first_name = member.name.split(' ')[0]
     artist_dict = {}
-    artworks_thumbnail_dir = f'static/files/users/{first_name}{member_id}/artworks/thumbnail/'
-    artworks_large_dir = f'static/files/users/{first_name}{member_id}/artworks/large/'
+    artworks_thumbnail_dir = f'static/files/users/{member_id}/artworks/thumbnail/'
+    artworks_large_dir = f'static/files/users/{member_id}/artworks/large/'
     index = 1
     for entry in os.scandir(artworks_thumbnail_dir):
         if entry.is_file():

@@ -76,13 +76,12 @@ a {
     left:50%;
     transform: translate(-50%, -50%);
     background: white;
+    z-index: 100;
 }
 #artwork-popup {
     display:none;
 }
-.artwork-popup {
-    z-index: 100;
-}
+
 #artwork-popup-overlay {
     display: none; /* Hidden by default */
     position: fixed; /* Cover the whole viewport */
