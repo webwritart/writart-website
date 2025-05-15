@@ -25,8 +25,8 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.environ.get('APP_SECRET')
 # app.secret_key = 'giehgeriogn94tgih*H()g94t9hg'
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///writart.db"
-# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URI')
+# app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///writart.db"
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URI')
 app.config["MAIL_SERVER"] = 'smtp.gmail.com'
 app.config["MAIL_PORT"] = 465
 app.config["MAIL_USERNAME"] = os.environ.get('MAIL_USERNAME')
@@ -86,5 +86,5 @@ if __name__ == '__main__':
     # scheduler.init_app(app)
     # scheduler.add_job(id='my_task', func=task, trigger='interval', seconds=5)
     # scheduler.start()
-    # app.run(host='0.0.0.0', port=5000)
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)
+    # app.run(debug=True)
