@@ -16,24 +16,25 @@ studio = Blueprint('studio', __name__, static_folder="static", template_folder='
 @studio.route('/', methods=['GET', 'POST'])
 def home():
     members = []
-    result = db.session.query(Member)
+    result = db.session.query(Member).all()
     for member in result:
         members.append(member)
         # print(member.sex)
 
     if request.method == 'POST':
 
-        member_id = request.form.get('portfolio-link')
-        member = db.session.query(Member).filter_by(id=member_id).one()
+        member_uuid = request.form.get('uuid')
+        member = db.session.query(Member).filter_by(uuid=member_uuid).one()
 
-        return redirect(url_for('studio.portfolio', member_id=member_id))
+        return redirect(url_for('studio.portfolio', member_uuid=member_uuid))
     return render_template('studio.html', members=members)
 
 
-@studio.route('/portfolio/<member_id>')
-def portfolio(member_id):
-    member_id = member_id
-    member = db.session.query(Member).filter_by(id=member_id).one_or_none()
+@studio.route('/portfolio/<member_uuid>')
+def portfolio(member_uuid):
+    member_uuid = member_uuid
+    member = db.session.query(Member).filter_by(uuid=member_uuid).one_or_none()
+    member_id = member.id
     first_name = member.name.split(' ')[0]
     artist_dict = {}
     artworks_thumbnail_dir = f'static/files/users/{member_id}/artworks/thumbnail/'

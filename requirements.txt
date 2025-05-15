@@ -44,3 +44,6 @@ urllib3==2.1.0
 Werkzeug==3.0.1
 wsproto==1.2.0
 yarg==0.1.9
+
+Flask-APScheduler~=1.13.1
+chardet~=5.2.0

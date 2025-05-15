@@ -4,10 +4,13 @@ __pycache__/
 *$py.class
 role.csv
 test.py
-
+static/writart.ico
 # C extensions
 *.so
-
+temp.py
+*.pyc
+*.pyo
+*$py.class
 # Distribution / packaging
 .Python
 env/
@@ -25,6 +28,8 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+static/files
+static/images
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

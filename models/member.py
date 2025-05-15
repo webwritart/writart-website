@@ -1,5 +1,5 @@
 # import table as table
-
+from sqlalchemy.sql.operators import truediv
 
 from extensions import db
 from flask_login import UserMixin
@@ -43,6 +43,7 @@ class Member(UserMixin, db.Model):
     artist_data = db.relationship('ArtistData', backref='member', uselist=False)
     project = db.relationship('Project', secondary=member_project, backref='clients')
     quizzes = db.relationship('QuizList', backref='player')
+    feedback_credits = db.relationship('FeedbackCredits', backref='student')
 
     def __repr__(self):
         return f'{self.name.split()[0]} -- {self.email}'
@@ -58,6 +59,18 @@ class QuizList(db.Model):
 
     def __repr__(self):
         return f'player_id: {self.player_id}, Correct: {self.correct}, Total: {self.total}'
+
+
+class FeedbackCredits(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    workshop_id = db.Column(db.Integer, unique=True)
+    category = db.Column(db.String(100))
+    credits = db.Column(db.Integer)
+    date = db.Column(db.String(15))
+    student_id = db.Column(db.Integer, db.ForeignKey('member.id'))
+
+    def __repr__(self):
+        return f'Member id: {self.student_id}, Category: {self.category}, Workshop id: {self.workshop_id}, Date: {self.date}'
 
 
 class Workshop(db.Model):
