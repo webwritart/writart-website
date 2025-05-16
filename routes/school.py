@@ -3,16 +3,18 @@ import pprint
 import random
 from flask import Blueprint, render_template, request, redirect, flash, send_file, session, url_for, jsonify
 from flask_login import current_user
+from werkzeug.utils import secure_filename
+
 from extensions import db, current_year
 from models.query import Query
 from models.tool import Tools
-from models.member import Workshop, Role, Member, QuizList
+from models.member import Workshop, Role, Member, QuizList, FeedbackCredits, FeedbackVideos
 from models.videos import Demo
 from models.quiz import Quiz
 from models.workshop_details import WorkshopDetails
 from operations.messenger import *
 import webbrowser
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 
 time_now = datetime.now()
 
@@ -508,6 +510,60 @@ def classroom():
                         f'Id: {current_user.id}---Time: {time_now}\n')
             return send_file(path_or_file=file_path, as_attachment=True, download_name=file_full_name)
 
+# -------------------------------------------- TEACHER'S FEEDBACK ------------------------------------------------- #
+
+        if request.form.get('submit-ws-feedback') == 'Submit Artworks':
+            ws_id = request.form.get('workshop_id')
+            total_ws_credits = db.session.query(FeedbackCredits).filter_by(student_id=current_user.id, workshop_id=ws_id).scalar().credits
+            if 'ws-feedback-files' not in request.files:
+                flash('No file part', 'error')
+                return redirect(request.url)
+            files = request.files.getlist('ws-feedback-files')
+            no_submitted_files = len(files)
+
+
+
+            folder = f'static/files/users/{current_user.id}/feedback/{ws_id}/'
+            if not os.path.exists(folder):
+                os.makedirs(folder)
+            for file in files:
+                if file.filename == '':
+                    flash('No selected file', 'error')
+                    return redirect(request.url)
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(folder, filename))
+
+            # deduct total credits ----------------------------------------------------------------------
+            remaining_credits = total_ws_credits - no_submitted_files
+            db.session.query(FeedbackCredits).filter_by(student_id=current_user.id, workshop_id=ws_id).scalar().credits = remaining_credits
+            db.session.commit()
+            flash('Successfully Submitted', 'success')
+            return redirect(url_for('school.classroom', _anchor='ws-feedback-form'))
+
+        if request.form.get('submit-topic-feedback') == 'Submit Artworks':
+            topic = request.form.get('topic')
+            total_topic_credits = db.session.query(FeedbackCredits).filter_by(student_id=current_user.id, category="topic").scalar().credits
+            if 'topic-feedback-files' not in request.files:
+                flash('No file part', 'error')
+                return redirect(request.url)
+            files = request.files.getlist('topic-feedback-files')
+            no_files = len(files)
+            folder = f'static/files/users/{current_user.id}/feedback/{topic}/'
+            if not os.path.exists(folder):
+                os.makedirs(folder)
+            for file in files:
+                if file.filename == '':
+                    flash('No selected file', 'error')
+                    return redirect(request.url)
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(folder, filename))
+            remaining_credits = total_topic_credits - no_files
+            db.session.query(FeedbackCredits).filter_by(student_id=current_user.id, category="topic").scalar().credits = remaining_credits
+            db.session.commit()
+            flash('Successfully Submitted', 'success')
+            return redirect(url_for('school.classroom', _anchor='topic-feedback-form'))
+
+
     result = db.session.query(Quiz).all()
     questions = {}
     category_list = []
@@ -557,16 +613,43 @@ def classroom():
         questions[q_id] = entry
     date_today = date.today()
 
-    # ----------------------------------------------- TEACHER'S FEEDBACK & CRITIQUE ------------------------------------------- #
+    enrolled_workshops = current_user.participated
+    ws_credit_dict = {}
+    total_ws_credits = 0
+    all_workshop_with_credit = []
 
-    
+    result = db.session.query(FeedbackCredits).filter_by(student_id=current_user.id, category='workshop').all()
+    for r in result:
+        if r.credits > 0:
+            all_workshop_with_credit.append(r.workshop_id)
+    for a in all_workshop_with_credit:
+        workshop_topic = db.session.query(Workshop).filter_by(id=a).scalar().topic
+        feedback_credit = db.session.query(FeedbackCredits).filter_by(workshop_id=a).scalar()
+        w_credits = feedback_credit.credits
+        total_ws_credits += int(w_credits)
+        credit_date = feedback_credit.date
+        date_object = datetime.strptime(credit_date, '%Y-%m-%d')
+        expiry_date_obj = date_object + timedelta(days=30)
+        expiry_date = expiry_date_obj.strftime('%Y-%m-%d')
+        entry = {
+            'title': workshop_topic,
+            'credits': w_credits,
+            'expiry': expiry_date
+        }
+        ws_credit_dict[a] = entry
+    no_ws_credit_dict = len(ws_credit_dict)
+    # total_ws_credits = ''
+
+    total_topic_credits = db.session.query(FeedbackCredits).filter_by(student_id=current_user.id, category='topic').scalar().credits
+
     return render_template('classroom.html', vid_id_list=qa_recorded_video_urls, qa_caption_list=qa_vid_caption_list
                            , qa_video_count=q_a_video_count, yt_vid_id_list=all_recorded_video_urls,
                            vid_caption_list=vid_caption_list, video_count=video_count,
                            logged_in=current_user.is_authenticated, admin=admin, all_demo_url_list=all_demo_url_list,
                            demo_caption_list=demo_caption_list, part_list=part_list, demo_count=demo_count,
                            title_list=title_list, ws_dict=ws_dict, ws_name_list=ws_name_list, ws_count=ws_count,
-                           questions=questions, category_list=category_list,role=role)
+                           questions=questions, category_list=category_list,role=role, total_topic_credits=total_topic_credits,
+                           ws_credit_dict=ws_credit_dict,no_ws_credit_dict=no_ws_credit_dict, total_ws_credits=total_ws_credits)
 
 
 @school.route('/save-quiz-data', methods=['POST'])
