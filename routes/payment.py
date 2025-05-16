@@ -21,8 +21,8 @@ load_dotenv()
 
 payment = Blueprint('payment', __name__, static_folder='static', template_folder='templates/payment')
 
-KEY_ID = os.environ.get('RAZORPAY_KEY_ID_LIVE')
-KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET_LIVE')
+KEY_ID = os.environ.get('RAZORPAY_KEY_ID_TEST')
+KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET_TEST')
 
 client = razorpay.Client(auth=(KEY_ID, KEY_SECRET))
 
@@ -192,6 +192,24 @@ def verify():
             f.close()
         except Exception as e:
             pass
+
+        try:
+            current_workshop_id = current_workshop.id
+            category = 'workshop'
+            credits = 5
+            date = today_date
+            student_id = current_user.id
+            entry = FeedbackCredits(
+                workshop_id=current_workshop_id,
+                category=category,
+                credits=credits,
+                date=date,
+                student_id=student_id
+            )
+            db.session.add(entry)
+            db.session.commit()
+        except Exception as e:
+            print(e)
         return redirect(url_for('payment.ws_registration_success'))
     # except Exception as e:
     #     send_email_support('Payment capture failed', ['writartstudios@gmail.com', 'shwetabhartist@gmail.com'], f'{amount} - {current_user.name}\nRazorpay_payment_id: {response_data["razorpay_payment_id"]}','', '')

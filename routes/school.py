@@ -167,16 +167,18 @@ def home():
             cover_path = f"../static/images/workshops/{ws}/cover.jpg"
 
             # ------------------------------------------ INSTRUCTOR ARTWORKS ----------------------------------------- #
-
-            member_id = 1
-            teacher = db.session.query(Member).filter_by(id=member_id).one_or_none()
-            first_name = teacher.name.split(' ')[0]
             artworks = []
-            artworks_dir = f'static/files/users/{first_name}{member_id}/artworks/thumbnail/'
-            for entry in os.scandir(artworks_dir):
-                if entry.is_file():
-                    artworks.append(f'/{artworks_dir}{entry.name}')
-            random.shuffle(artworks)
+            try:
+                member_id = 1
+                teacher = db.session.query(Member).filter_by(id=member_id).one_or_none()
+                first_name = teacher.name.split(' ')[0]
+                artworks_dir = f'static/files/users/{first_name}{member_id}/artworks/thumbnail/'
+                for entry in os.scandir(artworks_dir):
+                    if entry.is_file():
+                        artworks.append(f'/{artworks_dir}{entry.name}')
+                random.shuffle(artworks)
+            except Exception as e:
+                print(e)
 
             return render_template('workshops_second.html', category=category, topic=topic, sessions=sessions,
                                    brief=brief,
@@ -195,16 +197,20 @@ def home():
     cover_path = f"../static/images/workshops/{current_workshop_name}/cover.jpg"
 
     # ------------------------------------------------ INSTRUCTOR ARTWORKS ----------------------------------------- #
-
-    member_id = 1
-    teacher = db.session.query(Member).filter_by(id=member_id).one_or_none()
-    first_name = teacher.name.split(' ')[0]
     artworks = []
-    artworks_dir = f'static/files/users/{first_name}{member_id}/artworks/thumbnail/'
-    for entry in os.scandir(artworks_dir):
-        if entry.is_file():
-            artworks.append(f'/{artworks_dir}{entry.name}')
-    random.shuffle(artworks)
+
+    try:
+        member_id = 1
+        teacher = db.session.query(Member).filter_by(id=member_id).one_or_none()
+        first_name = teacher.name.split(' ')[0]
+        artworks_dir = f'static/files/users/{first_name}{member_id}/artworks/thumbnail/'
+        for entry in os.scandir(artworks_dir):
+            if entry.is_file():
+                artworks.append(f'/{artworks_dir}{entry.name}')
+        random.shuffle(artworks)
+    except Exception as e:
+        print(e)
+
     return render_template('workshops_main.html', category=category, topic=topic, sessions=sessions, brief=brief,
                            sub_list=sub_list, description=description, req_list=req_list, result_list=result_list,
                            logged_in=current_user.is_authenticated, upcoming_workshop_list=upcoming_workshop_list,
@@ -550,6 +556,10 @@ def classroom():
         }
         questions[q_id] = entry
     date_today = date.today()
+
+    # ----------------------------------------------- TEACHER'S FEEDBACK & CRITIQUE ------------------------------------------- #
+
+    
     return render_template('classroom.html', vid_id_list=qa_recorded_video_urls, qa_caption_list=qa_vid_caption_list
                            , qa_video_count=q_a_video_count, yt_vid_id_list=all_recorded_video_urls,
                            vid_caption_list=vid_caption_list, video_count=video_count,

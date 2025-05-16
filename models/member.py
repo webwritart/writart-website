@@ -73,6 +73,17 @@ class FeedbackCredits(db.Model):
         return f'Member id: {self.student_id}, Category: {self.category}, Workshop id: {self.workshop_id}, Date: {self.date}'
 
 
+class FeedbackVideos(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    yt_vid_id = db.Column(db.String(100))
+    title = db.Column(db.String(200))
+    date = db.Column(db.String(15))
+    workshop_id = db.Column(db.String(20))
+
+    def __repr__(self):
+        return f'Title: {self.yt_vid_id}, Date: {self.date}'
+
+
 class Workshop(db.Model):
     __tablename__ = 'workshop'
 

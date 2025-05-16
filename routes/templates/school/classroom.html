@@ -202,6 +202,55 @@
         </div>
     </div>
 {% endif %}
+<div class="wrapper">
+    <div class="feedback-container">
+        <h3 style="width:100%;color:white;opacity:0.5;">TEACHER'S FEEDBACK AND CRITIQUE</h3>
+        <div class="feedback_inner">
+            <div class="ws-feedback">
+                <h3> WORKSHOP-WISE FEEDBACKS</h3>
+                <p> Feedback credits can be used to upload artworks and get feedback and guidance by the teacher. One credit for one artwork submission. You'll get access to a video of the feedback.
+                    In this section you see all the feedback credits related to workshops. When you enroll to a workshop you get 5 free feedback credits.<span onclick="" style="color:blue;"> Learn more</span></p>
+                <p>Available Feedback credits: {{ ws_credits }}</p>
+                <form style="width:100%;" action="{{ url_for('school.classroom') }}" method="post" enctype="multipart/form-data">
+                    <select>
+                        <option value="default">Choose a Workshop</option>
+<!--                        <option value="{{ws_id}}">{{ws_title}}</option>-->
+                        <option value="1">Sketching Fundamentals</option>
+                    </select>
+                    <label>(Credits: {{selected_ws_credits}}| Expiring on: {{expiry_data}})</label>
+                    <input class="default-input" type="file" name="file" id="ws-feedback-files" multiple>
+                    <input type="submit" class="button" style="width:100%;" value="Submit Artworks" name="submit-ws-artworks-feedback">
+                </form>
+
+                <p>Purchase Credits</p>
+                <form style="width:100%;display:flex;justify-content:center;">
+                    <input class="default-input" style="width:100%;" type="number" name="credits">
+                    <input style="width:100%;" class="button" type="submit" value="Pay ₹50" name="buy-credits">
+                </form>
+            </div>
+            <div class="topic-feedback">
+
+                <h3>TOPIC-WISE FEEDBACKS</h3>
+                <p> Feedback credits can be used to upload artworks and get feedback and guidance by the teacher. One credit for one artwork submission. You'll get access to a video of the feedback.
+                    In this section you see all of your purchased feedbacks which can be used to get artwork feedback on any topic. Topic-wise feedbacks never expire.<span onclick="" style="color:blue;"> Learn more</span></p>
+                <P>Available Feedback credits: {{ topic_credits }} | Never Expires</P>
+                <form style="width:100%;" action="{{ url_for('school.classroom') }}" method="post" enctype="multipart/form-data">
+                    <select style="margin-bottom:1%;">
+                        <option value="default">Choose a Topic</option>
+                        <option value="1">Light and shadow (value/tone)</option>
+                    </select>
+                    <input class="default-input" type="file" name="file" id="topic-feedback-files" multiple>
+                    <input type="submit" class="button" style="width:100%" value="submit Artworks" name="submit-topic-artworks-feedback">
+                </form>
+                <p>Purchase Credits</p>
+                <form style="width:100%;display:flex;justify-content:center;">
+                    <input class="default-input" style="width:100%;" type="number" name="credits">
+                    <input style="width:100%;" class="button" type="submit" value="Pay ₹50" name="buy-credits">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="../static/lite-yt-embed.js"></script>
 <script src="../static/js/school.js"></script>

@@ -1054,6 +1054,34 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 .upcoming-ws-btn {
     font-size:0.9rem;
 }
+.feedback_inner {
+    background:#FFC6C6;
+    width: 100%;
+    display:flex;
+    padding:1%;
+}
+.ws-feedback, .topic-feedback {
+    display:flex;
+    flex-direction: column;
+    align-items:center;
+    justify-content:center;
+    width:50%;
+    border:solid 0.2rem #644A07;
+    padding:2%;
+    margin: 1%;
+}
+.default-input {
+    background:rgba(0, 0, 0, 0.3);
+    color: white;
+}
+.feedback-container {
+    width: 80%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content:center;
+    align-items:center;
+}
 
 @media only screen and (min-width : 1900px) {
     #video-wrapper-container .video {
@@ -1422,6 +1450,17 @@ and (max-width : 992px) {
 
 @media only screen
 and (max-width : 768px) {
+.feedback-container {
+    width: 100%;
+}
+.feedback_inner {
+    flex-direction: column;
+    align-items:center;
+    width:100%;
+}
+.ws-feedback, .topic-feedback {
+    width:100%;
+}
 .video-wrapper-container h3, .width-80-container h3 {
     font-size: 1.1rem;
 }
@@ -2024,7 +2063,6 @@ lite-youtube.lyt-activated > .lty-playbtn {
     display: flex;
     justify-content: center;
     width: 100%;
-
 }
 
 #gallery {
