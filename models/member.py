@@ -63,11 +63,12 @@ class QuizList(db.Model):
 
 class FeedbackCredits(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    workshop_id = db.Column(db.Integer, unique=True)
+    workshop_id = db.Column(db.Integer)
     category = db.Column(db.String(100))
     credits = db.Column(db.Integer)
     date = db.Column(db.String(15))
     student_id = db.Column(db.Integer, db.ForeignKey('member.id'))
+    free = db.Column(db.Boolean, unique=False, default=True)
 
     def __repr__(self):
         return f'Member id: {self.student_id}, Category: {self.category}, Workshop id: {self.workshop_id}, Date: {self.date}'

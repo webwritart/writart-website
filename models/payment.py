@@ -11,6 +11,8 @@ class Payment(db.Model):
     state = db.Column(db.String(100))
     amount = db.Column(db.String(50))
     message = db.Column(db.String(500))
+    category = db.Column(db.String(100))
+    topic = db.Column(db.String(150))
     ws_name = db.Column(db.String(100))
     date = db.Column(db.String(50))
     order_id = db.Column(db.String(100))
@@ -21,4 +23,4 @@ class Payment(db.Model):
 
 
     def __repr__(self):
-        return f'{self.name}, {self.amount}, {self.ws_name}'
+        return f'{self.name}, {self.amount}, {self.ws_name}, category: {self.category}'

@@ -1,4 +1,3 @@
-import csv
 import pprint
 import hmac
 import hashlib
@@ -73,6 +72,26 @@ def checkout():
     else:
         flash("You have already enrolled to this program!", "error")
         return redirect(url_for('payment.home'))
+
+
+@login_required
+@payment.route('/feedback-credit-checkout', methods=['POST'])
+def feedback_credit_checkout():
+    if request.form.get('submit') == "Purchase Workshop Credits":
+        name = current_user.name
+        email = current_user.email
+        phone = current_user.phone
+        ws_id = request.form.get('feedback-ws')
+        credits_quantity = int(request.form.get('credits'))
+        amount = int(f'{credits_quantity * 25}00')
+        credit_data = {"amount": amount, "currency": "INR"}
+        session['ws_credit_data'] = client.order.create(data=credit_data)
+        session['ws_id'] = ws_id
+        order_id = session['ws_credit_data']['id']
+        return render_template('feedback_credit_checkout.html', order_id=order_id, name=name, email=email,
+                               phone=phone, key_id=KEY_ID, ws_id=ws_id, logged_in=current_user.is_authenticated)
+    else:
+        return redirect(url_for('school.classroom'))
 
 
 @login_required
@@ -216,6 +235,69 @@ def verify():
 
     # return render_template('order.html', logged_in=current_user.is_authenticated)
 
+
+@payment.route('/verify-ws-credit-checkout', methods=['POST'])
+def verify_ws_credit_checkout():
+    resp = request.get_data()
+    response = resp.decode('utf-8').split('&')
+    amount = session['ws_credit_data']['amount']
+    credits_quantity = amount/2500
+    amount_paid = session['ws_credit_data']['amount_paid']
+    order_id = session['ws_credit_data']['id']
+    month = str(today_date).split('-')[1]
+    year = str(today_date).split('-')[0]
+    inv_n = db.session.query(Tools).filter_by(keyword='last invoice').one().data
+    ws_id = session['ws_id']
+    workshop_name = db.session.query(Workshop).filter_by(id=ws_id).scalar().topic
+
+    if len(inv_n) == 1:
+        inv_no = f"00{inv_n}"
+    elif len(inv_n) == 2:
+        inv_no = f"0{inv_n}"
+    else:
+        inv_no = inv_n
+    invoice = f"INV-{year}-{month}-{inv_no}"
+    entry = Payment(
+        name=current_user.name,
+        email=current_user.email,
+        phone=current_user.phone,
+        state=current_user.state,
+        amount=str(amount)[:-2],
+        message='',
+        order_id=order_id,
+        invoice_no=invoice,
+        payment_id=response[0].split('=')[1],
+        date=today_date,
+        category='ws_credit',
+        topic='',
+        ws_name=workshop_name
+    )
+    db.session.add(entry)
+    db.session.commit()
+    try:
+    ws_credits = db.session.query(FeedbackCredits).filter_by(category='workshop').all()
+    for a in ws_credits:
+        if a.workshop_id == ws_id and a.free == False:
+            print('data row found!')
+            existing_credits = int(a.credits)
+            new_credits = int(credits_quantity) + existing_credits
+            db.session.query(FeedbackCredits).filter_by(workshop_id=ws_id, free=False).credits = new_credits
+            db.session.commit()
+        else:
+            entry2 = FeedbackCredits(
+                workshop_id=int(ws_id),
+                category='workshop',
+                credits=credits_quantity,
+                date=today_date,
+                student_id=current_user.id,
+                free=False
+            )
+            db.session.add(entry2)
+            db.session.commit()
+
+    flash('Workshop feedback Credits purchased Successfully!', 'success')
+
+    return redirect(url_for('school.classroom', _anchor='ws-feedback-form'))
 
 @payment.route('/ws_registration_success')
 def ws_registration_success():

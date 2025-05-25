@@ -381,6 +381,7 @@ def upcoming_workshop():
 
 @school.route('/classroom', methods=['GET', 'POST'])
 def classroom():
+    all_enrolled_ws_dict = {}
     role = ''
     session['url'] = url_for('school.classroom')
     admin = db.session.query(Role).filter_by(name='admin').one_or_none()
@@ -563,6 +564,19 @@ def classroom():
             flash('Successfully Submitted', 'success')
             return redirect(url_for('school.classroom', _anchor='topic-feedback-form'))
 
+    try:
+        enrolled_ws = current_user.participated
+        for w in enrolled_ws:
+            ws_id = w.id
+            ws_title = w.topic
+            entry = {
+                'ws_id': ws_id,
+                'ws_title': ws_title
+            }
+            all_enrolled_ws_dict[ws_id] = entry
+    except Exception as e:
+        print(e)
+
 
     result = db.session.query(Quiz).all()
     questions = {}
@@ -613,34 +627,37 @@ def classroom():
         questions[q_id] = entry
     date_today = date.today()
 
-    enrolled_workshops = current_user.participated
     ws_credit_dict = {}
     total_ws_credits = 0
     all_workshop_with_credit = []
+    total_topic_credits = 0
+    try:
+        result = db.session.query(FeedbackCredits).filter_by(student_id=current_user.id, category='workshop').all()
+        total_topic_credits = db.session.query(FeedbackCredits).filter_by(student_id=current_user.id,
+                                                                          category='topic').scalar().credits
 
-    result = db.session.query(FeedbackCredits).filter_by(student_id=current_user.id, category='workshop').all()
-    for r in result:
-        if r.credits > 0:
-            all_workshop_with_credit.append(r.workshop_id)
-    for a in all_workshop_with_credit:
-        workshop_topic = db.session.query(Workshop).filter_by(id=a).scalar().topic
-        feedback_credit = db.session.query(FeedbackCredits).filter_by(workshop_id=a).scalar()
-        w_credits = feedback_credit.credits
-        total_ws_credits += int(w_credits)
-        credit_date = feedback_credit.date
-        date_object = datetime.strptime(credit_date, '%Y-%m-%d')
-        expiry_date_obj = date_object + timedelta(days=30)
-        expiry_date = expiry_date_obj.strftime('%Y-%m-%d')
-        entry = {
-            'title': workshop_topic,
-            'credits': w_credits,
-            'expiry': expiry_date
-        }
-        ws_credit_dict[a] = entry
+        for r in result:
+            if r.credits > 0:
+                all_workshop_with_credit.append(r.workshop_id)
+        for a in all_workshop_with_credit:
+            workshop_topic = db.session.query(Workshop).filter_by(id=a).scalar().topic
+            feedback_credit = db.session.query(FeedbackCredits).filter_by(workshop_id=a).scalar()
+            w_credits = feedback_credit.credits
+            total_ws_credits += int(w_credits)
+            credit_date = feedback_credit.date
+            date_object = datetime.strptime(credit_date, '%Y-%m-%d')
+            expiry_date_obj = date_object + timedelta(days=30)
+            expiry_date = expiry_date_obj.strftime('%Y-%m-%d')
+            entry = {
+                'title': workshop_topic,
+                'credits': w_credits,
+                'expiry': expiry_date
+            }
+            ws_credit_dict[a] = entry
+    except Exception as e:
+        print(e)
     no_ws_credit_dict = len(ws_credit_dict)
-    # total_ws_credits = ''
 
-    total_topic_credits = db.session.query(FeedbackCredits).filter_by(student_id=current_user.id, category='topic').scalar().credits
 
     return render_template('classroom.html', vid_id_list=qa_recorded_video_urls, qa_caption_list=qa_vid_caption_list
                            , qa_video_count=q_a_video_count, yt_vid_id_list=all_recorded_video_urls,
@@ -649,7 +666,8 @@ def classroom():
                            demo_caption_list=demo_caption_list, part_list=part_list, demo_count=demo_count,
                            title_list=title_list, ws_dict=ws_dict, ws_name_list=ws_name_list, ws_count=ws_count,
                            questions=questions, category_list=category_list,role=role, total_topic_credits=total_topic_credits,
-                           ws_credit_dict=ws_credit_dict,no_ws_credit_dict=no_ws_credit_dict, total_ws_credits=total_ws_credits)
+                           ws_credit_dict=ws_credit_dict,no_ws_credit_dict=no_ws_credit_dict, total_ws_credits=total_ws_credits,
+                           all_enrolled_ws_dict=all_enrolled_ws_dict)
 
 
 @school.route('/save-quiz-data', methods=['POST'])

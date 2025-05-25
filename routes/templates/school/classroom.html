@@ -79,10 +79,13 @@
         <p id="result" style="font-weight:600;"></p>
         <div><a type="button" id="next" onclick="next()" class="button" style="text-decoration:none;width:20%;text-align:center;padding:1%;color:white;">NEXT</a></div>
         <p id="test"></p>
-        <p id="log-in-alert" style="color:red;">Please Login to save save quiz result.</p>
+        <p id="log-in-alert" style="color:red;">Please Log in to save quiz result.</p>
         <div><a class="button" id="log-in-btn" style="text-decoration:none;text-align:center;color:white;background:red;padding:0.5% 0%;" href="{{url_for('account.login')}}">Log In</a></div>
     </form>
 </div>
+
+<!----------------------------------------------------- ART DEMONSTRATIONS -------------------------------------------------->
+
 <div class="video-wrapper">
     <div class="video-wrapper-container">
         <h3>ART DEMONSTRATIONS</h3>
@@ -124,7 +127,7 @@
     </div>
 </div>
 
-<hr/>
+<!----------------------------------------------------- WORKSHOPS ---------------------------------------------------------->
 
 <div class="video-wrapper" style="background:#594100; padding: 2% 0%;">
     <div class="video-wrapper-container" >
@@ -205,7 +208,7 @@
 
 <!------------------------------------------------------- TEACHER'S FEEDBACK -------------------------------------------------->
 
-
+{% if logged_in %}
 <div class="wrapper">
     <div class="feedback-container">
         <h3 style="width:100%;color:white;opacity:0.5;">TEACHER'S FEEDBACK AND CRITIQUE</h3>
@@ -219,7 +222,7 @@
                     In this section you see all the feedback credits related to workshops. When you enroll to a workshop you get 5 free feedback credits.
                         <span onclick="" style="color:green;"> Watch explaination video.</span></span>
                     <span id="read-less-ws-btn" onclick="readLessWs()" style="color:blue;cursor:pointer;">Read less</span></p>
-                <p>All workshops feedback credits: <span>{{ total_ws_credits }}</span></p>
+                <p>All workshops feedback credits: <span style="color:green;">{{ total_ws_credits }}</span></p>
                 {% if no_ws_credit_dict > 0 %}
                 <form style="width:100%;" action="{{ url_for('school.classroom') }}" id="ws-feedback-form" method="post" enctype="multipart/form-data">
                     <select onchange="wsFunc()" name="workshop_id" id="workshop-id" style="margin-bottom:1%;" required>
@@ -245,10 +248,18 @@
                 </form>
 
                 <button class="button" style="color:white;background:#5f9141;" onclick="purchaseWsCredits()">Purchase Workshop Credits</button>
-                <form class="purchase-credits" id="purchase-credits-ws">
-                    <input class="default-input" style="width:100%;" type="number" name="credits">
-                    <input style="width:100%;" class="button" type="submit" value="Pay ₹50" name="buy-credits">
+                <form class="purchase-credits" id="purchase-credits-ws" action="{{ url_for('payment.feedback_credit_checkout') }}" method="post">
+                    <select id="ws-feedback-purchase" style="width:100%; padding: 0% 0%;height:80%;" name="feedback-ws" required>
+                        <option value="default">Choose Workshop</option>
+                        {% for w in all_enrolled_ws_dict %}
+                        <option value="{{ all_enrolled_ws_dict[w]['ws_id'] }}">{{ all_enrolled_ws_dict[w]['ws_title'] }}</option>
+                        {% endfor %}
+                    </select>
+                    <input class="default-input" id="ws-credit-quantity" style="width:100%;" type="number" name="credits" placeholder="Number of Feedback Credits" required>
+                    <p style="color:green;font-weight:600;" id="ws-credit-amount">Total Amount: ₹ 0/-</p>
+                    <input style="width:100%;" class="button" type="submit" value="Purchase Workshop Credits" name="submit">
                 </form>
+                <p id="ws-credit-purchase-error" style="color:red;">Please choose the workshop first!</p>
                 <p id="test-js"></p>
             </div>
             <div class="topic-feedback">
@@ -286,6 +297,7 @@
         </div>
     </div>
 </div>
+{% endif %}
 
 <script src="../static/lite-yt-embed.js"></script>
 <script src="../static/js/school.js"></script>
@@ -312,6 +324,7 @@ function showFiles(ws_name) {
 
 const wsFeedbackForm = document.getElementById('ws-feedback-form');
 const topicFeedbackForm = document.getElementById('topic-feedback-form');
+const wsCreditPurchaseForm = document.getElementById('purchase-credits-ws');
 var wsId = '';
 var wsCreditDict = {{ ws_credit_dict | tojson }};
 var totalWsCredits = {{ total_ws_credits | tojson }};
@@ -327,6 +340,16 @@ function wsFunc() {
     }
 }
 
+const creditQuantity = document.getElementById('ws-credit-quantity');
+creditQuantity.addEventListener('input', function(event) {
+    const inputValue = event.target.value;
+    var wsCreditAmount = document.getElementById('ws-credit-amount');
+    var amount = inputValue * 25;
+    wsCreditAmount.innerHTML = 'Total amount: ₹ ' + amount + '/-';
+    wsCreditAmount.style.display = 'block';
+});
+
+
 wsFeedbackForm.addEventListener('submit', function(event) {
     if (document.getElementById('workshop-id').value == 'default') {
         event.preventDefault();
@@ -341,6 +364,14 @@ wsFeedbackForm.addEventListener('submit', function(event) {
     }
     totalWsCredits -= numberOfFiles;
 });
+
+wsCreditPurchaseForm.addEventListener('submit', function(event) {
+    if (document.getElementById('ws-feedback-purchase').value == 'default') {
+        event.preventDefault();
+        document.getElementById('ws-credit-purchase-error').style.display = 'block';
+    }
+});
+
 topicFeedbackForm.addEventListener('submit', function(event) {
     if (document.getElementById('topic').value == 'default') {
         event.preventDefault();
@@ -351,6 +382,7 @@ function purchaseWsCredits() {
     const purchaseDiv = document.getElementById('purchase-credits-ws');
     if (purchaseDiv.style.display == 'flex') {
         purchaseDiv.style.display = 'none';
+        document.getElementById('ws-credit-amount').value = '';
         } else {
         purchaseDiv.style.display = 'flex';
     }

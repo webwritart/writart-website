@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
+
 <div style="display:flex;justify-content:center;align-items:center;width:100%;height:80vh;">
-    <button style="width:40%;" id="rzp-button1" class="btn btn-primary btn-block btn-large">Pay & Register</button>
+    <button style="width:40%;padding:0.5% 0%; color:white;" id="rzp-button1" class="button">Checkout (Workshop Credits)</button>
 </div>
+
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
@@ -11,18 +13,17 @@ var options = {
 <!--    "amount": "50000", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise-->
     "currency": "INR",
     "name": "WRITART GURUKUL",
-    "description": "{{ ws_name }}",
+    "description": "{{ ws_id }}",
     "image": "https://example.com/your_logo",
     "order_id": "{{order_id}}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
-    "callback_url": "http://127.0.0.1:5000/payment/verify",
+    "callback_url": "http://127.0.0.1:5000/payment/verify-ws-credit-checkout",
     "prefill": {
         "name": "{{name}}",
         "email": "{{email}}",
         "contact": "{{phone}}"
     },
     "notes": {
-        "state": "{{ state }}",
-        "message": "{{ message }}"
+        "ws_id": "{{ws_id}}"
     },
     "theme": {
         "color": "#3399cc"
