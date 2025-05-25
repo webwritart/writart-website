@@ -5,6 +5,7 @@ from extensions import mail, login_manager, db
 from models.member import Member, member_role, member_workshop, Workshop, Role, QuizList, FeedbackCredits, FeedbackVideos
 from models.videos import Demo
 from models.quiz import Quiz
+from models.b2b import VidEditProject
 from routes.account import account
 from routes.main import main
 from routes.manager import manager
@@ -15,6 +16,7 @@ from routes.studio import studio
 from routes.animation_admin import animation_admin
 from routes.client_section import client_section
 from routes.api import api_page
+from routes.b2b import b2b
 # from operations.artist_tools import delete_watermarked_images
 from models.artist_data import ArtistData
 # from flask_apscheduler import APScheduler
@@ -47,6 +49,7 @@ app.register_blueprint(studio, url_prefix='/studio')
 app.register_blueprint(client_section, url_prefix='/client_section')
 app.register_blueprint(animation_admin, url_prefix='/animation_admin')
 app.register_blueprint(api_page, url_prefix='/api')
+app.register_blueprint(b2b, url_prefix='/b2b')
 
 with app.app_context():
     db.create_all()

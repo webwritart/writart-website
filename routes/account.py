@@ -270,6 +270,7 @@ def register():
                 db.session.commit()
 
             login_user(new_user)
+            session['logged_in'] = True
 
             # if artist_account == 'yes':
             #     artist = db.session.query(Role).filter_by(name='artist').one()
@@ -386,6 +387,7 @@ def login():
             flash('Password incorrect, please try again.', category='error')
         else:
             login_user(user)
+            session['logged_in'] = True
             if 'url' in session:
                 return redirect(session['url'])
             if db.session.query(Role).filter(Role.name == 'admin').scalar() in current_user.role:
@@ -503,6 +505,7 @@ def set_new_password():
 @login_required
 def logout():
     logout_user()
+    session['logged_in'] = False
     if 'url' in session:
         return redirect(session['url'])
     return redirect(url_for('main.home'))
