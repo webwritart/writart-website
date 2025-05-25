@@ -117,4 +117,4 @@ def home():
             else:
                 return render_template('user_not_allowed.html')
     else:
-        return render_template('user_not_allowed.html')
+        return redirect(url_for('account.login'))
