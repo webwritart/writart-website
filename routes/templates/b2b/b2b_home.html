@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+    ::placeholder {
+        color:black;
+    }
+    .video-edit-form {
+        padding:2% 5%;
+        background:#eedfd9;
+        margin: 2% 20%;
+    }
+    .video-edit-form input {
+        background:#FFDBDB;
+    }
+    .video-dit-form input {
+        background:#FFDBDB;
+    }
+    #reference {
+        display:flex;
+        width:100%;
+        padding:2%;
+    }
+    #time-stamp {
+        display:flex;
+        flex-direction:column;
+        width:100%;
+        align-items:center;
+        padding:2% 2%;
+        background:#f9f4f3;
+        margin:0% 2%;
+    }
+    #time-stamp p {
+        line-height:0rem;
+        color:#d08467;
+        font-size: 1rem;
+    }
+    #time-fields {
+        display:flex;
+        flex-direction:column:
+        width:100%;
+    }
+    #time-fields label {
+        color:rgba(0,0,0,0.5);
+    }
+    #start-time, #end-time {
+        display:flex;
+        flex-direction:column;
+        width:100%;
+        text-align:center;
+        padding:2%;
+    }
+    .vid-form-submit {
+        color:white;
+        width:100%;
+        padding:1% 0%;
+    }
+    #project-error {
+        color: red;
+        display:none;
+    }
+    h3 {
+        font-size: 1.6rem;
+    }
+    .video-edit-form form label {
+        font-size:1rem;
+    }
+    #project {
+        font-size:1rem;
+    }
+
+    @media only screen
+    and (min-width : 992px) {
+        .video-edit-form {
+                margin: 2% 20%;
+            }
+
+    }
+
+    @media only screen
+    and (max-width : 992px) {
+        .video-edit-form {
+                margin: 2% 10%;
+            }
+        h3 {
+            font-size: 1.3rem;
+        }
+        .video-edit-form form label {
+            font-size:0.9rem;
+        }
+        #project {
+            font-size:0.9rem;
+        }
+        #time-stamp p {
+            font-size: 0.9rem;
+        }
+    }
+
+    @media only screen
+    and (max-width : 600px) {
+        .video-edit-form {
+                margin: 2% 5%;
+            }
+        #reference {
+            flex-direction:column;
+            justify-content:center;
+        }
+        #time-stamp {
+            padding: 0%;
+            margin: 0%;
+        }
+        h3 {
+            font-size: 1rem;
+        }
+        .video-edit-form form label {
+            font-size:0.8rem;
+        }
+        #project {
+            font-size:0.8rem;
+        }
+        #time-stamp p {
+            font-size: 0.8rem;
+        }
+        #time-stamp {
+            padding: 5% 2%;
+        }
+    }
+</style>
+
+
+<div class="video-edit-form">
+    <form method="post" action="{{url_for('b2b.home')}}" enctype="multipart/form-data">
+     {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+              <div style="background:#FFC6C6;width:100%; text-align:center;padding-bottom:2%;" class="{{category}}"><b>{{ message }}</b></div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+        <h3 style="text-align:center;">UPLOAD PROJECT FILES</h3>
+        <label>Project Name</label>
+        <input type="text" name="project_name" maxlength="100" placeholder="100 characters maximum" required>
+        <label>Raw video Files</label>
+        <input type="file" name="raw_video_files" multiple required>
+        <label>Score and Voice-Over files</label>
+        <input type="file" name="score_vo_files" multiple required>
+        <button type="submit" class="button vid-form-submit" name="submit-video-data" value="vid-data">SUBMIT VIDEO DATA</button>
+    </form>
+
+</div>
+<div class="video-edit-form">
+    <form method="post" action="{{url_for('b2b.home')}}" enctype="multipart/form-data" id="reference-form">
+
+    <h3 style="text-align:center;padding-bottom:2%;">UPLOAD REFERENCE FILES</h3>
+    <div style="padding:0% 25%;">
+        <select style="width:100%;text-align:center;" name="project" id="project">
+            <option value="default">Choose Project</option>
+            {% for p in project_dict %}
+            <option value="{{project_dict[p]['name']}}">{{project_dict[p]['name']}}</option>
+            {% endfor %}
+        </select>
+        <p id="project-error">Please choose Project</p>
+    </div>
+        <div id="reference">
+            <div>
+                <label>Reference files</label>
+                <input type="file" name="reference_files" multiple required>
+            </div>
+            <div id="time-stamp">
+                <label>TIME STAMP</label>
+                <div id="time-fields">
+                    <div id="start-time">
+                        <p>Start Time</p>
+                        <div style="display:flex;">
+                            <div>
+                                <label>Minute</label>
+                                <input type="number" name="start-min" min="0"  max="59" placeholder="00" required>
+                            </div>
+                            <div>
+                                <label>Second</label>
+                                <input type="number" name="start-sec" min="0" max="59" placeholder="00" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="end-time">
+                        <p>End Time</p>
+                        <div style="display:flex;">
+                            <div>
+                                <label>Minute</label>
+                                <input type="number" name="end-min" min="0" max="59" placeholder="00" required>
+                            </div>
+                            <div>
+                                <label>Second</label>
+                                <input type="number" name="end-sec" min="0" max="59" placeholder="00" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="button vid-form-submit" name="submit-reference" value="submit-reference">SUBMIT REFERENCE</button>
+    </form>
+</div>
+
+<script>
+const reference = document.getElementById('reference-form');
+
+reference.addEventListener('submit', function(event) {
+    if (document.getElementById('project').value == 'default') {
+        event.preventDefault();
+        document.getElementById('project-error').style.display = 'block';
+        }
+});
+</script>
+{% endblock %}
