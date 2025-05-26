@@ -59,7 +59,7 @@ def home():
                         )
                         db.session.add(entry)
                         db.session.commit()
-                        body = f'New video edit project submitted, Chief!\n\nSubmitted by: {current_user.name}\n\n'
+                        body = f'New video edit project submitted, Chief!\n\nProject Name: {project_name}\nSubmitted by: {current_user.name}\n\n'
                         send_email_studio('VIDEO EDIT PROJECT SUBMISSION', ['shwetabhartist@gmail.com', 'writartstudios@gmail.com'],
                                           body, '', '')
                         flash('Successfully Submitted!', 'success')
