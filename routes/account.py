@@ -163,7 +163,7 @@ def home():
                                client=client,
                                animation_admin=animation_admin, roles=roles, current_year=current_year)
     else:
-        render_template('my_account.html', current_year=current_year)
+        return render_template('my_account.html', current_year=current_year)
 
 
 @account.route('/update_details', methods=['GET', 'POST'])

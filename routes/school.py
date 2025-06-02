@@ -613,7 +613,6 @@ def classroom():
         questions[q_id] = entry
     date_today = date.today()
 
-    enrolled_workshops = current_user.participated
     ws_credit_dict = {}
     total_ws_credits = 0
     all_workshop_with_credit = []
