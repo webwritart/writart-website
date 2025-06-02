@@ -616,6 +616,7 @@ def classroom():
     ws_credit_dict = {}
     total_ws_credits = 0
     all_workshop_with_credit = []
+    total_topic_credits = 0
     try:
         result = db.session.query(FeedbackCredits).filter_by(student_id=current_user.id, category='workshop').all()
         for r in result:
@@ -640,8 +641,10 @@ def classroom():
         print(e)
     no_ws_credit_dict = len(ws_credit_dict)
     # total_ws_credits = ''
-
-    total_topic_credits = db.session.query(FeedbackCredits).filter_by(student_id=current_user.id, category='topic').scalar().credits
+    try:
+        total_topic_credits = db.session.query(FeedbackCredits).filter_by(student_id=current_user.id, category='topic').scalar().credits
+    except Exception as e:
+        print(e)
 
     return render_template('classroom.html', vid_id_list=qa_recorded_video_urls, qa_caption_list=qa_vid_caption_list
                            , qa_video_count=q_a_video_count, yt_vid_id_list=all_recorded_video_urls,
