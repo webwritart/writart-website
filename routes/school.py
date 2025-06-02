@@ -616,26 +616,28 @@ def classroom():
     ws_credit_dict = {}
     total_ws_credits = 0
     all_workshop_with_credit = []
-
-    result = db.session.query(FeedbackCredits).filter_by(student_id=current_user.id, category='workshop').all()
-    for r in result:
-        if r.credits > 0:
-            all_workshop_with_credit.append(r.workshop_id)
-    for a in all_workshop_with_credit:
-        workshop_topic = db.session.query(Workshop).filter_by(id=a).scalar().topic
-        feedback_credit = db.session.query(FeedbackCredits).filter_by(workshop_id=a).scalar()
-        w_credits = feedback_credit.credits
-        total_ws_credits += int(w_credits)
-        credit_date = feedback_credit.date
-        date_object = datetime.strptime(credit_date, '%Y-%m-%d')
-        expiry_date_obj = date_object + timedelta(days=30)
-        expiry_date = expiry_date_obj.strftime('%Y-%m-%d')
-        entry = {
-            'title': workshop_topic,
-            'credits': w_credits,
-            'expiry': expiry_date
-        }
-        ws_credit_dict[a] = entry
+    try:
+        result = db.session.query(FeedbackCredits).filter_by(student_id=current_user.id, category='workshop').all()
+        for r in result:
+            if r.credits > 0:
+                all_workshop_with_credit.append(r.workshop_id)
+        for a in all_workshop_with_credit:
+            workshop_topic = db.session.query(Workshop).filter_by(id=a).scalar().topic
+            feedback_credit = db.session.query(FeedbackCredits).filter_by(workshop_id=a).scalar()
+            w_credits = feedback_credit.credits
+            total_ws_credits += int(w_credits)
+            credit_date = feedback_credit.date
+            date_object = datetime.strptime(credit_date, '%Y-%m-%d')
+            expiry_date_obj = date_object + timedelta(days=30)
+            expiry_date = expiry_date_obj.strftime('%Y-%m-%d')
+            entry = {
+                'title': workshop_topic,
+                'credits': w_credits,
+                'expiry': expiry_date
+            }
+            ws_credit_dict[a] = entry
+    except Exception as e:
+        print(e)
     no_ws_credit_dict = len(ws_credit_dict)
     # total_ws_credits = ''
 
