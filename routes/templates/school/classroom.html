@@ -206,86 +206,86 @@
 <!------------------------------------------------------- TEACHER'S FEEDBACK -------------------------------------------------->
 
 
-<div class="wrapper">
-    <div class="feedback-container">
-        <h3 style="width:100%;color:white;opacity:0.5;">TEACHER'S FEEDBACK AND CRITIQUE</h3>
+<!--<div class="wrapper">-->
+<!--    <div class="feedback-container">-->
+<!--        <h3 style="width:100%;color:white;opacity:0.5;">TEACHER'S FEEDBACK AND CRITIQUE</h3>-->
 
-        <div class="feedback_inner">
-            <div class="ws-feedback">
-                <h3> WORKSHOP-WISE FEEDBACKS</h3>
-                <p style="background:rgba(0,0,0,0.25);padding:2%;"> Feedback credits can be used to upload artworks and get feedback and guidance by the teacher.
-                    <span id="read-more-ws-btn" onclick="readMoreWs()" style="color:blue;cursor:pointer;"> Read more</span>
-                    <span id="know-more-ws-feedback"> One credit for one artwork submission. You'll get access to a video of the feedback.
-                    In this section you see all the feedback credits related to workshops. When you enroll to a workshop you get 5 free feedback credits.
-                        <span onclick="" style="color:green;"> Watch explaination video.</span></span>
-                    <span id="read-less-ws-btn" onclick="readLessWs()" style="color:blue;cursor:pointer;">Read less</span></p>
-                <p>All workshops feedback credits: <span>{{ total_ws_credits }}</span></p>
-                {% if no_ws_credit_dict > 0 %}
-                <form style="width:100%;" action="{{ url_for('school.classroom') }}" id="ws-feedback-form" method="post" enctype="multipart/form-data">
-                    <select onchange="wsFunc()" name="workshop_id" id="workshop-id" style="margin-bottom:1%;" required>
-                        <option value="default">Choose a Workshop</option>
-                        {% for w in ws_credit_dict %}
-                        <option id="ws-option" value="{{w}}">{{ws_credit_dict[w]['title']}}</option>
-                        {% endfor %}
-                    </select>
-                    <p id="workshop-error" style="color:red;">Please choose the workshop first!</p>
-                    <label id="credit-expiry-label"></label>
-                    <input class="default-input" type="file" name="ws-feedback-files" id="ws-feedback-files" multiple required>
-                    <input type="submit" class="button" style="width:100%;" value="Submit Artworks" name="submit-ws-feedback">
-                {% else %}
-                    <div style="padding-bottom:2%;color:red;text-align:center;"> You don't have any Workshop feedback credit left. <br>Please Purchase new credits below</div>
-                {% endif %}
-                     {% with messages = get_flashed_messages(with_categories=true) %}
-                        {% if messages %}
-                            {% for category, message in messages %}
-                              <div style="background:#FFC6C6;width:100%; text-align:center;padding-bottom:2%;" class="{{category}}"><b>{{ message }}</b></div>
-                            {% endfor %}
-                        {% endif %}
-                    {% endwith %}
-                </form>
+<!--        <div class="feedback_inner">-->
+<!--            <div class="ws-feedback">-->
+<!--                <h3> WORKSHOP-WISE FEEDBACKS</h3>-->
+<!--                <p style="background:rgba(0,0,0,0.25);padding:2%;"> Feedback credits can be used to upload artworks and get feedback and guidance by the teacher.-->
+<!--                    <span id="read-more-ws-btn" onclick="readMoreWs()" style="color:blue;cursor:pointer;"> Read more</span>-->
+<!--                    <span id="know-more-ws-feedback"> One credit for one artwork submission. You'll get access to a video of the feedback.-->
+<!--                    In this section you see all the feedback credits related to workshops. When you enroll to a workshop you get 5 free feedback credits.-->
+<!--                        <span onclick="" style="color:green;"> Watch explaination video.</span></span>-->
+<!--                    <span id="read-less-ws-btn" onclick="readLessWs()" style="color:blue;cursor:pointer;">Read less</span></p>-->
+<!--                <p>All workshops feedback credits: <span>{{ total_ws_credits }}</span></p>-->
+<!--                {% if no_ws_credit_dict > 0 %}-->
+<!--                <form style="width:100%;" action="{{ url_for('school.classroom') }}" id="ws-feedback-form" method="post" enctype="multipart/form-data">-->
+<!--                    <select onchange="wsFunc()" name="workshop_id" id="workshop-id" style="margin-bottom:1%;" required>-->
+<!--                        <option value="default">Choose a Workshop</option>-->
+<!--                        {% for w in ws_credit_dict %}-->
+<!--                        <option id="ws-option" value="{{w}}">{{ws_credit_dict[w]['title']}}</option>-->
+<!--                        {% endfor %}-->
+<!--                    </select>-->
+<!--                    <p id="workshop-error" style="color:red;">Please choose the workshop first!</p>-->
+<!--                    <label id="credit-expiry-label"></label>-->
+<!--                    <input class="default-input" type="file" name="ws-feedback-files" id="ws-feedback-files" multiple required>-->
+<!--                    <input type="submit" class="button" style="width:100%;" value="Submit Artworks" name="submit-ws-feedback">-->
+<!--                {% else %}-->
+<!--                    <div style="padding-bottom:2%;color:red;text-align:center;"> You don't have any Workshop feedback credit left. <br>Please Purchase new credits below</div>-->
+<!--                {% endif %}-->
+<!--                     {% with messages = get_flashed_messages(with_categories=true) %}-->
+<!--                        {% if messages %}-->
+<!--                            {% for category, message in messages %}-->
+<!--                              <div style="background:#FFC6C6;width:100%; text-align:center;padding-bottom:2%;" class="{{category}}"><b>{{ message }}</b></div>-->
+<!--                            {% endfor %}-->
+<!--                        {% endif %}-->
+<!--                    {% endwith %}-->
+<!--                </form>-->
 
-                <button class="button" style="color:white;background:#5f9141;" onclick="purchaseWsCredits()">Purchase Workshop Credits</button>
-                <form class="purchase-credits" id="purchase-credits-ws">
-                    <input class="default-input" style="width:100%;" type="number" name="credits">
-                    <input style="width:100%;" class="button" type="submit" value="Pay ₹50" name="buy-credits">
-                </form>
-                <p id="test-js"></p>
-            </div>
-            <div class="topic-feedback">
+<!--                <button class="button" style="color:white;background:#5f9141;" onclick="purchaseWsCredits()">Purchase Workshop Credits</button>-->
+<!--                <form class="purchase-credits" id="purchase-credits-ws">-->
+<!--                    <input class="default-input" style="width:100%;" type="number" name="credits">-->
+<!--                    <input style="width:100%;" class="button" type="submit" value="Pay ₹50" name="buy-credits">-->
+<!--                </form>-->
+<!--                <p id="test-js"></p>-->
+<!--            </div>-->
+<!--            <div class="topic-feedback">-->
 
-                <h3>TOPIC-WISE FEEDBACKS</h3>
-                <p style="background:rgba(0,0,0,0.25);padding:2%;"> Feedback credits can be used to upload artworks and get feedback and guidance by the teacher.
-                    <span id="read-more-topic-btn" onclick="readMoreTopic()" style="color:blue;cursor:pointer;"> Read more</span>
-                    <span id="know-more-topic-feedback"> One credit for one artwork submission. You'll get access to a video of the feedback.
-                    In this section you see all of your purchased feedbacks which can be used to get artwork feedback on any topic. Topic-wise feedbacks never expire.
-                        <span onclick="" style="color:green;"> Watch explaination video.</span></span>
-                    <span id="read-less-topic-btn" onclick="readLessTopic()" style="color:blue;cursor:pointer;">Read less</span></p>
-                <p>Available Feedback credits: {{ topic_credits }}</p>
-                <form style="width:100%;" action="{{ url_for('school.classroom') }}" id="topic-feedback-form" method="post" enctype="multipart/form-data">
-                    <select style="margin-bottom:1%;" name="topic" id="topic" required>
-                        <option value="default">Choose a Topic</option>
-                        <option value="topic1">Light and shadow (value/tone)</option>
-                    </select>
-                    <p id="topic-error" style="color:red;">Please choose the topic first!</p>
-                    <input class="default-input" type="file" name="topic-feedback-files" id="topic-feedback-files" multiple required>
-                    <input type="submit" class="button" style="width:100%" value="Submit Artworks" name="submit-topic-feedback">
-                    {% with messages = get_flashed_messages(with_categories=true) %}
-                        {% if messages %}
-                            {% for category, message in messages %}
-                              <div style="background:#FFC6C6;width:100%; text-align:center;padding-bottom:2%;" class="{{category}}"><b>{{ message }}</b></div>
-                            {% endfor %}
-                        {% endif %}
-                    {% endwith %}
-                </form>
-                <button class="button" style="color:white;background:#5f9141;" onclick="purchaseCredits()">Purchase Credits</button>
-                <form class="purchase-credits" id="purchase-credits-topic">
-                    <input class="default-input" style="width:100%;" type="number" name="credits">
-                    <input style="width:100%;" class="button" type="submit" value="Pay ₹50" name="buy-credits">
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+<!--                <h3>TOPIC-WISE FEEDBACKS</h3>-->
+<!--                <p style="background:rgba(0,0,0,0.25);padding:2%;"> Feedback credits can be used to upload artworks and get feedback and guidance by the teacher.-->
+<!--                    <span id="read-more-topic-btn" onclick="readMoreTopic()" style="color:blue;cursor:pointer;"> Read more</span>-->
+<!--                    <span id="know-more-topic-feedback"> One credit for one artwork submission. You'll get access to a video of the feedback.-->
+<!--                    In this section you see all of your purchased feedbacks which can be used to get artwork feedback on any topic. Topic-wise feedbacks never expire.-->
+<!--                        <span onclick="" style="color:green;"> Watch explaination video.</span></span>-->
+<!--                    <span id="read-less-topic-btn" onclick="readLessTopic()" style="color:blue;cursor:pointer;">Read less</span></p>-->
+<!--                <p>Available Feedback credits: {{ topic_credits }}</p>-->
+<!--                <form style="width:100%;" action="{{ url_for('school.classroom') }}" id="topic-feedback-form" method="post" enctype="multipart/form-data">-->
+<!--                    <select style="margin-bottom:1%;" name="topic" id="topic" required>-->
+<!--                        <option value="default">Choose a Topic</option>-->
+<!--                        <option value="topic1">Light and shadow (value/tone)</option>-->
+<!--                    </select>-->
+<!--                    <p id="topic-error" style="color:red;">Please choose the topic first!</p>-->
+<!--                    <input class="default-input" type="file" name="topic-feedback-files" id="topic-feedback-files" multiple required>-->
+<!--                    <input type="submit" class="button" style="width:100%" value="Submit Artworks" name="submit-topic-feedback">-->
+<!--                    {% with messages = get_flashed_messages(with_categories=true) %}-->
+<!--                        {% if messages %}-->
+<!--                            {% for category, message in messages %}-->
+<!--                              <div style="background:#FFC6C6;width:100%; text-align:center;padding-bottom:2%;" class="{{category}}"><b>{{ message }}</b></div>-->
+<!--                            {% endfor %}-->
+<!--                        {% endif %}-->
+<!--                    {% endwith %}-->
+<!--                </form>-->
+<!--                <button class="button" style="color:white;background:#5f9141;" onclick="purchaseCredits()">Purchase Credits</button>-->
+<!--                <form class="purchase-credits" id="purchase-credits-topic">-->
+<!--                    <input class="default-input" style="width:100%;" type="number" name="credits">-->
+<!--                    <input style="width:100%;" class="button" type="submit" value="Pay ₹50" name="buy-credits">-->
+<!--                </form>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
 
 <script src="../static/lite-yt-embed.js"></script>
 <script src="../static/js/school.js"></script>
