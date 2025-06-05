@@ -513,21 +513,38 @@ def classroom():
 
 # -------------------------------------------- TEACHER'S FEEDBACK ------------------------------------------------- #
 
-        if request.form.get('submit-ws-feedback') == 'Submit Artworks':
+        if request.form.get('submit-ws-feedback') == 'SUBMIT ARTWORKS':
+            total_ws_free_credits = 0
+            total_ws_purchased_credits = 0
+            files_exceeded_credits = False
             ws_id = request.form.get('workshop_id')
-            total_ws_credits = db.session.query(FeedbackCredits).filter_by(student_id=current_user.id, workshop_id=ws_id).scalar().credits
+            try:
+                total_ws_free_credits = db.session.query(FeedbackCredits).filter_by(student_id=current_user.id, workshop_id=ws_id, free=True).scalar().credits
+            except Exception as e:
+                pass
+            try:
+                total_ws_purchased_credits = db.session.query(FeedbackCredits).filter_by(student_id=current_user.id, workshop_id=ws_id, free=False).scalar().credits
+            except Exception as e:
+                pass
+            total_ws_credits = total_ws_free_credits + total_ws_purchased_credits
+
             if 'ws-feedback-files' not in request.files:
                 flash('No file part', 'error')
                 return redirect(request.url)
             files = request.files.getlist('ws-feedback-files')
+            files_to_save = []
             no_submitted_files = len(files)
-
-
+            if no_submitted_files > total_ws_credits:
+                files_exceeded_credits = True
+                for n in range(total_ws_credits):
+                    files_to_save.append(files[n])
+            else:
+                files_to_save = files
 
             folder = f'static/files/users/{current_user.id}/feedback/{ws_id}/'
             if not os.path.exists(folder):
                 os.makedirs(folder)
-            for file in files:
+            for file in files_to_save:
                 if file.filename == '':
                     flash('No selected file', 'error')
                     return redirect(request.url)
@@ -535,10 +552,26 @@ def classroom():
                 file.save(os.path.join(folder, filename))
 
             # deduct total credits ----------------------------------------------------------------------
-            remaining_credits = total_ws_credits - no_submitted_files
-            db.session.query(FeedbackCredits).filter_by(student_id=current_user.id, workshop_id=ws_id).scalar().credits = remaining_credits
-            db.session.commit()
-            flash('Successfully Submitted', 'success')
+            if no_submitted_files < total_ws_free_credits:
+                remaining_ws_free_credits = total_ws_free_credits - no_submitted_files
+                db.session.query(FeedbackCredits).filter_by(student_id=current_user.id,
+                                            workshop_id=ws_id, free=True).scalar().credits = remaining_ws_free_credits
+                db.session.commit()
+            else:
+                to_be_deducted_from_ws_purchased_credits = no_submitted_files - total_ws_free_credits
+                remaining_ws_free_credits = 0
+                remaining_ws_purchased_credits = total_ws_purchased_credits - to_be_deducted_from_ws_purchased_credits
+                if remaining_ws_purchased_credits < 0:
+                    remaining_ws_purchased_credits = 0
+                db.session.query(FeedbackCredits).filter_by(student_id=current_user.id,
+                                                workshop_id=ws_id, free=True).scalar().credits = remaining_ws_free_credits
+                db.session.query(FeedbackCredits).filter_by(student_id=current_user.id,
+                                                workshop_id=ws_id, free=False).scalar().credits = remaining_ws_purchased_credits
+                db.session.commit()
+            if files_exceeded_credits:
+                flash(f'Files were more than credits available. So we saved first {total_ws_credits}. Please view uploaded files below.', 'success')
+            else:
+                flash('Successfully Submitted all files. Please view uploaded files below.', 'success')
             return redirect(url_for('school.classroom', _anchor='ws-feedback-form'))
 
         if request.form.get('submit-topic-feedback') == 'Submit Artworks':
@@ -575,7 +608,7 @@ def classroom():
             }
             all_enrolled_ws_dict[ws_id] = entry
     except Exception as e:
-        print(e)
+        pass
 
 
     result = db.session.query(Quiz).all()
@@ -631,31 +664,50 @@ def classroom():
     total_ws_credits = 0
     all_workshop_with_credit = []
     total_topic_credits = 0
-    try:
+    if current_user.is_authenticated:
         result = db.session.query(FeedbackCredits).filter_by(student_id=current_user.id, category='workshop').all()
-        total_topic_credits = db.session.query(FeedbackCredits).filter_by(student_id=current_user.id,
-                                                                          category='topic').scalar().credits
-
+        total_topics_credits = 0
+        try:
+            total_topic_credits = db.session.query(FeedbackCredits).filter_by(student_id=current_user.id,
+                                                                              category='topic').scalar().credits
+        except Exception as e:
+            pass
         for r in result:
             if r.credits > 0:
                 all_workshop_with_credit.append(r.workshop_id)
         for a in all_workshop_with_credit:
             workshop_topic = db.session.query(Workshop).filter_by(id=a).scalar().topic
-            feedback_credit = db.session.query(FeedbackCredits).filter_by(workshop_id=a).scalar()
-            w_credits = feedback_credit.credits
-            total_ws_credits += int(w_credits)
-            credit_date = feedback_credit.date
-            date_object = datetime.strptime(credit_date, '%Y-%m-%d')
-            expiry_date_obj = date_object + timedelta(days=30)
-            expiry_date = expiry_date_obj.strftime('%Y-%m-%d')
+            free_ws_feedback_credits = 0
+            purchased_ws_feedback_credits = 0
+            free_ws_feedback_date = None
+            try:
+                free_ws_feedback_credits = db.session.query(FeedbackCredits).filter_by(workshop_id=a, free=True).scalar().credits
+            except Exception as e:
+                pass
+            try:
+                free_ws_feedback_date = db.session.query(FeedbackCredits).filter_by(workshop_id=a,
+                                                                                       free=True).scalar().date
+            except Exception as e:
+                pass
+            try:
+                purchased_ws_feedback_credits = db.session.query(FeedbackCredits).filter_by(workshop_id=a, free=False).scalar().credits
+            except Exception as e:
+                pass
+            total_ws_credits = free_ws_feedback_credits + purchased_ws_feedback_credits
+            if free_ws_feedback_date:
+                date_object = datetime.strptime(free_ws_feedback_date, '%Y-%m-%d')
+                expiry_date_obj = date_object + timedelta(days=30)
+                expiry_date = expiry_date_obj.strftime('%Y-%m-%d')
+            else:
+                expiry_date = 'N/A'
             entry = {
                 'title': workshop_topic,
-                'credits': w_credits,
+                'total_ws_credits': total_ws_credits,
+                'free_ws_credits': free_ws_feedback_credits,
+                'purchased_ws_credits': purchased_ws_feedback_credits,
                 'expiry': expiry_date
             }
             ws_credit_dict[a] = entry
-    except Exception as e:
-        print(e)
     no_ws_credit_dict = len(ws_credit_dict)
 
 

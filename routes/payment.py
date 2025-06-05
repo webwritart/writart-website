@@ -84,12 +84,35 @@ def feedback_credit_checkout():
         ws_id = request.form.get('feedback-ws')
         credits_quantity = int(request.form.get('credits'))
         amount = int(f'{credits_quantity * 25}00')
-        credit_data = {"amount": amount, "currency": "INR"}
-        session['ws_credit_data'] = client.order.create(data=credit_data)
+        # credit_data = {"amount": amount, "currency": "INR"}
+        # session['ws_credit_data'] = client.order.create(data=credit_data)
         session['ws_id'] = ws_id
-        order_id = session['ws_credit_data']['id']
-        return render_template('feedback_credit_checkout.html', order_id=order_id, name=name, email=email,
-                               phone=phone, key_id=KEY_ID, ws_id=ws_id, logged_in=current_user.is_authenticated)
+        # order_id = session['ws_credit_data']['id']
+        # return render_template('feedback_credit_checkout.html', order_id=order_id, name=name, email=email,
+        #                        phone=phone, key_id=KEY_ID, ws_id=ws_id, logged_in=current_user.is_authenticated)
+        result = db.session.query(FeedbackCredits).filter_by(student_id=current_user.id, workshop_id=ws_id, free=False).all()
+        purchased_ws_credit_rows = len(result)
+        if purchased_ws_credit_rows == 0:
+            entry = FeedbackCredits(
+                category='workshop',
+                credits=credits_quantity,
+                date=today_date,
+                student_id=current_user.id,
+                free=False,
+                workshop_id=ws_id
+            )
+            db.session.add(entry)
+            db.session.commit()
+        else:
+            row = result[0]
+            existing_purchased_ws_credits = row.credits
+            new_credit_amount = existing_purchased_ws_credits + credits_quantity
+            db.session.query(FeedbackCredits).filter_by(student_id=current_user.id, workshop_id=ws_id, free=False).scalar().credits = new_credit_amount
+            db.session.commit()
+        if 'url' in session:
+            return redirect(session['url'])
+        else:
+            return redirect(url_for('school.classroom'))
     else:
         return redirect(url_for('school.classroom'))
 
@@ -274,7 +297,6 @@ def verify_ws_credit_checkout():
     )
     db.session.add(entry)
     db.session.commit()
-    try:
     ws_credits = db.session.query(FeedbackCredits).filter_by(category='workshop').all()
     for a in ws_credits:
         if a.workshop_id == ws_id and a.free == False:

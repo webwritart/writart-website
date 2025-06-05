@@ -232,9 +232,9 @@
                         {% endfor %}
                     </select>
                     <p id="workshop-error" style="color:red;">Please choose the workshop first!</p>
-                    <label id="credit-expiry-label"></label>
+                    <label id="credit-expiry-label">Free Credits: <span style="color:green;font-weight:bold;" id="free-credits">0</span> (Expiry: <span style="color:red;font-weight:bold;" id="expiry-date">N/A</span>) | Purchased Credits: <span style="color:green;font-weight:bold;" id="purchased-credits">0</span> (Expiry: <span style="color:green;font-weight:bold;">Never</span>) </label>
                     <input class="default-input" type="file" name="ws-feedback-files" id="ws-feedback-files" multiple required>
-                    <input type="submit" class="button" style="width:100%;" value="Submit Artworks" name="submit-ws-feedback">
+                    <input type="submit" class="button" style="width:100%;" value="SUBMIT ARTWORKS" name="submit-ws-feedback">
                 {% else %}
                     <div style="padding-bottom:2%;color:red;text-align:center;"> You don't have any Workshop feedback credit left. <br>Please Purchase new credits below</div>
                 {% endif %}
@@ -247,7 +247,7 @@
                     {% endwith %}
                 </form>
 
-                <button class="button" style="color:white;background:#5f9141;" onclick="purchaseWsCredits()">Purchase Workshop Credits</button>
+                <button class="button" style="color:white;background:#5f9141;" onclick="purchaseWsCredits()">PURCHASE WORKSHOP CREDITS</button>
                 <form class="purchase-credits" id="purchase-credits-ws" action="{{ url_for('payment.feedback_credit_checkout') }}" method="post">
                     <select id="ws-feedback-purchase" style="width:100%; padding: 0% 0%;height:80%;" name="feedback-ws" required>
                         <option value="default">Choose Workshop</option>
@@ -279,7 +279,7 @@
                     </select>
                     <p id="topic-error" style="color:red;">Please choose the topic first!</p>
                     <input class="default-input" type="file" name="topic-feedback-files" id="topic-feedback-files" multiple required>
-                    <input type="submit" class="button" style="width:100%" value="Submit Artworks" name="submit-topic-feedback">
+                    <input type="submit" class="button" style="width:100%" value="SUBMIT ARTWORKS" name="submit-topic-feedback">
                     {% with messages = get_flashed_messages(with_categories=true) %}
                         {% if messages %}
                             {% for category, message in messages %}
@@ -288,7 +288,7 @@
                         {% endif %}
                     {% endwith %}
                 </form>
-                <button class="button" style="color:white;background:#5f9141;" onclick="purchaseCredits()">Purchase Credits</button>
+                <button class="button" style="color:white;background:#5f9141;" onclick="purchaseCredits()">PURCHASE CREDITS</button>
                 <form class="purchase-credits" id="purchase-credits-topic">
                     <input class="default-input" style="width:100%;" type="number" name="credits">
                     <input style="width:100%;" class="button" type="submit" value="Pay ₹50" name="buy-credits">
@@ -330,12 +330,18 @@ var wsCreditDict = {{ ws_credit_dict | tojson }};
 var totalWsCredits = {{ total_ws_credits | tojson }};
 function wsFunc() {
     var creditExpiryLabel = document.getElementById('credit-expiry-label');
+    var freeCredits = document.getElementById('free-credits');
+    var purchasedCredits = document.getElementById('purchased-credits');
+    var expiry = document.getElementById('expiry-date');
     wsId = document.getElementById('workshop-id').value;
     if ( wsId == 'default') {
         creditExpiryLabel.innerHTML = "";
         creditExpiryLabel.style.display = 'none';
     } else {
-        creditExpiryLabel.innerHTML = "(Credits: " + wsCreditDict[wsId]['credits'] + " | Expiring on: " + wsCreditDict[wsId]['expiry'] + ")";
+        freeCredits.innerHTML = wsCreditDict[wsId]['free_ws_credits'];
+        purchasedCredits.innerHTML = wsCreditDict[wsId]['purchased_ws_credits'];
+        expiry.innerHTML = wsCreditDict[wsId]['expiry'];
+
         creditExpiryLabel.style.display = 'block';
     }
 }
@@ -357,12 +363,14 @@ wsFeedbackForm.addEventListener('submit', function(event) {
     }
     var files = document.getElementById('ws-feedback-files').files;
     var numberOfFiles = files.length;
-    var credits = wsCreditDict[wsId]['credits'];
-    if (numberOfFiles > credits) {
-        event.preventDefault();
-        alert("You have only " + credits + " feedback credits left! Please don't upload more than " + credits + " files.");
+    var credits = wsCreditDict[wsId]['free_ws_credits'] + wsCreditDict[wsId]['purchased_ws_credits'];
+
+    if (numberOfFiles < totaWsCredits) {
+        totalWsCredits -= numberOfFiles;
+    } else {
+        totalWsCredits = 0;
     }
-    totalWsCredits -= numberOfFiles;
+
 });
 
 wsCreditPurchaseForm.addEventListener('submit', function(event) {
