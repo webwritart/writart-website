@@ -4,7 +4,11 @@ __pycache__/
 *$py.class
 role.csv
 test.py
-
+static/files/
+static/images
+static/writart.ico
+temp.py
+.idea/Writart Website.iml
 # C extensions
 *.so
 
