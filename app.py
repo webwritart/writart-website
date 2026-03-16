@@ -6,6 +6,7 @@ from models.member import Member, member_role, member_workshop, Workshop, Role, 
 from models.videos import Demo
 from models.quiz import Quiz
 from models.b2b import VidEditProject
+from models.artwork import Portrait
 from routes.account import account
 from routes.main import main
 from routes.manager import manager
