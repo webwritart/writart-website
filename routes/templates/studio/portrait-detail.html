@@ -4,8 +4,10 @@
     <div style="height: 90vh;">
         <img src="../{{ img_path }}" height="100%">
     </div>
-    <div>
-        <p>{{title}}</p>
+    <div style="text-align:center;">
+        <p style="margin-bottom:0%; padding-top:3%;">{{ title }}</p>
+        <p style="margin-top:0%;">Artist: <span style="color:#B5104F;">{{ artist }}</span></p>
+        <p style="margin-top:0%;">{{ description }}</p>
     </div>
     {% if medium == 'digital' %}
     <div class="full-width-div-row-narrow" style="background:black; color:white; justify-content:center; padding-bottom:0%;">
@@ -13,7 +15,7 @@
     </div>
 
     <div class="full-width-div-row-narrow" style="background:black; color:white;">
-        <p class="half-width-paragraph">Charge:<br> Starts from ₹5,000</p>
+        <p class="half-width-paragraph">Charge:<br> Starts from <b>₹5,000</b></p>
         <p>Time Taken:<br> 3-8 days approx.<br>(for exact deadline please contact the artist.)</p>
     </div>
     {% elif medium == 'oil_on_canvas' %}
@@ -21,7 +23,7 @@
         <p><b>OIL ON CANVAS</b></p>
     </div>
     <div class="full-width-div-row-narrow" style="background:black; color:white;">
-        <p class="half-width-paragraph">Charge:<br> Starts from ₹10,000</p>
+        <p class="half-width-paragraph">Charge:<br> Starts from <b>₹10,000</b></p>
         <p>Time Taken:<br> 3-8 weeks approx.<br>(for exact deadline please contact the artist.)</p>
     </div>
     {% elif medium == 'acrylics_on_canvas' %}
@@ -29,7 +31,7 @@
         <p><b>ACRYLICS ON CANVAS</b></p>
     </div>
     <div class="full-width-div-row-narrow" style="background:black; color:white;">
-        <p class="half-width-paragraph">Charge:<br> Starts from ₹8,000</p>
+        <p class="half-width-paragraph">Charge:<br> Starts from <b>₹8,000</b></p>
         <p>Time Taken:<br> 1-4 weeks approx.<br>(for exact deadline please contact the artist.)</p>
     </div>
     {% elif medium == 'charcoal_on_paper' %}
@@ -37,7 +39,7 @@
         <p><b>CHARCOAL ON PAPER</b></p>
     </div>
     <div class="full-width-div-row-narrow" style="background:black; color:white;">
-        <p class="half-width-paragraph">Charge:<br> Starts from ₹5,000</p>
+        <p class="half-width-paragraph">Charge:<br> Starts from <b>₹5,000</b></p>
         <p>Time Taken:<br> 3-8 days approx.<br>(for exact deadline please contact the artist.)</p>
     </div>
     {% endif %}

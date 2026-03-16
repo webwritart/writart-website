@@ -154,8 +154,9 @@ def portraits():
         title_raw = PureWindowsPath(file).name
         path = file
         uuid = title_raw.split('.')[0].split('-')[1]
+        artist = db.session.query(Portrait).filter_by(uuid=uuid).scalar().artist
         title = title_raw.split('.')[0].split('-')[0].replace('_', ' ')
-        artwork_dict[uuid] = {'title': title, 'path': path}
+        artwork_dict[uuid] = {'title': title, 'path': path, 'artist': artist}
 
 
     return render_template('portraits.html', artwork_dict=artwork_dict)
