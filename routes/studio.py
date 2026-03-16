@@ -149,7 +149,7 @@ def portraits():
     artwork_dict = {}
 
     all_portraits = db.session.query(Portrait).all()
-    base_path = 'static/files/users/165560/artworks/portrait/'
+    base_path = 'static/files/users/477706/artworks/portrait/'
     for file in list_files_in_directory(base_path):
         title_raw = PureWindowsPath(file).name
         path = file
@@ -166,7 +166,7 @@ def portrait_detail():
     uuid = request.args.get('uuid')
     title = request.args.get('title')
     img_path = ''
-    base_path = 'static/files/users/165560/artworks/portrait/'
+    base_path = 'static/files/users/477706/artworks/portrait/'
     search = True
     while search:
         for file in list_files_in_directory(base_path):
