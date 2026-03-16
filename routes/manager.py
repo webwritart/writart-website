@@ -15,6 +15,7 @@ from models.query import Query
 from models.tool import Tools
 from models.member import Member, Workshop, Role
 from models.workshop_details import WorkshopDetails
+from models.artwork import Portrait
 from operations.miscellaneous import allowed_file
 from routes.account import today_date
 
@@ -509,23 +510,59 @@ def home():
                         cnt += 1
                 return redirect(url_for('manager.home'))
             if request.form.get('submit') and request.form.get('submit') == 'upload_artworks':
-                allowed_extensions = {'jpg'}
-
+                existing_uuid_list = []
+                uuid = 0
+                filename = ''
+                path = ''
+                allowed_extensions = {'jpg', 'png'}
                 if 'file' not in request.files:
                     flash('No file part', 'error')
                     return redirect(request.url)
                 files = request.files.getlist('file')
+                artwork_category = request.form.get('artwork-category')
+                medium = request.form.get('medium')
+                description = request.form.get('description')
+                artist = 'Shwetabh Suman'
+                try:
+                    all_portraits = db.session.query(Portrait).all()
+                    for portrait in all_portraits:
+                        portrait_uuid = portrait.uuid
+                        existing_uuid_list.append(portrait_uuid)
+                except:
+                    pass
+                unique = False
+                while not unique:
+                    uuid = str(random.randint(100000, 999999))
+                    if uuid not in existing_uuid_list:
+                        unique = True
+
 
                 for file in files:
                     if file.filename == '':
                         flash('No selected file', 'error')
                         return redirect(request.url)
                     if file and allowed_file(file.filename, allowed_extensions):
-                        filename = secure_filename(file.filename)
-                        path = 'static/files/users/Shwetabh1/artworks'
+                        if request.form.get('file_name'):
+                            name = request.form.get('file_name')
+                            root, extension = os.path.splitext(secure_filename(file.filename))
+                            filename = secure_filename(name + '-' + str(uuid) + extension)
+                        else:
+                            filename = secure_filename(file.filename)
+
+                        path = f'static/files/users/{current_user.uuid}/artworks/{artwork_category}'
                         if not os.path.exists(path):
                             os.makedirs(path)
                         file.save(os.path.join(path, filename))
+                entry = Portrait(
+                    uuid = uuid,
+                    title = filename.split('.')[0],
+                    description = description,
+                    medium = medium,
+                    artist = artist,
+                    path = path
+                )
+                db.session.add(entry)
+                db.session.commit()
                 return redirect(url_for('manager.home'))
 
         open_reg = db.session.query(Tools).filter_by(keyword='open_reg').scalar().data

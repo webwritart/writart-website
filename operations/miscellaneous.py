@@ -1,6 +1,7 @@
 import datetime
 import os
 import PIL.Image as Image
+from difflib import SequenceMatcher
 from flask_sqlalchemy import table
 from extensions import db
 
@@ -64,4 +65,10 @@ def image_resize_and_compress_bulk(input_folder, output_folder, image_type, qual
             print('Resize successful!')
 
 
+def text_match(target, options_list):
+    def similarity_ratio(a, b):
+        return SequenceMatcher(None, a, b).ratio()
 
+    best_match = max(options_list, key=lambda option: similarity_ratio(target, option))
+    match_ratio = f'{int(similarity_ratio(target, best_match)*100)}%'
+    return best_match, match_ratio

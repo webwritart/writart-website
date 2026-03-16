@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, current_user
 from flask_mail import Mail, Message
 from datetime import datetime
+from pathlib import Path
 
 
 db = SQLAlchemy()
@@ -27,3 +28,15 @@ def admin_only(f):
         return f(*args, **kwargs)
 
     return decorated_function
+
+def list_files_in_directory(directory_path):
+    p = Path(directory_path)
+    # Use a list comprehension to filter for files only
+    files = [item for item in p.iterdir() if item.is_file()]
+    return files
+
+def list_folders_in_directory(path_string):
+    p = Path(path_string)
+    # Filter for entries that are directories and return their Path objects
+    folders = [item for item in p.iterdir() if item.is_dir()]
+    return folders

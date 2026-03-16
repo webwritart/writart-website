@@ -1,14 +1,15 @@
 import pprint
-
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash, send_file
 import os
 from flask_login import current_user
 from werkzeug.utils import secure_filename
-from extensions import db, current_year
+from extensions import db, current_year, list_files_in_directory, list_folders_in_directory
 from models.member import Member
-from operations.miscellaneous import allowed_file
+from operations.miscellaneous import allowed_file, text_match
 from operations.artist_tools import add_watermark, delete_single_watermarked_image, delete_all_from_user
 from models.artist_data import ArtistData
+from models.artwork import Portrait
+from pathlib import Path, PureWindowsPath
 
 studio = Blueprint('studio', __name__, static_folder="static", template_folder='templates/studio/')
 
@@ -142,3 +143,47 @@ def artist_tools():
 
     return render_template('artist_tools.html', folder_name=folder_name, photo_list=photo_list,
                            logged_in=current_user.is_authenticated, total_watermarked=total_watermarked_photos)
+
+@studio.route('/portraits', methods=['GET', 'POST'])
+def portraits():
+    artwork_dict = {}
+
+    all_portraits = db.session.query(Portrait).all()
+    base_path = 'static/files/users/165560/artworks/portrait/'
+    for file in list_files_in_directory(base_path):
+        title_raw = PureWindowsPath(file).name
+        path = file
+        uuid = title_raw.split('.')[0].split('-')[1]
+        title = title_raw.split('.')[0].split('-')[0].replace('_', ' ')
+        artwork_dict[uuid] = {'title': title, 'path': path}
+
+
+    return render_template('portraits.html', artwork_dict=artwork_dict)
+
+
+@studio.route('/portrait-detail', methods=['GET', 'POST'])
+def portrait_detail():
+    uuid = request.args.get('uuid')
+    title = request.args.get('title')
+    img_path = ''
+    base_path = 'static/files/users/165560/artworks/portrait/'
+    search = True
+    while search:
+        for file in list_files_in_directory(base_path):
+            path = str(PureWindowsPath(file))
+            if uuid in path:
+                img_path = path
+                search = False
+    portrait = db.session.query(Portrait).filter_by(uuid=uuid).scalar()
+    description = portrait.description
+    medium = portrait.medium
+    artist = portrait.artist
+    return render_template('portrait-detail.html', img_path=img_path, title=title, description=description,
+                           medium=medium, artist=artist)
+
+
+@studio.route('/paintings', methods=['GET', 'POST'])
+def paintings():
+    return render_template('paintings.html')
+
+

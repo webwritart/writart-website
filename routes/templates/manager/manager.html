@@ -453,6 +453,18 @@
                     <h2>Upload artworks</h2>
                     <form action="{{ url_for('manager.home') }}" method="post" id="form3" enctype="multipart/form-data">
                         <input type="file" name="file" id="file3" multiple>
+                        <input type="text" name="file_name" placeholder="Artwork Title (optional)">
+                        <select name="artwork-category">
+                            <option value="portrait">Portrait</option>
+                            <option value="painting">Painting</option>
+                        </select>
+                        <select name="medium">
+                            <option value="digital">Digital</option>
+                            <option value="oil_on_canvas">Oil on Canvas</option>
+                            <option value="acrylics_on_canvas">Acrylic on Canvas</option>
+                            <option value="charcoal_on_paper">Charcoal on Paper</option>
+                        </select>
+                        <input type="text" placeholder="Description" name="description">
                         <button type="submit" name="submit" id="file-btn3" class="btn btn-primary btn-block btn-large" value="upload_artworks">Upload Files</button>
                     </form>
                 </div>

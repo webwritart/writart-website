@@ -1102,6 +1102,77 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     display:none;
 }
 
+/* ------------------------------------------------------------- PORTRAITS ------------------------------------------ */
+
+.painting-gallery {
+    display: flex;
+    justify-content: center;
+    padding: 2%;
+    flex-wrap: wrap;
+}
+.painting-box-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 300px;
+    height: 350px;
+    margin: 20px 10px;
+    transition: transform .4s;
+    cursor: pointer;
+}
+.painting-box-container p {
+    text-decoration: none;
+}
+.painting-box-container:hover {
+    transform: scale(1.05);
+}
+.painting-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 300px;
+    height: 300px;
+    background: #D9D9D9;
+    position: relative;
+}
+
+.painting-box img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.full-size-portrait {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+}
+
+.full-width-div-row-narrow {
+    display: flex;
+    width: 50%;
+    padding: 1% 2%;
+}
+.half-width-paragraph {
+    width: 50%;
+}
+
+.portrait-btn {
+    width: 20%;
+    background: #85133D;
+    padding: .5%;
+    color: white;
+    margin: 1%;
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
+}
+.portrait-btn:hover {
+    color: white;
+    text-decoration: none;
+    background: #4F0621;
+}
+/* ------------------------------------------------------------- RESPONSIVE ------------------------------------------ */
+
 @media only screen and (min-width : 1900px) {
     #video-wrapper-container .video {
         width: 25%;}

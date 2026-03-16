@@ -23,6 +23,10 @@ school = Blueprint('school', __name__, static_folder='static', template_folder='
 
 @school.route('/', methods=['GET', 'POST'])
 def home():
+   return render_template('school.html')
+
+@school.route('/workshops', methods=['GET', 'POST'])
+def workshops():
     session['url'] = url_for('school.home')
     admin = db.session.query(Role).filter_by(name='admin').first()
     upcoming_workshop_list = []
