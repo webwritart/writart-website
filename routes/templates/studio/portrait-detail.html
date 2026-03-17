@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
+
+<style>
+
+</style>
 <div class="full-size-portrait">
-    <div style="height: 90vh;">
-        <img src="../{{ img_path }}" height="100%">
-    </div>
+    <img class="full-width-portrait" src="../{{ img_path }}">
     <div style="text-align:center;">
         <p style="margin-bottom:0%; padding-top:3%;">{{ title }}</p>
         <p style="margin-top:0%;">Artist: <span style="color:#B5104F;">{{ artist }}</span></p>
@@ -92,11 +94,11 @@
     {% if medium == 'digital' %}
     <a class="portrait-btn" href="https://wa.link/7cfgaq">CONTACT US</a>
     {% elif medium == 'oil_on_canvas' %}
-    <a class="portrait-btn" href="https://wa.link/7vioyu">PLACE ORDER</a>
+    <a class="portrait-btn" href="https://wa.link/7vioyu">CONTACT US</a>
     {% elif medium == 'acrylics_on_canvas' %}
-    <a class="portrait-btn" href="https://wa.link/oglbvh">PLACE ORDER</a>
+    <a class="portrait-btn" href="https://wa.link/oglbvh">CONTACT US</a>
     {% elif medium == 'charcoal_on_paper' %}
-    <a class="portrait-btn" href="https://wa.link/11755y">PLACE ORDER</a>
+    <a class="portrait-btn" href="https://wa.link/11755y">CONTACT US</a>
     {% endif %}
 
 </div>

@@ -4,11 +4,10 @@ import os
 from flask_login import current_user
 from werkzeug.utils import secure_filename
 from extensions import db, current_year, list_files_in_directory, list_folders_in_directory
-from models.member import Member
+from models.member import Member, Portrait, Role
 from operations.miscellaneous import allowed_file, text_match
 from operations.artist_tools import add_watermark, delete_single_watermarked_image, delete_all_from_user
 from models.artist_data import ArtistData
-from models.member import Portrait
 from pathlib import Path, PureWindowsPath
 
 studio = Blueprint('studio', __name__, static_folder="static", template_folder='templates/studio/')
@@ -146,6 +145,7 @@ def artist_tools():
 
 @studio.route('/portraits', methods=['GET', 'POST'])
 def portraits():
+    admin = db.session.query(Role).filter_by(name='admin').one_or_none()
     artwork_dict = {}
 
     base_path = 'static/files/users/477706/artworks/portrait/thumbnail'
@@ -158,11 +158,13 @@ def portraits():
         artwork_dict[uuid] = {'title': title, 'path': path, 'artist': artist}
 
 
-    return render_template('portraits.html', artwork_dict=artwork_dict)
+    return render_template('portraits.html', logged_in=current_user.is_authenticated, artwork_dict=artwork_dict,
+                           admin=admin)
 
 
 @studio.route('/portrait-detail', methods=['GET', 'POST'])
 def portrait_detail():
+    admin = db.session.query(Role).filter_by(name='admin').one_or_none()
     uuid = request.args.get('uuid')
     title = request.args.get('title')
     img_path = ''
@@ -179,11 +181,12 @@ def portrait_detail():
     medium = portrait.medium
     artist = portrait.artist_name
     return render_template('portrait-detail.html', img_path=img_path, title=title, description=description,
-                           medium=medium, artist=artist)
+                           medium=medium, artist=artist, logged_in=current_user.is_authenticated, admin=admin)
 
 
 @studio.route('/paintings', methods=['GET', 'POST'])
 def paintings():
-    return render_template('paintings.html')
+    admin = db.session.query(Role).filter_by(name='admin').one_or_none()
+    return render_template('paintings.html', logged_in=current_user.is_authenticated, admin=admin)
 
 

@@ -5,14 +5,14 @@
 </style>
 <div class="painting-gallery">
     {% for uuid in artwork_dict %}
-    <a href="{{ url_for('studio.portrait_detail', uuid=uuid, title=artwork_dict[uuid]['title']) }}" style="text-decoration: none;"><div class="painting-box-container">
-        <div class="painting-box">
-            <img src="../{{ artwork_dict[uuid]['path'] }}">
+    <a href="{{ url_for('studio.portrait_detail', uuid=uuid, title=artwork_dict[uuid]['title']) }}" style="text-decoration: none;">
+        <div class="painting-box-container">
+            <div class="painting-box">
+                <img src="../{{ artwork_dict[uuid]['path'] }}">
+            </div>
+            <p style="color: #C9C9C9;"> {{ artwork_dict[uuid]['title'] }}</p>
         </div>
-        <p style="color: black;"> {{ artwork_dict[uuid]['title'] }}</p>
-    </div></a>
+    </a>
     {% endfor %}
-
-
 </div>
 {% endblock %}
