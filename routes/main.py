@@ -6,7 +6,8 @@ from models.tool import Tools
 from flask_login import current_user
 from operations.miscellaneous import log
 from models.artist_data import ArtistData
-# from operations.artist_tools import delete_watermarked_images
+from operations.artist_tools import delete_watermarked_images
+from operations.miscellaneous import image_resize_and_compress_single
 
 main = Blueprint('main', __name__, static_folder='static', template_folder='templates')
 
@@ -68,6 +69,9 @@ def home():
     for workshop in workshops:
         if not workshop.reg_start:
             upcoming_workshop_list.append(workshop.name)
+    # ---------------------------------------- Temp ----------------------------------------------------- #
+
+
 
     return render_template('index.html', logged_in=current_user.is_authenticated, admin=admin, client=client,
                            animation_admin=animation_admin, upcoming_workshop_list=upcoming_workshop_list,

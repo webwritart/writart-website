@@ -16,7 +16,7 @@ from models.tool import Tools
 from models.member import Member, Workshop, Role
 from models.workshop_details import WorkshopDetails
 from models.artwork import Portrait
-from operations.miscellaneous import allowed_file
+from operations.miscellaneous import allowed_file, image_resize_and_compress_single
 from routes.account import today_date
 
 manager = Blueprint('manager', __name__, static_folder='static', template_folder='templates/manager')
@@ -563,6 +563,8 @@ def home():
                 )
                 db.session.add(entry)
                 db.session.commit()
+
+                image_resize_and_compress_single(filename, path)
                 return redirect(url_for('manager.home'))
 
         open_reg = db.session.query(Tools).filter_by(keyword='open_reg').scalar().data

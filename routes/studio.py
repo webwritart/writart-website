@@ -148,12 +148,11 @@ def artist_tools():
 def portraits():
     artwork_dict = {}
 
-    all_portraits = db.session.query(Portrait).all()
-    base_path = 'static/files/users/477706/artworks/portrait/'
+    base_path = 'static/files/users/477706/artworks/portrait/thumbnail'
     for file in list_files_in_directory(base_path):
         title_raw = PureWindowsPath(file).name
         path = file
-        uuid = title_raw.split('.')[0].split('-')[1]
+        uuid = title_raw.split('.')[0].split('-')[1].split('_')[0]
         artist = db.session.query(Portrait).filter_by(uuid=uuid).scalar().artist
         title = title_raw.split('.')[0].split('-')[0].replace('_', ' ')
         artwork_dict[uuid] = {'title': title, 'path': path, 'artist': artist}
@@ -167,7 +166,7 @@ def portrait_detail():
     uuid = request.args.get('uuid')
     title = request.args.get('title')
     img_path = ''
-    base_path = 'static/files/users/477706/artworks/portrait/'
+    base_path = 'static/files/users/477706/artworks/portrait/large'
     search = True
     while search:
         for file in list_files_in_directory(base_path):
