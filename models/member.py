@@ -44,9 +44,26 @@ class Member(UserMixin, db.Model):
     project = db.relationship('Project', secondary=member_project, backref='clients')
     quizzes = db.relationship('QuizList', backref='player')
     feedback_credits = db.relationship('FeedbackCredits', backref='student')
+    portraits = db.relationship('Portrait', backref='artist')
 
     def __repr__(self):
         return f'{self.name.split()[0]} -- {self.email}'
+
+
+class Portrait(db.Model):
+
+    id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.String(6), unique=True)
+    title = db.Column(db.String(100))
+    description = db.Column(db.String(500))
+    medium = db.Column(db.String(100))
+    artist_name = db.Column(db.String(100))
+    path = db.Column(db.String(200))
+    artist_id = db.Column(db.Integer, db.ForeignKey('member.id'))
+
+
+    def __repr__(self):
+        return f"{self.title}"
 
 
 class QuizList(db.Model):

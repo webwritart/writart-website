@@ -13,9 +13,8 @@ from operations.quiz import add_quiz_data_to_db
 from models.payment import Payment
 from models.query import Query
 from models.tool import Tools
-from models.member import Member, Workshop, Role
+from models.member import Member, Workshop, Role, Portrait
 from models.workshop_details import WorkshopDetails
-from models.artwork import Portrait
 from operations.miscellaneous import allowed_file, image_resize_and_compress_single
 from routes.account import today_date
 
@@ -554,12 +553,13 @@ def home():
                             os.makedirs(path)
                         file.save(os.path.join(path, filename))
                 entry = Portrait(
-                    uuid = uuid,
-                    title = filename.split('.')[0],
-                    description = description,
-                    medium = medium,
-                    artist = artist,
-                    path = path
+                    uuid=uuid,
+                    title=filename.split('.')[0],
+                    description=description,
+                    medium=medium,
+                    artist_name=artist,
+                    path=path,
+                    artist_id=current_user.id
                 )
                 db.session.add(entry)
                 db.session.commit()

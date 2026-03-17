@@ -8,7 +8,7 @@ from models.member import Member
 from operations.miscellaneous import allowed_file, text_match
 from operations.artist_tools import add_watermark, delete_single_watermarked_image, delete_all_from_user
 from models.artist_data import ArtistData
-from models.artwork import Portrait
+from models.member import Portrait
 from pathlib import Path, PureWindowsPath
 
 studio = Blueprint('studio', __name__, static_folder="static", template_folder='templates/studio/')
@@ -177,7 +177,7 @@ def portrait_detail():
     portrait = db.session.query(Portrait).filter_by(uuid=uuid).scalar()
     description = portrait.description
     medium = portrait.medium
-    artist = portrait.artist
+    artist = portrait.artist_name
     return render_template('portrait-detail.html', img_path=img_path, title=title, description=description,
                            medium=medium, artist=artist)
 

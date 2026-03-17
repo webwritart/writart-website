@@ -2,11 +2,10 @@ import os
 from flask import Flask
 from dotenv import load_dotenv
 from extensions import mail, login_manager, db
-from models.member import Member, member_role, member_workshop, Workshop, Role, QuizList, FeedbackCredits, FeedbackVideos
+from models.member import Member, member_role, member_workshop, Workshop, Role, QuizList, FeedbackCredits, FeedbackVideos, Portrait
 from models.videos import Demo
 from models.quiz import Quiz
 from models.b2b import VidEditProject
-from models.artwork import Portrait
 from routes.account import account
 from routes.main import main
 from routes.manager import manager
