@@ -76,31 +76,33 @@ def image_resize_and_compress_single(filename, root_path,):
     os.makedirs(large_folder, exist_ok=True)
     thumbnail_filename = filename.split('.')[0] + '_thumbnail.' + filename.split('.')[1]
     large_filename = filename.split('.')[0] + '_large.' + filename.split('.')[1]
+    width = 0
+    height = 0
 
     image_path = root_path + filename
-    image = Image.open(image_path)
-    image_2 = Image.open(image_path)
-    width, height = image.size
-    aspect_ratio = width/height
+    with Image.open(image_path) as image:
+        width, height = image.size
+        aspect_ratio = width/height
 
-    # -------------------------------------- THUMBNAIL -------------------------------------- #
-    if width > height:
-        new_t_width = 400
-        new_t_height = round(400/aspect_ratio)
-    else:
-        new_t_height = 400
-        new_t_width = round(400*aspect_ratio)
-    image.thumbnail((new_t_width, new_t_height), Image.Resampling.LANCZOS)
-    image.save(thumbnail_folder+thumbnail_filename, optimize=True, quality=100)
+        # -------------------------------------- THUMBNAIL -------------------------------------- #
+        if width > height:
+            new_t_width = 400
+            new_t_height = round(400/aspect_ratio)
+        else:
+            new_t_height = 400
+            new_t_width = round(400*aspect_ratio)
+        image.thumbnail((new_t_width, new_t_height), Image.Resampling.LANCZOS)
+        image.save(thumbnail_folder+thumbnail_filename, optimize=True, quality=100)
 
     # ---------------------------------------- LARGE ---------------------------------------- #
-    if height > 2100:
-        new_l_height = 2100
-        new_l_width = round(2100*aspect_ratio)
-        image_2.thumbnail((new_l_width, new_l_height), Image.Resampling.LANCZOS)
-        image_2.save(large_folder + large_filename, optimize=True, quality=75)
-    else:
-        image_2.save(large_folder + large_filename, optimize=True, quality=75)
+    with Image.open(image_path) as image_2:
+        if height > 2100:
+            new_l_height = 2100
+            new_l_width = round(2100*aspect_ratio)
+            image_2.thumbnail((new_l_width, new_l_height), Image.Resampling.LANCZOS)
+            image_2.save(large_folder + large_filename, optimize=True, quality=75)
+        else:
+            image_2.save(large_folder + large_filename, optimize=True, quality=75)
 
     os.remove(image_path)
     print('Image Resize Successful')
