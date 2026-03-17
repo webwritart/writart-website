@@ -565,7 +565,7 @@ def home():
                 db.session.commit()
 
                 image_resize_and_compress_single(filename, path)
-                flash("Chief! Session link sent successfully!", "success")
+                flash("Chief! Artwork image added successfully!", "success")
                 return redirect(url_for('manager.home'))
 
         open_reg = db.session.query(Tools).filter_by(keyword='open_reg').scalar().data
