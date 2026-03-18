@@ -92,6 +92,9 @@ def image_resize_and_compress_single(filename, root_path,):
             new_t_height = 400
             new_t_width = round(400*aspect_ratio)
         image.thumbnail((new_t_width, new_t_height), Image.Resampling.LANCZOS)
+        if filename.split('.')[1] is 'PNG' or 'png':
+            image.convert('RGB')
+            thumbnail_filename = thumbnail_filename.split('.')[0] + '.jpg'
         image.save(thumbnail_folder+thumbnail_filename, optimize=True, quality=100)
 
     # ---------------------------------------- LARGE ---------------------------------------- #
@@ -100,9 +103,16 @@ def image_resize_and_compress_single(filename, root_path,):
             new_l_height = 2100
             new_l_width = round(2100*aspect_ratio)
             image_2.thumbnail((new_l_width, new_l_height), Image.Resampling.LANCZOS)
+            if filename.split('.')[1] is 'PNG' or 'png':
+                image.convert('RGB')
+                large_filename = large_filename.split('.')[0] + '.jpg'
             image_2.save(large_folder + large_filename, optimize=True, quality=75)
         else:
+            if filename.split('.')[1] is 'PNG' or 'png':
+                image.convert('RGB')
+                large_filename = large_filename.split('.')[0] + '.jpg'
             image_2.save(large_folder + large_filename, optimize=True, quality=75)
+
 
     os.remove(image_path)
     print('Image Resize Successful')
