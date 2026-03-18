@@ -1,5 +1,7 @@
+from pathlib import PureWindowsPath
+
 from flask import Blueprint, render_template, request, flash, session, url_for
-from extensions import login_manager, db, current_year
+from extensions import login_manager, db, current_year, list_files_in_directory
 from models.member import Member, Workshop, Role
 from models.query import Query
 from models.tool import Tools
@@ -69,16 +71,19 @@ def home():
     for workshop in workshops:
         if not workshop.reg_start:
             upcoming_workshop_list.append(workshop.name)
-    # ---------------------------------------- Temp ----------------------------------------------------- #
+    # ---------------------------------------- Main ----------------------------------------------------- #
+    portrait_folder = 'static/files/users/477706/artworks/portrait/large/'
+    portrait_list = []
 
-
+    for file in list_files_in_directory(portrait_folder):
+        portrait_list.append(PureWindowsPath(file))
 
     return render_template('index.html', logged_in=current_user.is_authenticated, admin=admin, client=client,
                            animation_admin=animation_admin, upcoming_workshop_list=upcoming_workshop_list,
                            current_ws=current_ws, current_ws_category=current_ws_category,
                            current_ws_topic=current_ws_topic, current_ws_brief=current_ws_brief,
                            current_ws_date=current_ws_date, current_ws_time=current_ws_time, current_year=current_year,
-                           reg_status=reg_status)
+                           reg_status=reg_status, portrait_list=portrait_list)
 
 
 @main.route('/privacy_policy')
