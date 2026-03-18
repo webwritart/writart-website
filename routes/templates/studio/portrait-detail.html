@@ -4,10 +4,10 @@
 
 <div class="full-size-portrait">
     <img class="full-width-portrait" src="../{{ img_path }}">
-    <div style="text-align:center;">
-        <p style="margin-bottom:0%; padding-top:3%;">{{ title }}</p>
-        <p style="margin-top:0%;">Artist: <span style="color:#B5104F;">{{ artist }}</span></p>
-        <p style="margin-top:0%;">{{ description }}</p>
+    <div style="display: flex; flex-direction: column; text-align:center; align-items: center;">
+        <p class="portrait-main-details" style="margin-bottom:0%; padding-top:3%;">{{ title }}</p>
+        <p class="portrait-main-details" style="margin-top:0%;">Artist: <span style="color:#B5104F;">{{ artist }}</span></p>
+        <p class="portrait-main-details" style="margin-top:0%;">{{ description }}</p>
     </div>
     {% if medium == 'digital' %}
     <div class="full-width-div-row-narrow" style="background:black; color:white; justify-content:center; padding-bottom:0%;">
@@ -71,13 +71,14 @@
     </div>
     {% else %}
     <div class="full-width-div-row-narrow" style="background:#DECAD8;">
-        <p><b>Courier:</b><br>Completely <span style="color:#B5104F;">FREE OF COST courier</span> anywhere inside India. We cover all the courier expenses incurred in sending the prepared Artwork/painting/Portrait safely to the customers using very safe and sturdy packaging.</p>
+        <p><b>Courier:</b><br>Completely <span style="color:#B5104F;">FREE OF COST courier</span> anywhere inside India. We cover all the courier expenses incurred in sending the prepared Artwork/painting/Portrait safely to the customers using very safe and sturdy packaging
+            through the courier providing the best service in the customer's delivery area.</p>
     </div>
     <div class="full-width-div-row-narrow" style="background:#DECAD8;">
         <p><b>Insurance:</b><br>We care for our customers' hard-earned money. Therefore, we provide an option for insurance of the Painting while in courier transit.<br>
-        What does it mean? In case the painting gets damaged or gets lost and the courier provider is found responsible for the same
+        What does it mean? In case the painting gets damaged or gets lost and the courier provider is found responsible for the same,
             we help <span style="color:#B5104F;">recover 100%</span> of the total money the customer paid us for the painting using the courier insurance.
-        As already stated the courier cost is completely paid by us inside India but if the customer chooses to get insurance done,
+        As already stated, the courier cost is completely paid by us inside India but if the customer chooses to get insurance done,
         then the insurance charge has to be borne by the customer.<br><br>The insurance charge is transparent and is fixed. For the painting commissions amounting upto ₹20,000
         the insurance charge is 1% of the total amount (for example, for a painting costing ₹18,000 total, the insurance charge
         will be a flat ₹180), for the painting commissions amounting ₹20,001-₹45,000 the insurance charge is 2% of the total amount and
@@ -86,8 +87,8 @@
     </div>
     {% endif %}
     <div class="full-width-div-row-narrow" style="background:#DECAD8;">
-        <p><b>Refund:</b><br>For some unseen reasons if the painting fails to get completed and if the artist is responsible for the same,
-        the customer/client will get the all the paid amount <span style="color:#B5104F;">fully refunded</span> without any hassle.</p>
+        <p><b>Refund:</b><br>For some unseen reasons if the painting fails to get completed and the artist is responsible for the same,
+        the customer/client will get all the paid amount <span style="color:#B5104F;">fully refunded</span> without any hassle.</p>
     </div>
 
     {% if medium == 'digital' %}
