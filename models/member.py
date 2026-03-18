@@ -58,6 +58,7 @@ class Portrait(db.Model):
     description = db.Column(db.String(500))
     medium = db.Column(db.String(100))
     artist_name = db.Column(db.String(100))
+    date_time = db.Column(db.String(50))
     path = db.Column(db.String(200))
     artist_id = db.Column(db.Integer, db.ForeignKey('member.id'))
 

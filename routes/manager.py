@@ -17,6 +17,7 @@ from models.member import Member, Workshop, Role, Portrait
 from models.workshop_details import WorkshopDetails
 from operations.miscellaneous import allowed_file, image_resize_and_compress_single
 from routes.account import today_date
+import datetime
 
 manager = Blueprint('manager', __name__, static_folder='static', template_folder='templates/manager')
 
@@ -522,6 +523,8 @@ def home():
                 medium = request.form.get('medium')
                 description = request.form.get('description')
                 artist = 'Shwetabh Suman'
+                current_datetime = datetime.datetime.now()
+
                 try:
                     all_portraits = db.session.query(Portrait).all()
                     for portrait in all_portraits:
@@ -558,6 +561,7 @@ def home():
                     description=description,
                     medium=medium,
                     artist_name=artist,
+                    date_time=current_datetime,
                     path=path,
                     artist_id=current_user.id
                 )
