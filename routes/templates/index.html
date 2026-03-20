@@ -66,12 +66,13 @@ img {vertical-align: middle;}
 
 <div class="slideshow-container">
 {% for portrait in portrait_list %}
-
+<a href="{{ url_for('studio.portraits') }}">
 <div class="mySlides fade">
   <div class="slideshow_box">
     <img src="{{ portrait }}" style="max-height:100%; max-width: 100%;">
   </div>
 </div>
+</a>
 {% endfor %}
 <a href="{{ url_for('studio.portraits') }}" class="slideshow-btn" style="margin-bottom:">PORTRAITS</a>
 </div>
