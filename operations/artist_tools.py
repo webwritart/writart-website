@@ -36,7 +36,7 @@ def add_watermark(input_path, watermark_text, output_path, color, intensity, siz
         font_size = int(width/40)
     elif size == 'small':
         font_size = int(width/50)
-    font = ImageFont.truetype('/home/writart/website/static/fonts/Arial.ttf', font_size)
+    font = ImageFont.truetype('static/fonts/Arial.ttf', font_size)
     # font = ImageFont.truetype('arial.ttf', font_size)
     ascent, descent = font.getmetrics()
 
