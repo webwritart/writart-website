@@ -12,7 +12,7 @@ from operations.messenger import send_email_school, send_email_studio, send_emai
 from operations.quiz import add_quiz_data_to_db
 from models.payment import Payment
 from models.query import Query
-from models.tool import Tools
+from models.tool import Tools, ArtworkPriceTime
 from models.member import Member, Workshop, Role, Portrait
 from models.workshop_details import WorkshopDetails
 from operations.miscellaneous import allowed_file, image_resize_and_compress_single
@@ -745,11 +745,18 @@ def home():
 
         all_workshops = db.session.query(Workshop).all()
 
+        # ------------------------------------------------- STUDIO ----------------------------------------------------
+
+        type_list = []
+        result = db.session.query(ArtworkPriceTime).all()
+        for r in result:
+            type_list.append(r.type)
+
         return render_template('manager.html', logged_in=current_user.is_authenticated,
                                current_ws_name=current_ws_name, open_reg=open_reg, promotion=promotion,
                                reminder=reminder, close_reg=close_reg,
                                certificate_distribution=certificate_distribution, upcoming_ws_dict=upcoming_ws_dict,
-                               count=count, count_list=count_list, all_workshops=all_workshops,
+                               count=count, count_list=count_list, all_workshops=all_workshops, type_list=type_list,
                                current_year=current_year)
     else:
         return render_template('admin_area.html', logged_in=current_user.is_authenticated, current_year=current_year)
@@ -852,6 +859,29 @@ def role_management():
     admin = db.session.query(Role).filter_by(name='admin').one_or_none()
     return render_template('role_management.html', logged_in=current_user.is_authenticated, admin=admin,
                            current_year=current_year)
+
+
+@login_required
+@admin_only
+@manager.route('/artwork_price_time', methods=['GET', 'POST'])
+def artwork_price_time():
+    if request.method == 'POST':
+        if request.form.get('submit') == 'update_artwork_price':
+            artwork_type = request.form.get('type')
+            price = request.form.get('price')
+            discount_percentage = request.form.get('discount_percentage')
+            time_taken = request.form.get('time')
+
+            data = db.session.query(ArtworkPriceTime).filter_by(type=artwork_type).scalar()
+            if price != '':
+                data.price = price
+            if discount_percentage != '':
+                data.discount_percentage = discount_percentage
+            if time_taken != '':
+                data.time_taken = time_taken
+
+            db.session.commit()
+    return redirect(url_for('manager.home'))
 
 
 @login_required

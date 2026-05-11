@@ -9,6 +9,7 @@ from operations.miscellaneous import allowed_file, text_match
 from operations.artist_tools import add_watermark, delete_single_watermarked_image, delete_all_from_user
 from models.artist_data import ArtistData
 from pathlib import Path, PureWindowsPath
+from models.tool import ArtworkPriceTime
 
 studio = Blueprint('studio', __name__, static_folder="static", template_folder='templates/studio/')
 
@@ -157,9 +158,16 @@ def portraits():
         title = title_raw.split('.')[0].split('-')[0].replace('_', ' ')
         artwork_dict[uuid] = {'title': title, 'path': path, 'artist': artist}
 
+        # Finding maximum discount from database to display on the discount advertisement--------------------
+        discount_list = []
+        data = db.session.query(ArtworkPriceTime).all()
+        for discount in data:
+            discount_list.append(discount.discount_percentage)
+        maximum_discount = max(discount_list)
+
 
     return render_template('portraits.html', logged_in=current_user.is_authenticated, artwork_dict=artwork_dict,
-                           admin=admin)
+                           admin=admin, maximum_discount=maximum_discount)
 
 
 @studio.route('/portrait-detail', methods=['GET', 'POST'])
@@ -180,8 +188,24 @@ def portrait_detail():
     description = portrait.description
     medium = portrait.medium
     artist = portrait.artist_name
+
+    portrait_price_time_dict = {}
+    data = db.session.query(ArtworkPriceTime).all()
+    for entry in data:
+        price = f"{entry.price:,}"
+        discounted_price = ((100 - entry.discount_percentage)/100) * entry.price
+        discounted_price = f"{int(discounted_price):,}"
+
+        portrait_price_time_dict[entry.type] = {
+            'price': price,
+            'discount_percentage': entry.discount_percentage,
+            'discounted_price': discounted_price,
+            'time_taken': entry.time_taken
+        }
+    print(portrait_price_time_dict)
     return render_template('portrait-detail.html', img_path=img_path, title=title, description=description,
-                           medium=medium, artist=artist, logged_in=current_user.is_authenticated, admin=admin)
+                           medium=medium, artist=artist, logged_in=current_user.is_authenticated, admin=admin,
+                           portrait_price_time_dict=portrait_price_time_dict)
 
 
 @studio.route('/paintings', methods=['GET', 'POST'])

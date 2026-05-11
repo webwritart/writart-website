@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
-<style>
 
-</style>
+<div class="discount_advertisement">
+  <p><span style="color:#dedede;">Upto </span><b>{{ maximum_discount }}%</b> discount <span style="color:#dedede;">available. Hurry!</span></p>
+</div>
+
 <div class="painting-gallery">
     {% for uuid in artwork_dict %}
     <a href="{{ url_for('studio.portrait_detail', uuid=uuid, title=artwork_dict[uuid]['title']) }}" style="text-decoration: none;">

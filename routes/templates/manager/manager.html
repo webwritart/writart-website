@@ -464,8 +464,23 @@
                             <option value="acrylics_on_canvas">Acrylic on Canvas</option>
                             <option value="charcoal_on_paper">Charcoal on Paper</option>
                         </select>
+
                         <input type="text" placeholder="Description" name="description">
                         <button type="submit" name="submit" id="file-btn3" class="btn btn-primary btn-block btn-large" value="upload_artworks">Upload Files</button>
+                    </form>
+                </div>
+                <div id="artwork-price">
+                    <h2>Artwork Price</h2>
+                    <form action="{{ url_for('manager.artwork_price_time') }}" method="post" id="artwork-price-form">
+                        <select name="type">
+                            {% for item in type_list %}
+                            <option value={{item}}>{{item}}</option>
+                            {% endfor %}
+                        </select>
+                        <input type="text" name="price" placeholder="Price">
+                        <input type="text" name="discount_percentage" placeholder="Discount Percent">
+                        <input type="text" name="time" placeholder="Time taken">
+                        <button type="submit" name="submit" id="artwork-price-btn" class="btn btn-primary btn-block btn-large" value="update_artwork_price">Update Price and Time</button>
                     </form>
                 </div>
             </div>

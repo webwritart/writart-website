@@ -4,7 +4,7 @@ from flask import Blueprint, render_template, request, flash, session, url_for
 from extensions import login_manager, db, current_year, list_files_in_directory
 from models.member import Member, Workshop, Role
 from models.query import Query
-from models.tool import Tools
+from models.tool import Tools, ArtworkPriceTime
 from flask_login import current_user
 from operations.miscellaneous import log
 from models.artist_data import ArtistData
@@ -78,12 +78,19 @@ def home():
     for file in list_files_in_directory(portrait_folder):
         portrait_list.append(PureWindowsPath(file))
 
+    # Finding maximum discount from database to display on the discount advertisement--------------------
+    discount_list = []
+    data = db.session.query(ArtworkPriceTime).all()
+    for discount in data:
+        discount_list.append(discount.discount_percentage)
+    maximum_discount = max(discount_list)
+
     return render_template('index.html', logged_in=current_user.is_authenticated, admin=admin, client=client,
                            animation_admin=animation_admin, upcoming_workshop_list=upcoming_workshop_list,
                            current_ws=current_ws, current_ws_category=current_ws_category,
                            current_ws_topic=current_ws_topic, current_ws_brief=current_ws_brief,
                            current_ws_date=current_ws_date, current_ws_time=current_ws_time, current_year=current_year,
-                           reg_status=reg_status, portrait_list=portrait_list)
+                           reg_status=reg_status, portrait_list=portrait_list, maximum_discount=maximum_discount)
 
 
 @main.route('/privacy_policy')

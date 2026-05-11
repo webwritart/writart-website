@@ -15,16 +15,21 @@
     </div>
 
     <div class="full-width-div-row-narrow" style="background:black; color:white; text-align: center;">
-        <p class="half-width-paragraph"><b>Charge:</b><br> Starts from <b>₹5,000</b></p>
-        <p><b>Time Taken:</b><br> 3-8 days approx.<br>(for exact deadline please contact the artist.)</p>
+        <p class="half-width-paragraph"><b>Charge:</b><br> Starts from
+            <s><b>₹{{ portrait_price_time_dict['portrait_digital']['price'] }} </b></s>
+            &nbsp;&nbsp;<span style="color:#38ff74;"><b>₹ {{ portrait_price_time_dict['portrait_digital']['discounted_price'] }}</b></span>
+            <br><span style="color:#e04e22;">({{ portrait_price_time_dict['portrait_digital']['discount_percentage'] }}% discount applied!)</span></p>
+        <p><b>Time Taken:</b><br> {{ portrait_price_time_dict['portrait_digital']['time_taken'] }} approx.<br>(for exact deadline please contact the artist.)</p>
     </div>
     {% elif medium == 'oil_on_canvas' %}
     <div class="full-width-div-row-narrow" style="background:black; color:white; justify-content:center; padding-bottom:0%;">
         <p><b>OIL ON CANVAS</b></p>
     </div>
     <div class="full-width-div-row-narrow" style="background:black; color:white; text-align: center;">
-        <p class="half-width-paragraph"><b>Charge:</b><br> Starts from <b>₹10,000</b></p>
-        <p><b>Time Taken:</b><br> 3-8 weeks approx.<br>(for exact deadline please contact the artist.)</p>
+        <p class="half-width-paragraph"><b>Charge:</b><br> Starts from <s><b>₹{{ portrait_price_time_dict['portrait_oil_on_canvas_18x24']['price'] }}</b></s>
+        &nbsp;&nbsp;<span style="color:#38ff74;"><b>₹ {{ portrait_price_time_dict['portrait_oil_on_canvas_18x24']['discounted_price'] }}</b></span>
+        <br><span style="color:#e04e22;">({{ portrait_price_time_dict['portrait_oil_on_canvas_18x24']['discount_percentage'] }}% discount applied!)</span></p>
+        <p><b>Time Taken:</b><br> {{ portrait_price_time_dict['portrait_oil_on_canvas_18x24']['time_taken'] }} approx.<br>(for exact deadline please contact the artist.)</p>
     </div>
     {% elif medium == 'acrylics_on_canvas' %}
     <div class="full-width-div-row-narrow" style="background:black; color:white; justify-content:center; padding-bottom:0%;">

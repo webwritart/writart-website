@@ -21,6 +21,7 @@ from routes.b2b import b2b
 from models.artist_data import ArtistData
 # from flask_apscheduler import APScheduler
 from sqlalchemy import create_engine, text
+from models.tool import Tools, ArtworkPriceTime
 
 load_dotenv()
 
@@ -89,5 +90,5 @@ if __name__ == '__main__':
     # scheduler.init_app(app)
     # scheduler.add_job(id='my_task', func=task, trigger='interval', seconds=5)
     # scheduler.start()
-    app.run(host='0.0.0.0', port=5000)
-    # app.run(debug=True)
+    # app.run(host='0.0.0.0', port=5000)
+    app.run(debug=True)

@@ -20,6 +20,7 @@ img {vertical-align: middle;}
     align-items: center;
     background: black;
     padding-top: 2%;
+    padding-bottom: 5%;
 }
 
 /* Caption text */
@@ -63,7 +64,9 @@ img {vertical-align: middle;}
 }
 </style>
 
-
+<div class="discount_advertisement">
+  <p><span style="color:#dedede;">Upto </span><b>{{ maximum_discount }}%</b> discount <span style="color:#dedede;">available. Hurry!</span></p>
+</div>
 <div class="slideshow-container">
 {% for portrait in portrait_list %}
 <a href="{{ url_for('studio.portraits') }}">
@@ -77,7 +80,6 @@ img {vertical-align: middle;}
 <a href="{{ url_for('studio.portraits') }}" class="slideshow-btn" style="margin-bottom:">PORTRAITS</a>
 </div>
 <br>
-
 
 
 
