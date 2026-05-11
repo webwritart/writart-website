@@ -1226,19 +1226,33 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     text-decoration: none;
     background: #9c7679;
 }
-#price-table {
+.price-table {
     display:flex;
     flex-direction: column;
     width: 40%;
     padding: 0% 2% 2% 2%;
     align-items: center;
 }
-#price-table td {
+.price-table td {
     width: 50%;
     border: 1px solid;
 }
 #price-table-label {
     padding-top: 2%;
+}
+.studio-btn-two {
+    display: flex;
+    justify-content: center;
+    padding: 1%;
+}
+.studio-btn-two a {
+    background: #85133D;
+    padding: .5% 3%;
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
+}
+.studio-btn-two a:hover {
+    background: #4F0621;
+    text-decoration: none;
 }
 /* ------------------------------------------------------------- RESPONSIVE ------------------------------------------ */
 
@@ -1479,7 +1493,7 @@ and (max-width : 1440px) {
         margin-top: 2%;
         margin-bottom: 3%;
     }
-    #price-table {
+    .price-table {
         width: 50%;
     }
 }
@@ -1646,7 +1660,7 @@ and (max-width : 992px) {
         margin-top: 2%;
         margin-bottom: 4%;
     }
-    #price-table {
+    .price-table {
         width: 60%;
     }
 }
@@ -1763,7 +1777,7 @@ and (max-width : 768px) {
         font-size: 1.5rem;
         padding-top:1%;
     }
-    #price-table {
+    .price-table {
         width: 70%;
     }
 }
@@ -1999,7 +2013,7 @@ and (max-width : 576px) {
         padding-top:1.3%;
         padding-bottom: 0%;
     }
-    #price-table {
+    .price-table {
         width: 80%;
     }
 }

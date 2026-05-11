@@ -202,7 +202,6 @@ def portrait_detail():
             'discounted_price': discounted_price,
             'time_taken': entry.time_taken
         }
-    print(portrait_price_time_dict)
     return render_template('portrait-detail.html', img_path=img_path, title=title, description=description,
                            medium=medium, artist=artist, logged_in=current_user.is_authenticated, admin=admin,
                            portrait_price_time_dict=portrait_price_time_dict)
@@ -212,5 +211,26 @@ def portrait_detail():
 def paintings():
     admin = db.session.query(Role).filter_by(name='admin').one_or_none()
     return render_template('paintings.html', logged_in=current_user.is_authenticated, admin=admin)
+
+
+@studio.route('/artwork-pricing', methods=['GET', 'POST'])
+def artwork_pricing():
+    admin = db.session.query(Role).filter_by(name='admin').one_or_none()
+
+    portrait_price_time_dict = {}
+    data = db.session.query(ArtworkPriceTime).all()
+    for entry in data:
+        price = f"{entry.price:,}"
+        discounted_price = ((100 - entry.discount_percentage) / 100) * entry.price
+        discounted_price = f"{int(discounted_price):,}"
+
+        portrait_price_time_dict[entry.type] = {
+            'price': price,
+            'discount_percentage': entry.discount_percentage,
+            'discounted_price': discounted_price,
+            'time_taken': entry.time_taken
+        }
+    return render_template('artwork-pricing.html', logged_in=current_user.is_authenticated, admin=admin,
+                           portrait_price_time_dict=portrait_price_time_dict)
 
 
