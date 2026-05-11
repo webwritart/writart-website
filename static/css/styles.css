@@ -1214,6 +1214,32 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     align-items: center;
     height: 80vh;
 }
+#price-table-btn {
+    padding: .5% 2%;
+    border: none;
+    background: #a69294;
+    color: white;
+    margin-top: 1%;
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.3);
+}
+#price-table-btn:hover {
+    text-decoration: none;
+    background: #9c7679;
+}
+#price-table {
+    display:flex;
+    flex-direction: column;
+    width: 40%;
+    padding: 0% 2% 2% 2%;
+    align-items: center;
+}
+#price-table td {
+    width: 50%;
+    border: 1px solid;
+}
+#price-table-label {
+    padding-top: 2%;
+}
 /* ------------------------------------------------------------- RESPONSIVE ------------------------------------------ */
 
 @media only screen and (min-width : 1900px) {
@@ -1453,6 +1479,9 @@ and (max-width : 1440px) {
         margin-top: 2%;
         margin-bottom: 3%;
     }
+    #price-table {
+        width: 50%;
+    }
 }
 
 
@@ -1617,6 +1646,9 @@ and (max-width : 992px) {
         margin-top: 2%;
         margin-bottom: 4%;
     }
+    #price-table {
+        width: 60%;
+    }
 }
 
 @media only screen
@@ -1730,6 +1762,9 @@ and (max-width : 768px) {
     .discount_advertisement p {
         font-size: 1.5rem;
         padding-top:1%;
+    }
+    #price-table {
+        width: 70%;
     }
 }
 
@@ -1963,6 +1998,9 @@ and (max-width : 576px) {
         font-size: 1.2rem;
         padding-top:1.3%;
         padding-bottom: 0%;
+    }
+    #price-table {
+        width: 80%;
     }
 }
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- #

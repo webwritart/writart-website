@@ -17,7 +17,7 @@
     <div class="full-width-div-row-narrow" style="background:black; color:white; text-align: center;">
         <p class="half-width-paragraph"><b>Charge:</b><br> Starts from
             <s><b>₹{{ portrait_price_time_dict['portrait_digital']['price'] }} </b></s>
-            &nbsp;&nbsp;<span style="color:#38ff74;"><b>₹ {{ portrait_price_time_dict['portrait_digital']['discounted_price'] }}</b></span>
+            &nbsp;&nbsp;<span style="color:#38ff74;"><b>₹{{ portrait_price_time_dict['portrait_digital']['discounted_price'] }}</b></span>
             <br><span style="color:#e04e22;">({{ portrait_price_time_dict['portrait_digital']['discount_percentage'] }}% discount applied!)</span></p>
         <p><b>Time Taken:</b><br> {{ portrait_price_time_dict['portrait_digital']['time_taken'] }} approx.<br>(for exact deadline please contact the artist.)</p>
     </div>
@@ -27,9 +27,35 @@
     </div>
     <div class="full-width-div-row-narrow" style="background:black; color:white; text-align: center;">
         <p class="half-width-paragraph"><b>Charge:</b><br> Starts from <s><b>₹{{ portrait_price_time_dict['portrait_oil_on_canvas_18x24']['price'] }}</b></s>
-        &nbsp;&nbsp;<span style="color:#38ff74;"><b>₹ {{ portrait_price_time_dict['portrait_oil_on_canvas_18x24']['discounted_price'] }}</b></span>
+        &nbsp;&nbsp;<span style="color:#38ff74;"><b>₹{{ portrait_price_time_dict['portrait_oil_on_canvas_18x24']['discounted_price'] }}</b></span>
         <br><span style="color:#e04e22;">({{ portrait_price_time_dict['portrait_oil_on_canvas_18x24']['discount_percentage'] }}% discount applied!)</span></p>
         <p><b>Time Taken:</b><br> {{ portrait_price_time_dict['portrait_oil_on_canvas_18x24']['time_taken'] }} approx.<br>(for exact deadline please contact the artist.)</p>
+    </div>
+    <p id="price-table-label"><b>PRICE TABLE</b></p>
+    <div id="price-table">
+        <table style="width:100%;">
+            <tr>
+                <td style="background:#807d7d; color:white;">Size</td>
+                <td style="background:#807d7d; color:white;">Oil on Canvas</td>
+            </tr>
+            <tr>
+                <td>18 x 24 inch (1.5 x 2 feet)</td>
+                <td><s>₹{{ portrait_price_time_dict['portrait_oil_on_canvas_18x24']['price'] }}</s> <span style="color:green;"><b>₹{{ portrait_price_time_dict['portrait_oil_on_canvas_18x24']['discounted_price'] }}</b></span></td>
+            </tr>
+            <tr>
+                <td>24 x 36 inch (2 x 3 feet)</td>
+                <td><s>₹{{ portrait_price_time_dict['portrait_oil_on_canvas_24x36']['price'] }}</s> <span style="color:green;"><b>₹{{ portrait_price_time_dict['portrait_oil_on_canvas_24x36']['discounted_price'] }}</b></span></td>
+            </tr>
+            <tr>
+                <td>30 x 40 inch (2.5 x 3.33 feet)</td>
+                <td><s>₹{{ portrait_price_time_dict['portrait_oil_on_canvas_30x40']['price'] }}</s> <span style="color:green;"><b>₹{{ portrait_price_time_dict['portrait_oil_on_canvas_30x40']['discounted_price'] }}</b></span></td>
+            </tr>
+            <tr>
+                <td>36 x 48 inch (3 x 4 feet)</td>
+                <td><s>₹{{ portrait_price_time_dict['portrait_oil_on_canvas_36x48']['price'] }}</s> <span style="color:green;"><b>₹{{ portrait_price_time_dict['portrait_oil_on_canvas_36x48']['discounted_price'] }}</b></span></td>
+            </tr>
+        </table>
+        <p style="color:#e04e22;">Discount is available for limited time.</p>
     </div>
     {% elif medium == 'acrylics_on_canvas' %}
     <div class="full-width-div-row-narrow" style="background:black; color:white; justify-content:center; padding-bottom:0%;">
