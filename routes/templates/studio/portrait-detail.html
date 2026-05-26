@@ -121,15 +121,15 @@
         <p><b>Refund:</b><br>For some unseen reasons if the painting fails to get completed and the artist is responsible for the same,
         the customer/client will get all the paid amount <span style="color:#B5104F;">fully refunded</span> without any hassle.</p>
     </div>
-
+    <a class="portrait-btn" href="{{url_for('studio.artwork_pricing')}}">PRICING AND CHARGES</a>
     {% if medium == 'digital' %}
-    <a class="portrait-btn" href="https://wa.link/7cfgaq">CONTACT US</a>
+    <a class="portrait-btn contact-btn" style='background: gray;' href="https://wa.link/7cfgaq">CONTACT US</a>
     {% elif medium == 'oil_on_canvas' %}
-    <a class="portrait-btn" href="https://wa.link/7vioyu">CONTACT US</a>
+    <a class="portrait-btn contact-btn" style='background: gray;' href="https://wa.link/7vioyu">CONTACT US</a>
     {% elif medium == 'acrylics_on_canvas' %}
-    <a class="portrait-btn" href="https://wa.link/oglbvh">CONTACT US</a>
+    <a class="portrait-btn contact-btn" style='background: gray;' href="https://wa.link/oglbvh">CONTACT US</a>
     {% elif medium == 'charcoal_on_paper' %}
-    <a class="portrait-btn" href="https://wa.link/11755y">CONTACT US</a>
+    <a class="portrait-btn contact-btn" style='background: gray;' href="https://wa.link/11755y">CONTACT US</a>
     {% endif %}
 
 </div>

@@ -2,91 +2,137 @@
 {% block content %}
 
 <style>
-  .cover-container {
-    padding: 8% 0%;
-    background-color: rgba(0,0,0,0);
-    background: url('/static/images/cover.jpg');
-    background-repeat: no-repeat;
-    background-size: cover;
-    align-items:center;
-    height: 30%;
+<!--  .cover-container {-->
+<!--    padding: 8% 0%;-->
+<!--    background-color: rgba(0,0,0,0);-->
+<!--    background: url('/static/images/cover.jpg');-->
+<!--    background-repeat: no-repeat;-->
+<!--    background-size: cover;-->
+<!--    align-items:center;-->
+<!--    height: 30%;-->
+<!--}-->
+<!--    .homepage_cover {-->
+<!--        background: url(static/images/workshops/{{current_ws}}/cover.jpg);-->
+<!--        padding: 4%;-->
+<!--        color: white;-->
+<!--        margin-top: 1%;-->
+<!--        background-size: cover;-->
+<!--        width: 100%;-->
+<!--    }-->
+<!--    .homepage_cover_header {-->
+<!--        display: flex;-->
+<!--        justify-content: space-between;-->
+<!--    }-->
+<!--    .homepage_cover_header h3 {-->
+<!--        font-size: 0.6rem;-->
+<!--        text-transform: uppercase;-->
+<!--    }-->
+<!--    .homepage_cover_title {-->
+<!--        display: flex;-->
+<!--        flex-direction: column;-->
+<!--        justify-content: center;-->
+<!--        align-items: center;-->
+<!--    }-->
+<!--    .homepage_cover_title h1{-->
+<!--        font-size: 1.2rem;-->
+<!--    }-->
+<!--    .homepage_cover_title h3 {-->
+<!--        font-size: 0.8rem;-->
+<!--        line-height: 1rem;-->
+<!--    }-->
+<!--    .homepage_cover_title h4 {-->
+<!--        padding: 2% 0% 1% 0%;-->
+<!--        color: #6eb661;-->
+<!--        font-size: 0.8rem;-->
+<!--    }-->
+<!--    .homepage_cover_title h6 {-->
+<!--        font-size: 0.6rem;-->
+<!--        padding-top: 1.5%;-->
+<!--        color: #f58233;-->
+<!--    }-->
+<!--    .homepage_cover_button {-->
+<!--        display:flex;-->
+<!--        justify-content:space-around;-->
+<!--        align-items:center;-->
+<!--        padding: 2% 5%;-->
+<!--        width: 100%;-->
+<!--    }-->
+<!--    .homepage_cover_button a {-->
+<!--        width: 40%;-->
+<!--        background: #FFDBDB;-->
+<!--        color: #644A07 !important;-->
+<!--        padding: 0.5%;-->
+<!--        font-weight: 400;-->
+<!--        font-size: 0.7rem;-->
+<!--        text-decoration: none;-->
+<!--    }-->
+<!--    .homepage_cover_button a:hover {-->
+<!--        background: #FFC6C6;-->
+<!--        color: #644A07 !important;-->
+<!--    }-->
+<!--    .hero-content{-->
+<!--        color:white;-->
+<!--       text-align:center;-->
+<!--       padding: 0% 15%;-->
+<!--    }-->
+<!--    .hero-content h1 {-->
+<!--        font-size: 1.3rem;-->
+<!--    }-->
+<!--    .hero-content h4 {-->
+<!--        font-size: 0.9rem;-->
+<!--        line-height:1rem;-->
+<!--    }-->
+<!--    .hero-content p {-->
+<!--        font-size: 0.8rem;-->
+<!--        opacity:0.7;-->
+<!--        padding:3% 0% 0% 0%;-->
+<!--    }-->
+
+
+.course-info {
+    width:100%;
+    margin-top:2%;
+    background: #424038;
 }
-    .homepage_cover {
-        background: url(static/images/workshops/{{current_ws}}/cover.jpg);
-        padding: 4%;
-        color: white;
-        margin-top: 1%;
-        background-size: cover;
-        width: 100%;
-    }
-    .homepage_cover_header {
-        display: flex;
-        justify-content: space-between;
-    }
-    .homepage_cover_header h3 {
-        font-size: 0.6rem;
-        text-transform: uppercase;
-    }
-    .homepage_cover_title {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    }
-    .homepage_cover_title h1{
-        font-size: 1.2rem;
-    }
-    .homepage_cover_title h3 {
-        font-size: 0.8rem;
-        line-height: 1rem;
-    }
-    .homepage_cover_title h4 {
-        padding: 2% 0% 1% 0%;
-        color: #6eb661;
-        font-size: 0.8rem;
-    }
-    .homepage_cover_title h6 {
-        font-size: 0.6rem;
-        padding-top: 1.5%;
-        color: #f58233;
-    }
-    .homepage_cover_button {
-        display:flex;
-        justify-content:space-around;
-        align-items:center;
-        padding: 2% 5%;
-        width: 100%;
-    }
-    .homepage_cover_button a {
-        width: 40%;
-        background: #FFDBDB;
-        color: #644A07 !important;
-        padding: 0.5%;
-        font-weight: 400;
-        font-size: 0.7rem;
-        text-decoration: none;
-    }
-    .homepage_cover_button a:hover {
-        background: #FFC6C6;
-        color: #644A07 !important;
-    }
-    .hero-content{
-        color:white;
-       text-align:center;
-       padding: 0% 15%;
-    }
-    .hero-content h1 {
-        font-size: 1.3rem;
-    }
-    .hero-content h4 {
-        font-size: 0.9rem;
-        line-height:1rem;
-    }
-    .hero-content p {
-        font-size: 0.8rem;
-        opacity:0.7;
-        padding:3% 0% 0% 0%;
-    }
+.syllabus-week {
+    color: #ffa754;
+    font-weight: bold;
+    font-size: 1rem;
+}
+#course-title {
+  padding:3% 0% 0% 0%;
+  font-weight: bold;
+  font-size: 1.3rem;
+}
+.section-heading {
+  color:white;
+  background:#0f0f0d;
+  padding:1% 0% 1% 3%;
+  box-shadow: 5px 10px 3px rgba(0, 0, 0, .4);
+  text-align:left;
+  font-size: 1rem;
+}
+#syllabus-container {
+  width: 80%;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:left;
+  color:white;
+  padding-left: 10%;
+}
+.syllabus-category {
+  color: #44ebb0;
+  font-size: .9rem;
+}
+#course-contact-btn {
+  margin-top: 0%;
+}
+#contact-text {
+  padding: 3% 2% 1% 2%;
+  text-align: center;
+  font-size: 1rem;
+}
 
 @media (min-width: 600px) {
 .hero-content h4 {
@@ -118,6 +164,22 @@
         width:35%;
         padding: 0.5% 5%;
     }
+    #course-title {
+      padding:2% 0% 0% 0%;
+      font-size: 1.5rem;
+    }
+  .course-info {
+    width:80%;
+  }
+  .section-heading {
+    font-size: 1.1rem;
+  }
+  .syllabus-category {
+    font-size: .9rem;
+  }
+  #contact-text {
+    padding: 3% 8% 0% 8%;
+  }
 }
 @media (min-width: 768px) {
 .hero-content h4 {
@@ -145,6 +207,23 @@
         font-size: 0.9rem;
         width: 30%;
         padding: 0.5% 5%;
+    }
+    .section-heading {
+      font-size: 1.2rem;
+    }
+    .syllabus-category {
+      font-size: 1rem;
+    }
+    .syllabus-week {
+      font-size: 1.1rem;
+    }
+    #course-title {
+      padding:2% 0% 0% 0%;
+      font-size: 1.7rem;
+    }
+    #contact-text {
+      padding: 3% 8% 0% 8%;
+      font-size: 1.1rem;
     }
 }
 @media (min-width: 1200px) {
@@ -183,6 +262,22 @@
         font-size: 1rem;
         width: 25%;
     }
+  .course-info {
+    width:60%;
+  }
+  .section-heading {
+    font-size: 1.3rem;
+  }
+  .syllabus-category {
+    font-size: 1.1rem;
+  }
+  .syllabus-week {
+    font-size: 1.2rem;
+  }
+  #course-title {
+    padding:2% 0% 0% 0%;
+    font-size: 1.9rem;
+  }
 }
 @media (min-width: 1900px) {
   .cover-container {
@@ -217,6 +312,10 @@
         font-size: 1.2rem;
         width: 20%;
     }
+    #course-title {
+      padding:2% 0% 0% 0%;
+      font-size: 2.1rem;
+    }
 }
 @media (min-width: 2500px) {
  .hero-content p {
@@ -250,75 +349,183 @@
 }
 
 </style>
+<div style="display:flex; flex-direction:column; align-items:center; width:100%;">
+  <img src="../static/files/courses/portraiture_beginner/cover.jpg" width="100%">
+  <p id="course-title">PORTRAITURE (BEGINNERS)</p>
 
-<div class="container-fluid cover-container">
-    <div class="row cover">
-        <div class="col">
-            <div class="hero-content">
-                <h1><b>Art & Illustration</b></h1>
-                <h4>Training for Traditional, Animation, Gaming, Illustration Industry</h4>
-                <p>We, at Writart Gurukul provide art workshops and other art activities and training which is directly applicable in professional art field.
-                    The skills we train here can be applied in traditional painting, Designing, Digital art, photography, Concept art and Illustration in Animation and Gaming field.<br>
-                    Besides fixed fee courses we also have a 'Pay what you want' model inspired from the ancient Indian Gurukul system.
-                 </p>
-<!--                <a type="button" href="{{url_for('school.home')}}">WORKSHOPS</a>-->
-             </div>
-        </div>
-    </div>
-</div>
+  <div class="course-info">
+    <p class="section-heading"><b>SYLLABUS</b></p>
+    <div id="syllabus-container">
+      <p class="syllabus-category">(Main Course)</p>
+      <p class="syllabus-week">Week 1 (Fundamentals)</p>
+      <ul>
+        <li>Basics of Sketching</li>
+        <li>Introduction to Facial Proportions</li>
+        <li>Loomis Method</li>
+        <li>Head drawing from different viewing angles</li>
+        <li>Grid Drawing</li>
+        <p></p>
+      </ul>
+      <p class="syllabus-week">Week 2 (Eyes & Eyebrows)</p>
+      <ul>
+        <li>Constructing eyeball, eyelids and eyelashes</li>
+        <li>Surrounding shadows and form</li>
+        <li>Drawing from different viewing angles</li>
+      </ul>
+      <p class="syllabus-week">Week 3 (Nose & Ears)</p>
+      <ul>
+        <li>Basic anatomy and form of nose</li>
+        <li>Basic anatomy of ears</li>
+        <li>Drawing both from different viewing angles</li>
+      </ul>
+      <p class="syllabus-week">Week 4 (Mouth & Lips)</p>
+      <ul>
+        <li>Anatomy and form of lips, the philtrum, the chin and the jawline</li>
+        <li>Drawing teeth</li>
+        <li>Drawing from different viewing angles</li>
+      </ul>
+      <p class="syllabus-week">Week 5 (Hair & Skin texture)</p>
+      <ul>
+        <li>Hair as mass</li>
+        <li>Common hair lock pattern study</li>
+        <li>Rendering realistic skin textures using different shading methods</li>
+      </ul>
+      <p class="syllabus-week">Week 6 (Planes of Face)</p>
+      <ul>
+        <li>Basic anatomy and form of face</li>
+        <li>Assembling all the already learn facial parts on face</li>
+      </ul>
+      <p class="syllabus-week">Week 7 (Value and Contrast)</p>
+      <ul>
+        <li>The 70-30 rule of values</li>
+        <li>Basics of value and lighting</li>
+      </ul>
+      <p class="syllabus-week">Week 8 (Portrait Lighting)</p>
+      <ul>
+        <li>Low-key and high-key lighting</li>
+        <li>Lighting quality (hard vs soft)</li>
+        <li>Classic lighting patterns</li>
+      </ul>
+      <p class="syllabus-week">Week 9 & 10 (Expressions)</p>
+      <ul>
+        <li>Happy, sad, surprised, scared, smiling, laughing, frowning, disgust etc.</li>
+      </ul>
+      <p class="syllabus-week">Week 11 (Male vs Female vs Baby face)</p>
+      <ul>
+        <li>Masculine features</li>
+        <li>Feminine features</li>
+        <li>Baby features</li>
+        <li>Ageing</li>
+      </ul>
+      <p class="syllabus-week">Week 12 (History)</p>
+      <ul>
+        <li>Classical portraits by the maestros</li>
+      </ul>
 
-<div class="homepage_cover">
-    <div class="homepage_cover_header">
-        <h3>CURRENT PROGRAM</h3>
-        <h3>{{current_ws_category}}</h3>
+      <p class="syllabus-category"><b>(Optional)</b></p>
+      <p class="syllabus-week">Week 13 to 16 (Practice, feedback & guidance)</p>
+      <ul>
+        <li>Practicing portraits applying everything learnt in the previous classes</li>
+        <li>Feedback and guidance by the instructor on drawings by the students</li>
+      </ul>
     </div>
-    <div class="homepage_cover_title">
-        <h1><b>{{current_ws_topic}}</b></h1>
-        <h3>{{ current_ws_brief }}</h3>
-        <h4>Fee: Pay what you can!</h4>
-        <h6>Date: {{current_ws_date}}</h6>
-        <h6>Time: {{current_ws_time}}</h6>
-        <h6 style="color:#6eb661;padding: 1% 0%; text-align:center;line-height:normal;">(Recorded Session video available to all enrolled Students)</h6>
+  </div>
+  <div class="course-info">
+    <p class="section-heading"><b>REQUIREMENTS</b></p>
+    <div style="display:flex; justify-content:left; align-items:center; color:white;">
+      <div style="width:50%;">
+        <ul>Pencil (Graphite or Charcoal)</ul>
+        <ul>Eraser & Sharpener</ul>
+      </div>
+      <div>
+        <ul>Loose paper or a Drawing pad</ul>
+        <ul>Or digital drawing pad</ul>
+      </div>
     </div>
+  </div>
+  <div class="course-info">
+    <div style="display:flex; justify-content:space-evenly; align-items:center; color:white;">
+      <div style="width:50%;">
+        <p class="section-heading" style="padding:1% 0% 1% 6%;"><b>Class Schedule</b></p>
+        <ul>Two classes/sessions per week</ul>
+      </div>
+      <div style="width:50%;">
+        <p class="section-heading" style="padding:1% 0% 1% 0%;"><b>Fee</b></p>
+        <p><span style="color:red;"><s>₹3000</s></span> <b>₹1000</b> per month</p>
+      </div>
+    </div>
+  </div>
+  <p id="contact-text">To get admitted to the course or if you have any question please contact us.</p>
+  <a class="portrait-btn" id="course-contact-btn" href="https://wa.link/w2mup9">CONTACT US</a>
+</div>
+<!--<div class="container-fluid cover-container">-->
+<!--    <div class="row cover">-->
+<!--        <div class="col">-->
+<!--            <div class="hero-content">-->
+<!--                <h1><b>Art & Illustration</b></h1>-->
+<!--                <h4>Training for Traditional, Animation, Gaming, Illustration Industry</h4>-->
+<!--                <p>We, at Writart Gurukul provide art workshops and other art activities and training which is directly applicable in professional art field.-->
+<!--                    The skills we train here can be applied in traditional painting, Designing, Digital art, photography, Concept art and Illustration in Animation and Gaming field.<br>-->
+<!--                    Besides fixed fee courses we also have a 'Pay what you want' model inspired from the ancient Indian Gurukul system.-->
+<!--                 </p>-->
+<!--&lt;!&ndash;                <a type="button" href="{{url_for('school.home')}}">WORKSHOPS</a>&ndash;&gt;-->
+<!--             </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
 
-    <div class="homepage_cover_button">
-        <a href="{{ url_for('school.home') }}">Know More</a>
-        {% if reg_status == 'Pending' %}
-        <a onclick="openInterestedForm4()">Interested</a>
-        {% elif reg_status == 'open' %}
-        <a href="{{url_for('payment.home')}}">Enroll Now</a>
-        {% elif reg_status == 'close' %}
-        <a style="background:gray;color:black !important;">Registration Closed</a>
-        {% endif %}
-        <div class="form-popup" id="interested-form4">
-            <form class="popup-form-container" action="{{url_for('main.home')}}" name="interested-form" method="post">
-                <div style="display: flex; justify-content: right; width: 95%;">
-                    <a style="opacity: 0.5;" type="button" onclick="closeFormInterested4()">close <img src="../static/images/icons/cross-sign.png" width="10px"></a>
-                </div>
-                <h3 style="color: #c9c9c9;">INTERESTED</h3>
-                <p>We'll notify you when enrollment of the selected workshop opens</p>
-                {% if not logged_in %}
-                <input type="text" placeholder="Name" name="name" required>
-                <input type="email" placeholder="Email" name="email" required>
-                <input type="text" placeholder="Phone" name="phone" required>
-                <input type="text" placeholder="Whatsapp (skip if same whatsapp)" name="whatsapp">
-                {% endif %}
-                <input type="hidden" id="interested-form-hidden-workshop4" name="interested-form-hidden-workshop" required>
-                <input type="text" maxlength="300" placeholder="Any message for us? (optional)" name="message">
-                <input type="submit" name="submit" class="btn btn-primary" onclick="closeFormInterested4()" value="SUBMIT">
-            </form>
-        </div>
-    </div>
-</div>
-<div style="display:flex; justify-content:center;">
- {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% for category, message in messages %}
-            <div class="{{category}}">{{ message }}</div>
-        {% endfor %}
-    {% endif %}
-{% endwith %}
-</div>
+<!--<div class="homepage_cover">-->
+<!--    <div class="homepage_cover_header">-->
+<!--        <h3>CURRENT PROGRAM</h3>-->
+<!--        <h3>{{current_ws_category}}</h3>-->
+<!--    </div>-->
+<!--    <div class="homepage_cover_title">-->
+<!--        <h1><b>{{current_ws_topic}}</b></h1>-->
+<!--        <h3>{{ current_ws_brief }}</h3>-->
+<!--        <h4>Fee: Pay what you can!</h4>-->
+<!--        <h6>Date: {{current_ws_date}}</h6>-->
+<!--        <h6>Time: {{current_ws_time}}</h6>-->
+<!--        <h6 style="color:#6eb661;padding: 1% 0%; text-align:center;line-height:normal;">(Recorded Session video available to all enrolled Students)</h6>-->
+<!--    </div>-->
+
+<!--    <div class="homepage_cover_button">-->
+<!--        <a href="{{ url_for('school.home') }}">Know More</a>-->
+<!--        {% if reg_status == 'Pending' %}-->
+<!--        <a onclick="openInterestedForm4()">Interested</a>-->
+<!--        {% elif reg_status == 'open' %}-->
+<!--        <a href="{{url_for('payment.home')}}">Enroll Now</a>-->
+<!--        {% elif reg_status == 'close' %}-->
+<!--        <a style="background:gray;color:black !important;">Registration Closed</a>-->
+<!--        {% endif %}-->
+<!--        <div class="form-popup" id="interested-form4">-->
+<!--            <form class="popup-form-container" action="{{url_for('main.home')}}" name="interested-form" method="post">-->
+<!--                <div style="display: flex; justify-content: right; width: 95%;">-->
+<!--                    <a style="opacity: 0.5;" type="button" onclick="closeFormInterested4()">close <img src="../static/images/icons/cross-sign.png" width="10px"></a>-->
+<!--                </div>-->
+<!--                <h3 style="color: #c9c9c9;">INTERESTED</h3>-->
+<!--                <p>We'll notify you when enrollment of the selected workshop opens</p>-->
+<!--                {% if not logged_in %}-->
+<!--                <input type="text" placeholder="Name" name="name" required>-->
+<!--                <input type="email" placeholder="Email" name="email" required>-->
+<!--                <input type="text" placeholder="Phone" name="phone" required>-->
+<!--                <input type="text" placeholder="Whatsapp (skip if same whatsapp)" name="whatsapp">-->
+<!--                {% endif %}-->
+<!--                <input type="hidden" id="interested-form-hidden-workshop4" name="interested-form-hidden-workshop" required>-->
+<!--                <input type="text" maxlength="300" placeholder="Any message for us? (optional)" name="message">-->
+<!--                <input type="submit" name="submit" class="btn btn-primary" onclick="closeFormInterested4()" value="SUBMIT">-->
+<!--            </form>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+<!--<div style="display:flex; justify-content:center;">-->
+<!-- {% with messages = get_flashed_messages(with_categories=true) %}-->
+<!--    {% if messages %}-->
+<!--        {% for category, message in messages %}-->
+<!--            <div class="{{category}}">{{ message }}</div>-->
+<!--        {% endfor %}-->
+<!--    {% endif %}-->
+<!--{% endwith %}-->
+<!--</div>-->
 
 <!--<div>-->
 <!--    <div class="row justify-content-center align-items-center" style="padding: 0% 0%;">-->
@@ -379,23 +586,25 @@
 <!--    </div>-->
 <!--</div>-->
 
-<h4 class="section-heading"><b>UPCOMING WORKSHOPS</b></h4>
-{% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% for category, message in messages %}
-            <div class="{{category}}">{{ message }}</div>
-        {% endfor %}
-    {% endif %}
-{% endwith %}
-<div class="main-upcoming-ws-wrapper">
-    {% for workshop in upcoming_workshop_list %}
-    <div class="main-upcoming-ws-item">
-       <a href="{{url_for('school.upcoming_workshop',workshop=workshop)}}"><img src="static/images/workshops/{{workshop}}/thumbnail.jpg" width="100%" height="100%"></a>
-    </div>
+<!--<h4 class="section-heading"><b>UPCOMING WORKSHOPS</b></h4>-->
+<!--{% with messages = get_flashed_messages(with_categories=true) %}-->
+<!--    {% if messages %}-->
+<!--        {% for category, message in messages %}-->
+<!--            <div class="{{category}}">{{ message }}</div>-->
+<!--        {% endfor %}-->
+<!--    {% endif %}-->
+<!--{% endwith %}-->
+<!--<div class="main-upcoming-ws-wrapper">-->
+<!--    {% for workshop in upcoming_workshop_list %}-->
+<!--    <div class="main-upcoming-ws-item">-->
+<!--       <a href="{{url_for('school.upcoming_workshop',workshop=workshop)}}"><img src="static/images/workshops/{{workshop}}/thumbnail.jpg" width="100%" height="100%"></a>-->
+<!--    </div>-->
 
-    {% endfor %}
-</div>
+<!--    {% endfor %}-->
+<!--</div>-->
 
-<script src="../static/js/main.js"></script>
+<!--<script src="../static/js/main.js"></script>-->
+
+
 
 {% endblock %}
