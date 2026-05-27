@@ -133,6 +133,9 @@
   text-align: center;
   font-size: 1rem;
 }
+#cover-pc {
+  display: none;
+}
 
 @media (min-width: 600px) {
 .hero-content h4 {
@@ -224,6 +227,12 @@
     #contact-text {
       padding: 3% 8% 0% 8%;
       font-size: 1.1rem;
+    }
+    #cover-pc {
+      display: block;
+    }
+    #cover-phone {
+      display: none;
     }
 }
 @media (min-width: 1200px) {
@@ -350,7 +359,8 @@
 
 </style>
 <div style="display:flex; flex-direction:column; align-items:center; width:100%;">
-  <img src="../static/files/courses/portraiture_beginner/cover.jpg" width="100%">
+  <img id="cover-pc" src="../static/files/courses/portraiture_beginner/cover.jpg" width="100%">
+  <img id="cover-phone" src="../static/files/courses/portraiture_beginner/cover-phone.jpg" width="100%">
   <p id="course-title">PORTRAITURE (BEGINNERS)</p>
 
   <div class="course-info">
