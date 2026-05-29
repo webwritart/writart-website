@@ -21,12 +21,13 @@ img {vertical-align: middle;}
     background: black;
     padding-top: 2%;
     padding-bottom: 5%;
+    width: 100%;
 }
 
 /* Caption text */
 .text {
   color: #f2f2f2;
-  font-size: 15px;
+  font-size: 11px;
   padding: 8px 12px;
   position: absolute;
   bottom: 8px;
@@ -58,31 +59,162 @@ img {vertical-align: middle;}
   to {opacity: 1}
 }
 
-/* On smaller screens, decrease text size */
-@media only screen and (max-width: 300px) {
-  .text {font-size: 11px}
+
+.course-cta {
+    background-image: linear-gradient(rgba(0, 0, 0, .5), rgba(0, 0, 0, .7)), url("static/files/courses/portraiture_beginner/cta_phone.jpg");
+    background-repeat: no-repeat;
+    background-size: 100% auto;
+    aspect-ratio: 9 / 5;
+    padding: 0% 10%;
 }
+.course-cta-text {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    color: white;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+.course-cta-text-category {
+    line-height: 0;
+    padding: 0;
+    color: white;
+    font-weight: bold;
+    opacity: .6;
+}
+.course-cta-text-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    padding: 0%;
+    margin: 0% 0% 1% 0%;
+}
+.course-cta-text-detail {
+    opacity: .6;
+    padding: 0%;
+    margin: 0%;
+    line-height: 1.2;
+    font-size: .85rem;
+}
+.course-cta-text-btn-container {
+    display:flex;
+    justify-content:center;
+    width: 100%;
+}
+.course-cta-text-btn {
+    width: 50%;
+    background: #B32451;
+    padding: 1%;
+    color: white;
+    margin: 4% 0% 0% 0%;
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
+    font-size: 1rem;
+    text-align: center;
+}
+.course-cta-text-btn:hover {
+    color: white;
+    text-decoration: none;
+    background: #941365;
+}
+
+@media (min-width: 600px) {
+    .text {font-size: 15px;}
+
+    .course-cta {
+        background-image: url("static/files/courses/portraiture_beginner/cta_pc.jpg");
+        background-repeat: no-repeat;
+        background-size: 100% auto;
+        aspect-ratio: 96 / 35;
+        padding-left: 5%;
+    }
+    .course-cta-text {
+        align-items: left;
+        justify-content: center;
+        width: 50%;
+        text-align: left;
+    }
+    .course-cta-text-category {
+        width: 100%;
+    }
+    .course-cta-text-title {
+        width: 100%;
+        font-size: 1.2rem;
+    }
+    .course-cta-text-detail {
+        width: 100%;
+    }
+    .course-cta-text-btn-container {
+        justify-content: left;
+    }
+}
+
+@media (min-width: 768px) {
+    .course-cta-text {
+        width: 45%;
+    }
+    .course-cta-text-title {
+        font-size: 1.3rem;
+    }
+    .course-cta-text-detail {
+        font-size: .9rem;
+    }
+}
+
+@media (min-width: 1200px) {
+    .course-cta-text {
+        width: 40%;
+    }
+    .course-cta-text-title {
+        font-size: 1.5rem;
+    }
+    .course-cta-text-detail {
+        font-size: 1.1rem;
+    }
+}
+
+@media (min-width: 1900px) {
+    .course-cta-text-title {
+        font-size: 1.7rem;
+    }
+}
+
+@media (min-width: 2500px) {
+
+}
+
 </style>
 
 <div class="discount_advertisement">
   <p><span style="color:#dedede;">Upto </span><b>{{ maximum_discount }}%</b> discount on Portraits.<span style="color:#dedede;"> Hurry!</span></p>
 </div>
 <div class="slideshow-container">
-{% for portrait in portrait_list %}
-<a href="{{ url_for('studio.portraits') }}">
-<div class="mySlides fade">
-  <div class="slideshow_box">
-    <img src="{{ portrait }}" style="max-height:100%; max-width: 100%;">
-  </div>
+    {% for portrait in portrait_list %}
+    <a href="{{ url_for('studio.portraits') }}">
+        <div class="mySlides fade">
+          <div class="slideshow_box">
+            <img src="{{ portrait }}" style="max-height:100%; max-width: 100%;">
+          </div>
+        </div>
+    </a>
+    {% endfor %}
+    <a href="{{ url_for('studio.portraits') }}" class="slideshow-btn" style="margin-bottom:">PORTRAITS</a>
+    <div class="studio-btn-two">
+        <a style="color:white;" href="{{ url_for('studio.artwork_pricing') }}">PRICING & CHARGES</a>
+    </div>
 </div>
-</a>
-{% endfor %}
-<a href="{{ url_for('studio.portraits') }}" class="slideshow-btn" style="margin-bottom:">PORTRAITS</a>
+<div class="course-cta">
+    <div class="course-cta-text">
+        <p class="course-cta-text-category">Art Course</p>
+        <p class="course-cta-text-title">PORTRAITURE (BEGINNERS)</p>
+        <p class="course-cta-text-detail">Learn drawing portraits, anatomy, form, eyes, nose, ears, mouth shapes, filling
+            life, lighting, emotions, expressions and much more.</p>
+        <div class="course-cta-text-btn-container">
+            <a class="course-cta-text-btn" style="" href="{{url_for('school.home')}}">VIEW COURSE</a>
+        </div>
+    </div>
 </div>
-<br>
-<div class="studio-btn-two">
-    <a style="color:white;" href="{{ url_for('studio.artwork_pricing') }}">PRICING & CHARGES</a>
-</div>
+
 
 
 

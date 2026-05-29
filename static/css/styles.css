@@ -1215,7 +1215,7 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 .slideshow-btn:hover {
     color: white;
     text-decoration: none;
-    background: #BA6016;
+    background: #941365;
 }
 .slideshow_box {
     display: flex;
@@ -1252,15 +1252,14 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 .studio-btn-two {
     display: flex;
     justify-content: center;
-    padding: 1%;
+    width: 100%;
 }
 .studio-btn-two a {
-    background: #85133D;
-    padding: .5% 3%;
-    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
+    background: #292929;
+    padding: .5% 2%;
 }
 .studio-btn-two a:hover {
-    background: #4F0621;
+    background: #454545;
     text-decoration: none;
 }
 /* ------------------------------------------------------------- RESPONSIVE ------------------------------------------ */
