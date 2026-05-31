@@ -242,6 +242,7 @@
                     </div>
                 {% endfor %}
             </div>
+<!--------------------------------------------------------------------------------------------------------------------------------------->
             <div id="add-ws">
                 <form action="{{ url_for('manager.home') }}" method="post">
                     <h2>Add New Workshop</h2>
@@ -309,6 +310,14 @@
                     <input name="result9" placeholder="Result9" type="text"><br>
                     <button type="submit" class="btn btn-primary btn-block btn-large">ADD TO DATABASE</button>
                 </form>
+                <div id="add-ws-videos">
+                    <form action="{{ url_for('manager.home') }}" method="post">
+                        <h2>Add Workshop Videos</h2>
+                        <input name="title" placeholder="Video Title" type="text" required>
+                        <input name="url" placeholder="Video Youtube URL" type="text" required>
+
+                    </form>
+                </div>
                 <form action="{{ url_for('manager.home') }}" method="post" id="form2" enctype="multipart/form-data">
                     <input type="text" name="workshop_name" placeholder="Workshop Name" required>
                     <input type="file" name="file" id="file2" multiple>
