@@ -67,6 +67,7 @@ class Portrait(db.Model):
         return f"{self.title}"
 
 
+
 class QuizList(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     category = db.Column(db.String(255))
@@ -130,9 +131,19 @@ class Workshop(db.Model):
     s4_date = db.Column(db.String(100))
     s4_time = db.Column(db.String(100))
     details = db.relationship('WorkshopDetails', backref='workshop', uselist=False)
+    videos = db.relationship('WorkshopVideos', backref='workshop')
 
     def __repr__(self):
         return f'{self.name}, {self.topic}, {self.date}, {self.s2_date}, {self.s3_date}, {self.s4_date}'
+
+
+class WorkshopVideos(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100))
+    workshop_id = db.Column(db.Integer, db.ForeignKey('workshop.id'))
+
+    def __repr__(self):
+        return f'{self.title}'
 
 
 class Role(db.Model):
