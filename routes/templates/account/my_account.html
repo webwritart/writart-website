@@ -38,13 +38,13 @@
                         <a href="{{current_user.insta_url}}">Instagram</a><br/>
                         <a href="{{current_user.website}}">Website</a><br><br>
                         <input type="button" class="profile-edit-btn" onclick="openSocialUpdatePopup()" value="Edit Social"/>
-                        {% if certificate %}
-                            <div style="padding-top: 20%;">
-                                <h6 style="padding-bottom: 3%;">Certificates</h6>
-                                <button  type="submit" class="btn btn-primary" name="submit" value="download-certificate" formmethod="post" formaction="{{url_for('account.home')}}">DOWNLOAD LAST CERTIFICATE</button>
-                                <button style="width: 80%; margin: 2% 0%;" type="button" class="btn btn-primary" name="submit" value="all-certificates" onclick="openCertificateList()">VIEW ALL CERTIFICATES</button>
-                            </div>
-                        {% endif %}
+<!--                        {% if certificate %}-->
+<!--                            <div style="padding-top: 20%;">-->
+<!--                                <h6 style="padding-bottom: 3%;">Certificates</h6>-->
+<!--                                <button  type="submit" class="btn btn-primary" name="submit" value="download-certificate" formmethod="post" formaction="{{url_for('account.home')}}">DOWNLOAD LAST CERTIFICATE</button>-->
+<!--                                <button style="width: 80%; margin: 2% 0%;" type="button" class="btn btn-primary" name="submit" value="all-certificates" onclick="openCertificateList()">VIEW ALL CERTIFICATES</button>-->
+<!--                            </div>-->
+<!--                        {% endif %}-->
 <!--                        <p>SKILLS</p>-->
 <!--                        <a href="">Web Designer</a><br/>-->
 <!--                        <a href="">Web Developer</a><br/>-->
@@ -191,9 +191,9 @@
             </div>
         </form>
     </div>
-    <div class="delete-btn-container" >
-        <a type="button" class="delete-btn" onclick="deleteAccountPopup()"><p >Delete Account Permanently</p></a>
-    </div>
+<!--    <div class="delete-btn-container" >-->
+<!--        <a type="button" class="delete-btn" onclick="deleteAccountPopup()"><p >Delete Account Permanently</p></a>-->
+<!--    </div>-->
     <div id="action">
         <div class="container">
             {% if 'student' in roles %}
@@ -272,19 +272,19 @@
     </form>
 </div>
 
-<div class="form-popup box" id="certificate_list">
-    <div style="border: 2px solid black; background-color: white; margin: auto; text-align: center;" class="cert_list" >
-        <form action="{{url_for('account.home')}}" method="post">
-            <div style="display: flex; justify-content: right; width: 95%;">
-                <a style="opacity: 0.5;" type="button" onclick="closeCertificateList()">close <img src="../static/images/icons/cross-sign.png" width="10px"></a>
-            </div>
-            <p style="color: #590f59;"><b>All Certificates</b><br><span style="font-size: 0.8em;">Click names to download</span></p>
-            {% for certificate in certificate_list: %}
-                <button style="padding: 0%; background: none; border: none; color: blue; text-decoration: underline;" type="submit" name="submit" value="{{certificate}}">{{certificate}}</button>
-            {% endfor %}
-        </form>
-    </div>
-</div>
+<!--<div class="form-popup box" id="certificate_list">-->
+<!--    <div style="border: 2px solid black; background-color: white; margin: auto; text-align: center;" class="cert_list" >-->
+<!--        <form action="{{url_for('account.home')}}" method="post">-->
+<!--            <div style="display: flex; justify-content: right; width: 95%;">-->
+<!--                <a style="opacity: 0.5;" type="button" onclick="closeCertificateList()">close <img src="../static/images/icons/cross-sign.png" width="10px"></a>-->
+<!--            </div>-->
+<!--            <p style="color: #590f59;"><b>All Certificates</b><br><span style="font-size: 0.8em;">Click names to download</span></p>-->
+<!--            {% for certificate in certificate_list: %}-->
+<!--                <button style="padding: 0%; background: none; border: none; color: blue; text-decoration: underline;" type="submit" name="submit" value="{{certificate}}">{{certificate}}</button>-->
+<!--            {% endfor %}-->
+<!--        </form>-->
+<!--    </div>-->
+<!--</div>-->
 <div class="form-popup box" id="delete-account">
     <div style="border: 2px solid black; background-color: white; margin: auto; text-align: center;padding:10%;">
         <form action="{{url_for('account.home')}}" name="delete-account" method="post">
