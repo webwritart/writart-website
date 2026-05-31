@@ -476,7 +476,7 @@ def forgot_password():
             # login_user(user)
             flash('New password set successfully!', 'success')
             mail = render_template('mails/password_reset_notification.html')
-            send_email_support('Password Reset', [current_user.email],
+            send_email_support('Password Reset', email,
                                '',
                                mail, '')
             if 'url' in session:
