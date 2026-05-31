@@ -5,8 +5,8 @@
 #classroom-hero {
     width: 100%;
     height: 0%;
-    background: #dbaaaa;
-    color: white;
+    background: #FFC94D;
+    color: black;
     opacity: 1;
     margin-bottom: 3%;
     display: flex;
@@ -19,7 +19,7 @@
 <div id="classroom-hero">
     <div class="title">
         <h1>CLASSROOM</h1>
-        <p>Revisions and Practice make an artist perfect. Therefore, welcome to your classroom! Take Notes, Draw at least 5 rough drawings/sketches every day.</p>
+        <p style="color:black;">Revisions and Practice make an artist perfect. Therefore, welcome to your classroom! Take Notes, Draw at least 5 rough drawings/sketches every day.</p>
     </div>
 </div>
 <!--<div style="display:flex;justify-content:center;">-->
@@ -126,10 +126,10 @@
 
 <hr/>
 
-<div class="video-wrapper" style="background:#594100; padding: 2% 0%;">
+<div class="video-wrapper" style="background:#FA6781; padding: 2% 0%;">
     <div class="video-wrapper-container" >
-        <h3 style="color:white;opacity:0.6;">WORKSHOPS</h3>
-        <p style="color:white;opacity:0.5;">This section contains recorded sessions of all the workshops you get enrolled in.</p>
+        <h3 style="color:black;">WORKSHOPS</h3>
+        <p style="color:black;">This section contains recorded sessions of all the workshops you get enrolled in.</p>
         {% if logged_in %}
 
         {% if video_count > 0 %}
@@ -172,9 +172,9 @@
     </div>
 </div>
 {% if logged_in %}
-    <div class="wrapper">
+    <div class="wrapper" style="background: #FAE7CB;">
         <div class="width-80-container">
-            <h3 style="width:100%;color:white;opacity:0.5;">STUDY MATERIALS</h3>
+            <h3 style="width:100%;color:black;opacity:1;">STUDY MATERIALS</h3>
             <div class="study-material-wrapper">
                 <div class="category-list">
                     {% for n in ws_dict %}
