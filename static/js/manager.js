@@ -2,6 +2,7 @@ function closeAll() {
     document.getElementById("manager-img").style.display = 'none';
     document.getElementById("add-ws").style.display = 'none';
     document.getElementById("add-ws-details").style.display = 'none';
+    document.getElementById("add-ws-videos").style.display = 'none';
     document.getElementById("add-recording-link").style.display = 'none';
     document.getElementById("add-session-link").style.display = 'none';
     document.getElementById("close-reg").style.display = 'none';
@@ -28,6 +29,11 @@ function addNewWs() {
 function addWsDetails() {
     closeAll();
     document.getElementById("add-ws-details").style.display = 'block';
+}
+
+function addWsVideos() {
+    closeAll();
+    document.getElementById("add-ws-videos").style.display = 'block';
 }
 
 function openRegistration() {

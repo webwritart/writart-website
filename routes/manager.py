@@ -189,6 +189,26 @@ def home():
                         file.save(f"{folder}/{filename}")
                         flash('Chief! Images uploaded successfully!', 'success')
 
+            if request.form.get('submit') == 'add-ws-videos':
+                ws_name = request.form.get('ws-name')
+                title = request.form.get('title')
+                video_yt_url = request.form.get('url')
+                try:
+                    workshop = db.session.query(Workshop).filter_by(name=ws_name).first()
+                    video = workshop.videos
+                    video.name = ws_name
+                    video.title = title
+                    video.vid_id = video_yt_url
+
+                    try:
+                        db.session.commit()
+                        flash('Data added successfully, Chief!', 'success')
+                    except Exception as e:
+                        flash('Failed to add, chief!', 'error')
+                except Exception as e:
+                    flash('No workshop found with the provided name', 'error')
+                    return redirect(url_for('manager.home'))
+
             if request.form.get('session-link'):
                 j_link = request.form.get('session-link')
                 if current_workshop.joining_link2 is None or current_workshop.joining_link2 == '':

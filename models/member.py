@@ -140,7 +140,9 @@ class Workshop(db.Model):
 class WorkshopVideos(db.Model):
     __tablename__ = 'workshop_videos'
     id = db.Column(db.Integer, primary_key=True)
+    ws_name = db.Column(db.String(100))
     title = db.Column(db.String(100))
+    vid_id = db.Column(db.String(100))
     workshop_id = db.Column(db.Integer, db.ForeignKey('workshop.id'))
 
     def __repr__(self):
