@@ -13,7 +13,7 @@ from operations.quiz import add_quiz_data_to_db
 from models.payment import Payment
 from models.query import Query
 from models.tool import Tools, ArtworkPriceTime
-from models.member import Member, Workshop, Role, Portrait
+from models.member import Member, Workshop, Role, Portrait, WorkshopVideos
 from models.workshop_details import WorkshopDetails
 from operations.miscellaneous import allowed_file, image_resize_and_compress_single
 from routes.account import today_date
@@ -195,13 +195,16 @@ def home():
                 video_yt_url = request.form.get('url')
                 try:
                     workshop = db.session.query(Workshop).filter_by(name=ws_name).first()
-                    video = workshop.videos
-                    video.name = ws_name
-                    video.title = title
-                    video.vid_id = video_yt_url
-
+                    entry = WorkshopVideos(
+                        ws_name=ws_name,
+                        title=title,
+                        vid_id=video_yt_url,
+                        workshop_id=workshop.id
+                )
                     try:
+                        db.session.add(entry)
                         db.session.commit()
+                        print('committed')
                         flash('Data added successfully, Chief!', 'success')
                     except Exception as e:
                         flash('Failed to add, chief!', 'error')
