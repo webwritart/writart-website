@@ -473,7 +473,7 @@ def forgot_password():
             user.password = hash_and_salted_password
 
             db.session.commit()
-            login_user(user)
+            # login_user(user)
             flash('New password set successfully!', 'success')
             mail = render_template('mails/password_reset_notification.html')
             send_email_support('Password Reset', [current_user.email],
