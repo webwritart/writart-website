@@ -134,7 +134,7 @@ class Workshop(db.Model):
     videos = db.relationship('WorkshopVideos', backref='workshop')
 
     def __repr__(self):
-        return f'{self.name}, {self.topic}, {self.date}, {self.s2_date}, {self.s3_date}, {self.s4_date}'
+        return f'{self.name}, {self.topic}'
 
 
 class WorkshopVideos(db.Model):

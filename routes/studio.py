@@ -216,12 +216,15 @@ def paintings():
 @studio.route('/artwork-pricing', methods=['GET', 'POST'])
 def artwork_pricing():
     admin = db.session.query(Role).filter_by(name='admin').one_or_none()
+    example_base_charge = 0
 
     portrait_price_time_dict = {}
     data = db.session.query(ArtworkPriceTime).all()
     for entry in data:
         price = f"{entry.price:,}"
         discounted_price = ((100 - entry.discount_percentage) / 100) * entry.price
+        if entry.type == 'portrait_oil_on_canvas_36x48':
+            example_base_charge += discounted_price
         discounted_price = f"{int(discounted_price):,}"
 
         portrait_price_time_dict[entry.type] = {
@@ -230,7 +233,12 @@ def artwork_pricing():
             'discounted_price': discounted_price,
             'time_taken': entry.time_taken
         }
+
+    additional_price = int(.3 * example_base_charge)
+    print(additional_price)
+    total_price = int(example_base_charge + additional_price)
     return render_template('artwork-pricing.html', logged_in=current_user.is_authenticated, admin=admin,
-                           portrait_price_time_dict=portrait_price_time_dict)
+                           portrait_price_time_dict=portrait_price_time_dict, additional_price=additional_price,
+                           total_price=total_price)
 
 

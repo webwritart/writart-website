@@ -1,7 +1,33 @@
 {% extends "base.html" %}
 {% block content %}
+<style>
+    .dashboard-btn-container {
+        display:flex;
+        justify-content:center;
+        padding-bottom: 2%;
+        margin: 0%;
+        cursor:pointer;
+        flex-wrap:wrap;
+    }
+    .dashboard-btn {
+        background:#509918;
+        color:white;
+        padding:1% 5%;
+        margin: 1% 1%;
+        border-radius:2rem;
+        text-decoration: none;
+        transition: transform 0.2s ease-in-out;
+    }
+    .dashboard-btn:hover {
+        text-decoration:none;
+        color:white;
+        transform:scale(0.9);
+    }
+</style>
+<!---------------------------------------------------------------------------------------------------------------------------------->
+
 <div style="margin-bottom:200px;">
-    <div class="container user-profile">
+    <div class="container user-profile" style="padding-bottom:0%;">
         <form method="post">
             <div class="row">
                 <div class="col-md-4">
@@ -194,41 +220,9 @@
 <!--    <div class="delete-btn-container" >-->
 <!--        <a type="button" class="delete-btn" onclick="deleteAccountPopup()"><p >Delete Account Permanently</p></a>-->
 <!--    </div>-->
-    <div id="action">
-        <div class="container">
-            {% if 'student' in roles %}
-            <div class="row" style="background:black; height:200px;display:flex; margin-bottom:3%; align-items:center;">
-                <div class="col-7">
-                    <div style="color:white; text-align:left; padding-left:10%;">
-                        <ul>Demo videos</ul>
-                        <ul>Workshop recorded videos</ul>
-                        <ul>Doubt-solving videos and more</ul>
-                    </div>
-                </div>
-                <div class="col-5" style="padding:5%;">
-                    <a href="{{ url_for('school.classroom') }}" class="btn btn-primary btn-block btn-large" role="button">CLASSROOM</a>
-                </div>
-            </div>
-            {% endif %}
-            {% if 'artist' in roles %}
-            <div class="row" style="background:black; height:200px;display:flex; margin-bottom:3%; align-items:center;">
-                <div class="col-7">
-                    <div style="color:white; text-align:left; padding-left:10%;">
-                        <ul>Add watermark</ul>
-                        <ul>More coming soon!</ul>
-                    </div>
-                </div>
-                <div class="col-5" style="padding:5%;">
-                    <a href="{{ url_for('studio.artist_tools') }}" class="btn btn-primary btn-block btn-large" role="button">ARTIST TOOLS</a>
-                </div>
-            </div>
-            {% endif %}
-            <div class="row"></div>
-        </div>
-    </div>
 </div>
 
- <!--  ---------------------------------------------------------------------- UPDATE RECORDS POPUP -------------------------------------------------------------------------------- -->
+<!--  ---------------------------------------------------------------------- UPDATE RECORDS POPUP -------------------------------------------------------------------------------- -->
 
 <div class="form-popup" style="" id="change-password">
     <form action="{{url_for('account.home')}}" class="popup-form-container" name="change-password" onsubmit="return validateForm()" method="post">
@@ -302,7 +296,41 @@
     </div>
 </div>
 
+
+
+<div class="dashboard-btn-container">
+    {% if 'student' in roles %}
+    <a class="dashboard-btn" href="{{ url_for('account.student_dashboard') }}">STUDENT DASHBOARD</a>
+    {% endif %}
+    {% if 'customer' in roles %}
+    <a class="dashboard-btn">CUSTOMER DASHBOARD</a>
+    {% endif %}
+<!--    <a class="dashboard-btn">STUDENT DASHBOARD</a>-->
+<!--    <a class="dashboard-btn">STUDENT DASHBOARD</a>-->
+<!--    <a class="dashboard-btn">STUDENT DASHBOARD</a>-->
+<!--    <a class="dashboard-btn">STUDENT DASHBOARD</a>-->
+</div>
 <!--  ---------------------------------------------------------------------------- SCRIPTS ---------------------------------------------------------------------------------------- -->
 <script src="../static/js/my_account.js"></script>
+
+
+            {% if 'artist' in roles %}
+<!--            <div class="row" style="background:black; height:200px;display:flex; margin-bottom:3%; align-items:center;">-->
+<!--                <div class="col-7">-->
+<!--                    <div style="color:white; text-align:left; padding-left:10%;">-->
+<!--                        <ul>Add watermark</ul>-->
+<!--                        <ul>More coming soon!</ul>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="col-5" style="padding:5%;">-->
+<!--                    <a href="{{ url_for('studio.artist_tools') }}" class="btn btn-primary btn-block btn-large" role="button">ARTIST TOOLS</a>-->
+<!--                </div>-->
+<!--            </div>-->
+            {% endif %}
+
+
+
+
+
 
 {% endblock %}

@@ -12,7 +12,7 @@
         </table>
     </div>
     <div class="price-table">
-        <p id="price-table-label"><b>OIL ON CANVAS</b></p>
+        <p class="price-table-label"><b>OIL ON CANVAS</b></p>
         <table style="width:100%; background:#ededed;">
             <tr>
                 <td style="background:#807d7d; color:white;">Size</td>
@@ -36,6 +36,32 @@
             </tr>
         </table>
         <p style="color:#e04e22;">Discount is available for limited time.</p>
+
+        <p class="price-table-label"><b>FOR MORE THAN ONE PERSON IN FRAME</b></p>
+        <table style="width:100%; background:#ededed;">
+            <tr>
+                <td style="background:#807d7d; color:white;">Additional Person</td>
+                <td style="background:#807d7d; color:white;">Percentage addition in the base charge</td>
+            </tr>
+            <tr>
+                <td>1 additional person (total 2)</td>
+                <td>+30%</td>
+            </tr>
+            <tr>
+                <td>2 additional persons (total 3)</td>
+                <td>+40%</td>
+            </tr>
+            <tr>
+                <td>3 additional persons (total 4)</td>
+                <td>+50%</td>
+            </tr>
+        </table>
+        <div style="display:flex; width:100%; padding-top:2%;">
+            <p style="text-align:left;"><span style="color:green;"><b>Explanation:</b></span> For example, if a client commissions a painting
+            of size 38 x 48 inch including 2 persons in frame then the calculation will be the base price
+                ,<b>₹{{ portrait_price_time_dict['portrait_oil_on_canvas_36x48']['discounted_price'] }}</b> + 30% of the base price, that is <b>₹{{additional_price}}</b>
+            which makes it <b>₹{{total_price}}</b> total.</p>
+        </div>
     </div>
 </div>
 

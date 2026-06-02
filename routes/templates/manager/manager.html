@@ -22,6 +22,7 @@
             </div>
             <div id="notification">
                 <h5>NOTIFICATIONS</h5>
+                <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="addNews()" value="Add News">Add News</button>
                 <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="promotion()" value="New Workshop Promotion">New Workshop Promotion</button>
                 <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="lastDateReminder()" value="Last Date Reminder">Last Date Reminder</button>
                 <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="sessionLink()" value="Session Link">Session Link</button>
@@ -279,8 +280,8 @@
                     <h2>Add Ws details</h2>
                     <input name="ws_name" placeholder="Workshop Name" type="text" required>
                     <input name="category" placeholder="category" type="text" required><br>
-                    <input name="brief" placeholder="brief" type="text" required><br>
-                    <input name="sessions" placeholder="sessions" type="text" required><br>
+                    <input name="brief" placeholder="brief" type="text"><br>
+                    <input name="sessions" placeholder="sessions" type="text"><br>
                     <input name="st1" placeholder="Subtopic1" type="text"><br>
                     <input name="st2" placeholder="Subtopic2" type="text"><br>
                     <input name="st3" placeholder="Subtopic3" type="text"><br>
@@ -290,7 +291,7 @@
                     <input name="st7" placeholder="Subtopic7" type="text"><br>
                     <input name="st8" placeholder="Subtopic8" type="text"><br>
                     <input name="st9" placeholder="Subtopic9" type="text"><br>
-                    <input name="description" placeholder="Description" type="text" required><br>
+                    <input name="description" placeholder="Description" type="text"><br>
                     <input name="req1" placeholder="Requirement1" type="text"><br>
                     <input name="req2" placeholder="Requirement2" type="text"><br>
                     <input name="req3" placeholder="Requirement3" type="text"><br>
@@ -382,6 +383,20 @@
                     <input name="vid_id3" type="text" placeholder="Video id Part 3">
                     <input name="tags" type="text" placeholder="Tags">
                     <button type="submit" name="add_demo" value="demo" class="btn btn-primary btn-block btn-large">ADD DEMO VIDEO</button>
+                </form>
+            </div>
+            <div id="add-news">
+                <form action="{{ url_for('manager.home') }}" method="post">
+                    <h2>Add News</h2>
+                    <select name="news_category" style="width:100%;" required>
+                        <option value="default" selected>Category</option>
+                        <option value="school">School</option>
+                        <option value="common">Common</option>
+                        <option value="studio">Studio</option>
+                    </select>
+                    <input name="news_text" placeholder="News Text" type="text" required>
+                    <input name="news_link" placeholder="News Link" type="text" required>
+                    <button type="submit" name="submit" value="add_news" class="btn btn-primary btn-block btn-large">ADD NEWS</button>
                 </form>
             </div>
             <div id="ws-promo">

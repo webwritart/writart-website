@@ -21,7 +21,7 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
     <script>
-      document.addEventListener('contextmenu', event => event.preventDefault());
+<!--      document.addEventListener('contextmenu', event => event.preventDefault());-->
     </script>
 
     {% block style %}
@@ -75,10 +75,7 @@
           </li>
           {% endif %}
           <li class="nav-item">
-            <a class="nav-link" href="{{url_for('account.home')}}">Hello {{ current_user.name.split()[0] }}</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{url_for('account.home')}}">My Account</a>
+            <a class="nav-link" href="{{url_for('account.main_dashboard')}}">DASHBOARD</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{{url_for('account.logout')}}">Log Out</a>

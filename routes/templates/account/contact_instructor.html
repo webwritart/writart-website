@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    #form-container {
+        display:flex;
+        justify-content: center;
+        align-items:center;
+        height: 90vh;
+        background-image: linear-gradient(45deg, #54D69A, #79D654);
+    }
+    #instructor-contact {
+        display:flex;
+        flex-direction:column;
+        width: 60%;
+    }
+    form textarea {
+        width:100%;
+    }
+    form button {
+        border: none;
+        background:#083011;
+        color:white;
+        padding:.5% 0%;
+    }
+    form button:hover {
+        background:#37731F;
+    }
+    label {
+        line-height: 1;
+    }
+
+    @media (max-width: 768px) {
+        #instructor-contact {
+            width:80%;
+        }
+        h1 {
+            font-weight:bold;
+            font-size: 1.3rem;
+            opacity:.8;
+        }
+        label {
+            font-size: .9rem;
+        }
+        button {
+            font-size:.9rem;
+        }
+    }
+</style>
+<div id="form-container">
+    <form id="instructor-contact" action="{{ url_for('account.contact_instructor') }}" method="post">
+    <h1>Contact Instructor</h1>
+
+        <input name="name" value="{{current_user.name}}" type="hidden">
+        <input name="contact" value="{{current_user.phone}}" type="hidden">
+        <input name="email" value="{{current_user.email}}" type="hidden">
+        <input name="user_id" value="{{current_user.id}}" type="hidden">
+        <label>Please write your message here</label>
+        <textarea name="message" placeholder="Please write your message here" rows="4" required> </textarea>
+        <button type="submit" name="submit" value="instructor-contact">SEND TO INSTRUCTOR</button>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                  <div class="{{category}}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </form>
+</div>
+{% endblock %}

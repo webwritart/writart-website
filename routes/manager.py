@@ -15,6 +15,7 @@ from models.query import Query
 from models.tool import Tools, ArtworkPriceTime
 from models.member import Member, Workshop, Role, Portrait, WorkshopVideos
 from models.workshop_details import WorkshopDetails
+from models.news import News
 from operations.miscellaneous import allowed_file, image_resize_and_compress_single
 from routes.account import today_date
 import datetime
@@ -330,6 +331,28 @@ def home():
                     except Exception as e:
                         print(e)
                         flash("I'm sorry Chief! Some error occurred!", "error")
+
+            if request.form.get('submit') == 'add_news':
+                category = request.form.get('news_category')
+                news_text = request.form.get('news_text')
+                news_link = request.form.get('news_link')
+                date_time = datetime.datetime.now().replace(microsecond=0)
+                if category == 'default':
+                    flash('Aborted! Please select datetime!', 'error')
+                else:
+                    try:
+                        entry = News(
+                            category=category,
+                            text=news_text,
+                            link=news_link,
+                            date_time=date_time
+                        )
+                        db.session.add(entry)
+                        db.session.commit()
+                        flash("Hooray! Added to database successfully!", "success")
+                    except Exception as e:
+                        print(e)
+                        flash("Aborted, Problem in adding to database", "error")
 
             if request.form.get('submit') and request.form.get('submit') == 'mail-promo':
                 recipients = []

@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    .figure-container {
+        display:flex;
+        flex-wrap:wrap;
+        width:100%;
+        justify-content: center;
+    }
+    figure {
+        margin: 1%;
+    }
+    .responsive-iframe {
+        aspect-ratio: 16/9;
+        width: 100%;
+    }
+    figcaption {
+        color: black;
+        font-weight: semibold;
+        text-align: center;
+    }
+</style>
+
+<div class="video-wrapper" style="background:#FA6781; padding: 2% 0%; min-height: 80vh; align-items:start;">
+    <div class="video-wrapper-container" >
+        <h3 style="color:black;">{{ ws_topic }}</h3>
+        <hr>
+        {% if logged_in %}
+        <div class="figure-container">
+        {% if video_count > 0 %}
+            {% for n in range(video_count) %}
+            <figure>
+<!--                <iframe class="responsive-iframe" style="display:flex; width:25%; border:none;" src="https://www.youtube.com/embed/{{ vid_id_list[n] }}?si=2BVYS-0QHsxcX4f5&;"-->
+<!--                title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write;-->
+<!--                encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"-->
+<!--                allowfullscreen></iframe>-->
+                <iframe class="responsive-iframe" src="https://www.youtube.com/embed/{{ vid_id_list[n] }}?si=2BVYS-0QHsxcX4f5&;"
+                title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write;
+                encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen></iframe>
+                <figcaption>{{vid_caption_list[n]}}</figcaption>
+            </figure>
+<!--                    <div class="video">-->
+<!--                        <div class="content">-->
+<!--                            <lite-youtube videoid="{{ vid_id_list[n] }}"-->
+
+<!--                                      params="controls=1"></lite-youtube>-->
+<!--                            <p>{{ vid_caption_list[n] }}</p>-->
+<!--                        </div>-->
+<!--                     </div>-->
+            {% endfor %}
+        {% endif %}
+        </div>
+        {% if video_count == 0 %}
+            <p style="color: white;">No classes recordings yet! The Video will be uploaded after the commencement of the classes</p>
+        {% endif %}
+<!--            {% if video_count == 0 %}-->
+<!--                <div class="">-->
+<!--                    <p style="color: white;">If you can't see any video in Workshops section it means you haven't enrolled in any workshop till now. Please check our current workshop and enroll if the registration is open..</p>-->
+<!--                    <a href="{{url_for('school.home')}}" class="button quiz-btn" type="button" style="background:#180e05; color:white; text-decoration:none;">OUR WORKSHOPS</a>-->
+<!--                </div>-->
+<!--            {% endif %}-->
+        {% endif %}
+
+        {% if not logged_in %}
+            <div class="course-btn">
+                <div class="text-button-center">
+                    <p style="color: white;">Please Log in to watch</p>
+                    <div style="display: flex; justify-content: center;">
+                        <a style="background:#FFC6C6;color:black;" href="{{url_for('account.login')}}" class="btn btn-primary btn-block btn-large button_medium button" role="button">LOG IN</a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

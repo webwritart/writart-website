@@ -44,4 +44,4 @@ class WorkshopDetails(db.Model):
     ws_id = db.Column(db.Integer, db.ForeignKey('workshop.id'), unique=True)
 
     def __repr__(self):
-        return f'Details of: {self.category} {self.ws_id}'
+        return f'Details of: {self.category}, id: {self.ws_id}'

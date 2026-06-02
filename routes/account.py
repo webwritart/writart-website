@@ -4,13 +4,14 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from operations.artist_tools import add_watermark
 from extensions import db, image_dict, current_year
-from operations.messenger import send_email_school, send_email_support
+from operations.messenger import send_email_school, send_email_support, send_email_with_reply
 from models.member import Member, Workshop, Role
 from flask_login import current_user, login_required, login_user, logout_user
-from datetime import date
+from datetime import date, datetime
 import random
 from operations.miscellaneous import calculate_age, allowed_file
 from models.artist_data import ArtistData
+from models.news import News
 from routes import main
 
 account = Blueprint('account', __name__, static_folder='static', template_folder='templates/account')
@@ -164,6 +165,97 @@ def home():
                                animation_admin=animation_admin, roles=roles, current_year=current_year)
     else:
         return render_template('my_account.html', current_year=current_year)
+
+
+
+@account.route('/main-dashboard', methods=['GET', 'POST'])
+def main_dashboard():
+    if not current_user.is_authenticated:
+        return redirect(url_for('account.login'))
+    admin = db.session.query(Role).filter_by(name='admin').scalar()
+    student = db.session.query(Role).filter_by(name='student').scalar()
+
+    roles = current_user.role
+    if admin in roles:
+        roles.remove(admin)
+
+    if len(roles) == 1:
+        if student in roles:
+            return redirect(url_for('account.student_dashboard', logged_in=current_user.is_authenticated, current_year=current_year))
+
+    return render_template('main_dashboard.html', logged_in=current_user.is_authenticated, current_year=current_year)
+
+
+
+@account.route('/student-dashboard', methods=['GET', 'POST'])
+def student_dashboard():
+    if not current_user.is_authenticated:
+        return redirect(url_for('account.login'))
+
+    multiple_roles = False
+    roles = current_user.role
+    admin = db.session.query(Role).filter_by(name='admin').scalar()
+    if admin in roles:
+        roles.remove(admin)
+    if len(roles) > 1:
+        multiple_roles = True
+
+    # --------------------------------------------- News --------------------------------------------------------------------- #
+    date_time_list = []
+    school_news_dict = {}
+    common_news_dict = {}
+
+    school_news = db.session.query(News).filter_by(category='school').all()
+    for news in school_news:
+        date_time = news.date_time
+        date_time_list.append(date_time)
+    sorted_dates = sorted(date_time_list, key=lambda d: datetime.strptime(d, "%Y-%m-%d %H:%M:%S"), reverse=True)
+    for item in sorted_dates:
+        news = db.session.query(News).filter_by(date_time=item).scalar()
+        news_text = news.text
+        news_link = news.link
+        school_news_dict[item] = {'news_text': news_text,'news_link': news_link}
+
+    common_news = db.session.query(News).filter_by(category='common').all()
+    for n in common_news:
+        date_time = n.date_time
+        date_time_list.clear()
+        date_time_list.append(date_time)
+    sorted_dates = sorted(date_time_list, key=lambda d: datetime.strptime(d, "%Y-%m-%d %H:%M:%S"), reverse=True)
+    for item in sorted_dates:
+        news = db.session.query(News).filter_by(date_time=item).scalar()
+        news_text = news.text
+        news_link = news.link
+        common_news_dict[item] = {'news_text': news_text, 'news_link': news_link}
+
+
+    return render_template('student_dashboard.html', logged_in=current_user.is_authenticated, current_year=current_year,
+                           multiple_roles=multiple_roles, school_news_dict=school_news_dict, common_news_dict=common_news_dict)
+
+
+
+@account.route('/contact-instructor', methods=['GET', 'POST'])
+def contact_instructor():
+    if not current_user.is_authenticated:
+        return redirect(url_for('account.login'))
+
+    if request.method == 'POST':
+        if request.form.get('submit') == 'instructor-contact':
+            name = request.form.get('name')
+            phone = request.form.get('contact')
+            email = request.form.get('email')
+            user_id = request.form.get('user_id')
+            message = request.form.get('message')
+
+            subject = 'Student Message- URGENT!'
+            message_body = f'New School Message:\n\nName: {name}\nEmail: {email}\n' \
+                           f'Phone: {phone}' \
+                           f'\nUser_id: {user_id}\n\nMessage: {message}\n\n'
+            send_email_with_reply(subject, email, ['shwetabhartist@gmail.com'], message_body)
+
+            flash('Message sent successfully', 'success')
+
+    return render_template('contact_instructor.html', logged_in=current_user.is_authenticated, current_year=current_year)
 
 
 @account.route('/update_details', methods=['GET', 'POST'])
@@ -388,14 +480,6 @@ def login():
         else:
             login_user(user)
             session['logged_in'] = True
-            if 'url' in session:
-                return redirect(session['url'])
-            if db.session.query(Role).filter(Role.name == 'admin').scalar() in current_user.role:
-                return redirect(url_for('manager.home'))
-            if db.session.query(Role).filter(Role.name == 'animation_admin').scalar() in current_user.role:
-                return redirect(url_for('animation_admin.home'))
-            if db.session.query(Role).filter(Role.name == 'client').scalar() in current_user.role:
-                return redirect(url_for('client_section.client_dashboard'))
             if not current_user.sex or current_user.sex == '':
                 return render_template('update_account.html')
             if request.form.get('prev-page') == 'enroll':
@@ -404,6 +488,8 @@ def login():
             if request.form.get('prev-page') == 'change-password':
                 flash("You are successfully logged in. Now proceed to change password", "success")
                 return redirect(url_for('account.change_password'))
+            if 'url' in session:
+                return redirect(session['url'])
             return redirect(url_for('account.home', name=current_user.name.split()[0]))
 
     return render_template("login.html", instruction='login', current_year=current_year)

@@ -68,4 +68,10 @@ def send_email_support(subject, recipients, body, html, image_dict):
     print("Mail sent")
 
 
+def send_email_with_reply(subject, sender_mail, recipients_list, message_body):
+    message = Message(subject, sender=("Writart Studio", "writartstudios@gmail.com"), recipients=recipients_list, reply_to=sender_mail)
+    message.body = message_body
+    mail.send(message)
+    print("mail sent")
+
 

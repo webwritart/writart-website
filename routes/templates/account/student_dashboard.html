@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+    .container-full-width {
+        display:flex;
+        width: 100%;
+        height: 80vh;
+        overflow:auto;
+    }
+    .container-full-width div {
+    }
+    .child-20-left {
+        display:flex;
+        flex-direction:column;
+        width:20%;
+        background:#DEFFC2;
+        border:solid 1px black;
+        overflow:auto;
+        padding: 0% 1%;
+    }
+    .child-20-right {
+        display:flex;
+        flex-direction:column;
+        width:20%;
+        background:#D3DEC1;
+        border:solid 1px black;
+        overflow:auto;
+        align-items:center;
+        padding:5% 0%;
+    }
+    .child-60 {
+        display: flex;
+        flex-wrap:wrap;
+        overflow: auto;
+        width:60%;
+        justify-content:center;
+        align-items: center;
+    }
+    .card {
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        width:300px;
+        height: 200px;
+        color: white;
+        margin:2%;
+        transition: transform 0.2s ease-in-out;
+        box-shadow: 8px 8px 8px rgba(0, 0, 0, 0.4);
+    }
+    .card:hover {
+        color: white;
+        text-decoration:none;
+        transform: scale(0.9);
+    }
+    .card-text {
+        text-decoration: none;
+        text-align: center;
+        font-size: 2rem;
+    }
+    .news {
+        line-height: 1;
+        text-align: left;
+        text-decoration: none;
+        color: black;
+    }
+
+    .dashboard-operation-btn {
+        background:white;
+        text-decoration:none;
+        color: #34751B;
+        font-weight: bold;
+        margin: 1% 0%;
+        padding: 3% 0%;
+        width:70%;
+        line-height:1;
+        border-radius: 1rem;
+        transition: transform 0.2s ease-in-out;
+        cursor: pointer;
+    }
+    .dashboard-operation-btn:hover {
+        text-decoration: none;
+        color: #34751B;
+        transform: scale(0.9);
+    }
+    #school-news {
+        display: flex;
+        flex-direction: column;
+        background:#F1FFE3;
+        height:60%;
+    }
+    #common-news {
+        background:#F1FFE3;
+        height:30%;
+    }
+    .news-section-heading {
+        background: #696811;
+        color: white;
+        padding: 1% 2%
+    }
+</style>
+
+<div class="title" style="background:#083011; color:white; padding: 1% 0%;">
+    <h1>STUDENT DASHBOARD</h1>
+</div>
+<div class="container-full-width">
+    <div class="child-20-left">
+        <p class="section-heading" style="background:#509918; color:white;">NEWS</p>
+        <div id="school-news">
+            <p class="news-section-heading">School News</p>
+            {% for n in school_news_dict %}
+            <ul><li><a class="news" href="{{ school_news_dict[n]['news_link'] }}">{{ school_news_dict[n]['news_text'] }}</a></li></ul>
+            {% endfor %}
+        </div>
+        <div id="common-news">
+            <p class="news-section-heading">Common News</p>
+            {% for n in common_news_dict %}
+            <ul><li><a class="news" href="{{ common_news_dict[n]['news_link'] }}">{{ common_news_dict[n]['news_text'] }}</a></li></ul>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="child-60">
+        <a class="card" style="background-image: linear-gradient(45deg, #25A19F, #25A12B);" href="{{ url_for('school.classroom') }}">
+            <p class="card-text">CLASSROOM</p>
+        </a>
+        <a class="card" style="background-image: linear-gradient(45deg, #56BD33, #9BC936);" href="{{ url_for('school.home') }}">
+            <p class="card-text">UPCOMING COURSE INFO</p>
+        </a>
+    </div>
+    <div class="child-20-right">
+        <a class="dashboard-operation-btn" href="{{ url_for('account.home') }}">Account Details</a>
+        {% if multiple_roles %}
+        <a class="dashboard-operation-btn" href="{{ url_for('account.main_dashboard') }}">Main Dashboard</a>
+        {% endif %}
+        <a class="dashboard-operation-btn" href="{{ url_for('account.contact_instructor') }}">Contact Instructor</a>
+    </div>
+</div>
+
+{% endblock %}
