@@ -8,8 +8,6 @@
         height: 80vh;
         overflow:auto;
     }
-    .container-full-width div {
-    }
     .child-20-left {
         display:flex;
         flex-direction:column;
@@ -88,15 +86,77 @@
         flex-direction: column;
         background:#F1FFE3;
         height:60%;
+        overflow: auto;
     }
     #common-news {
         background:#F1FFE3;
         height:30%;
+        overflow: auto;
     }
     .news-section-heading {
         background: #696811;
         color: white;
-        padding: 1% 2%
+        padding: 1% 2%;
+        margin-bottom: 0%;
+    }
+    .dashboard-operation-btn {
+        font-size: 1rem;
+    }
+
+    @media screen and (max-width: 1200px) {
+        .container-full-width {
+            flex-direction: column;
+            height: auto;
+        }
+        .child-20-left {
+            width: 100%;
+            max-height: 40vh;
+        }
+        .child-60 {
+            width: 100%;
+            padding: 2% 0%;
+        }
+        .child-20-right {
+            width: 100%;
+            padding: 1% 20%;
+        }
+        #school-news {
+            padding-right: 5%;
+        }
+        #common-news {
+            padding-right: 5%;
+        }
+        .card {
+            width: 240px;
+            height: 160px;
+            padding: 5%;
+        }
+        .card-text {
+            font-size: 1.2rem;
+        }
+    }
+    @media screen and (max-width: 600px) {
+        .card {
+            width: 120px;
+            height: 80px;
+            padding: 5%;
+        }
+        .card-text {
+            font-size: .8rem;
+        }
+        #school-news {
+            font-size: .85rem;
+        }
+        #common-news {
+            font-size: .85rem;
+        }
+        .dashboard-operation-btn {
+            font-size: .9rem;
+            margin: 2% 0%;
+        }
+        .child-20-right {
+            padding: 5% 5%;
+        }
     }
 </style>
 
@@ -105,18 +165,22 @@
 </div>
 <div class="container-full-width">
     <div class="child-20-left">
-        <p class="section-heading" style="background:#509918; color:white;">NEWS</p>
+        <p class="section-heading" style="background:#509918; color:white; padding: 0%; margin-top:1%;">NEWS</p>
+        <p class="news-section-heading">School News</p>
         <div id="school-news">
-            <p class="news-section-heading">School News</p>
+            <ul>
             {% for n in school_news_dict %}
-            <ul><li><a class="news" href="{{ school_news_dict[n]['news_link'] }}">{{ school_news_dict[n]['news_text'] }}</a></li></ul>
+            <li><a class="news" href="{{ school_news_dict[n]['news_link'] }}">{{ school_news_dict[n]['news_text'] }}</a></li>
             {% endfor %}
+            </ul>
         </div>
+        <p class="news-section-heading">Common News</p>
         <div id="common-news">
-            <p class="news-section-heading">Common News</p>
+            <ul>
             {% for n in common_news_dict %}
-            <ul><li><a class="news" href="{{ common_news_dict[n]['news_link'] }}">{{ common_news_dict[n]['news_text'] }}</a></li></ul>
+            <li><a class="news" href="{{ common_news_dict[n]['news_link'] }}">{{ common_news_dict[n]['news_text'] }}</a></li>
             {% endfor %}
+            </ul>
         </div>
     </div>
     <div class="child-60">

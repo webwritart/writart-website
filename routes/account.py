@@ -217,9 +217,9 @@ def student_dashboard():
         school_news_dict[item] = {'news_text': news_text,'news_link': news_link}
 
     common_news = db.session.query(News).filter_by(category='common').all()
+    date_time_list.clear()
     for n in common_news:
         date_time = n.date_time
-        date_time_list.clear()
         date_time_list.append(date_time)
     sorted_dates = sorted(date_time_list, key=lambda d: datetime.strptime(d, "%Y-%m-%d %H:%M:%S"), reverse=True)
     for item in sorted_dates:
