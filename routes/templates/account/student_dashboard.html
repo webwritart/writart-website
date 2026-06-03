@@ -170,7 +170,9 @@
         <div id="school-news">
             <ul>
             {% for n in school_news_dict %}
-            <li><a class="news" href="{{ school_news_dict[n]['news_link'] }}">{{ school_news_dict[n]['news_text'] }}</a></li>
+            <li><a class="news" href="{{ school_news_dict[n]['news_link'] }}">
+                {{ school_news_dict[n]['news_text'] }} <span style="color:blue;">view</span> <span style="opacity:.5;">- {{ school_news_dict[n]['news_date'] }}</span>
+            </a></li>
             {% endfor %}
             </ul>
         </div>
@@ -178,7 +180,9 @@
         <div id="common-news">
             <ul>
             {% for n in common_news_dict %}
-            <li><a class="news" href="{{ common_news_dict[n]['news_link'] }}">{{ common_news_dict[n]['news_text'] }}</a></li>
+            <li><a class="news" href="{{ common_news_dict[n]['news_link'] }}">
+                {{ common_news_dict[n]['news_text'] }} <span style="color:blue;">view</span> <span style="opacity:.5;">- {{ common_news_dict[n]['news_date'] }}</span>
+            </a></li>
             {% endfor %}
             </ul>
         </div>

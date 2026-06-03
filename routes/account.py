@@ -204,6 +204,7 @@ def student_dashboard():
     date_time_list = []
     school_news_dict = {}
     common_news_dict = {}
+    month_list = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
     school_news = db.session.query(News).filter_by(category='school').all()
     for news in school_news:
@@ -214,7 +215,13 @@ def student_dashboard():
         news = db.session.query(News).filter_by(date_time=item).scalar()
         news_text = news.text
         news_link = news.link
-        school_news_dict[item] = {'news_text': news_text,'news_link': news_link}
+        news_date_raw = news.date_time.split(" ")[0].split('-')
+        dt = news_date_raw[2]
+        month = news_date_raw[1]
+        year = news_date_raw[0]
+        month_name = month_list[int(month)-1]
+        news_date = f'{dt} {month_name}, {year}'
+        school_news_dict[item] = {'news_text': news_text,'news_link': news_link, 'news_date': news_date}
 
     common_news = db.session.query(News).filter_by(category='common').all()
     date_time_list.clear()
@@ -226,7 +233,13 @@ def student_dashboard():
         news = db.session.query(News).filter_by(date_time=item).scalar()
         news_text = news.text
         news_link = news.link
-        common_news_dict[item] = {'news_text': news_text, 'news_link': news_link}
+        news_date_raw = news.date_time.split(" ")[0].split('-')
+        dt = news_date_raw[2]
+        month = news_date_raw[1]
+        year = news_date_raw[0]
+        month_name = month_list[int(month) - 1]
+        news_date = f'{dt} {month_name}, {year}'
+        common_news_dict[item] = {'news_text': news_text, 'news_link': news_link, 'news_date': news_date}
 
 
     return render_template('student_dashboard.html', logged_in=current_user.is_authenticated, current_year=current_year,
