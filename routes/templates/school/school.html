@@ -2,512 +2,586 @@
 {% block content %}
 
 <style>
-<!--  .cover-container {-->
-<!--    padding: 8% 0%;-->
-<!--    background-color: rgba(0,0,0,0);-->
-<!--    background: url('/static/images/cover.jpg');-->
-<!--    background-repeat: no-repeat;-->
-<!--    background-size: cover;-->
-<!--    align-items:center;-->
-<!--    height: 30%;-->
-<!--}-->
-<!--    .homepage_cover {-->
-<!--        background: url(static/images/workshops/{{current_ws}}/cover.jpg);-->
-<!--        padding: 4%;-->
-<!--        color: white;-->
-<!--        margin-top: 1%;-->
-<!--        background-size: cover;-->
-<!--        width: 100%;-->
-<!--    }-->
-<!--    .homepage_cover_header {-->
-<!--        display: flex;-->
-<!--        justify-content: space-between;-->
-<!--    }-->
-<!--    .homepage_cover_header h3 {-->
-<!--        font-size: 0.6rem;-->
-<!--        text-transform: uppercase;-->
-<!--    }-->
-<!--    .homepage_cover_title {-->
-<!--        display: flex;-->
-<!--        flex-direction: column;-->
-<!--        justify-content: center;-->
-<!--        align-items: center;-->
-<!--    }-->
-<!--    .homepage_cover_title h1{-->
-<!--        font-size: 1.2rem;-->
-<!--    }-->
-<!--    .homepage_cover_title h3 {-->
-<!--        font-size: 0.8rem;-->
-<!--        line-height: 1rem;-->
-<!--    }-->
-<!--    .homepage_cover_title h4 {-->
-<!--        padding: 2% 0% 1% 0%;-->
-<!--        color: #6eb661;-->
-<!--        font-size: 0.8rem;-->
-<!--    }-->
-<!--    .homepage_cover_title h6 {-->
-<!--        font-size: 0.6rem;-->
-<!--        padding-top: 1.5%;-->
-<!--        color: #f58233;-->
-<!--    }-->
-<!--    .homepage_cover_button {-->
-<!--        display:flex;-->
-<!--        justify-content:space-around;-->
-<!--        align-items:center;-->
-<!--        padding: 2% 5%;-->
-<!--        width: 100%;-->
-<!--    }-->
-<!--    .homepage_cover_button a {-->
-<!--        width: 40%;-->
-<!--        background: #FFDBDB;-->
-<!--        color: #644A07 !important;-->
-<!--        padding: 0.5%;-->
-<!--        font-weight: 400;-->
-<!--        font-size: 0.7rem;-->
-<!--        text-decoration: none;-->
-<!--    }-->
-<!--    .homepage_cover_button a:hover {-->
-<!--        background: #FFC6C6;-->
-<!--        color: #644A07 !important;-->
-<!--    }-->
-<!--    .hero-content{-->
-<!--        color:white;-->
-<!--       text-align:center;-->
-<!--       padding: 0% 15%;-->
-<!--    }-->
-<!--    .hero-content h1 {-->
-<!--        font-size: 1.3rem;-->
-<!--    }-->
-<!--    .hero-content h4 {-->
-<!--        font-size: 0.9rem;-->
-<!--        line-height:1rem;-->
-<!--    }-->
-<!--    .hero-content p {-->
-<!--        font-size: 0.8rem;-->
-<!--        opacity:0.7;-->
-<!--        padding:3% 0% 0% 0%;-->
-<!--    }-->
+    <!--  .cover-container {-->
+    <!--    padding: 8% 0%;-->
+    <!--    background-color: rgba(0,0,0,0);-->
+    <!--    background: url('/static/images/cover.jpg');-->
+    <!--    background-repeat: no-repeat;-->
+    <!--    background-size: cover;-->
+    <!--    align-items:center;-->
+    <!--    height: 30%;-->
+    <!--}-->
+    <!--    .homepage_cover {-->
+    <!--        background: url(static/images/workshops/{{current_ws}}/cover.jpg);-->
+    <!--        padding: 4%;-->
+    <!--        color: white;-->
+    <!--        margin-top: 1%;-->
+    <!--        background-size: cover;-->
+    <!--        width: 100%;-->
+    <!--    }-->
+    <!--    .homepage_cover_header {-->
+    <!--        display: flex;-->
+    <!--        justify-content: space-between;-->
+    <!--    }-->
+    <!--    .homepage_cover_header h3 {-->
+    <!--        font-size: 0.6rem;-->
+    <!--        text-transform: uppercase;-->
+    <!--    }-->
+    <!--    .homepage_cover_title {-->
+    <!--        display: flex;-->
+    <!--        flex-direction: column;-->
+    <!--        justify-content: center;-->
+    <!--        align-items: center;-->
+    <!--    }-->
+    <!--    .homepage_cover_title h1{-->
+    <!--        font-size: 1.2rem;-->
+    <!--    }-->
+    <!--    .homepage_cover_title h3 {-->
+    <!--        font-size: 0.8rem;-->
+    <!--        line-height: 1rem;-->
+    <!--    }-->
+    <!--    .homepage_cover_title h4 {-->
+    <!--        padding: 2% 0% 1% 0%;-->
+    <!--        color: #6eb661;-->
+    <!--        font-size: 0.8rem;-->
+    <!--    }-->
+    <!--    .homepage_cover_title h6 {-->
+    <!--        font-size: 0.6rem;-->
+    <!--        padding-top: 1.5%;-->
+    <!--        color: #f58233;-->
+    <!--    }-->
+    <!--    .homepage_cover_button {-->
+    <!--        display:flex;-->
+    <!--        justify-content:space-around;-->
+    <!--        align-items:center;-->
+    <!--        padding: 2% 5%;-->
+    <!--        width: 100%;-->
+    <!--    }-->
+    <!--    .homepage_cover_button a {-->
+    <!--        width: 40%;-->
+    <!--        background: #FFDBDB;-->
+    <!--        color: #644A07 !important;-->
+    <!--        padding: 0.5%;-->
+    <!--        font-weight: 400;-->
+    <!--        font-size: 0.7rem;-->
+    <!--        text-decoration: none;-->
+    <!--    }-->
+    <!--    .homepage_cover_button a:hover {-->
+    <!--        background: #FFC6C6;-->
+    <!--        color: #644A07 !important;-->
+    <!--    }-->
+    <!--    .hero-content{-->
+    <!--        color:white;-->
+    <!--       text-align:center;-->
+    <!--       padding: 0% 15%;-->
+    <!--    }-->
+    <!--    .hero-content h1 {-->
+    <!--        font-size: 1.3rem;-->
+    <!--    }-->
+    <!--    .hero-content h4 {-->
+    <!--        font-size: 0.9rem;-->
+    <!--        line-height:1rem;-->
+    <!--    }-->
+    <!--    .hero-content p {-->
+    <!--        font-size: 0.8rem;-->
+    <!--        opacity:0.7;-->
+    <!--        padding:3% 0% 0% 0%;-->
+    <!--    }-->
 
 
-.course-info {
-    width:100%;
-    margin-top:2%;
-    background: #424038;
-    padding-bottom: 2%;
-}
-.course-info ul {
-  margin-top: 0%;
-  margin-bottom: 1%;
-}
-.text {
-  font-size: .85rem;
-}
-.course-info li {
-  font-size: .8rem;
-  padding: 0%;
-  margin: 0%;
-}
-.syllabus-week {
-    color: #ffa754;
-    font-weight: bold;
-    font-size: .8rem;
-    padding: 0%;
-    margin: 0%;
-}
-#course-title {
-  padding:3% 0% 0% 0%;
-  font-weight: bold;
-  font-size: 1rem;
-}
-.section-heading {
-  width: 100%;
-  display:flex;
-  color:white;
-  background:#0f0f0d;
-  padding:1% 0% 1% 3%;
-  box-shadow: 5px 10px 3px rgba(0, 0, 0, .4);
-  text-align:left;
-  font-size: 1rem;
-}
-.section-heading p {
-  width: 50%;
-}
-#syllabus-container {
-  width: 80%;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:left;
-  color:white;
-  padding-left: 10%;
-}
-.syllabus-category {
-  color: #44ebb0;
-  font-size: .9rem;
-  margin-bottom: 0%;
-}
-#course-contact-btn {
-  margin-top: 0%;
-}
-#contact-text {
-  padding: 3% 2% 1% 2%;
-  text-align: center;
-  font-size: 1rem;
-}
-#cover-pc {
-  display: none;
-}
-
-@media (min-width: 600px) {
-.hero-content h4 {
-        font-size: 1rem;
+    .course-info {
+        width:100%;
+        background: #454a30;
+        padding-bottom: 2%;
     }
-     .hero-content h1 {
-        font-size:1.4rem;
-     }
-    .homepage_cover_header h3 {
-        font-size: 0.8rem;
-    }
-    .homepage_cover_title h1{
-        font-size: 1.4rem;
-    }
-    .homepage_cover_title h3 {
-        font-size: 0.9rem;
-    }
-    .homepage_cover_title h4 {
-        font-size: 0.9rem;
-    }
-    .homepage_cover_title h6 {
-        font-size: 0.7rem;
-    }
-    .homepage_cover_button {
-        padding: 2% 0%;
-    }
-    .homepage_cover_button a {
-        font-size: 0.8rem;
-        width:35%;
-        padding: 0.5% 5%;
-    }
-    #course-title {
-      padding:2% 0% 0% 0%;
-      font-size: 1.2rem;
-    }
-  .course-info {
-    width:80%;
-  }
-  .section-heading {
-    font-size: 1.1rem;
-  }
-  .syllabus-category {
-    font-size: .9rem;
-  }
-  #contact-text {
-    padding: 3% 8% 0% 8%;
-  }
-}
-@media (min-width: 768px) {
-.hero-content h4 {
-        font-size: 1.1rem;
-    }
-.hero-content h1 {
-        font-size:1.6rem;
-     }
-    .homepage_cover_header h3 {
-        font-size: 0.9rem;
-    }
-    .homepage_cover_title h1{
-        font-size: 1.5rem;
-    }
-    .homepage_cover_title h3 {
-        font-size: 1.1rem;
-    }
-    .homepage_cover_title h4 {
-        font-size: 1.1rem;
-    }
-    .homepage_cover_title h6 {
-        font-size: 0.8rem;
-    }
-    .homepage_cover_button a {
-        font-size: 0.9rem;
-        width: 30%;
-        padding: 0.5% 5%;
-    }
-    .section-heading {
-      font-size: 1.2rem;
-    }
-    .syllabus-category {
-      font-size: 1rem;
-    }
-    .syllabus-week {
-      font-size: 1.1rem;
-    }
-    .course-info li {
-      font-size: 1rem;
+    .course-info ul {
+      margin-top: 0%;
+      margin-bottom: 1%;
     }
     .text {
+      font-size: .85rem;
+    }
+    .course-info li {
+      font-size: .8rem;
+      padding: 0%;
+      margin: 0%;
+    }
+    .syllabus-week {
+        color: #ffa754;
+        font-weight: bold;
+        font-size: .8rem;
+        padding: 0%;
+        margin: 0%;
+    }
+    #course-title {
+      padding:3% 0% 0% 0%;
+      font-weight: bold;
       font-size: 1rem;
     }
-    #course-title {
-      padding:2% 0% 0% 0%;
-      font-size: 1.5rem;
+    .section-heading {
+      width: 100%;
+      display:flex;
+      color:white;
+      background:#151a03;
+      padding:1% 0% 1% 3%;
+      box-shadow: 5px 10px 3px rgba(0, 0, 0, .4);
+      text-align:left;
+      font-size: 1rem;
+    }
+    .section-heading p {
+      width: 50%;
+    }
+    #syllabus-container {
+      width: 80%;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:left;
+      color:white;
+      padding-left: 10%;
+    }
+    .syllabus-category {
+      color: #44ebb0;
+      font-size: .9rem;
+      margin-bottom: 0%;
+    }
+    #course-contact-btn {
+      margin-top: 0%;
     }
     #contact-text {
-      padding: 3% 8% 0% 8%;
-      font-size: 1.1rem;
+      padding: 3% 2% 1% 2%;
+      text-align: center;
+      font-size: 1rem;
     }
     #cover-pc {
-      display: block;
-    }
-    #cover-phone {
       display: none;
     }
-}
-@media (min-width: 1200px) {
-    .cover-container {
-        background-position-y:25%;
+    .horizontal-double-div-bg-dark {
+        display:flex;
+        flex-direction: column;
+        width: 100%;
+        justify-content: space-evenly;
+        background: #1a2109;
+        line-height:1rem;
+        padding: 5% 5% 2% 5%;
+        color:white;
+        align-items:center;
+        text-transform: uppercase;
+        font-size: .8rem;
     }
-  .cover-container {
-    padding: 5% 0%;
-    height: 35vh;
-}
-  .hero-content p {
-        font-size: 0.95rem;
+    .horizontal-double-div-bg-dark p {
+        padding: 0% 2%;
+        line-height: 1rem;
     }
-.hero-content h4 {
-        font-size: 1.3rem;
+    .horizontal-double-div {
+        display:flex;
+        flex-direction: column;
+        width: 100%;
+        justify-content: space-evenly;
+        line-height:1rem;
+        padding: 2% 0%;
+        align-items:center;
+        text-transform: uppercase;
     }
-.hero-content h1 {
-        font-size:1.9rem;
-     }
-    .homepage_cover_header h3 {
+    .register-contact a {
+        color: black;
+        margin: 2% 0%;
+        background: #ff8000;
+        padding: 1.5% 5%;
+        width: 60%;
+        font-weight: bold;
+        box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
+        transition: transform 0.2s ease-in-out;
+        cursor: pointer;
+    }
+    .register-contact a:hover {
+        text-decoration: none;
+        transform: scale(0.9);
+        color: black;
+    }
+
+    @media (min-width: 600px) {
+    .hero-content h4 {
+            font-size: 1rem;
+        }
+         .hero-content h1 {
+            font-size:1.4rem;
+         }
+        .homepage_cover_header h3 {
+            font-size: 0.8rem;
+        }
+        .homepage_cover_title h1{
+            font-size: 1.4rem;
+        }
+        .homepage_cover_title h3 {
+            font-size: 0.9rem;
+        }
+        .homepage_cover_title h4 {
+            font-size: 0.9rem;
+        }
+        .homepage_cover_title h6 {
+            font-size: 0.7rem;
+        }
+        .homepage_cover_button {
+            padding: 2% 0%;
+        }
+        .homepage_cover_button a {
+            font-size: 0.8rem;
+            width:35%;
+            padding: 0.5% 5%;
+        }
+        #course-title {
+          padding:2% 0% 0% 0%;
+          font-size: 1.2rem;
+        }
+      .course-info {
+        width:80%;
+      }
+      .section-heading {
         font-size: 1.1rem;
+      }
+      .syllabus-category {
+        font-size: .9rem;
+      }
+      #contact-text {
+        padding: 3% 8% 0% 8%;
+      }
     }
-    .homepage_cover_title h1{
-        font-size: 1.7rem;
+    @media (min-width: 768px) {
+    .hero-content h4 {
+            font-size: 1.1rem;
+        }
+    .hero-content h1 {
+            font-size:1.6rem;
+         }
+        .homepage_cover_header h3 {
+            font-size: 0.9rem;
+        }
+        .homepage_cover_title h1{
+            font-size: 1.5rem;
+        }
+        .homepage_cover_title h3 {
+            font-size: 1.1rem;
+        }
+        .homepage_cover_title h4 {
+            font-size: 1.1rem;
+        }
+        .homepage_cover_title h6 {
+            font-size: 0.8rem;
+        }
+        .homepage_cover_button a {
+            font-size: 0.9rem;
+            width: 30%;
+            padding: 0.5% 5%;
+        }
+        .section-heading {
+          font-size: 1.2rem;
+        }
+        .syllabus-category {
+          font-size: 1rem;
+        }
+        .syllabus-week {
+          font-size: 1.1rem;
+        }
+        .course-info li {
+          font-size: 1rem;
+        }
+        .text {
+          font-size: 1rem;
+        }
+        #course-title {
+          padding:2% 0% 0% 0%;
+          font-size: 1.5rem;
+        }
+        #contact-text {
+          padding: 3% 8% 0% 8%;
+          font-size: 1.1rem;
+        }
+        #cover-pc {
+          display: block;
+        }
+        #cover-phone {
+          display: none;
+        }
+        .horizontal-double-div-bg-dark {
+            width:80%;
+            padding: 2% 0%;
+            font-size: 1rem;
+        }
+        .horizontal-double-div {
+            flex-direction: row;
+            width: 80%;
+            padding: 4% 0%;
+        }
+        .register-contact a {
+            margin: 0% 2%;
+        }
+    @media (min-width: 1200px) {
+        .cover-container {
+            background-position-y:25%;
+        }
+      .cover-container {
+        padding: 5% 0%;
+        height: 35vh;
     }
-    .homepage_cover_title h3 {
+      .hero-content p {
+            font-size: 0.95rem;
+        }
+    .hero-content h4 {
+            font-size: 1.3rem;
+        }
+    .hero-content h1 {
+            font-size:1.9rem;
+         }
+        .homepage_cover_header h3 {
+            font-size: 1.1rem;
+        }
+        .homepage_cover_title h1{
+            font-size: 1.7rem;
+        }
+        .homepage_cover_title h3 {
+            font-size: 1.3rem;
+        }
+        .homepage_cover_title h4 {
+            font-size: 1.3rem;
+        }
+        .homepage_cover_title h6 {
+            font-size: 1rem;
+        }
+        .homepage_cover_button a {
+            font-size: 1rem;
+            width: 25%;
+        }
+      .course-info {
+        width:60%;
+      }
+      .section-heading {
         font-size: 1.3rem;
-    }
-    .homepage_cover_title h4 {
-        font-size: 1.3rem;
-    }
-    .homepage_cover_title h6 {
-        font-size: 1rem;
-    }
-    .homepage_cover_button a {
-        font-size: 1rem;
-        width: 25%;
-    }
-  .course-info {
-    width:60%;
-  }
-  .section-heading {
-    font-size: 1.3rem;
-  }
-  .syllabus-category {
-    font-size: 1.1rem;
-  }
-  .syllabus-week {
-    font-size: 1.2rem;
-  }
-  #course-title {
-    padding:2% 0% 0% 0%;
-    font-size: 1.9rem;
-  }
-}
-@media (min-width: 1900px) {
-  .cover-container {
-    padding: 4% 0%;
-    height: 35vh;
-}
- .hero-content p {
-        font-size: 1.05rem;
-    }
-.hero-content h4 {
-        font-size: 1.5rem;
-    }
-.hero-content h1 {
-        font-size:2.2rem;
-     }
-    .homepage_cover_header h3 {
-        font-size: 1.4rem;
-    }
-    .homepage_cover_title h1{
-        font-size: 2.2rem;
-    }
-    .homepage_cover_title h3 {
-        font-size: 1.5rem;
-    }
-    .homepage_cover_title h4 {
-        font-size: 1.5rem;
-    }
-    .homepage_cover_title h6 {
+      }
+      .syllabus-category {
+        font-size: 1.1rem;
+      }
+      .syllabus-week {
         font-size: 1.2rem;
-    }
-    .homepage_cover_button a {
-        font-size: 1.2rem;
-        width: 20%;
-    }
-    #course-title {
-      padding:2% 0% 0% 0%;
-      font-size: 2.1rem;
-    }
-}
-@media (min-width: 2500px) {
- .hero-content p {
-        font-size: 1.5rem;
-    }
-.hero-content h4 {
-        font-size: 2.2rem;
-    }
-.hero-content h1 {
-        font-size:3.2rem;
-     }
-    .homepage_cover_header h3 {
-        font-size: 2rem;
-    }
-    .homepage_cover_title h1{
-        font-size: 3.8rem;
-    }
-    .homepage_cover_title h3 {
-        font-size: 2rem;
-    }
-    .homepage_cover_title h4 {
+      }
+      #course-title {
+        padding:2% 0% 0% 0%;
         font-size: 1.9rem;
+      }
+      .horizontal-double-div-bg-dark {
+            width:60%;
+            padding: 2% 0%;
+            font-size: 1rem;
+        }
+        .horizontal-double-div {
+            flex-direction: row;
+            width: 60%;
+            padding: 4% 0%;
+        }
+        .register-contact a {
+            margin: 0% 2%;
+        }
     }
-    .homepage_cover_title h6 {
-        font-size: 1.7rem;
+    @media (min-width: 1900px) {
+      .cover-container {
+        padding: 4% 0%;
+        height: 35vh;
     }
-    .homepage_cover_button a {
-        font-size: 1.5rem;
-        width: 20%;
+     .hero-content p {
+            font-size: 1.05rem;
+        }
+    .hero-content h4 {
+            font-size: 1.5rem;
+        }
+    .hero-content h1 {
+            font-size:2.2rem;
+         }
+        .homepage_cover_header h3 {
+            font-size: 1.4rem;
+        }
+        .homepage_cover_title h1{
+            font-size: 2.2rem;
+        }
+        .homepage_cover_title h3 {
+            font-size: 1.5rem;
+        }
+        .homepage_cover_title h4 {
+            font-size: 1.5rem;
+        }
+        .homepage_cover_title h6 {
+            font-size: 1.2rem;
+        }
+        .homepage_cover_button a {
+            font-size: 1.2rem;
+            width: 20%;
+        }
+        #course-title {
+          padding:2% 0% 0% 0%;
+          font-size: 2.1rem;
+        }
     }
-}
+    @media (min-width: 2500px) {
+     .hero-content p {
+            font-size: 1.5rem;
+        }
+    .hero-content h4 {
+            font-size: 2.2rem;
+        }
+    .hero-content h1 {
+            font-size:3.2rem;
+         }
+        .homepage_cover_header h3 {
+            font-size: 2rem;
+        }
+        .homepage_cover_title h1{
+            font-size: 3.8rem;
+        }
+        .homepage_cover_title h3 {
+            font-size: 2rem;
+        }
+        .homepage_cover_title h4 {
+            font-size: 1.9rem;
+        }
+        .homepage_cover_title h6 {
+            font-size: 1.7rem;
+        }
+        .homepage_cover_button a {
+            font-size: 1.5rem;
+            width: 20%;
+        }
+    }
 
 </style>
 <div style="display:flex; flex-direction:column; align-items:center; width:100%;">
-  <img id="cover-pc" src="../static/files/courses/portraiture_beginner/cover.jpg" width="100%">
-  <img id="cover-phone" src="../static/files/courses/portraiture_beginner/cover-phone.jpg" width="100%">
-  <p id="course-title"><b>PORTRAITURE (BEGINNERS)</b></p>
+    <img id="cover-pc" src="../static/files/courses/portraiture_beginner/cover.jpg" width="100%">
+    <img id="cover-phone" src="../static/files/courses/portraiture_beginner/cover-phone.jpg" width="100%">
+    <p id="course-title"><b>PORTRAITURE (BEGINNERS)</b></p>
+    <div class="horizontal-double-div-bg-dark">
+        <p><span style="opacity:.7;">Registration Closes on:</span> <span style="color:#ffa347;">10th June 2026 (Wed)</span></p>
+        <p><span style="opacity:.7;">Classes begin:</span> <span style="color:#ffa347;">13th June 2026 (sat) | 4 - 5 PM</span></p>
+    </div>
+    <div class="horizontal-double-div register-contact">
+        <a href="https://wa.link/kol6tn">REGISTER NOW!</a>
+        <a href="https://wa.link/kol6tn">CONTACT US</a>
+    </div>
+    <div class="course-info">
+        <p class="section-heading"><b>SYLLABUS</b></p>
+        <div id="syllabus-container">
+            <p class="syllabus-category">(Main Course)</p>
+            <p class="syllabus-week">Week 1 (Fundamentals)</p>
+            <ul>
+                <li>Basics of Sketching</li>
+                <li>Introduction to Facial Proportions</li>
+                <li>Loomis Method</li>
+                <li>Head drawing from different viewing angles</li>
+                <li>Grid Drawing</li>
+            </ul>
+            <p class="syllabus-week">Week 2 (Eyes & Eyebrows)</p>
+            <ul>
+                <li>Constructing eyeball, eyelids and eyelashes</li>
+                <li>Surrounding shadows and form</li>
+                <li>Drawing from different viewing angles</li>
+            </ul>
+            <p class="syllabus-week">Week 3 (Nose & Ears)</p>
+            <ul>
+                <li>Basic anatomy and form of nose</li>
+                <li>Basic anatomy of ears</li>
+                <li>Drawing both from different viewing angles</li>
+            </ul>
+            <p class="syllabus-week">Week 4 (Mouth & Lips)</p>
+            <ul>
+                <li>Anatomy and form of lips, the philtrum, the chin and the jawline</li>
+                <li>Drawing teeth</li>
+                <li>Drawing from different viewing angles</li>
+            </ul>
+            <p class="syllabus-week">Week 5 (Hair & Skin texture)</p>
+            <ul>
+                <li>Hair as mass</li>
+                <li>Common hair lock pattern study</li>
+                <li>Rendering realistic skin textures using different shading methods</li>
+            </ul>
+            <p class="syllabus-week">Week 6 (Planes of Face)</p>
+            <ul>
+                <li>Basic anatomy and form of face</li>
+                <li>Assembling all the already learn facial parts on face</li>
+            </ul>
+            <p class="syllabus-week">Week 7 (Value and Contrast)</p>
+            <ul>
+                <li>The 70-30 rule of values</li>
+                <li>Basics of value and lighting</li>
+            </ul>
+            <p class="syllabus-week">Week 8 (Portrait Lighting)</p>
+            <ul>
+                <li>Low-key and high-key lighting</li>
+                <li>Lighting quality (hard vs soft)</li>
+                <li>Classic lighting patterns</li>
+            </ul>
+            <p class="syllabus-week">Week 9 & 10 (Expressions)</p>
+            <ul>
+                <li>Happy, sad, surprised, scared, smiling, laughing, frowning, disgust etc.</li>
+            </ul>
+            <p class="syllabus-week">Week 11 (Male vs Female vs Baby face)</p>
+            <ul>
+                <li>Masculine features</li>
+                <li>Feminine features</li>
+                <li>Baby features</li>
+                <li>Ageing</li>
+            </ul>
+            <p class="syllabus-week">Week 12 (History)</p>
+            <ul>
+                <li>Classical portraits by the maestros</li>
+            </ul>
 
-  <div class="course-info">
-    <p class="section-heading"><b>SYLLABUS</b></p>
-    <div id="syllabus-container">
-      <p class="syllabus-category">(Main Course)</p>
-      <p class="syllabus-week">Week 1 (Fundamentals)</p>
-      <ul>
-        <li>Basics of Sketching</li>
-        <li>Introduction to Facial Proportions</li>
-        <li>Loomis Method</li>
-        <li>Head drawing from different viewing angles</li>
-        <li>Grid Drawing</li>
-      </ul>
-      <p class="syllabus-week">Week 2 (Eyes & Eyebrows)</p>
-      <ul>
-        <li>Constructing eyeball, eyelids and eyelashes</li>
-        <li>Surrounding shadows and form</li>
-        <li>Drawing from different viewing angles</li>
-      </ul>
-      <p class="syllabus-week">Week 3 (Nose & Ears)</p>
-      <ul>
-        <li>Basic anatomy and form of nose</li>
-        <li>Basic anatomy of ears</li>
-        <li>Drawing both from different viewing angles</li>
-      </ul>
-      <p class="syllabus-week">Week 4 (Mouth & Lips)</p>
-      <ul>
-        <li>Anatomy and form of lips, the philtrum, the chin and the jawline</li>
-        <li>Drawing teeth</li>
-        <li>Drawing from different viewing angles</li>
-      </ul>
-      <p class="syllabus-week">Week 5 (Hair & Skin texture)</p>
-      <ul>
-        <li>Hair as mass</li>
-        <li>Common hair lock pattern study</li>
-        <li>Rendering realistic skin textures using different shading methods</li>
-      </ul>
-      <p class="syllabus-week">Week 6 (Planes of Face)</p>
-      <ul>
-        <li>Basic anatomy and form of face</li>
-        <li>Assembling all the already learn facial parts on face</li>
-      </ul>
-      <p class="syllabus-week">Week 7 (Value and Contrast)</p>
-      <ul>
-        <li>The 70-30 rule of values</li>
-        <li>Basics of value and lighting</li>
-      </ul>
-      <p class="syllabus-week">Week 8 (Portrait Lighting)</p>
-      <ul>
-        <li>Low-key and high-key lighting</li>
-        <li>Lighting quality (hard vs soft)</li>
-        <li>Classic lighting patterns</li>
-      </ul>
-      <p class="syllabus-week">Week 9 & 10 (Expressions)</p>
-      <ul>
-        <li>Happy, sad, surprised, scared, smiling, laughing, frowning, disgust etc.</li>
-      </ul>
-      <p class="syllabus-week">Week 11 (Male vs Female vs Baby face)</p>
-      <ul>
-        <li>Masculine features</li>
-        <li>Feminine features</li>
-        <li>Baby features</li>
-        <li>Ageing</li>
-      </ul>
-      <p class="syllabus-week">Week 12 (History)</p>
-      <ul>
-        <li>Classical portraits by the maestros</li>
-      </ul>
-
-      <p class="syllabus-category"><b>(Optional)</b></p>
-      <p class="syllabus-week">Week 13 to 16 (Practice, feedback & guidance)</p>
-      <ul>
-        <li>Practicing portraits applying everything learnt in the previous classes</li>
-        <li>Feedback and guidance by the instructor on drawings by the students</li>
-      </ul>
+            <p class="syllabus-category"><b>(Optional)</b></p>
+            <p class="syllabus-week">Week 13 to 16 (Practice, feedback & guidance)</p>
+            <ul>
+                <li>Practicing portraits applying everything learnt in the previous classes</li>
+                <li>Feedback and guidance by the instructor on drawings by the students</li>
+            </ul>
+        </div>
     </div>
-  </div>
-  <div class="course-info">
-    <p class="section-heading"><b>REQUIREMENTS</b></p>
-    <div style="display:flex; justify-content:left; align-items:center; color:white;">
-      <div style="width:50%;">
-        <ul class="text">Pencil (Graphite or Charcoal)</ul>
-        <ul class="text">Eraser & Sharpener</ul>
-      </div>
-      <div>
-        <ul class="text">Loose paper or a Drawing pad</ul>
-        <ul class="text">Or digital drawing pad</ul>
-      </div>
+    <div class="course-info">
+        <p class="section-heading"><b>REQUIREMENTS</b></p>
+        <div style="display:flex; justify-content:left; align-items:center; color:white;">
+            <div style="width:50%;">
+                <ul class="text">Pencil (Graphite or Charcoal)</ul>
+                <ul class="text">Eraser & Sharpener</ul>
+            </div>
+            <div>
+                <ul class="text">Loose paper or a Drawing pad</ul>
+                <ul class="text">Or digital drawing pad</ul>
+            </div>
+        </div>
     </div>
-  </div>
-  <div class="course-info">
-    <div style="display:flex; justify-content:space-evenly; align-items:center; color:white;">
-        <p class="section-heading"><b>SCHEDULE</b></p>
-        <p class="section-heading"><b>FEE</b></p>
-<!--      <div style="width:50%;">-->
-<!--        <p class="section-heading" style="padding:1% 0% 1% 6%;"><b>Schedule</b></p>-->
-<!--        <ul>Two classes/sessions per week</ul>-->
-<!--      </div>-->
-<!--      <div style="width:50%;">-->
-<!--        <p class="section-heading" style="padding:1% 0% 1% 0%;"><b>Fee</b></p>-->
-<!--        <p><span style="color:red;"><s>₹3000</s></span> <b>₹1000</b> per month</p>-->
-<!--      </div>-->
-<!--    </div>-->
+    <div class="course-info">
+        <div style="display:flex; justify-content:space-evenly; align-items:center; color:white;">
+            <p class="section-heading"><b>SCHEDULE</b></p>
+            <p class="section-heading"><b>FEE</b></p>
+            <!--      <div style="width:50%;">-->
+            <!--        <p class="section-heading" style="padding:1% 0% 1% 6%;"><b>Schedule</b></p>-->
+            <!--        <ul>Two classes/sessions per week</ul>-->
+            <!--      </div>-->
+            <!--      <div style="width:50%;">-->
+            <!--        <p class="section-heading" style="padding:1% 0% 1% 0%;"><b>Fee</b></p>-->
+            <!--        <p><span style="color:red;"><s>₹3000</s></span> <b>₹1000</b> per month</p>-->
+            <!--      </div>-->
+            <!--    </div>-->
+        </div>
+        <div style="display:flex; justify-content:left; align-items:center; color:white;">
+            <ul class="text" style="width:50%;">Two classes/sessions (1hr) per week</ul>
+            <p class="text" style="width:50%;"><span style="color:red;"><s>₹3000</s></span> <b>₹1000</b> per month</p>
+        </div>
     </div>
-    <div style="display:flex; justify-content:left; align-items:center; color:white;">
-      <ul class="text" style="width:50%;">Two classes/sessions (1hr) per week</ul>
-      <p class="text" style="width:50%;"><span style="color:red;"><s>₹3000</s></span> <b>₹1000</b> per month</p>
-    </div>
-  </div>
-  <p id="contact-text">To get admitted to the course or if you have any question please contact us.</p>
-  <a class="portrait-btn" id="course-contact-btn" href="https://wa.link/w2mup9">CONTACT US</a>
+    <p id="contact-text">To get admitted to the course or if you have any question please contact us.</p>
+    <a class="portrait-btn" id="course-contact-btn" href="https://wa.link/w2mup9">CONTACT US</a>
 </div>
 <div style="display:flex; align-items:center; background-image:linear-gradient(#33a367,#44c24e); height:20%;">
-  <div style="display:flex;">
+    <div style="display:flex;">
 
-  </div>
-  <div>
+    </div>
+    <div>
 
-  </div>
+    </div>
 </div>
 <!--<div class="container-fluid cover-container">-->
 <!--    <div class="row cover">-->
