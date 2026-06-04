@@ -203,6 +203,27 @@
     #course-contact-btn {
         font-size: .8rem;
     }
+    .feature-container {
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        width:60%;
+        text-align:center;
+        margin: 7% 0%;
+    }
+    .feature-card {
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        border:1px solid #a3a3a3;
+        border-radius:1rem;
+        padding:3%;
+        margin: 5% 0%;
+        box-shadow: 5px 5px 5px rgba(0, 0, 0, .3);
+    }
+    .icon {
+        width:20%;
+    }
 
     @media (min-width: 600px) {
     .hero-content h4 {
@@ -250,6 +271,20 @@
       #contact-text {
         padding: 3% 8% 0% 8%;
       }
+    .feature-container {
+        flex-direction:row;
+        justify-content:center;
+        width:80%;
+        margin: 2% 0%;
+        height: 20vh;
+    }
+    .feature-card {
+        padding:3%;
+        margin: 0% 2%;
+    }
+    .icon {
+        width:25%;
+    }
     }
     @media (min-width: 768px) {
     .hero-content h4 {
@@ -324,6 +359,19 @@
         #course-contact-btn {
             font-size: .9rem;
         }
+        .feature-container {
+            width:60%;
+            margin-bottom:0% 0% 2% 0%;
+        }
+        .feature-card {
+            padding:3%;
+            margin: 0% 2%;
+            height: 100%;
+        }
+        .icon {
+            width:25%;
+        }
+    }
     @media (min-width: 1200px) {
         .cover-container {
             background-position-y:25%;
@@ -393,6 +441,14 @@
         #course-contact-btn {
             font-size: 1rem;
         }
+        .feature-container {
+            width:40%;
+            margin-bottom:0% 0% 2% 0%;
+        }
+
+        .icon {
+            width:25%;
+        }
     }
     @media (min-width: 1900px) {
       .cover-container {
@@ -430,6 +486,14 @@
         #course-title {
           padding:2% 0% 0% 0%;
           font-size: 2.1rem;
+        }
+         .feature-container {
+            width:30%;
+            margin-bottom:0% 0% 2% 0%;
+            height:15vh;
+        }
+        .icon {
+            width:25%;
         }
     }
     @media (min-width: 2500px) {
@@ -475,6 +539,16 @@
     <div class="horizontal-double-div register-contact">
         <a href="https://wa.link/kol6tn">REGISTER NOW!</a>
         <a href="https://wa.link/kol6tn">CONTACT US</a>
+    </div>
+    <div class="feature-container">
+        <div class="feature-card">
+            <img class="icon" src="../static/files/courses/portraiture_beginner/video-camera.png">
+            <p>Recorded Sessions available to watch later</p>
+        </div>
+        <div class="feature-card">
+            <img class="icon" src="../static/files/courses/portraiture_beginner/book.png">
+            <p>In depth tricks, techniques and theory, No to Copying.</p>
+        </div>
     </div>
     <div class="course-info">
         <p class="section-heading"><b>SYLLABUS</b></p>
