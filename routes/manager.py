@@ -1084,7 +1084,6 @@ def manual_enroll():
             else:
                 flash('Aborted! Please choose the workshop/course', 'error')
             email_list = []
-            student_list = []
             student_emails = request.form.get('email')
             if ',' in student_emails:
                 separated_email_list = student_emails.split(',')
@@ -1094,11 +1093,17 @@ def manual_enroll():
                     student = db.session.query(Member).filter_by(email=email).scalar()
                     student.participated.append(workshop)
                     db.session.commit()
+                    subject = 'Enrolment Success'
+                    message = f"Dear {student.name},\n\nHooray! You have been successfully enrolled in the course: {workshop.topic}!"
+                    send_email_school(subject, [email], message, '', '')
                     flash('Student enrolled successfully', 'success')
             else:
                 student = db.session.query(Member).filter_by(email=student_emails.strip()).scalar()
                 student.participated.append(workshop)
                 db.session.commit()
+                subject = "Enrolment Success"
+                message = f"Dear {student.name},\n\nHooray! You have been successfully enrolled in the course: {workshop.topic}!"
+                send_email_school(subject, [student_emails.strip()], message, '', '')
                 flash('Student enrolled successfully!', 'success')
 
 
