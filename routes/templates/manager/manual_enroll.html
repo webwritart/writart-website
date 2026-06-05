@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="display:flex; height: 90vh; width:100%; justify-content:center; align-items: center;">
+    <div class="box2" style="width:50%;">
+        <h1>MANUAL ENROLL</h1>
+        <form action="{{ url_for('manager.manual_enroll') }}" method="post">
+            <input type="text" name="email" placeholder="Student's email or emails separated by comma" required>
+            <select name="course" required>
+                <option value="default">Workshop/course Selection</option>
+                {% for ws in ws_dict %}
+                <option value="{{ws}}">{{ws_dict[ws]['topic']}}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" class="btn btn-primary btn-block btn-large" name="submit" value="manual_enroll">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="{{category}}">{{ message }}</div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+        </form>
+    </div>
+</div>
+
+{% endblock %}

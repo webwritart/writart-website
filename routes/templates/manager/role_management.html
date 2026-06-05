@@ -2,47 +2,69 @@
 {% block operation_content %}
 <script src="{{ url_for('static', filename='js/manager.js')}}"></script>
 
-  <h2 style="padding: 0%;">Role Management</h2>
-  {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-              {% for category, message in messages %}
-                <div class="{{category}}">{{ message }}</div>
-              {% endfor %}
-        {% endif %}
-    {% endwith %}
-  <div class="box2">
+<h2 style="padding: 0%;">Role Management</h2>
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="{{category}}">{{ message }}</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+<div class="box2">
     <form action="{{ url_for('manager.role_management') }}" method="post">
-      <input type="text" name="email" placeholder="Email" required="required" />
-      <select id="role" name="role">
-        <option value="student">student</option>
-        <option value="admin">admin</option>
-        <option value="animation_admin">animation_admin</option>
-        <option value="editor">editor</option>
-        <option value="blogger">blogger</option>
-        <option value="artist">artist</option>
-        <option value="customer">customer</option>
-        <option value="client">client</option>
-        <option value="instructor">instructor</option>
-      <input type="submit" class="btn btn-primary btn-block btn-large" value="Assign by email">
-      </select>
+        <input type="text" name="name" placeholder="Search Name" required>
+        <button type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="search">Search</button>
     </form>
-  </div>
-  <div class="box2">
+    <table style="width:100%;">
+        <tr>
+            <td>Name</td>
+            <td>Email</td>
+            <td>Phone</td>
+            <td>State</td>
+            <td>Registration date</td>
+        </tr>
+        {% for member in member_dict %}
+        <tr>
+            <td>{{member_dict[member]['name']}}</td>
+            <td>{{member_dict[member]['email']}}</td>
+            <td>{{member_dict[member]['phone']}}</td>
+            <td>{{member_dict[member]['state']}}</td>
+            <td>{{member_dict[member]['registration_date']}}</td>
+        </tr>
+        {% endfor %}
+    </table>
     <form action="{{ url_for('manager.role_management') }}" method="post">
-      <input type="text" name="email" placeholder="Email" required="required" />
-      <select name="role">
-        <option value="student1">student</option>
-        <option value="admin1">admin</option>
-        <option value="animation_admin1">animation_admin</option>
-        <option value="editor1">editor</option>
-        <option value="blogger1">blogger</option>
-        <option value="artist1">artist</option>
-        <option value="customer1">customer</option>
-        <option value="animation_client1">animation_client</option>
-        <option value="instructor1">instructor</option>
-      <input type="submit" class="btn btn-primary btn-block btn-large" value="Remove by email">
-      </select>
+        <input type="text" name="email" placeholder="Email" required="required" />
+        <select id="role" name="role">
+            <option value="student">student</option>
+            <option value="admin">admin</option>
+            <option value="animation_admin">animation_admin</option>
+            <option value="editor">editor</option>
+            <option value="blogger">blogger</option>
+            <option value="artist">artist</option>
+            <option value="customer">customer</option>
+            <option value="client">client</option>
+            <option value="instructor">instructor</option>
+        </select>
+        <button type="submit" class="btn btn-primary btn-block btn-large" value="Assign by email">Assign by Email</button>
     </form>
-  </div>
+</div>
+<div class="box2">
+    <form action="{{ url_for('manager.role_management') }}" method="post">
+        <input type="text" name="email" placeholder="Email" required="required" />
+        <select name="role">
+            <option value="student1">student</option>
+            <option value="admin1">admin</option>
+            <option value="animation_admin1">animation_admin</option>
+            <option value="editor1">editor</option>
+            <option value="blogger1">blogger</option>
+            <option value="artist1">artist</option>
+            <option value="customer1">customer</option>
+            <option value="animation_client1">animation_client</option>
+            <option value="instructor1">instructor</option>
+        </select>
+        <button type="submit" class="btn btn-primary btn-block btn-large" value="Remove by email">Remove by Email</button>
+    </form>
+</div>
 
 {% endblock %}

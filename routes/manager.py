@@ -19,6 +19,7 @@ from models.news import News
 from operations.miscellaneous import allowed_file, image_resize_and_compress_single
 from routes.account import today_date
 import datetime
+import difflib
 
 manager = Blueprint('manager', __name__, static_folder='static', template_folder='templates/manager')
 
@@ -839,6 +840,7 @@ def role_management():
     customer = db.session.query(Role).filter_by(name='customer').one_or_none()
     client = db.session.query(Role).filter_by(name='client').one_or_none()
     instructor = db.session.query(Role).filter_by(name='instructor').one_or_none()
+    matching_member_dict = {}
     if request.method == 'POST':
         email = request.form.get('email')
         user = db.session.query(Member).filter_by(email=email).one_or_none()
@@ -901,10 +903,41 @@ def role_management():
             user.role.remove(instructor)
             flash(f"{email} has been removed from instructor role", "success")
         db.session.commit()
+        if request.form.get('submit') == 'search':
+
+            member_dict = {}
+            name_list = []
+            name = request.form.get('name')
+            all_members = db.session.query(Member).all()
+            for member in all_members:
+                member_name = member.name
+                member_id = member.id
+                member_dict[member_id] = {'name':member_name, 'id':member_id}
+                name_list.append(member_name)
+            best_match = difflib.get_close_matches(name, name_list, n=3)
+            for match in best_match:
+                for member in member_dict:
+                    if member_dict[member]['name'] == match:
+                        member = db.session.query(Member).filter_by(id=member_dict[member]['id']).scalar()
+                        email = member.email
+                        phone = member.phone
+                        state = member.state
+                        registration_date = member.registration_date
+                        matching_member_dict[match] = {
+                            'name': match,
+                            'email': email,
+                            'phone': phone,
+                            'state': state,
+                            'registration_date': registration_date
+                        }
+                    else:
+                        pass
+
+
         return redirect(url_for('manager.role_management'))
     admin = db.session.query(Role).filter_by(name='admin').one_or_none()
     return render_template('role_management.html', logged_in=current_user.is_authenticated, admin=admin,
-                           current_year=current_year)
+                           current_year=current_year, member_dict=matching_member_dict)
 
 
 @login_required
@@ -1024,6 +1057,55 @@ def modifications():
     admin = db.session.query(Role).filter_by(name='admin').one_or_none()
     return render_template('modifications.html', admin=admin, logged_in=current_user.is_authenticated,
                            current_year=current_year)
+
+
+@manager.route('/manual_enroll', methods=['GET', 'POST'])
+def manual_enroll():
+    global workshop
+    if not current_user.is_authenticated:
+        return redirect(url_for('account.login'))
+
+    admin = db.session.query(Role).filter_by(name='admin').scalar()
+    user_roles = current_user.role
+    if admin not in user_roles:
+        return render_template('admin_area.html', current_year=current_year)
+    else:
+        workshop_dict = {}
+        data = db.session.query(Workshop).all()
+        for ws in data:
+            ws_id = ws.id
+            ws_topic = ws.topic
+            workshop_dict[ws_id] = {'id':ws_id, 'topic': ws_topic}
+
+        if request.method == 'POST':
+            workshop_id = request.form.get('course')
+            if workshop_id != 'default':
+                workshop = db.session.query(Workshop).filter_by(id=workshop_id).scalar()
+            else:
+                flash('Aborted! Please choose the workshop/course', 'error')
+            email_list = []
+            student_list = []
+            student_emails = request.form.get('email')
+            if ',' in student_emails:
+                separated_email_list = student_emails.split(',')
+                for email in separated_email_list:
+                    email_list.append(email.strip())
+                for email in email_list:
+                    student = db.session.query(Member).filter_by(email=email).scalar()
+                    student.participated.append(workshop)
+                    db.session.commit()
+                    flash('Student enrolled successfully', 'success')
+            else:
+                student = db.session.query(Member).filter_by(email=student_emails.strip()).scalar()
+                student.participated.append(workshop)
+                db.session.commit()
+                flash('Student enrolled successfully!', 'success')
+
+
+
+
+        return render_template('manual_enroll.html', current_year=current_year, logged_in=current_user.is_authenticated,
+                               ws_dict=workshop_dict)
 
 
 @manager.route('/log')
