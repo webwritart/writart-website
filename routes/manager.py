@@ -862,7 +862,7 @@ def vis_user_by_workshop():
         if request.method == 'POST':
             students_dict = {}
             workshop_id = request.form.get('ws')
-            if ws != 'default':
+            if workshop_id != 'default':
                 ws = db.session.query(Workshop).filter_by(id=workshop_id).scalar()
                 try:
                     students_enrolled = ws.participants
