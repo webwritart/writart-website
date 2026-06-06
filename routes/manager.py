@@ -862,26 +862,27 @@ def vis_user_by_workshop():
         if request.method == 'POST':
             students_dict = {}
             workshop_id = request.form.get('ws')
-            ws = db.session.query(Workshop).filter_by(id=workshop_id).scalar()
-            try:
-                students_enrolled = ws.participants
-                for s in students_enrolled:
-                    students_dict[s.id] = {
-                        'name': s.name,
-                        'email': s.email,
-                        'phone': s.phone,
-                        'whatsapp': s.whatsapp,
-                        'state': s.state,
-                        'reg':s.registration_date,
-                        'roles':s.role
-                    }
-                    
-                    
-                total_enrolled = len(students_enrolled)
-            except Exception as e:
-                print('No students enrolled')
-            return render_template('vis_user_by_workshop.html', logged_in=current_user.is_authenticated, admin=admin,
-                                   current_year=current_year, ws_dict=ws_dict, students_dict=students_dict, enrolled_count=total_enrolled)
+            if ws != 'default':
+                ws = db.session.query(Workshop).filter_by(id=workshop_id).scalar()
+                try:
+                    students_enrolled = ws.participants
+                    for s in students_enrolled:
+                        students_dict[s.id] = {
+                            'name': s.name,
+                            'email': s.email,
+                            'phone': s.phone,
+                            'whatsapp': s.whatsapp,
+                            'state': s.state,
+                            'reg':s.registration_date,
+                            'roles':s.role
+                        }
+                        
+                        
+                    total_enrolled = len(students_enrolled)
+                except Exception as e:
+                    print('No students enrolled')
+                return render_template('vis_user_by_workshop.html', logged_in=current_user.is_authenticated, admin=admin,
+                                    current_year=current_year, ws_dict=ws_dict, students_dict=students_dict, enrolled_count=total_enrolled)
 
         return render_template('vis_user_by_workshop.html', logged_in=current_user.is_authenticated, admin=admin,
                            current_year=current_year, ws_dict=ws_dict)
