@@ -1,11 +1,11 @@
 import os
-import pprint
+from pprint import pprint
 import random
 from flask import Blueprint, render_template, request, redirect, flash, send_file, session, url_for, jsonify
 from flask_login import current_user
 from werkzeug.utils import secure_filename
 
-from extensions import db, current_year
+from extensions import db, current_year,p
 from models.query import Query
 from models.tool import Tools
 from models.member import Workshop, Role, Member, QuizList, FeedbackCredits, FeedbackVideos

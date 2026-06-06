@@ -6,6 +6,7 @@ from flask_mail import Mail, Message
 from datetime import datetime
 from pathlib import Path
 
+from sqlalchemy.sql.coercions import RoleImpl
 
 db = SQLAlchemy()
 login_manager = LoginManager()
@@ -20,14 +21,15 @@ image_dict = {
 current_year = datetime.now().year
 
 
-def admin_only(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if current_user.role.name != 'admin':
-            return abort(403)
-        return f(*args, **kwargs)
-
-    return decorated_function
+# def admin_only(f):
+#     @wraps(f)
+#     def decorated_function(*args, **kwargs):
+#         admin = db.session.query(Role)
+#         if current_user.role.name != 'admin':
+#             return abort(403)
+#         return f(*args, **kwargs)
+#
+#     return decorated_function
 
 def list_files_in_directory(directory_path):
     p = Path(directory_path)
@@ -40,3 +42,6 @@ def list_folders_in_directory(path_string):
     # Filter for entries that are directories and return their Path objects
     folders = [item for item in p.iterdir() if item.is_dir()]
     return folders
+
+def p(text):
+    print(f"\033[37m{text}\033[0m")

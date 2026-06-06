@@ -3,12 +3,6 @@ from datetime import datetime
 import pytz
 from extensions import db, Message, mail
 from dotenv import load_dotenv
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-# from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
 from time import sleep
 from urllib.parse import quote
 import os

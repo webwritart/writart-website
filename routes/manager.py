@@ -6,7 +6,7 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for,
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash
 from werkzeug.utils import secure_filename
-from extensions import db, admin_only, current_year
+from extensions import db, current_year, p
 from models.videos import Demo
 from operations.messenger import send_email_school, send_email_studio, send_email_support
 from operations.quiz import add_quiz_data_to_db
@@ -20,8 +20,8 @@ from operations.miscellaneous import allowed_file, image_resize_and_compress_sin
 from routes.account import today_date
 import datetime
 import difflib
-
 manager = Blueprint('manager', __name__, static_folder='static', template_folder='templates/manager')
+
 
 
 @manager.route('/', methods=['GET', 'POST'])
@@ -810,7 +810,6 @@ def home():
 
 
 @login_required
-@admin_only
 @manager.route('/adv_operations')
 def adv_operations():
     admin = db.session.query(Role).filter_by(name='admin').one_or_none()
@@ -818,17 +817,129 @@ def adv_operations():
                            current_year=current_year)
 
 
-@login_required
-@admin_only
 @manager.route('/visualization')
+@login_required
 def visualization():
     admin = db.session.query(Role).filter_by(name='admin').one_or_none()
     return render_template('visualization.html', logged_in=current_user.is_authenticated, admin=admin,
                            current_year=current_year)
 
 
+@manager.route('/vis-user-all-users')
 @login_required
-@admin_only
+def vis_user_all_users():
+    admin = db.session.query(Role).filter_by(name='admin').one_or_none()
+    if admin in current_user.role:
+        all_members_dict = {}
+        all_members = db.session.query(Member).all()
+        for member in all_members:
+            all_members_dict[member.id] = {
+                'name':member.name,
+                'email':member.email,
+                'phone':member.phone,
+                'whatsapp':member.whatsapp,
+                'profession':member.profession,
+                'state':member.state,
+                'reg':member.registration_date
+            }
+        return render_template('vis_user_all_users.html', logged_in=current_user.is_authenticated, admin=admin,
+                               current_year=current_year, all_members_dict=all_members_dict)
+    else:
+        return render_template('admin_area.html')
+
+
+@manager.route('/vis-user-by-workshop', methods=['GET', 'POST'])
+@login_required
+def vis_user_by_workshop():
+    admin = db.session.query(Role).filter_by(name='admin').one_or_none()
+    if admin in current_user.role:
+        ws_dict = {}
+        all_workshops = db.session.query(Workshop).all()
+        for ws in all_workshops:
+            ws_id = ws.id
+            ws_topic = ws.topic
+            ws_dict[ws_id] = {'topic':ws_topic}
+        if request.method == 'POST':
+            students_dict = {}
+            workshop_id = request.form.get('ws')
+            ws = db.session.query(Workshop).filter_by(id=workshop_id).scalar()
+            try:
+                students_enrolled = ws.participants
+                for s in students_enrolled:
+                    students_dict[s.id] = {
+                        'name': s.name,
+                        'email': s.email,
+                        'phone': s.phone,
+                        'whatsapp': s.whatsapp,
+                        'state': s.state,
+                        'reg':s.registration_date,
+                        'roles':s.role
+                    }
+                    
+                    
+                total_enrolled = len(students_enrolled)
+            except Exception as e:
+                print('No students enrolled')
+            return render_template('vis_user_by_workshop.html', logged_in=current_user.is_authenticated, admin=admin,
+                                   current_year=current_year, ws_dict=ws_dict, students_dict=students_dict, enrolled_count=total_enrolled)
+
+        return render_template('vis_user_by_workshop.html', logged_in=current_user.is_authenticated, admin=admin,
+                           current_year=current_year, ws_dict=ws_dict)
+    else:
+        return render_template('admin_area.html')
+
+
+@manager.route('/vis-user-by-role', methods=['GET', 'POST'])
+@login_required
+def vis_user_by_role():
+    admin = db.session.query(Role).filter_by(name='admin').one_or_none()
+    roles = db.session.query(Role).all()
+    
+    if request.method == 'POST':
+        members_dict = {}
+        role = request.form.get('role')
+        members = db.session.query(Role).filter_by(name=role).scalar().members
+        for m in members:
+            member_id = m.id
+            name = m.name
+            email = m.email
+            phone = m.phone
+            whatsapp = m.whatsapp
+            state = m.state
+            reg = m.registration_date
+            members_dict[member_id] = {
+                'id': member_id,
+                'name': name,
+                'email': email,
+                'phone': phone,
+                'whatsapp': whatsapp,
+                'state': state,
+                'reg': reg
+            }
+        total_members = len(members)
+        return render_template('vis_user_by_role.html', logged_in=current_user.is_authenticated, admin=admin,
+                               current_year=current_year, members_dict=members_dict, total_members=total_members, roles=roles)
+    return render_template('vis_user_by_role.html', logged_in=current_user.is_authenticated, admin=admin,
+                           current_year=current_year, roles=roles)
+
+
+@manager.route('/vis-user-by-name', methods=['GET', 'POST'])
+@login_required
+def vis_user_by_name():
+    admin = db.session.query(Role).filter_by(name='admin').one_or_none()
+    return render_template('vis_user_by_name.html', logged_in=current_user.is_authenticated, admin=admin,
+                           current_year=current_year)
+
+
+@manager.route('/vis-user-by-email', methods=['GET', 'LOST'])
+@login_required
+def vis_user_by_email():
+    admin = db.session.query(Role).filter_by(name='admin').one_or_none()
+    return render_template('vis_user_by_email.html', logged_in=current_user.is_authenticated, admin=admin,
+                           current_year=current_year)
+
+
+@login_required
 @manager.route('/role_management', methods=['GET', 'POST'])
 def role_management():
     student = db.session.query(Role).filter_by(name='student').one_or_none()
@@ -941,7 +1052,6 @@ def role_management():
 
 
 @login_required
-@admin_only
 @manager.route('/artwork_price_time', methods=['GET', 'POST'])
 def artwork_price_time():
     if request.method == 'POST':
@@ -964,7 +1074,6 @@ def artwork_price_time():
 
 
 @login_required
-@admin_only
 @manager.route('/modifications', methods=['GET', 'POST'])
 def modifications():
     global query
@@ -1072,6 +1181,7 @@ def manual_enroll():
     else:
         workshop_dict = {}
         data = db.session.query(Workshop).all()
+        student_role = db.session.query(Role).filter_by(name='student').scalar()
         for ws in data:
             ws_id = ws.id
             ws_topic = ws.topic
@@ -1091,20 +1201,30 @@ def manual_enroll():
                     email_list.append(email.strip())
                 for email in email_list:
                     student = db.session.query(Member).filter_by(email=email).scalar()
-                    student.participated.append(workshop)
-                    db.session.commit()
-                    subject = 'Enrolment Success'
-                    message = f"Dear {student.name},\n\nHooray! You have been successfully enrolled in the course: {workshop.topic}!"
-                    send_email_school(subject, [email], message, '', '')
-                    flash('Student enrolled successfully', 'success')
+                    if workshop not in student.participated:
+                        student.participated.append(workshop)
+                        if student_role not in student.role:
+                            student.role.append(student_role)
+                        db.session.commit()
+                        subject = 'Enrolment Success'
+                        message = f"Dear {student.name},\n\nHooray! You have been successfully enrolled in the course: {workshop.topic}!"
+                        send_email_school(subject, [email], message, '', '')
+                        flash('Student enrolled successfully', 'success')
+                    else:
+                        flash('Aborted! Already enrolled!', 'error')
             else:
                 student = db.session.query(Member).filter_by(email=student_emails.strip()).scalar()
-                student.participated.append(workshop)
-                db.session.commit()
-                subject = "Enrolment Success"
-                message = f"Dear {student.name},\n\nHooray! You have been successfully enrolled in the course: {workshop.topic}!"
-                send_email_school(subject, [student_emails.strip()], message, '', '')
-                flash('Student enrolled successfully!', 'success')
+                if workshop not in student.participated:
+                    student.participated.append(workshop)
+                    if student_role not in student.role:
+                        student.role.append(student_role)
+                    db.session.commit()
+                    subject = "Enrolment Success"
+                    message = f"Dear {student.name},\n\nHooray! You have been successfully enrolled in the course: {workshop.topic}!"
+                    send_email_school(subject, [student_emails.strip()], message, '', '')
+                    flash('Student enrolled successfully!', 'success')
+                else:
+                    flash('Aborted Already enrolled!', 'error')
 
 
 

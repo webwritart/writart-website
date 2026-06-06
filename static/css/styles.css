@@ -1265,6 +1265,20 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     background: #454545;
     text-decoration: none;
 }
+/* --------------------------------------------------------- MANAGER --------------------------------------------------*/
+/* -------- VISUALIZATION ------------------*/
+
+.visualization-secondary-btn {
+    padding: .5% 3%;
+    background: #1a3b1a;
+    color: white;
+}
+.visualization-secondary-btn:hover {
+    color: white;
+    background: #498037;
+    text-decoration:none;
+}
+
 /* ------------------------------------------------------------- RESPONSIVE ------------------------------------------ */
 
 @media only screen and (min-width : 1900px) {

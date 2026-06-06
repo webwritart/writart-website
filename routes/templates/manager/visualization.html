@@ -6,58 +6,58 @@
 <h2 style="padding: 0%;">Visualization</h2>
 <table class="submenu">
     <tr>
-        <th width="20%"><button type="button" class="btn btn-primary btn-block btn-large my_btn" onclick="user()">USER</button></th>
-        <th width="20%"><button type="button" class="btn btn-primary btn-block btn-large my_btn" onclick="workshop()">WORKSHOP</button> </th>
-        <th width="20%"><button type="button" class="btn btn-primary btn-block btn-large my_btn" onclick="query()">QUERY</button> </th>
-        <th width="20%"><button type="button" class="btn btn-primary btn-block btn-large my_btn" onclick="accountant()">ACCOUNTANT</button> </th>
-        <th width="20%"><button type="button" class="btn btn-primary btn-block btn-large my_btn" onclick="gst()">GST</button> </th>
+        <th width="20%"><a type="a" class="btn btn-primary btn-block btn-large my_btn" onclick="user()">USER</a></th>
+        <th width="20%"><a type="a" class="btn btn-primary btn-block btn-large my_btn" onclick="workshop()">WORKSHOP</a> </th>
+        <th width="20%"><a type="a" class="btn btn-primary btn-block btn-large my_btn" onclick="query()">QUERY</a> </th>
+        <th width="20%"><a type="a" class="btn btn-primary btn-block btn-large my_btn" onclick="accountant()">ACCOUNTANT</a> </th>
+        <th width="20%"><a type="a" class="btn btn-primary btn-block btn-large my_btn" onclick="gst()">GST</a> </th>
     </tr>
 </table>
 
 <div class="submenu_options"  style="font-size: 12px; width: 100%;">
     <table id="blank"></table>
-    <table id="user-opt" style="width: 100%;">
-        <tr>
-            <td width="15%"><button class="btn btn-secondary btn-block ">All Users</button></td>
-            <td width="15%"><button class="btn btn-secondary btn-block ">By Workshop</button></td>
-            <td width="15%"><button class="btn btn-secondary btn-block ">By Role</button></td>
-            <td width="15%"><button class="btn btn-secondary btn-block ">By Name</button></td>
-            <td width="15%"><button class="btn btn-secondary btn-block ">By Mail</button></td>
-        </tr>
-    </table>
+    <div id="user-opt" style="width: 100%;">
+        <div>
+            <a class="visualization-secondary-btn" href="{{ url_for('manager.vis_user_all_users') }}">All Users</a>
+            <a class="visualization-secondary-btn" href="{{ url_for('manager.vis_user_by_workshop') }}">By Workshop</a>
+            <a class="visualization-secondary-btn" href="{{ url_for('manager.vis_user_by_role') }}">By Role</a>
+            <a class="visualization-secondary-btn">By Name</a>
+            <a class="visualization-secondary-btn">By Email</a>
+        </div>
+    </div>
     <table id="workshop1-opt" style="width: 100%;">
         <tr>
-            <td width="20%"><button class="btn btn-secondary btn-block ">All</button></td>
-            <td width="20%"><button class="btn btn-secondary btn-block ">Participants by WS</button></td>
-            <td width="20%"><button class="btn btn-secondary btn-block ">By Instructor</button></td>
-            <td width="20%"><button class="btn btn-secondary btn-block ">By Date</button></td>
+            <td width="20%"><a class="visualization-secondary-btn">All</a></td>
+            <td width="20%"><a class="visualization-secondary-btn">Participated WS</a></td>
+            <td width="20%"><a class="visualization-secondary-btn">By Instructor</a></td>
+            <td width="20%"><a class="visualization-secondary-btn">By Date</a></td>
         </tr>
     </table>
     <table id="query-opt" style="width: 100%;">
         <tr>
-            <td width="15%"><button class="btn btn-secondary btn-block ">All</button></td>
-            <td width="15%"><button class="btn btn-secondary btn-block ">By Workshop</button></td>
-            <td width="15%"><button class="btn btn-secondary btn-block ">By Role</button></td>
-            <td width="15%"><button class="btn btn-secondary btn-block ">By Name</button></td>
-            <td width="15%"><button class="btn btn-secondary btn-block ">By Mail</button></td>
+            <td width="15%"><a class="visualization-secondary-btn">All</a></td>
+            <td width="15%"><a class="visualization-secondary-btn">By Workshop</a></td>
+            <td width="15%"><a class="visualization-secondary-btn">By Role</a></td>
+            <td width="15%"><a class="visualization-secondary-btn">By Name</a></td>
+            <td width="15%"><a class="visualization-secondary-btn">By Mail</a></td>
         </tr>
     </table>
     <table id="accountant-opt" style="width: 100%;">
         <tr>
-            <td width="15%"><button class="btn btn-secondary btn-block ">All</button></td>
-            <td width="15%"><button class="btn btn-secondary btn-block ">By Workshop</button></td>
-            <td width="15%"><button class="btn btn-secondary btn-block ">By Role</button></td>
-            <td width="15%"><button class="btn btn-secondary btn-block ">By Name</button></td>
-            <td width="15%"><button class="btn btn-secondary btn-block ">By Mail</button></td>
+            <td width="15%"><a class="visualization-secondary-btn">All</a></td>
+            <td width="15%"><a class="visualization-secondary-btn">By Workshop</a></td>
+            <td width="15%"><a class="visualization-secondary-btn">By Role</a></td>
+            <td width="15%"><a class="visualization-secondary-btn">By Name</a></td>
+            <td width="15%"><a class="visualization-secondary-btn">By Mail</a></td>
         </tr>
     </table>
     <table id="gst-opt" style="width: 100%;">
         <tr>
-            <td width="15%"><button class="btn btn-secondary btn-block ">All</button></td>
-            <td width="15%"><button class="btn btn-secondary btn-block ">By Workshop</button></td>
-            <td width="15%"><button class="btn btn-secondary btn-block ">By Role</button></td>
-            <td width="15%"><button class="btn btn-secondary btn-block ">By Name</button></td>
-            <td width="15%"><button class="btn btn-secondary btn-block ">By Mail</button></td>
+            <td width="15%"><a class="visualization-secondary-btn">All</a></td>
+            <td width="15%"><a class="visualization-secondary-btn">By Workshop</a></td>
+            <td width="15%"><a class="visualization-secondary-btn">By Role</a></td>
+            <td width="15%"><a class="visualization-secondary-btn">By Name</a></td>
+            <td width="15%"><a class="visualization-secondary-btn">By Mail</a></td>
         </tr>
     </table>
 </div>

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    #table-container {
+        display:flex;
+        flex-direction:column;
+        width:100%;
+        align-items:center;
+    }
+    #table-container table {
+        width:80%;
+        border: 2px solid black;
+    }
+    td {
+        text-align:left;
+    }
+</style>
+<div id="table-container">
+    <h1> ALL USERS</h1>
+    <table>
+        <tr>
+            <td>ID</td>
+            <td>NAME</td>
+            <td>EMAIL</td>
+            <td>PHONE</td>
+            <td>WHATSAPP</td>
+            <td>PROFESSION</td>
+            <td>STATE</td>
+            <td>REG</td>
+        </tr>
+        {% for member in all_members_dict %}
+        <tr>
+            <td>{{ member }}</td>
+            <td>{{ all_members_dict[member]['name'] }}</td>
+            <td>{{ all_members_dict[member]['email'] }}</td>
+            <td>{{ all_members_dict[member]['phone'] }}</td>
+            <td>{{ all_members_dict[member]['whatsapp'] }}</td>
+            <td>{{ all_members_dict[member]['profession'] }}</td>
+            <td>{{ all_members_dict[member]['state'] }}</td>
+            <td>{{ all_members_dict[member]['reg'] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

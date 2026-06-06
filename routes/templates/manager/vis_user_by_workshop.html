@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="display:flex; flex-direction:column; width:100%; align-items:center; height:40vh; justify-content:center;">
+    <h1>USERS PARTICIPATED IN WORKSHOP</h1>
+    <form style="display:flex; flex-direction:column;" action="{{ url_for('manager.vis_user_by_workshop') }}" method="post">
+        <select name="ws" required>
+            <option value="default" selected>Workshop</option>
+            {% for ws in ws_dict %}
+            <option value="{{ws}}">{{ws_dict[ws]['topic']}}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" value="submit">View Enrolled Students</button>
+    </form>
+</div>
+<div style="display:flex; flex-direction: column; width:100%; justify-content:space-evenly; padding: 0% 5%;">
+    {% if students_dict %}
+    <h1>Students Table</h1>
+    <table>
+        <tr style="background: black; color: white;">
+            <td>ID</td>
+            <td>NAME</td>
+            <td>EMAIL</td>
+            <td>PHONE</td>
+            <td>WHATSAPP</td>
+            <td>STATE</td>
+            <td>REG-DATE</td>
+            <td>ROLES</td>
+        </tr>
+        {% for st in students_dict %}
+        <tr>
+            <td>{{st}}</td>
+            <td>{{students_dict[st]['name']}}</td>
+            <td>{{students_dict[st]['email']}}</td>
+            <td>{{students_dict[st]['phone']}}</td>
+            <td>{{students_dict[st]['whatsapp']}}</td>
+            <td>{{students_dict[st]['state']}}</td>
+            <td>{{students_dict[st]['reg']}}</td>
+            <td>{{students_dict[st]['roles']}}</td>
+
+        </tr>
+        {% endfor %}
+    </table>
+    <p style="text-align:center; padding:2% 0%; background: black; color:white;">Total enrolled students:  <b>{{enrolled_count}}</b></p>
+    {% endif %}
+</div>
+{% endblock %}

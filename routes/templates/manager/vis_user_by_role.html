@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div style="display:flex; flex-direction:column; width:100%; align-items:center; height:40vh; justify-content:center;">
+    <form style="display:flex; flex-direction:column;" action="{{url_for('manager.vis_user_by_role')}}" method="post">
+        <h1>View Users by Role</h1>
+        <select name="role">
+            <option value="default">Choose Role</option>
+            {% for role in roles %}
+            <option value="{{role}}">{{role}}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" value="users_by_role" name="submit">Get Users</button>
+    </form>
+</div>
+<div style="display:flex; flex-direction: column; width:100%; justify-content:space-evenly; padding: 0% 5%;">
+    {% if members_dict %}
+    <h1>Members Table</h1>
+    <table>
+        <tr style="background: black; color: white;">
+            <td>ID</td>
+            <td>NAME</td>
+            <td>EMAIL</td>
+            <td>PHONE</td>
+            <td>WHATSAPP</td>
+            <td>STATE</td>
+            <td>REG-DATE</td>
+        </tr>
+        {% for m in members_dict %}
+        <tr>
+            <td>{{m}}</td>
+            <td>{{members_dict[m]['name']}}</td>
+            <td>{{members_dict[m]['email']}}</td>
+            <td>{{members_dict[m]['phone']}}</td>
+            <td>{{members_dict[m]['whatsapp']}}</td>
+            <td>{{members_dict[m]['state']}}</td>
+            <td>{{members_dict[m]['reg']}}</td>
+
+        </tr>
+        {% endfor %}
+    </table>
+    <p style="text-align:center; padding:2% 0%; background: black; color:white;">Total members:  <b>{{total_members}}</b></p>
+    {% endif %}
+</div>
+
+{% endblock %}
