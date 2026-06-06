@@ -7,6 +7,11 @@
                 <h5>OVERVIEW</h5>
                 <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="overview()" value="overview">OVERVIEW</button>
             </div>
+            <div id="miscellaneous">
+                <h5>MISCELLANEOUS</h5>
+                <a class="btn-primary btn-block btn-large my_btn" href="{{ url_for('manager.adv_operations') }}">OPERATIONS</a>
+                <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="gallery()" value="Gallery">GALLERY</button>
+            </div>
             <div id="workshop">
                 <h5>STUDY MATERIAL OPERATIONS</h5>
                 <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="addNewWs()" value="Add New Workshop">Add New Workshop</button>
@@ -39,11 +44,7 @@
                 <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="reports()" value="Reports">Reports</button>
                 <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="gstFilingSheet()" value="GST Filing Sheet">GST Filing Sheet</button>
             </div>
-            <div id="miscellaneous">
-                <h5>MISCELLANEOUS</h5>
-                <a class="btn-primary btn-block btn-large my_btn" href="{{ url_for('manager.adv_operations') }}">OPERATIONS</a>
-                <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="gallery()" value="Gallery">GALLERY</button>
-            </div>
+            
         </div>
         <div class="col-md-1"></div>
         <div class="col-md-8 operation-body">
