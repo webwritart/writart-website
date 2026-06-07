@@ -225,11 +225,11 @@ def api():
             year = request.args.get('year')
             return jsonify(payments_by_quarter(end_month_name, year))
         elif data == 'current_ws_enrolled':
-            return jsonify(all_enrolled_current_workshop())
+            return jsonify(all_enrolled_current_workshop)
         elif data == 'collection':
-            return jsonify(total_collection_current_workshop())
+            return jsonify(total_collection_current_workshop)
         elif data == 'current-session-url':
-            return jsonify(current_session_url())
+            return jsonify(current_session_url)
         else:
             return jsonify('Wrong data type!')
     else:
