@@ -170,37 +170,7 @@
     </div>
 </div>
 <hr/>
-{% if logged_in %}
-    <div class="wrapper" style="background: #FAE7CB;">
-        <div class="width-80-container">
-            <h3 style="width:100%;color:black;opacity:1;">STUDY MATERIALS</h3>
-            <div class="study-material-wrapper">
-                <div class="category-list">
-                    {% for n in ws_dict %}
-                    <button style="width:100%;" onclick="showFiles('{{n}}')">{{ws_dict[n]['topic']}}</button>
-                    {% endfor %}
-                </div>
-                <div class="category-content">
-                    {% for w in ws_dict %}
-                        <h5 class="title-workshop-study-materials" id="title-{{w}}">{{ ws_dict[w]['topic'] }} files</h5>
-                        <div class="file-item" id="{{ w }}">
-                        {% for f in ws_dict[w]['files'] %}
-                            <div class="file-item-inner">
-                                <form method="post" action="{{ url_for('school.classroom') }}">
-                                    <input type="hidden" name="file-name" value="{{m}}">
-                                    <button type="submit" name="download-file" value="{{ ws_dict[w]['files'][f]['file_path'] }}">
-                                        <img src="../static/images/pdf_icon.png"></button>
-                                    <p>{{ f }}</p>
-                                </form>
-                            </div>
-                        {% endfor %}
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-    </div>
-{% endif %}
+
 
 <!------------------------------------------------------- TEACHER'S FEEDBACK -------------------------------------------------->
 
