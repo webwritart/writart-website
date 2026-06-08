@@ -457,39 +457,17 @@ def classroom():
     demo_count = len(all_demo_url_list)
     ws_name_list = []
     ws_dict = {}
-    if current_user.is_authenticated:
-        enrolled_ws = current_user.participated
-        if len(enrolled_ws) >= 0:
-            for n in enrolled_ws:
-                all_files_path_dict = {}
-                base_dir = f"static/files/workshops/{n.name}"
-                if not os.path.exists(base_dir):
-                    os.makedirs(base_dir)
-                folder_content = os.listdir(base_dir)
-                for f in folder_content:
-                    f_path = base_dir + '/' + f
-                    if os.path.isfile(f_path):
-                        file_dict = {
-                            'file_path': f_path
-                        }
-                        all_files_path_dict[f] = file_dict
-
-                entry = {
-                    "name": n.name,
-                    "topic": n.topic,
-                    "files": all_files_path_dict
-                }
-                ws_dict[n.name] = entry
-        ws_name_list = list(ws_dict.keys())
-    ws_count = len(ws_name_list)
+    
 
     if request.method == 'POST':
         if request.form.get('download-file'):
             file_path = request.form.get('download-file')
+            p(file_path)
             file_name = request.form.get('file-name')
             ws_name = os.path.basename(os.path.dirname(file_path))
             ws_topic = db.session.query(Workshop).filter_by(name=ws_name).one_or_none().topic
             file_full_name = f'{ws_name}__{ws_topic}__{file_name}'
+            p(file_name)
             with open("download_log.txt", "a") as f:
                 f.write(f'{file_full_name} -- downloaded by -- {current_user.name}--{current_user.email}--'
                         f'Id: {current_user.id}---Time: {time_now}\n')
@@ -649,7 +627,7 @@ def classroom():
                            vid_caption_list=vid_caption_list, workshop_count=workshop_count,
                            logged_in=current_user.is_authenticated, admin=admin, all_demo_url_list=all_demo_url_list,
                            demo_caption_list=demo_caption_list, part_list=part_list, demo_count=demo_count,
-                           title_list=title_list, ws_dict=ws_dict, ws_name_list=ws_name_list, ws_count=ws_count,
+                           title_list=title_list, ws_dict=ws_dict, ws_name_list=ws_name_list,
                            questions=questions, category_list=category_list,role=role, total_topic_credits=total_topic_credits,
                            ws_credit_dict=ws_credit_dict,no_ws_credit_dict=no_ws_credit_dict, total_ws_credits=total_ws_credits,
                            ws_thumbnail_dict=workshop_name_thumbnail_dict)
@@ -689,10 +667,25 @@ def session_videos():
 
     current_user_participated_workshops = current_user.participated
 
+    # ------------------------------ STUDY MATERIAL ----------------------------------------------- #
+    study_material_dict = {}
+    base_dir = f"static/files/workshops/{ws_name}"
+    if not os.path.exists(base_dir):
+        os.makedirs(base_dir)
+    folder_content = os.listdir(base_dir)
+    for f in folder_content:
+        f_path = base_dir + '/' + f
+        if os.path.isfile(f_path):
+            material = {
+                'file_path': f_path
+            }
+            study_material_dict[f] = material
+    study_material_count = len(study_material_dict)
+
 
     return render_template('tutorial_video_list.html', logged_in=current_user.is_authenticated,
                            video_count=video_count, vid_id_list=vid_id_list, vid_caption_list=vid_caption_list,
-                           ws_topic=ws_topic)
+                           ws_topic=ws_topic, study_material_dict=study_material_dict, study_material_count=study_material_count)
 
 
 @school.route('/save-quiz-data', methods=['POST'])

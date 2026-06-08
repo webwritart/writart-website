@@ -187,7 +187,7 @@
                         {% for f in ws_dict[w]['files'] %}
                             <div class="file-item-inner">
                                 <form method="post" action="{{ url_for('school.classroom') }}">
-                                    <input type="hidden" name="file-name" value="{{f}}">
+                                    <input type="hidden" name="file-name" value="{{m}}">
                                     <button type="submit" name="download-file" value="{{ ws_dict[w]['files'][f]['file_path'] }}">
                                         <img src="../static/images/pdf_icon.png"></button>
                                     <p>{{ f }}</p>

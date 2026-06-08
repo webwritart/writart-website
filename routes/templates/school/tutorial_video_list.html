@@ -21,7 +21,7 @@
     }
 </style>
 
-<div class="video-wrapper" style="background:#FA6781; padding: 2% 0%; min-height: 80vh; align-items:start;">
+<div class="video-wrapper" style="background:#67ca94; padding: 2% 0%; align-items:start;">
     <div class="video-wrapper-container" >
         <h3 style="color:black;">{{ ws_topic }}</h3>
         <hr>
@@ -74,5 +74,24 @@
         {% endif %}
     </div>
 </div>
+{% if study_material_count > 0 %}
+<div class="wrapper">
+    <div class="width-80-container">
+        <h3 style="width:100%;color:rgb(255, 255, 255);opacity:1;">STUDY MATERIALS</h3>
+        <div class="category-content">
+            {% for m in study_material_dict %}
+                <div class="file-item-inner">
+                    <form method="post" action="{{ url_for('school.classroom') }}">
+                        <input type="hidden" name="file-name" value="{{m}}">
+                        <button type="submit" name="download-file" value="{{ study_material_dict[m]['file_path'] }}">
+                            <img src="../static/images/pdf_icon.png"></button>
+                        <p>{{ m }}</p>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
 
 {% endblock %}
