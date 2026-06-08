@@ -1,7 +1,7 @@
 from pathlib import PureWindowsPath
-
+import random
 from flask import Blueprint, render_template, request, flash, session, url_for
-from extensions import login_manager, db, current_year, list_files_in_directory
+from extensions import login_manager, db, current_year, list_files_in_directory, p
 from models.member import Member, Workshop, Role
 from models.query import Query
 from models.tool import Tools, ArtworkPriceTime
@@ -77,6 +77,7 @@ def home():
 
     for file in list_files_in_directory(portrait_folder):
         portrait_list.append(PureWindowsPath(file))
+    random.shuffle(portrait_list)
 
     # Finding maximum discount from database to display on the discount advertisement--------------------
     discount_list = []

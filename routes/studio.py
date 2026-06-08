@@ -1,6 +1,7 @@
 import pprint
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash, send_file
 import os
+import random
 from flask_login import current_user
 from werkzeug.utils import secure_filename
 from extensions import db, current_year, list_files_in_directory, list_folders_in_directory
@@ -157,6 +158,11 @@ def portraits():
         artist = db.session.query(Portrait).filter_by(uuid=uuid).scalar().artist
         title = title_raw.split('.')[0].split('-')[0].replace('_', ' ')
         artwork_dict[uuid] = {'title': title, 'path': path, 'artist': artist}
+
+        items = list(artwork_dict.items())
+        random.shuffle(items)
+
+        artwork_dict = dict(items)
 
         # Finding maximum discount from database to display on the discount advertisement--------------------
         discount_list = []
