@@ -1185,7 +1185,7 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 
 .portrait-btn {
     width: 20%;
-    background: #ff8000;
+    background: #03cf2f;
     padding: .5%;
     color: black;
     margin: 1%;
@@ -1206,7 +1206,7 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 }
 .slideshow-btn {
     width: 20%;
-    background: #B32451;
+    background: #68a205;
     padding: .5%;
     color: white;
     margin: 1%;
@@ -1217,7 +1217,7 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 .slideshow-btn:hover {
     color: white;
     text-decoration: none;
-    background: #941365;
+    background: #287903;
 }
 .slideshow_box {
     display: flex;
