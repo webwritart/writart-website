@@ -1085,22 +1085,25 @@ def modifications():
             keyword = request.form.get('filter_keyword')
             change_column = enumerate(request.form.get('change_column'))
             data = request.form.get('data')
+            if table != 'table':
+                if table == 'member':
+                    query = 'db.session.query(Member)'
+                elif table == 'payment':
+                    query = db.session.query(Payment)
+                elif table == 'query':
+                    query = db.session.query(Query)
+                elif table == 'role':
+                    query = db.session.query(Role)
+                elif table == 'tools':
+                    query = db.session.query(Tools)
+                elif table == 'workshop':
+                    query = db.session.query(Workshop)
 
-            if table == 'member':
-                query = db.session.query(Member)
-            elif table == 'payment':
-                query = db.session.query(Payment)
-            elif table == 'query':
-                query = db.session.query(Query)
-            elif table == 'role':
-                query = db.session.query(Role)
-            elif table == 'tools':
-                query = db.session.query(Tools)
-            elif table == 'workshop':
-                query = db.session.query(Workshop)
-
-            filter_key = f"{filter_by}='{keyword}'"
-            row = query.filter_by(filter_key).one()
+                filter_key = f"{filter_by}='{keyword}'"
+                row = query.strip('"/"').filter_by(filter_key).scalar()
+                p(row)
+            else:
+                flash("Please select Table first", "error")
 
         if request.form.get('submit') == 'member-workshop':
             member_email = request.form.get('email')
