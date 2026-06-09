@@ -178,42 +178,49 @@ def home():
                     return redirect(request.url)
                 files = request.files.getlist('file')
 
-                folder_name = request.form.get('workshop_name')
-                folder = f"./static/images/workshops/{folder_name}"
-                if not os.path.exists(folder):
-                    os.makedirs(folder)
-                for file in files:
-                    if file.filename == '':
-                        flash('No selected file', 'error')
-                        return redirect(request.url)
-                    if file and allowed_file(file.filename, allowed_extensions):
-                        filename = secure_filename(file.filename)
-                        file.save(f"{folder}/{filename}")
-                        flash('Chief! Images uploaded successfully!', 'success')
+                ws_id = request.form.get('ws_id')
+                if ws_id != 'default':
+                    folder_name = db.session.query(Workshop).filter_by(id=ws_id).scalar().name
+                    folder = f"./static/images/workshops/{folder_name}"
+                    if not os.path.exists(folder):
+                        os.makedirs(folder)
+                    for file in files:
+                        if file.filename == '':
+                            flash('No selected file', 'error')
+                            return redirect(request.url)
+                        if file and allowed_file(file.filename, allowed_extensions):
+                            filename = secure_filename(file.filename)
+                            file.save(f"{folder}/{filename}")
+                            flash('Chief! Images uploaded successfully!', 'success')
+                else:
+                    flash('Aborted! Please select Course/Workshop first!', 'error')
 
             if request.form.get('submit') == 'add-ws-videos':
                 ws_id = request.form.get('ws-id')
-                title = request.form.get('title')
-                video_yt_url = request.form.get('url')
-                try:
-                    workshop = db.session.query(Workshop).filter_by(id=ws_id).first()
-                    ws_name = workshop.name
-                    entry = WorkshopVideos(
-                        ws_name=ws_name,
-                        title=title,
-                        vid_id=video_yt_url,
-                        workshop_id=workshop.id
-                )
+                if ws_id != 'default':
+                    title = request.form.get('title')
+                    video_yt_url = request.form.get('url')
                     try:
-                        db.session.add(entry)
-                        db.session.commit()
-                        print('committed')
-                        flash('Data added successfully, Chief!', 'success')
+                        workshop = db.session.query(Workshop).filter_by(id=ws_id).first()
+                        ws_name = workshop.name
+                        entry = WorkshopVideos(
+                            ws_name=ws_name,
+                            title=title,
+                            vid_id=video_yt_url,
+                            workshop_id=workshop.id
+                    )
+                        try:
+                            db.session.add(entry)
+                            db.session.commit()
+                            print('committed')
+                            flash('Data added successfully, Chief!', 'success')
+                        except Exception as e:
+                            flash('Failed to add, chief!', 'error')
                     except Exception as e:
-                        flash('Failed to add, chief!', 'error')
-                except Exception as e:
-                    flash('No workshop found with the provided name', 'error')
-                    return redirect(url_for('manager.home'))
+                        flash('No workshop found with the provided name', 'error')
+                        return redirect(url_for('manager.home'))
+                else:
+                    flash('Aborted! Please select the Course/Workshop first!', 'error')
 
             if request.form.get('session-link'):
                 j_link = request.form.get('session-link')
@@ -827,18 +834,21 @@ def add_assignments():
         files = request.files.getlist('assignments')
 
         folder_name = request.form.get('ws_id')
-        folder = f"./static/files/workshops/assignments/{folder_name}"
-        if not os.path.exists(folder):
-            os.makedirs(folder)
-        for file in files:
-            if file.filename == '':
-                flash('No selected file', 'error')
-                return redirect(request.url)
-            if file:
-                filename = secure_filename(file.filename)
-                file.save(f"{folder}/{filename}")
-                flash('Chief! Files uploaded successfully!', 'success')
-        return redirect(request.url)
+        if folder_name != 'default':
+            folder = f"./static/files/workshops/assignments/{folder_name}"
+            if not os.path.exists(folder):
+                os.makedirs(folder)
+            for file in files:
+                if file.filename == '':
+                    flash('No selected file', 'error')
+                    return redirect(request.url)
+                if file:
+                    filename = secure_filename(file.filename)
+                    file.save(f"{folder}/{filename}")
+                    flash('Chief! Files uploaded successfully!', 'success')
+            return redirect(request.url)
+        else:
+            flash('Aborted! Please select the Course/Workshop first!', 'error')
     return redirect(url_for('manager.home'))
 
 

@@ -316,7 +316,12 @@
                 </form>
 
                 <form action="{{ url_for('manager.home') }}" method="post" id="form2" enctype="multipart/form-data">
-                    <input type="text" name="workshop_name" placeholder="Workshop Name" required>
+                    <select name="ws-id" required>
+                        <option value="default">Select Course/Workshop</option>
+                        {% for id in ws_topic_dict %}
+                        <option value="{{id}}">{{ws_topic_dict[id]['topic']}}</option>
+                        {% endfor %}
+                    </select>
                     <input type="file" name="file" id="file2" multiple>
                     <button type="submit" name="submit" id="file-btn2" class="btn btn-primary btn-block btn-large" value="upload_photos">UPLOAD PHOTOS</button>
                 </form>
