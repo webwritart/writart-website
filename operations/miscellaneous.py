@@ -4,6 +4,9 @@ import PIL.Image as Image
 from difflib import SequenceMatcher
 from flask_sqlalchemy import table
 from extensions import db
+from captcha.image import ImageCaptcha
+import random
+import base64
 
 
 def calculate_age(birthdate):
@@ -125,3 +128,14 @@ def text_match(target, options_list):
     best_match = max(options_list, key=lambda option: similarity_ratio(target, option))
     match_ratio = f'{int(similarity_ratio(target, best_match)*100)}%'
     return best_match, match_ratio
+
+
+def generate_captcha():
+    captcha_num = str(random.randrange(100000, 999999))
+    img = ImageCaptcha()
+    captcha_io = img.generate(captcha_num)
+    binary_data = captcha_io.getvalue()
+    encoded_data_bytes = base64.b64encode(binary_data)
+    encoded_string = encoded_data_bytes.decode('utf-8')
+    captcha_uri = f"data:image/png;base64, {encoded_string}"
+    return captcha_num, captcha_uri

@@ -41,6 +41,10 @@
 <!--                <input class="radio-inp" type="radio" name="artist_account" value="no"> <span> No</span>-->
 <!--            </label>-->
             <br>
+            <div id="captcha">
+                <div style="display:flex; justify-content:center;"><img src="{{captcha}}" width="350" height="50"></div>
+                <input id="captcha_input" type="text" name="captcha" placeholder="Enter Captcha" required>
+            </div>
 
             By clicking REGISTER button you agree to our <a href="{{url_for('main.privacy_policy')}}" target="_blank">privacy policy</a>
             <button type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="register">REGISTER</button>

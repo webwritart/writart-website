@@ -3,13 +3,13 @@ from flask import Blueprint, render_template, request, flash, send_file, redirec
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from operations.artist_tools import add_watermark
-from extensions import db, image_dict, current_year
+from extensions import db, image_dict, current_year, p
 from operations.messenger import send_email_school, send_email_support, send_email_with_reply
 from models.member import Member, Workshop, Role
 from flask_login import current_user, login_required, login_user, logout_user
 from datetime import date, datetime
 import random
-from operations.miscellaneous import calculate_age, allowed_file
+from operations.miscellaneous import calculate_age, allowed_file, generate_captcha
 from models.artist_data import ArtistData
 from models.news import News
 from routes import main
@@ -276,6 +276,14 @@ def update_details():
     pass
 
 
+@account.route('/registration_form', methods=['GET', 'POST'])
+def registration_form():
+    captcha_value, captcha_uri = generate_captcha()
+    session['captcha_value'] = captcha_value
+    return render_template("register.html", logged_in=current_user.is_authenticated, current_year=current_year, captcha=captcha_uri,
+                           captcha_value=captcha_value)
+
+
 @account.route('/register', methods=['GET', 'POST'])
 def register():
     num_list = []
@@ -299,119 +307,126 @@ def register():
 
     if request.method == 'POST':
         if request.form.get('submit') == 'register':
-            ph = request.form.get('phone')
-            if len(ph) == 10:
-                phone = f"91{ph}"
-            elif len(ph) == 11 and ph[0] == '0':
-                phone = f'91{ph[1:]}'
-            elif len(ph) == 12 and ph[:2] == '91':
-                phone = ph
-            elif len(ph) == 13:
-                phone = ph[3:]
-            else:
-                phone = ph
+            captcha_value = session.get('captcha_value')
+            p(captcha_value)
+            p(request.form.get('captcha'))
+            if request.form.get('captcha') == captcha_value:
+                ph = request.form.get('phone')
+                if len(ph) == 10:
+                    phone = f"91{ph}"
+                elif len(ph) == 11 and ph[0] == '0':
+                    phone = f'91{ph[1:]}'
+                elif len(ph) == 12 and ph[:2] == '91':
+                    phone = ph
+                elif len(ph) == 13:
+                    phone = ph[3:]
+                else:
+                    phone = ph
 
-            email = request.form.get('email')
-            state = request.form.get('state')
-            result = db.session.execute(db.select(Member).where(Member.email == email))
-            user = result.scalar()
-            if user:
-                flash("You've already signed up with that email, log in instead!", "error")
-                return redirect(url_for('account.login'))
-            if phone in num_list:
-                flash("Already an account exists with phone number. Please register with different phone number or log in",
-                      "error")
-                return redirect(url_for('account.register'))
-            hash_and_salted_password = generate_password_hash(
-                request.form.get('password'),
-                method='pbkdf2:sha256',
-                salt_length=8
-            )
-            date_ = request.form.get('date')
-            if len(date_) < 2:
-                date_ = "0" + date_
-            month = request.form.get('month')
-            if len(month) < 2:
-                month = "0" + month
-            year = request.form.get('year')
-            dob = f"{year}-{month}-{date_}"
-            age = calculate_age(dob)
+                email = request.form.get('email')
+                state = request.form.get('state')
+                result = db.session.execute(db.select(Member).where(Member.email == email))
+                user = result.scalar()
+                if user:
+                    flash("You've already signed up with that email, log in instead!", "error")
+                    return redirect(url_for('account.login'))
+                if phone in num_list:
+                    flash("Already an account exists with phone number. Please register with different phone number or log in",
+                        "error")
+                    return redirect(url_for('account.register'))
+                hash_and_salted_password = generate_password_hash(
+                    request.form.get('password'),
+                    method='pbkdf2:sha256',
+                    salt_length=8
+                )
+                date_ = request.form.get('date')
+                if len(date_) < 2:
+                    date_ = "0" + date_
+                month = request.form.get('month')
+                if len(month) < 2:
+                    month = "0" + month
+                year = request.form.get('year')
+                dob = f"{year}-{month}-{date_}"
+                age = calculate_age(dob)
 
-            artist_account = request.form.get('artist_account')
+                artist_account = request.form.get('artist_account')
 
-            # if age < 13:
-            #     flash("You're below 13 year. Really very sorry we cannot take you in!", "error")
-            #     return redirect(request.url)
+                # if age < 13:
+                #     flash("You're below 13 year. Really very sorry we cannot take you in!", "error")
+                #     return redirect(request.url)
 
-            unique = False
-            uuid = ''
-            while not unique:
-                u = random.randint(100000, 999999)
-                if u not in uuid_list:
-                    uuid = u
-                    unique = True
+                unique = False
+                uuid = ''
+                while not unique:
+                    u = random.randint(100000, 999999)
+                    if u not in uuid_list:
+                        uuid = u
+                        unique = True
 
-            new_user = Member(
-                email=request.form.get('email'),
-                password=hash_and_salted_password,
-                name=request.form.get('name'),
-                phone=request.form.get('phone'),
-                whatsapp=request.form.get('whatsapp'),
-                profession=request.form.get('profession'),
-                sex=request.form.get('sex'),
-                dob=dob,
-                state=state,
-                registration_date=today_date,
-                uuid=uuid
-            )
-            db.session.add(new_user)
-            db.session.commit()
-
-            all_users = db.session.query(Member)
-            admin = db.session.query(Role).filter_by(name='admin').scalar()
-
-            if len(all_users.all()) == 1:
-                all_users[0].role.append(admin)
+                new_user = Member(
+                    email=request.form.get('email'),
+                    password=hash_and_salted_password,
+                    name=request.form.get('name'),
+                    phone=request.form.get('phone'),
+                    whatsapp=request.form.get('whatsapp'),
+                    profession=request.form.get('profession'),
+                    sex=request.form.get('sex'),
+                    dob=dob,
+                    state=state,
+                    registration_date=today_date,
+                    uuid=uuid
+                )
+                db.session.add(new_user)
                 db.session.commit()
 
-            login_user(new_user)
-            session['logged_in'] = True
+                all_users = db.session.query(Member)
+                admin = db.session.query(Role).filter_by(name='admin').scalar()
 
-            # if artist_account == 'yes':
-            #     artist = db.session.query(Role).filter_by(name='artist').one()
-            #
-            #     current_user.role.append(artist)
-            #     db.session.commit()
-            #     entry = ArtistData(
-            #         artist=current_user.name,
-            #         watermarked_artworks=0,
-            #         gallery_artworks=0,
-            #         all_collections=0,
-            #         commission_collections=0,
-            #         sold_artworks=0,
-            #         queried_artworks=0,
-            #         shipped_artworks=0,
-            #         contracted_artworks=0,
-            #         sold_commissions=0,
-            #         memory_occupied_total=0,
-            #         memory_occupied_gallery=0,
-            #         member=current_user,
-            #     )
-            #     db.session.add(entry)
-            #     db.session.commit()
+                if len(all_users.all()) == 1:
+                    all_users[0].role.append(admin)
+                    db.session.commit()
 
-            mail = render_template('mails/registration_success.html')
-            send_email_support('Registration success!', [email],
-                               '',
-                               mail, '')
-            mail_message = f'New Registration:\n\nName: {request.form.get("name")}\nEmail: {request.form.get("email")}\n' \
-                           f'Phone: {request.form.get("phone")}' \
-                           f'Sex: {request.form.get("sex")}\nProfession: {request.form.get("profession")}\n' \
-                           f'State: {request.form.get("state")}\n\n'
-            send_email_support('New Registration!', ['writartstudios@gmail.com'], mail_message, '', '')
-            if 'url' in session:
-                return redirect(session['url'])
-            return redirect(url_for('account.home', name=current_user.name.split()[0]))
+                login_user(new_user)
+                session['logged_in'] = True
+
+                # if artist_account == 'yes':
+                #     artist = db.session.query(Role).filter_by(name='artist').one()
+                #
+                #     current_user.role.append(artist)
+                #     db.session.commit()
+                #     entry = ArtistData(
+                #         artist=current_user.name,
+                #         watermarked_artworks=0,
+                #         gallery_artworks=0,
+                #         all_collections=0,
+                #         commission_collections=0,
+                #         sold_artworks=0,
+                #         queried_artworks=0,
+                #         shipped_artworks=0,
+                #         contracted_artworks=0,
+                #         sold_commissions=0,
+                #         memory_occupied_total=0,
+                #         memory_occupied_gallery=0,
+                #         member=current_user,
+                #     )
+                #     db.session.add(entry)
+                #     db.session.commit()
+
+                mail = render_template('mails/registration_success.html')
+                send_email_support('Registration success!', [email],
+                                '',
+                                mail, '')
+                mail_message = f'New Registration:\n\nName: {request.form.get("name")}\nEmail: {request.form.get("email")}\n' \
+                            f'Phone: {request.form.get("phone")}' \
+                            f'Sex: {request.form.get("sex")}\nProfession: {request.form.get("profession")}\n' \
+                            f'State: {request.form.get("state")}\n\n'
+                send_email_support('New Registration!', ['writartstudios@gmail.com'], mail_message, '', '')
+                if 'url' in session:
+                    return redirect(session['url'])
+                return redirect(url_for('account.home', name=current_user.name.split()[0]))
+            else:
+                flash("Aborted! Captcha doesn't match!", "error")
+                
     return render_template("register.html", logged_in=current_user.is_authenticated, current_year=current_year)
 
 
