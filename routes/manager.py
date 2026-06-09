@@ -178,7 +178,7 @@ def home():
                     return redirect(request.url)
                 files = request.files.getlist('file')
 
-                ws_id = request.form.get('ws_id')
+                ws_id = request.form.get('ws-id')
                 if ws_id != 'default':
                     folder_name = db.session.query(Workshop).filter_by(id=ws_id).scalar().name
                     folder = f"./static/images/workshops/{folder_name}"
