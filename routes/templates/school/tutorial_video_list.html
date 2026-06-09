@@ -7,8 +7,9 @@
         width:100%;
         justify-content: center;
     }
-    figure {
+    .figure {
         margin: 1%;
+        width: 20%;
     }
     .responsive-iframe {
         aspect-ratio: 16/9;
@@ -18,6 +19,25 @@
         color: black;
         font-weight: semibold;
         text-align: center;
+    }
+
+    @media (max-width: 1200px) {
+        .figure {
+            width: 30%;
+        }
+        figcaption {
+            font-size: .8rem;
+            line-height: 1.2;
+        }
+    }
+    @media (max-width: 600px) {
+        .figure {
+            width: 45%;
+        }
+        figcaption {
+            font-size: .7rem;
+            
+        }
     }
 </style>
 
@@ -29,7 +49,7 @@
         <div class="figure-container">
         {% if video_count > 0 %}
             {% for n in range(video_count) %}
-            <figure>
+            <figure class="figure">
 <!--                <iframe class="responsive-iframe" style="display:flex; width:25%; border:none;" src="https://www.youtube.com/embed/{{ vid_id_list[n] }}?si=2BVYS-0QHsxcX4f5&;"-->
 <!--                title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write;-->
 <!--                encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"-->

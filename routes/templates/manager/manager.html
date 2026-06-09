@@ -324,7 +324,12 @@
             <div id="add-ws-videos">
                 <form action="{{ url_for('manager.home') }}" method="post">
                     <h2>Add Workshop Videos</h2>
-                    <input name="ws-name" placeholder="Course/Workshop Short Name" type="text" required>
+                    <select name="ws-id">
+                        <option value="Default">Select Course/Workshop</option>
+                        {% for id in ws_topic_dict %}
+                        <option value="{{id}}">{{ws_topic_dict[id]['topic']}}</option>
+                        {% endfor %}
+                    </select>
                     <input name="title" placeholder="Video Title" type="text" required>
                     <input name="url" placeholder="Video Youtube URL" type="text" required>
                     <button type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="add-ws-videos">ADD TO DATABASE</button>

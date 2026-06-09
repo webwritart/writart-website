@@ -192,11 +192,12 @@ def home():
                         flash('Chief! Images uploaded successfully!', 'success')
 
             if request.form.get('submit') == 'add-ws-videos':
-                ws_name = request.form.get('ws-name')
+                ws_id = request.form.get('ws-id')
                 title = request.form.get('title')
                 video_yt_url = request.form.get('url')
                 try:
-                    workshop = db.session.query(Workshop).filter_by(name=ws_name).first()
+                    workshop = db.session.query(Workshop).filter_by(id=ws_id).first()
+                    ws_name = workshop.name
                     entry = WorkshopVideos(
                         ws_name=ws_name,
                         title=title,
