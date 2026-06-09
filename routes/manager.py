@@ -791,8 +791,16 @@ def home():
                 flash("Please choose sender email to send email", "error")
 
         all_workshops = db.session.query(Workshop).all()
+        # --------------------------------------- ADD ASSIGNMENTS ----------------------------------------------------- #
 
-        # ------------------------------------------------- STUDIO ----------------------------------------------------
+        ws_topic_dict = {}
+        all_ws = db.session.query(Workshop).all()
+
+        for ws in all_ws:
+            ws_topic_dict[ws.id] = {'topic':ws.topic}
+
+
+        # ------------------------------------------------- STUDIO ---------------------------------------------------- #
 
         type_list = []
         result = db.session.query(ArtworkPriceTime).all()
@@ -804,12 +812,37 @@ def home():
                                reminder=reminder, close_reg=close_reg,
                                certificate_distribution=certificate_distribution, upcoming_ws_dict=upcoming_ws_dict,
                                count=count, count_list=count_list, all_workshops=all_workshops, type_list=type_list,
-                               current_year=current_year)
+                               current_year=current_year, ws_topic_dict=ws_topic_dict)
     else:
         return render_template('admin_area.html', logged_in=current_user.is_authenticated, current_year=current_year)
 
 
-@login_required
+@manager.route('/add_assignments', methods=['GET', 'POST'])
+def add_assignments():
+    if request.method == 'POST':
+        if 'assignments' not in request.files:
+            flash('No file part', 'error')
+            return redirect(request.url)
+        files = request.files.getlist('assignments')
+
+        folder_name = request.form.get('ws_id')
+        folder = f"./static/files/workshops/assignments/{folder_name}"
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+        for file in files:
+            if file.filename == '':
+                flash('No selected file', 'error')
+                return redirect(request.url)
+            if file:
+                filename = secure_filename(file.filename)
+                file.save(f"{folder}/{filename}")
+                flash('Chief! Files uploaded successfully!', 'success')
+        return redirect(request.url)
+    return redirect(url_for('manager.home'))
+
+
+
+
 @manager.route('/adv_operations')
 def adv_operations():
     admin = db.session.query(Role).filter_by(name='admin').one_or_none()

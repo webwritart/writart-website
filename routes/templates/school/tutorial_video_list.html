@@ -94,4 +94,24 @@
 </div>
 {% endif %}
 
+{% if assignments_count > 0 %}
+<div class="wrapper" style="background: rgb(49, 92, 47);">
+    <div class="width-80-container">
+        <h3 style="width:100%;color:rgb(255, 255, 255);opacity:1;">ASSIGNMENTS</h3>
+        <div class="category-content">
+            {% for m in assignments_dict %}
+                <div class="file-item-inner">
+                    <form method="post" action="{{ url_for('school.classroom') }}">
+                        <input type="hidden" name="file-name" value="{{m}}">
+                        <button type="submit" name="download-file" value="{{ assignments_dict[m]['file_path'] }}">
+                            <img src="../static/images/pdf_icon.png"></button>
+                        <p>{{ m }}</p>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
 {% endblock %}

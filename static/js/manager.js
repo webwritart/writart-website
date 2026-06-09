@@ -18,6 +18,7 @@ function closeAll() {
     document.getElementById("open-demo").style.display = 'none';
     document.getElementById("send-email").style.display = 'none';
     document.getElementById("add-ws-files").style.display = 'none';
+    document.getElementById("add-assignments").style.display = 'none';
     document.getElementById("add-quiz-data").style.display = 'none';
     document.getElementById("add-news").style.display = 'none';
 }
@@ -75,6 +76,11 @@ function sessionLink() {
 function sessionReminder() {
     closeAll();
     document.getElementById("session-reminder").style.display = 'block';
+}
+
+function addAssignments() {
+    closeAll();
+    document.getElementById("add-assignments").style.display = 'block';
 }
 
 function addWsFiles() {

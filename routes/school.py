@@ -682,10 +682,26 @@ def session_videos():
             study_material_dict[f] = material
     study_material_count = len(study_material_dict)
 
+    # ----------------------------------- ASSIGNMENTS ---------------------------------------------- #
+    assignments_dict = {}
+    base_dir = f"static/files/workshops/assignments/{workshop.id}"
+    p(workshop.id)
+    if not os.path.exists(base_dir):
+        os.makedirs(base_dir)
+    folder_content = os.listdir(base_dir)
+    for f in folder_content:
+        f_path = base_dir + '/' + f
+        if os.path.isfile(f_path):
+            assignment = {
+                'file_path': f_path
+            }
+            assignments_dict[f] = assignment
+    assignments_count = len(assignments_dict)
 
     return render_template('tutorial_video_list.html', logged_in=current_user.is_authenticated,
                            video_count=video_count, vid_id_list=vid_id_list, vid_caption_list=vid_caption_list,
-                           ws_topic=ws_topic, study_material_dict=study_material_dict, study_material_count=study_material_count)
+                           ws_topic=ws_topic, study_material_dict=study_material_dict, study_material_count=study_material_count,
+                           assignments_dict=assignments_dict, assignments_count=assignments_count)
 
 
 @school.route('/save-quiz-data', methods=['POST'])
