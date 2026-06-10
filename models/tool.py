@@ -23,3 +23,17 @@ class ArtworkPriceTime(db.Model):
 
     def __repr__(self):
         return f'{self.type}'
+
+
+class SupportTicket(db.Model):
+    __tablename__ = 'support_ticket'
+
+    id = db.Column(db.Integer, primary_key=True)
+    ticket_no = db.Column(db.Integer, unique=True)
+    member_id = db.Column(db.Integer, db.ForeignKey('member.id'))
+    msg = db.Column(db.String(500))
+    subject = db.Column(db.String(100))
+    status = db.Column(db.String(50))
+
+    def __repr__(self):
+        return f'{self.subject} - {self.status}'

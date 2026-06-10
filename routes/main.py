@@ -18,7 +18,7 @@ main = Blueprint('main', __name__, static_folder='static', template_folder='temp
 def home():
     session['url'] = url_for('main.home')
     upcoming_workshop_list = []
-    current_ws = db.session.query(Tools).filter_by(keyword='current_workshop').one().data
+    current_ws = db.session.query(Tools).filter_by(keyword='current_workshop').scalar().data
     admin = db.session.query(Role).filter_by(name='admin').one_or_none()
     client = db.session.query(Role).filter_by(name='client').one_or_none()
     animation_admin = db.session.query(Role).filter_by(name='animation_admin').one_or_none()

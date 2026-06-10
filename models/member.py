@@ -35,6 +35,9 @@ class Member(UserMixin, db.Model):
     dob = db.Column(db.String(15))
     state = db.Column(db.String(100))
     website = db.Column(db.String(100))
+    facebook = db.Column(db.String(100))
+    instagram = db.Column(db.String(100))
+    x = db.Column(db.String(100))
     registration_date = db.Column(db.String(50))
     token = db.Column(db.String(10))
     participated = db.relationship('Workshop', secondary=member_workshop, backref='participants')
@@ -43,6 +46,7 @@ class Member(UserMixin, db.Model):
     artist_data = db.relationship('ArtistData', backref='member', uselist=False)
     project = db.relationship('Project', secondary=member_project, backref='clients')
     quizzes = db.relationship('QuizList', backref='player')
+    tickets = db.relationship('SupportTicket', backref='member')
     feedback_credits = db.relationship('FeedbackCredits', backref='student')
     portraits = db.relationship('Portrait', backref='artist')
 

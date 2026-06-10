@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+    #container-parent {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+    #container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        padding: 0% 0% 5% 0%;
+        border: solid 1px black;
+    }
+    .heading {
+        background: green;
+        text-align: center;
+        color: white;
+        padding: 1% 0% !important;
+    }
+    #container p {
+        padding: 0% 5%;
+    }
+    #container span {
+        font-weight: bold;
+    }
+    .edit {
+        border: none;
+        background: rgb(109, 134, 55);
+        color: white;
+        padding: 0% 2%;
+    }
+    .form-div {
+        height: 2rem;
+    }
+    form {
+        display: flex;
+        padding: 0% 2%;
+        height: 1.5rem;
+    }
+    form input {
+        height: 100%;
+        font-size: .8rem;
+        color: black;
+    }
+    form button {
+        padding: 0% 2%;
+        line-height: 1;
+        height: 100%;
+        font-size: .8rem;
+    }
+    #flash-msg {
+        display: flex; 
+        justify-content: center; 
+        font-size: 0.8rem;
+        text-align: center;
+        font-weight: bold;
+    }
+    #back-btn-container {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        padding-bottom: 5%;
+    }
+    #back-btn {
+        width: 60%;
+        text-align: center;
+        background: rgb(59, 73, 5);
+        color: white;
+        line-height: 1;
+        padding: 2% 0%;
+        box-shadow: 5px 5px 5px rgba(0, 0, 0, .5);
+        border: solid 1px rgb(40, 48, 5);
+        text-decoration: none;
+    }
+    #back-btn:hover {
+        background: rgb(113, 113, 10);
+        color: white;
+        text-decoration: none;
+    }
+
+    @media (min-width: 768px) {
+        #back-btn {
+            width: 45%;
+            padding: 1.5% 0%;
+        }
+        #container {
+            width: 80%;
+        }
+    }
+    @media (min-width: 1200px) {
+        #back-btn {
+            width: 30%;
+            padding: 1% 0%;
+        }
+        .heading {
+            font-size: 1.2rem;
+        }
+        #container {
+            width: 50%;
+        }
+    }
+    @media (min-width: 1920px) {
+        #back-btn {
+            width: 20%;
+            padding: .8% 0%;
+        }
+        #container {
+            width: 40%;
+        }
+    }
+
+    /* ------------------------------------------ FOR JS ---------------------------------------------- */
+    #name-edit {
+        display: none;
+    }
+    #email-edit {
+        display: none;
+    }
+    #phone-edit {
+        display: none;
+    }
+    #whatsapp-edit {
+        display: none;
+    }
+    #profession-edit {
+        display: none;
+    }
+    #state-edit {
+        display: none;
+    }
+    #facebook-edit {
+        display: none;
+    }
+    #instagram-edit {
+        display: none;
+    }
+    #x-edit {
+        display: none;
+    }
+    #website-edit {
+        display: none;
+    }
+</style>
+<!-- ------------------------------------------------------------------------------------------------------- -->
+<div id="container-parent">
+    <div id="container">
+        <p class="heading">Edit Account Info</p>
+        <p id="name">Name:  <span>{{current_user.name}}</span>  &emsp;<button class="edit" onclick="nameForm()">Edit</button></p>
+        <div id="name-edit">
+            <form action="{{url_for('account.edit_account_info')}}" method="post">
+                <input id="name-input" type="text" name="name" value="{{current_user.name}}">
+                <button type="submit" name="submit" value="edit-name">Change</button>
+            </form>
+        </div>
+        <p id="email">Email:  <span>{{current_user.email}}</span>  &emsp;<button class="edit" onclick="emailForm()">Edit</button></p>
+        <div id="email-edit">
+            <form action="{{url_for('account.edit_account_info')}}" method="post">
+                <input id="email-input" type="text" name="email" value="{{current_user.email}}">
+                <button type="submit" name="submit" value="edit-email">Change</button>
+            </form>
+        </div>
+        <p id="phone">Phone:  <span>{{current_user.phone}}</span>  &emsp;<button class="edit" onclick="phoneForm()">Edit</button></p>
+        <div id="phone-edit">
+            <form action="{{url_for('account.edit_account_info')}}" method="post">
+                <input id="phone-input" type="text" name="phone" value="{{current_user.phone}}">
+                <button type="submit" name="submit" value="edit-phone">Change</button>
+            </form>
+        </div>
+        <p id="whatsapp">Whatsapp:  <span>{{current_user.whatsapp}}</span>  &emsp;<button class="edit" onclick="whatsappForm()">Edit</button></p>
+        <div id="whatsapp-edit">
+            <form action="{{url_for('account.edit_account_info')}}" method="post">
+                <input id="whatsapp-input" type="text" name="whatsapp" value="{{current_user.whatsapp}}">
+                <button type="submit" name="submit" value="edit-whatsapp">Change</button>
+            </form>
+        </div>
+        <p id="profession">Profession:  <span>{{current_user.profession}}</span>  &emsp;<button class="edit" onclick="professionForm()">Edit</button></p>
+        <div id="profession-edit">
+            <form action="{{url_for('account.edit_account_info')}}" method="post">
+                <input id="profession-input" type="text" name="profession" value="{{current_user.profession}}">
+                <button type="submit" name="submit" value="edit-profession">Change</button>
+            </form>
+        </div>
+        <p id="state">State:  <span>{{current_user.state}}</span>  &emsp;<button class="edit" onclick="stateForm()">Edit</button></p>
+        <div id="state-edit">
+            <form action="{{url_for('account.edit_account_info')}}" method="post">
+                <input id="state-input" type="text" name="state" value="{{current_user.state}}">
+                <button type="submit" name="submit" value="edit-state">Change</button>
+            </form>
+        </div>
+        <div id="flash-msg">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="{{category}}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        <p class="heading">Social</p>
+        <p id="facebook">Facebook:  <span>{{current_user.facebook}}</span>  &emsp;<button class="edit" onclick="facebookForm()">Edit</button></p>
+        <div id="facebook-edit">
+            <form action="{{url_for('account.edit_account_info')}}" method="post">
+                <input id="facebook-input" type="text" name="facebook" value="{{current_user.facebook}}">
+                <button type="submit" name="submit" value="edit-facebook">Change</button>
+            </form>
+        </div>
+        <p id="instagram">Instagram:  <span>{{current_user.instagram}}</span>  &emsp;<button class="edit" onclick="instagramForm()">Edit</button></p>
+        <div id="instagram-edit">
+            <form action="{{url_for('account.edit_account_info')}}" method="post">
+                <input id="instagram-input" type="text" name="instagram" value="{{current_user.instagram}}">
+                <button type="submit" name="submit" value="edit-instagram">Change</button>
+            </form>
+        </div>
+        <p id="x">X (Twitter):  <span>{{current_user.x}}</span>  &emsp;<button class="edit" onclick="xForm()">Edit</button></p>
+        <div id="x-edit">
+            <form action="{{url_for('account.edit_account_info')}}" method="post">
+                <input id="x-input" type="text" name="x" value="{{current_user.x}}">
+                <button type="submit" name="submit" value="edit-x">Change</button>
+            </form>
+        </div>
+        <p id="website">Website:  <span>{{current_user.website}}</span>  &emsp;<button class="edit" onclick="websiteForm()">Edit</button></p>
+        <div id="website-edit">
+            <form action="{{url_for('account.edit_account_info')}}" method="post">
+                <input id="website-input" type="text" name="website" value="{{current_user.website}}">
+                <button type="submit" name="submit" value="edit-website">Change</button>
+            </form>
+        </div>
+    </div>
+</div>
+<div id="back-btn-container">
+    <a id="back-btn" href="{{url_for('account.home')}}">Back to Account</a>
+</div>
+
+<script src="../static/js/edit_account_info.js"></script>
+{% endblock %}

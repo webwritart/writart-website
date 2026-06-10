@@ -12,7 +12,10 @@ import random
 from operations.miscellaneous import calculate_age, allowed_file, generate_captcha
 from models.artist_data import ArtistData
 from models.news import News
+from models.tool import SupportTicket, Tools
 from routes import main
+import random
+
 
 account = Blueprint('account', __name__, static_folder='static', template_folder='templates/account')
 
@@ -158,11 +161,15 @@ def home():
         roles = []
         for role in role_result:
             roles.append(role.name)
+        if 'admin' in roles:
+            roles.remove('admin')
+        
+        role_count = len(roles)
 
         return render_template('my_account.html', certificate_list=certificate_list, certificate=certificate,
                                name=current_user.name, logged_in=current_user.is_authenticated, admin=admin,
                                client=client,
-                               animation_admin=animation_admin, roles=roles, current_year=current_year)
+                               animation_admin=animation_admin, roles=roles, role_count=role_count, current_year=current_year)
     else:
         return render_template('my_account.html', current_year=current_year)
 
@@ -183,7 +190,7 @@ def main_dashboard():
         if student in roles:
             return redirect(url_for('account.student_dashboard', logged_in=current_user.is_authenticated, current_year=current_year))
 
-    return render_template('main_dashboard.html', logged_in=current_user.is_authenticated, current_year=current_year)
+    return render_template('main_dashboard.html', logged_in=current_user.is_authenticated, current_year=current_year, admin=admin)
 
 
 
@@ -243,7 +250,8 @@ def student_dashboard():
 
 
     return render_template('student_dashboard.html', logged_in=current_user.is_authenticated, current_year=current_year,
-                           multiple_roles=multiple_roles, school_news_dict=school_news_dict, common_news_dict=common_news_dict)
+                           multiple_roles=multiple_roles, school_news_dict=school_news_dict, common_news_dict=common_news_dict,
+                           admin=admin)
 
 
 
@@ -271,9 +279,133 @@ def contact_instructor():
     return render_template('contact_instructor.html', logged_in=current_user.is_authenticated, current_year=current_year)
 
 
-@account.route('/update_details', methods=['GET', 'POST'])
-def update_details():
-    pass
+@account.route('/edit-account-info', methods=['GET', 'POST'])
+def edit_account_info():
+    admin = db.session.query(Role).filter_by(name='admin').scalar()
+
+    if request.method == 'POST':
+        if request.form.get('submit') == 'edit-name':
+            name = request.form.get('name')
+            current_user.name = name
+            try:
+                db.session.commit()
+                flash('Name changed successfully!', 'success')
+            except Exception as e:
+                flash('Name failed to change!', 'error')
+        if request.form.get('submit') == 'edit-email':
+            email = request.form.get('email')
+            current_user.email = email
+            try:
+                db.session.commit()
+                flash('Email changed successfully!', 'success')
+            except Exception as e:
+                flash('Email failed to change!', 'error')
+        if request.form.get('submit') == 'edit-phone':
+            phone = request.form.get('phone')
+            current_user.phone = phone
+            try:
+                db.session.commit()
+                flash('Phone changed successfully!', 'success')
+            except Exception as e:
+                flash('Phone failed to change!', 'error')
+        if request.form.get('submit') == 'edit-whatsapp':
+            whatsapp = request.form.get('whatsapp')
+            current_user.whatsapp = whatsapp
+            try:
+                db.session.commit()
+                flash('Whatsapp changed successfully!', 'success')
+            except Exception as e:
+                flash('Whatsapp failed to change!', 'error')
+        if request.form.get('submit') == 'edit-profession':
+            profession = request.form.get('profession')
+            current_user.profession = profession
+            try:
+                db.session.commit()
+                flash('Profession changed successfully!', 'success')
+            except Exception as e:
+                flash('Profession failed to change!', 'error')
+        if request.form.get('submit') == 'edit-state':
+            state = request.form.get('state')
+            current_user.state = state
+            try:
+                db.session.commit()
+                flash('State changed successfully!', 'success')
+            except Exception as e:
+                flash('State failed to change!', 'error')
+        if request.form.get('submit') == 'edit-facebook':
+            facebook = request.form.get('facebook')
+            current_user.facebook = facebook
+            try:
+                db.session.commit()
+                flash('Facebook changed successfully!', 'success')
+            except Exception as e:
+                flash('Facebook failed to change!', 'error')
+        if request.form.get('submit') == 'edit-instagram':
+            instagram = request.form.get('instagram')
+            current_user.instagram = instagram
+            try:
+                db.session.commit()
+                flash('Instagram changed successfully!', 'success')
+            except Exception as e:
+                flash('Instagram failed to change!', 'error')
+        if request.form.get('submit') == 'edit-x':
+            x = request.form.get('x')
+            current_user.x = x
+            try:
+                db.session.commit()
+                flash('X changed successfully!', 'success')
+            except Exception as e:
+                flash('X failed to change!', 'error')
+        if request.form.get('submit') == 'edit-website':
+            website = request.form.get('website')
+            current_user.website = website
+            try:
+                db.session.commit()
+                flash('Website changed successfully!', 'success')
+            except Exception as e:
+                flash('Website failed to change!', 'error')
+
+    return render_template('edit_account_info.html', logged_in=current_user.is_authenticated, current_year=current_year,
+                           admin=admin)
+
+
+@account.route('/support', methods=['GET', 'POST'])
+def support():
+    ticket_category = db.session.query(Tools).filter_by(keyword='ticket_category').scalar().data
+    issue_category_list = ticket_category.split('/')
+
+    all_ticket_no_list = []
+    all_ticket_no = db.session.query(SupportTicket).all()
+    for t in all_ticket_no:
+        all_ticket_no_list.append(t.ticket_no)
+
+    if request.method == 'POST':
+        if request.form.get('submit') == 'create-ticket':
+            subject = request.form.get('problem-category')
+            if subject != 'default':
+                member_id = request.form.get('member_id')
+                msg = request.form.get('message')
+                continue_process = True
+                while continue_process:
+                    ticket_no = random.randint(100000, 999999)
+                    if ticket_no not in all_ticket_no_list:
+                        continue_process = False
+            
+            entry = SupportTicket(
+                ticket_no=ticket_no,
+                member_id=member_id,
+                msg=msg,
+                subject=subject,
+                status='open'
+            )
+            try:
+                db.session.add(entry)
+                db.session.commit()
+                flash('Your Issue got submitted successfully', 'success')
+            except Exception as e:
+                flash('Problem in submitting Issue!', 'error')
+
+    return render_template('support.html', issue_category_list=issue_category_list, current_year=current_year, logged_in=current_user.is_authenticated)
 
 
 @account.route('/registration_form', methods=['GET', 'POST'])

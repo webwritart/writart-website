@@ -21,7 +21,7 @@ from routes.b2b import b2b
 from models.artist_data import ArtistData
 # from flask_apscheduler import APScheduler
 from sqlalchemy import create_engine, text
-from models.tool import Tools, ArtworkPriceTime
+from models.tool import Tools, ArtworkPriceTime, SupportTicket
 from models.news import News
 
 load_dotenv()
