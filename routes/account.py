@@ -334,7 +334,7 @@ def edit_account_info():
                 flash('State failed to change!', 'error')
         if request.form.get('submit') == 'edit-facebook':
             facebook = request.form.get('facebook')
-            current_user.facebook = facebook
+            current_user.fb_url = facebook
             try:
                 db.session.commit()
                 flash('Facebook changed successfully!', 'success')
@@ -342,7 +342,7 @@ def edit_account_info():
                 flash('Facebook failed to change!', 'error')
         if request.form.get('submit') == 'edit-instagram':
             instagram = request.form.get('instagram')
-            current_user.instagram = instagram
+            current_user.insta_url = instagram
             try:
                 db.session.commit()
                 flash('Instagram changed successfully!', 'success')
