@@ -12,26 +12,27 @@
 }
 
 </style>
-
-<div class="form-center-container">
-    <div class="form-center">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                  {% for category, message in messages %}
-                    <div class="{{category}}">{{ message }}</div>
-                  {% endfor %}
-            {% endif %}
-        {% endwith %}
-        <form id="registration" action="{{ url_for('account.register') }}" method="post">
-            <h2 style="text-align: center;">Captcha Verification</h2>
-            <div id="captcha" style="width:100%;">
-                <div style="display:flex; justify-content:center;"><img src="{{captcha}}" width="350" height="50"></div>
-                <a href="{{url_for('account.captcha_verification')}}" id="captcha-refresh">Refresh Captcha</a>
-                <input id="captcha_input" type="text" name="captcha" placeholder="Enter Captcha" required>
-            </div>
-            By clicking REGISTER button you agree to our <a href="{{url_for('main.privacy_policy')}}" target="_blank">privacy policy</a>
-            <button type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="register">REGISTER</button>
-        </form>
+<div style="display:flex; flex-direction:column; height: 90vh; justify-content:center;">
+    <div class="form-center-container">
+        <div class="form-center">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="{{category}}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            <form id="registration" action="{{ url_for('account.register') }}" method="post">
+                <h2 style="text-align: center;">Captcha Verification</h2>
+                <div id="captcha" style="width:100%;">
+                    <div style="display:flex; justify-content:center;"><img src="{{captcha}}" width="350" height="50"></div>
+                    <a href="{{url_for('account.captcha_verification')}}" id="captcha-refresh">Refresh Captcha</a>
+                    <input id="captcha_input" type="text" name="captcha" placeholder="Enter Captcha" required>
+                </div>
+                By clicking REGISTER button you agree to our <a href="{{url_for('main.privacy_policy')}}" target="_blank">privacy policy</a>
+                <button type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="register">REGISTER</button>
+            </form>
+        </div>
     </div>
 </div>
 
