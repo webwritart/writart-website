@@ -278,14 +278,6 @@ def update_details():
 
 @account.route('/registration_form', methods=['GET', 'POST'])
 def registration_form():
-    captcha_value, captcha_uri = generate_captcha()
-    session['captcha_value'] = captcha_value
-    return render_template("register.html", logged_in=current_user.is_authenticated, current_year=current_year, captcha=captcha_uri,
-                           captcha_value=captcha_value)
-
-
-@account.route('/register', methods=['GET', 'POST'])
-def register():
     num_list = []
     uuid_list = []
 
@@ -306,71 +298,110 @@ def register():
         num_list.append(user_no)
 
     if request.method == 'POST':
+        if request.form.get('submit') == 'proceed':
+            ph = request.form.get('phone')
+            if len(ph) == 10:
+                phone = f"91{ph}"
+            elif len(ph) == 11 and ph[0] == '0':
+                phone = f'91{ph[1:]}'
+            elif len(ph) == 12 and ph[:2] == '91':
+                phone = ph
+            elif len(ph) == 13:
+                phone = ph[3:]
+            else:
+                phone = ph
+
+            email = request.form.get('email')
+            state = request.form.get('state')
+            result = db.session.execute(db.select(Member).where(Member.email == email))
+            user = result.scalar()
+            if user:
+                flash("You've already signed up with that email, log in instead!", "error")
+                return redirect(url_for('account.login'))
+            if phone in num_list:
+                flash("Already an account exists with phone number. Please register with different phone number or log in",
+                    "error")
+                return redirect(url_for('account.register'))
+            hash_and_salted_password = generate_password_hash(
+                request.form.get('password'),
+                method='pbkdf2:sha256',
+                salt_length=8
+            )
+            date_ = request.form.get('date')
+            if len(date_) < 2:
+                date_ = "0" + date_
+            month = request.form.get('month')
+            if len(month) < 2:
+                month = "0" + month
+            year = request.form.get('year')
+            dob = f"{year}-{month}-{date_}"
+            age = calculate_age(dob)
+
+            artist_account = request.form.get('artist_account')
+
+            # if age < 13:
+            #     flash("You're below 13 year. Really very sorry we cannot take you in!", "error")
+            #     return redirect(request.url)
+
+            unique = False
+            uuid = ''
+            while not unique:
+                u = random.randint(100000, 999999)
+                if u not in uuid_list:
+                    uuid = u
+                    unique = True
+
+        # ------------------------------------------ Add details to session ----------------------------------------- #
+            session['name'] = request.form.get('name')
+            session['email'] = request.form.get('email')
+            session['password'] = hash_and_salted_password
+            session['phone'] = request.form.get('phone')
+            session['whatsapp'] = request.form.get('whatsapp')
+            session['sex'] = request.form.get('sex')
+            session['dob'] = dob
+            session['profession'] = request.form.get('profession')
+            session['state'] = state
+            session['uuid'] = uuid
+            return redirect(url_for('account.captcha_verification'))
+
+    return render_template("register.html", logged_in=current_user.is_authenticated, current_year=current_year)
+
+
+
+@account.route('/captcha-verification', methods=['GET', 'POST'])
+def captcha_verification():
+    captcha_value, captcha_uri = generate_captcha()
+    session['captcha_value'] = captcha_value
+    return render_template("captcha_verification.html", current_year=current_year, captcha=captcha_uri)
+
+
+
+@account.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
         if request.form.get('submit') == 'register':
-            captcha_value = session.get('captcha_value')
-            p(captcha_value)
-            p(request.form.get('captcha'))
-            if request.form.get('captcha') == captcha_value:
-                ph = request.form.get('phone')
-                if len(ph) == 10:
-                    phone = f"91{ph}"
-                elif len(ph) == 11 and ph[0] == '0':
-                    phone = f'91{ph[1:]}'
-                elif len(ph) == 12 and ph[:2] == '91':
-                    phone = ph
-                elif len(ph) == 13:
-                    phone = ph[3:]
-                else:
-                    phone = ph
-
-                email = request.form.get('email')
-                state = request.form.get('state')
-                result = db.session.execute(db.select(Member).where(Member.email == email))
-                user = result.scalar()
-                if user:
-                    flash("You've already signed up with that email, log in instead!", "error")
-                    return redirect(url_for('account.login'))
-                if phone in num_list:
-                    flash("Already an account exists with phone number. Please register with different phone number or log in",
-                        "error")
-                    return redirect(url_for('account.register'))
-                hash_and_salted_password = generate_password_hash(
-                    request.form.get('password'),
-                    method='pbkdf2:sha256',
-                    salt_length=8
-                )
-                date_ = request.form.get('date')
-                if len(date_) < 2:
-                    date_ = "0" + date_
-                month = request.form.get('month')
-                if len(month) < 2:
-                    month = "0" + month
-                year = request.form.get('year')
-                dob = f"{year}-{month}-{date_}"
-                age = calculate_age(dob)
-
-                artist_account = request.form.get('artist_account')
-
-                # if age < 13:
-                #     flash("You're below 13 year. Really very sorry we cannot take you in!", "error")
-                #     return redirect(request.url)
-
-                unique = False
-                uuid = ''
-                while not unique:
-                    u = random.randint(100000, 999999)
-                    if u not in uuid_list:
-                        uuid = u
-                        unique = True
+            captcha = request.form.get('captcha')
+            captcha_value = session['captcha_value']
+            if captcha == captcha_value:
+                name = session['name']
+                email = session['email']
+                password = session['password']
+                phone = session['phone']
+                whatsapp = session['whatsapp']
+                sex = session['sex']
+                dob = session['dob']
+                profession = session['profession']
+                state = session['state']
+                uuid = session['uuid']
 
                 new_user = Member(
-                    email=request.form.get('email'),
-                    password=hash_and_salted_password,
-                    name=request.form.get('name'),
-                    phone=request.form.get('phone'),
-                    whatsapp=request.form.get('whatsapp'),
-                    profession=request.form.get('profession'),
-                    sex=request.form.get('sex'),
+                    email=email,
+                    password=password,
+                    name=name,
+                    phone=phone,
+                    whatsapp=whatsapp,
+                    profession=profession,
+                    sex=sex,
                     dob=dob,
                     state=state,
                     registration_date=today_date,
@@ -416,10 +447,10 @@ def register():
                 send_email_support('Registration success!', [email],
                                 '',
                                 mail, '')
-                mail_message = f'New Registration:\n\nName: {request.form.get("name")}\nEmail: {request.form.get("email")}\n' \
-                            f'Phone: {request.form.get("phone")}' \
-                            f'Sex: {request.form.get("sex")}\nProfession: {request.form.get("profession")}\n' \
-                            f'State: {request.form.get("state")}\n\n'
+                mail_message = f'New Registration:\n\nName: {name}\nEmail: {email}\n' \
+                            f'Phone: {phone}\n' \
+                            f'Sex: {sex}\nProfession: {profession}\n' \
+                            f'State: {state}\n\n'
                 send_email_support('New Registration!', ['writartstudios@gmail.com'], mail_message, '', '')
                 if 'url' in session:
                     return redirect(session['url'])

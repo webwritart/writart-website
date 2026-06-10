@@ -75,14 +75,13 @@ function validateForm2() {
 }
 
 function validateRegistration() {
-    const dates = ['1', '01', '2', '02', '3', '03', '4', '04', '5', '05', '6', '06', '7', '07', '8', '08', '9', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31']
-    const months = ['1', '01', '2', '02', '3', '03', '4', '04', '5', '05', '6', '06', '7', '07', '8', '08', '9', '09', '10', '11', '12']
-    let date = document.forms["registration"]["date"].value
-    let month = document.forms["registration"]["month"].value
-    let year = document.forms["registration"]["year"].value
-    let email = document.forms["registration"]["email"].value
-    let password = document.forms["registration"]["password"].value
-    let retypePassword = document.forms["registration"]["retype-password"].value
+    const dates = ['1', '01', '2', '02', '3', '03', '4', '04', '5', '05', '6', '06', '7', '07', '8', '08', '9', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31'];
+    const months = ['1', '01', '2', '02', '3', '03', '4', '04', '5', '05', '6', '06', '7', '07', '8', '08', '9', '09', '10', '11', '12'];
+    let date = document.forms["registration"]["date"].value;
+    let month = document.forms["registration"]["month"].value;
+    let year = document.forms["registration"]["year"].value;
+    let retypeEmail = document.forms["registration"]["retype-email"].value;
+    let email = document.forms["registration"]["email"].value;
 
     if (!dates.includes(date)) {
         alert("Wrong date. Please check again!");
@@ -92,21 +91,21 @@ function validateRegistration() {
         alert("Wrong month. Please check again!");
         return false;
     }
-    if (password != retypePassword) {
-        alert("The Retyped message doesn't match. Please enter again");
+    if (email != retypeEmail) {
+        alert("The Retyped email doesn't match. Please enter again");
         return false;
     }
 }
 
 function validateUpdateDetails() {
-    const dates = ['1', '01', '2', '02', '3', '03', '4', '04', '5', '05', '6', '06', '7', '07', '8', '08', '9', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31']
-    const months = ['1', '01', '2', '02', '3', '03', '4', '04', '5', '05', '6', '06', '7', '07', '8', '08', '9', '09', '10', '11', '12']
-    let date = document.forms["update_details"]["date"].value
-    let month = document.forms["update_details"]["month"].value
-    let year = document.forms["update_details"]["year"].value
-    let email = document.forms["update_details"]["email"].value
-    let password = document.forms["update_details"]["password2"].value
-    let retypePassword = document.forms["update_details"]["retype-password2"].value
+    const dates = ['1', '01', '2', '02', '3', '03', '4', '04', '5', '05', '6', '06', '7', '07', '8', '08', '9', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31'];
+    const months = ['1', '01', '2', '02', '3', '03', '4', '04', '5', '05', '6', '06', '7', '07', '8', '08', '9', '09', '10', '11', '12'];
+    let date = document.forms["update_details"]["date"].value;
+    let month = document.forms["update_details"]["month"].value;
+    let year = document.forms["update_details"]["year"].value;
+    let email = document.forms["update_details"]["email"].value;
+    let password = document.forms["update_details"]["password2"].value;
+    let retypePassword = document.forms["update_details"]["retype-password2"].value;
 
     if (!dates.includes(date)) {
         alert("Wrong date. Please check again!");
