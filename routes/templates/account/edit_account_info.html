@@ -200,14 +200,14 @@
             {% endwith %}
         </div>
         <p class="heading">Social</p>
-        <p id="facebook">Facebook:  <span>{{current_user.facebook}}</span>  &emsp;<button class="edit" onclick="facebookForm()">Edit</button></p>
+        <p id="facebook">Facebook:  <span>{{current_user.fb_url}}</span>  &emsp;<button class="edit" onclick="facebookForm()">Edit</button></p>
         <div id="facebook-edit">
             <form action="{{url_for('account.edit_account_info')}}" method="post">
                 <input id="facebook-input" type="text" name="facebook" value="{{current_user.fb_url}}">
                 <button type="submit" name="submit" value="edit-facebook">Change</button>
             </form>
         </div>
-        <p id="instagram">Instagram:  <span>{{current_user.instagram}}</span>  &emsp;<button class="edit" onclick="instagramForm()">Edit</button></p>
+        <p id="instagram">Instagram:  <span>{{current_user.insta_url}}</span>  &emsp;<button class="edit" onclick="instagramForm()">Edit</button></p>
         <div id="instagram-edit">
             <form action="{{url_for('account.edit_account_info')}}" method="post">
                 <input id="instagram-input" type="text" name="instagram" value="{{current_user.insta_url}}">
