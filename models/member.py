@@ -111,7 +111,7 @@ class Workshop(db.Model):
     __tablename__ = 'workshop'
 
     id = db.Column(db.Integer, primary_key=True)
-    uuid = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.Integer, unique=True)
     name = db.Column(db.String(100))
     topic = db.Column(db.String(100))
     date = db.Column(db.String(50))

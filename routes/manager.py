@@ -31,6 +31,7 @@ def home():
     current_ws_name = db.session.query(Tools).filter_by(keyword='current_workshop').one_or_none().data
     current_ws = current_workshop = db.session.query(Workshop).filter_by(name=current_ws_name).one_or_none()
     current_ws_topic = current_ws.topic
+    all_ws = db.session.query(Workshop).all()
 
     if db.session.query(Role).filter(Role.name == 'admin').scalar() in current_user.role:
         if request.method == 'POST':
@@ -48,7 +49,7 @@ def home():
                 db.session.query(Tools).filter_by(keyword='reg_status').one().data = 'open'
                 db.session.commit()
                 flash('Registration opened boss!', 'success')
-            if request.form.get('name'):
+            if request.form.get('submit') == 'add_new_ws':
                 result = db.session.query(Workshop).filter_by(name=request.form.get('name')).first()
                 if result:
                     flash("Chief! The workshop already exist!", "error")
@@ -94,6 +95,16 @@ def home():
                     s4_time = request.form.get('s4_time')
                     instructor_ = request.form.get('instructor')
                     session_link = request.form.get('link')
+                    ws_uuid_list = []
+                    for ws in all_ws:
+                        ws_uuid_list.append(ws.uuid)
+                    ws_uuid = 0
+                    uuid_process_continue = True
+                    while uuid_process_continue:
+                        uuid = random.randint(100000, 999999)
+                        if uuid not in ws_uuid_list:
+                            ws_uuid = uuid
+                            uuid_process_continue = False
                     entry = Workshop(
                         name=name,
                         topic=topic,
@@ -107,6 +118,7 @@ def home():
                         s4_time=s4_time,
                         instructor=instructor_,
                         joining_link=session_link,
+                        uuid=ws_uuid
                     )
                     db.session.add(entry)
                     db.session.query(Tools).filter_by(keyword='reg_status').one().data = 'pending'

@@ -474,13 +474,14 @@ def classroom():
             return send_file(path_or_file=file_path, as_attachment=True, download_name=file_full_name)
 # ---------------------------------------- Course/Workshop Thumbnails --------------------------------------------- #
     workshop_name_thumbnail_dict = {}
-    ws_thumbnail_base_url = "../static/images/workshops/"
+    ws_thumbnail_base_url = "../static/images/courses/"
     workshop_list = db.session.query(Workshop).all()
     for workshop in workshop_list:
+        uuid = workshop.uuid
         name = workshop.name
         category = workshop.details.category
         if category != 'Q&A':
-            thumbnail = f'{ws_thumbnail_base_url}{name}/thumbnail.jpg'
+            thumbnail = f'{ws_thumbnail_base_url}{uuid}/thumbnail.jpg'
             workshop_name_thumbnail_dict[name] = {'name':name,
                                                   'thumbnail_url':thumbnail}
     workshop_count = len(workshop_name_thumbnail_dict)
