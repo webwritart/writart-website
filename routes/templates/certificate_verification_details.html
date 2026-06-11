@@ -2,7 +2,7 @@
 {% block content %}
 
 <style>
-    #heading {
+    .heading {
         font-size: 2rem;
         font-weight: bold;
     }
@@ -30,7 +30,7 @@
     }
 
     @media (max-width: 1200px) {
-        #heading {
+        .heading {
             font-size: 1.5rem;
         }
         #btn {
@@ -47,7 +47,7 @@
         }
     }
     @media (max-width: 600px) {
-        #heading {
+        .heading {
             font-size: 1.3rem;
         }
         #btn {
@@ -64,7 +64,8 @@
 </style>
 
 <div id="table-container">
-    <p id="heading">CERTIFICATE DETAILS</p>
+    {% if status == 'success' %}
+    <p class="heading">CERTIFICATE DETAILS</p>
     {% for i in dict %}
     <table>
         <tr>
@@ -108,8 +109,12 @@
             <td style="color: green; font-weight: bold;">Verification Successful!</td>
         </tr>
     </table>
-    <a class="btn btn-primary btn-block btn-large" id="btn" href="{{url_for('main.verification')}}">Back to Verification form</a>
     {% endfor %}
+    {% elif status == 'failed' %}
+    <p class="heading" style="color:red;">No Record Found! Verification failed!</p>
+    {% endif %}
+    <a class="btn btn-primary btn-block btn-large" id="btn" href="{{url_for('main.verification')}}">Back to Verification form</a>
+    
 </div>
 
 
