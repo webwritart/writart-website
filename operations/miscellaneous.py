@@ -108,12 +108,12 @@ def image_resize_and_compress_single(filename, root_path,):
             new_l_height = 2100
             new_l_width = round(2100*aspect_ratio)
             image_2.thumbnail((new_l_width, new_l_height), Image.Resampling.LANCZOS)
-            if filename.split('.')[1] is 'PNG' or 'png':
+            if filename.split('.')[1] == 'PNG' or 'png':
                 image.convert('RGB')
                 large_filename = large_filename.split('.')[0] + '.jpg'
             image_2.save(large_folder + large_filename, optimize=True, quality=75)
         else:
-            if filename.split('.')[1] is 'PNG' or 'png':
+            if filename.split('.')[1] == 'PNG' or 'png':
                 image.convert('RGB')
                 large_filename = large_filename.split('.')[0] + '.jpg'
             image_2.save(large_folder + large_filename, optimize=True, quality=75)
