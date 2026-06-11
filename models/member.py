@@ -49,9 +49,30 @@ class Member(UserMixin, db.Model):
     tickets = db.relationship('SupportTicket', backref='member')
     feedback_credits = db.relationship('FeedbackCredits', backref='student')
     portraits = db.relationship('Portrait', backref='artist')
+    certificates = db.relationship('Certificate', backref='member')
 
     def __repr__(self):
         return f'{self.name.split()[0]} -- {self.email}'
+
+
+
+class Certificate(db.Model):
+    __tablename__ = 'certificate'
+
+    id = db.Column(db.Integer, primary_key=True)
+    certificate_no = db.Column(db.String(50), unique=True)
+    course_topic = db.Column(db.String(100))
+    course_period = db.Column(db.String(50))
+    session_type = db.Column(db.String(50))
+    instructor = db.Column(db.String(100))
+    lead_instructor = db.Column(db.String(100))
+    issue_date = db.Column(db.String(50))
+    member_id = db.Column(db.Integer, db.ForeignKey('member.id'))
+
+    def __repr__(self):
+        return f'{self.course_topic}, Certificate No. {self.certificate_no}'
+
+
 
 
 class Portrait(db.Model):

@@ -2,7 +2,7 @@ import os
 from flask import Flask
 from dotenv import load_dotenv
 from extensions import mail, login_manager, db
-from models.member import Member, member_role, member_workshop, Workshop, Role, QuizList, FeedbackCredits, FeedbackVideos, Portrait, WorkshopVideos
+from models.member import Member, member_role, member_workshop, Workshop, Role, QuizList, FeedbackCredits, FeedbackVideos, Portrait, WorkshopVideos, Certificate
 from models.videos import Demo
 from models.quiz import Quiz
 from models.b2b import VidEditProject

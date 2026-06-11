@@ -13,10 +13,10 @@ from operations.quiz import add_quiz_data_to_db
 from models.payment import Payment
 from models.query import Query
 from models.tool import Tools, ArtworkPriceTime
-from models.member import Member, Workshop, Role, Portrait, WorkshopVideos
+from models.member import Member, Workshop, Role, Portrait, WorkshopVideos, Certificate
 from models.workshop_details import WorkshopDetails
 from models.news import News
-from operations.miscellaneous import allowed_file, image_resize_and_compress_single
+from operations.miscellaneous import allowed_file, image_resize_and_compress_single, prepare_certificate
 from routes.account import today_date
 import datetime
 import difflib
@@ -548,39 +548,68 @@ def home():
                 else:
                     flash("Oops Chief! The file doesn't exist!", "error")
 
-            if request.form.get('submit') and request.form.get('submit') == 'upload_certificates':
-                allowed_extensions = {'pdf', 'jpg'}
-                participants = current_workshop.participants
+            if request.form.get('submit') and request.form.get('submit') == 'create_certificates':
+                course_id = request.form.get('course_id')
+                course_period = request.form.get('course_period')
+                issuing_date = datetime.date.today()
+                issuing_date = "-".join(reversed(str(issuing_date).split("-")))
+                certificate_no = ''
+                
+                course = db.session.query(Workshop).filter_by(id=course_id).scalar()
+                course_topic = course.topic
+                ws_uuid = course.uuid
+                session_type = request.form.get('session_type')
+                instructor = request.form.get('instructor')
 
-                if 'file' not in request.files:
-                    flash('No file part', 'error')
-                    return redirect(request.url)
-                files = request.files.getlist('file')
-                db.session.query(Tools).filter_by(keyword='certificate').one().data = current_ws_topic
+                certificate_no_list = []
+                certificates = db.session.query(Certificate).all()
+                for c in certificates:
+                    certificate_no_list.append(c.certificate_no)
 
-                name_list = []
-                folder_name_list = []
-                for participant in participants:
-                    folder_name = participant.name.split()[0] + str(participant.id)
-                    folder_name_list.append(folder_name)
-                    name_list.append(participant.name.split()[0])
+                process_continue = True
+                while process_continue:
+                    certificate_no = str(random.randint(10000000, 99999999))
+                    if certificate_no not in certificate_no_list:
+                        process_continue = False
 
-                    folder = f'static/files/users/{folder_name}/certificates'
-                    if not os.path.exists(folder):
-                        os.makedirs(folder)
-                cnt = 0
-                for file in files:
-                    if file.filename == '':
-                        flash('No selected file', 'error')
-                        return redirect(request.url)
-                    if file and allowed_file(file.filename, allowed_extensions):
-                        # filename = secure_filename(file.filename)
-                        file_name = f"{current_workshop.name}-{name_list[cnt]}.pdf"
-                        path = f'../static/files/users/{folder_name_list[cnt]}/certificates'
+                students = course.participants
+                for s in students:
+                    awardee_name_text = s.name
+                    user_name = s.name
+                    user_uuid = s.uuid
+                    member_id = s.id
 
-                        file.save(os.path.join(path, file_name))
-                        cnt += 1
+                export_path = f"./static/files/users/{user_uuid}/certificates/"
+
+                try:
+                    prepare_certificate(awardee_name_text, course_topic, course_period, issuing_date, 
+                                    certificate_id=certificate_no, ws_uuid=ws_uuid, user_uuid=user_uuid,
+                                    user_name=user_name, export_path=export_path)
+                    flash("Certificates prepared", "success")
+                except Exception as e:
+                    flash("Couldn't preapre certificates!", "error")
+
+                try:
+                    entry = Certificate(
+                        certificate_no=certificate_no,
+                        course_topic=course_topic,
+                        course_period=course_period,
+                        session_type=session_type,
+                        instructor=instructor,
+                        lead_instructor='Shwetabh Suman',
+                        issue_date=issuing_date,
+                        member_id=member_id
+                    )
+
+                    db.session.add(entry)
+                    db.session.commit()
+                    flash("Certificates added to the Database", "success")
+                except Exception as e:
+                    p(e)
+                    flash("Couldn't add certificates to the database", "error")
+
                 return redirect(url_for('manager.home'))
+            
             if request.form.get('submit') and request.form.get('submit') == 'upload_artworks':
                 existing_uuid_list = []
                 uuid = 0

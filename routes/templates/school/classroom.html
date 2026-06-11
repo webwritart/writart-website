@@ -146,7 +146,7 @@
         <div class="ws-thumbnail-container" style="">
         {% if workshop_count > 0 %}
             {% for ws in ws_thumbnail_dict %}
-                <a href="{{url_for('school.session_videos', ws_name=ws)}}"><img src="{{ ws_thumbnail_dict[ws].thumbnail_url}}"></a>
+                <a href="{{url_for('school.course', ws_uuid=ws_thumbnail_dict[ws].uuid)}}"><img src="{{ ws_thumbnail_dict[ws].thumbnail_url}}"></a>
             {% endfor %}
         {% endif %}
         </div>

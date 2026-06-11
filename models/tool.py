@@ -37,3 +37,5 @@ class SupportTicket(db.Model):
 
     def __repr__(self):
         return f'{self.subject} - {self.status}'
+    
+

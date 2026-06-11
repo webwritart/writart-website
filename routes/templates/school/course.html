@@ -125,7 +125,7 @@
                         <input type="hidden" name="file-name" value="{{m}}">
                         <button type="submit" name="download-file" value="{{ assignments_dict[m]['file_path'] }}">
                             <img src="../static/images/pdf_icon.png"></button>
-                        <p>{{ m }}</p>
+                        <p class="file-name">{{ m }}</p>
                     </form>
                 </div>
             {% endfor %}

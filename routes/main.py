@@ -2,7 +2,7 @@ from pathlib import PureWindowsPath
 import random
 from flask import Blueprint, render_template, request, flash, session, url_for
 from extensions import login_manager, db, current_year, list_files_in_directory, p
-from models.member import Member, Workshop, Role
+from models.member import Member, Workshop, Role, Certificate
 from models.query import Query
 from models.tool import Tools, ArtworkPriceTime
 from flask_login import current_user
@@ -97,4 +97,33 @@ def home():
 @main.route('/privacy_policy')
 def privacy_policy():
     return render_template('privacy_policy.html', current_year=current_year)
+
+
+@main.route('/verification', methods=['GET', 'POST'])
+def verification():
+    if request.method == 'POST':
+        if request.form.get('submit') == 'verify-certificate':
+            certificate_id = request.form.get('certificate-id')
+
+            student_dict = {}
+            
+            certificate = db.session.query(Certificate).filter_by(certificate_no=int(certificate_id)).scalar()
+            course_topic = certificate.course_topic
+            course_period = certificate.course_period
+            session_type = certificate.session_type
+            instructor = certificate.instructor
+            issue_date = certificate.issue_date
+            member = certificate.member
+            student_name = member.name
+
+            student_dict[certificate_id] = {
+                'course_topic': course_topic,
+                'course_period': course_period,
+                'session_type': session_type,
+                'instructor': instructor,
+                'issue_date': issue_date,
+                'student_name': student_name
+            }
+        return render_template('certificate_verification_details.html', current_year=current_year, dict=student_dict)
+    return render_template('verification.html', current_year=current_year)
 

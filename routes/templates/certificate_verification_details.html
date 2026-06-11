@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+    #heading {
+        font-size: 2rem;
+        font-weight: bold;
+    }
+    #table-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 80vh;
+    }
+    table {
+        width:50%;
+    }
+    td {
+        border: solid 1px black;
+        padding-left: 2%;
+    }
+    .header {
+        background: rgb(77, 98, 58);
+        color: white;
+    }
+    .btn {
+        width: 20%;
+        margin-top: 3%;
+    }
+
+    @media (max-width: 1200px) {
+        #heading {
+            font-size: 1.5rem;
+        }
+        #btn {
+            font-size: .8rem;
+        }
+        td {
+            font-size: .8rem;
+        }
+    }
+    @media (max-width: 900px) {
+        #btn {
+            width: 30%;
+            font-size: .7rem;
+        }
+    }
+    @media (max-width: 600px) {
+        #heading {
+            font-size: 1.3rem;
+        }
+        #btn {
+            width: 50%;
+        }
+        table {
+            width: 80%;
+        }
+        td {
+            font-size: .7rem;
+        }
+    }
+
+</style>
+
+<div id="table-container">
+    <p id="heading">CERTIFICATE DETAILS</p>
+    {% for i in dict %}
+    <table>
+        <tr>
+            <td class="header"></td>
+            <td class="header">Details</td>
+        </tr>
+        <tr>
+            <td class="header">Certificate ID</td>
+            <td>{{i}}</td>
+        </tr>
+        <tr>
+            <td class="header">Student Name</td>
+            <td>{{dict[i]['student_name']}}</td>
+        </tr>
+        <tr>
+            <td class="header">Topic</td>
+            <td>{{dict[i]['course_topic']}}</td>
+        </tr>
+        <tr>
+            <td class="header">Period</td>
+            <td>{{dict[i]['course_period']}}</td>
+        </tr>
+        <tr>
+            <td class="header">Category</td>
+            <td>{{dict[i]['session_type']}}</td>
+        </tr>
+        <tr>
+            <td class="header">Instructor</td>
+            <td>{{dict[i]['instructor']}}</td>
+        </tr>
+        <tr>
+            <td class="header">Issue Date</td>
+            <td>{{dict[i]['issue_date']}}</td>
+        </tr>
+        <tr>
+            <td class="header">Awardee's Name</td>
+            <td>{{dict[i]['student_name']}}</td>
+        </tr>
+        <tr>
+            <td class="header">Status</td>
+            <td style="color: green; font-weight: bold;">Verification Successful!</td>
+        </tr>
+    </table>
+    <a class="btn btn-primary btn-block btn-large" id="btn" href="{{url_for('main.verification')}}">Back to Verification form</a>
+    {% endfor %}
+</div>
+
+
+{% endblock %}

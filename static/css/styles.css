@@ -801,16 +801,29 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 }
 .file-item-inner {
     display:flex;
-    padding:1%;
+    padding:0%;
+    margin:1%;
+    width: 60px;
+}
+.file-item-inner form {
+    width: 100%;
+    overflow-wrap: break-word;
+    padding-bottom:0%;
 }
 .file-item-inner button {
+    background: rgba(0, 0, 0, 0);
+    border: none;
     width: 100%;
+    padding: 0%;
 }
 .file-item-inner img {
     width:100%;
 }
 .file-item-inner p {
-    font-size: 1rem;
+    font-size: .8rem;
+    color: white;
+    width: 100%;
+    line-height:1;
 }
 
 .video-wrapper-container .video .content p{
@@ -1334,13 +1347,7 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     .default-form div {
     width: 40%;
 }
-.file-item-inner p {
-    font-size: 0.9rem;
-}
 
-.file-item-inner button {
-    width: 90%;
-}
 .category-list button {
     font-size: 0.9rem;
 }
@@ -1509,7 +1516,7 @@ and (max-width : 1440px) {
         margin: 2% 0%;
     }
     .portrait-main-details {
-        width: 60%%;
+        width: 60%;
     }
     .slideshow-btn {
         width: 30%;
@@ -1518,6 +1525,12 @@ and (max-width : 1440px) {
     }
     .price-table {
         width: 50%;
+    }
+    .file-item-inner {
+        width: 50px;
+    }
+    .file-item-inner p {
+        font-size: .7rem;
     }
 }
 
@@ -1634,12 +1647,7 @@ and (max-width : 992px) {
 .instructor-artwork-slide-container {
     padding: 4% 0% 6% 0%;
 }
-.file-item-inner p {
-    font-size: 0.7rem;
-}
-.file-item-inner button {
-    width: 80%;
-}
+
 .category-list button {
     font-size: 0.7rem;
 }
@@ -1686,6 +1694,12 @@ and (max-width : 992px) {
     .price-table {
         width: 60%;
     }
+    .file-item-inner {
+        width: 40px;
+    }
+    .file-item-inner p {
+        font-size: .65rem;
+    }
 }
 
 @media only screen
@@ -1728,7 +1742,7 @@ and (max-width : 768px) {
         width: 50%;
     }
     .button_medium {
-    width: 60%%;
+    width: 60%;
     }
     .course-btn {
     padding: 0% 5%;
@@ -1802,6 +1816,12 @@ and (max-width : 768px) {
     }
     .price-table {
         width: 70%;
+    }
+    .file-item-inner {
+        width: 30px;
+    }
+    .file-item-inner p {
+        font-size: .6rem;
     }
 }
 

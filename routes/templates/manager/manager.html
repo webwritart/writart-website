@@ -459,7 +459,7 @@
                     <button type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="certificate-dist">Distribute via Email</button>
                 </form>
                 <div id="basket">
-                    <h2>Upload Certificates</h2>
+                    <h2>Create Certificates</h2>
                     <form action="{{ url_for('manager.home') }}" method="post" id="form1" enctype="multipart/form-data" style="display: flex; flex-direction: column;">
                         <select name="course_id" required>
                             <option value="default">Choose Course/Workshop</option>
@@ -467,8 +467,10 @@
                             <option value="{{ws_id}}">{{ws_topic_dict[ws_id]['topic']}}</option>
                             {% endfor %}
                         </select>
-                        <input type="file" name="file" id="file" multiple>
-                        <button type="submit" name="submit" id="file-btn" class="btn btn-primary btn-block btn-large" value="upload_certificates">Upload Files</button>
+                        <input type="text" name="course_period" placeholder="Course Period" required>
+                        <input type="text" name="session_type" placeholder="Session Type (like course, workshop, etc.)">
+                        <input type="text" name="instructor" placeholder="Instructor">
+                        <button type="submit" name="submit" id="file-btn" class="btn btn-primary btn-block btn-large" value="create_certificates">Create Certificates</button>
                     </form>
                 </div>
             </div>

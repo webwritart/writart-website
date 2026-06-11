@@ -483,6 +483,7 @@ def classroom():
         if category != 'Q&A':
             thumbnail = f'{ws_thumbnail_base_url}{uuid}/thumbnail.jpg'
             workshop_name_thumbnail_dict[name] = {'name':name,
+                                                  'uuid':uuid,
                                                   'thumbnail_url':thumbnail}
     workshop_count = len(workshop_name_thumbnail_dict)
     workshop_name_thumbnail_dict = dict(reversed(workshop_name_thumbnail_dict.items()))
@@ -634,13 +635,13 @@ def classroom():
                            ws_thumbnail_dict=workshop_name_thumbnail_dict)
 
 
-@school.route('/session-videos', methods=['GET','POST'])
-def session_videos():
+@school.route('/course', methods=['GET','POST'])
+def course():
     vid_id_list = []
     vid_caption_list = []
 
-    ws_name = request.args.get('ws_name')
-    workshop = db.session.query(Workshop).filter_by(name=ws_name).scalar()
+    ws_uuid = request.args.get('ws_uuid')
+    workshop = db.session.query(Workshop).filter_by(uuid=ws_uuid).scalar()
     category = workshop.details.category
     ws_topic = workshop.topic
 
@@ -670,7 +671,7 @@ def session_videos():
 
     # ------------------------------ STUDY MATERIAL ----------------------------------------------- #
     study_material_dict = {}
-    base_dir = f"static/files/workshops/{ws_name}"
+    base_dir = f"static/files/courses/{ws_uuid}/notes"
     if not os.path.exists(base_dir):
         os.makedirs(base_dir)
     folder_content = os.listdir(base_dir)
@@ -685,7 +686,7 @@ def session_videos():
 
     # ----------------------------------- ASSIGNMENTS ---------------------------------------------- #
     assignments_dict = {}
-    base_dir = f"static/files/workshops/assignments/{workshop.id}"
+    base_dir = f"static/files/courses/{ws_uuid}/assignments"
     p(workshop.id)
     if not os.path.exists(base_dir):
         os.makedirs(base_dir)
@@ -699,7 +700,7 @@ def session_videos():
             assignments_dict[f] = assignment
     assignments_count = len(assignments_dict)
 
-    return render_template('tutorial_video_list.html', logged_in=current_user.is_authenticated,
+    return render_template('course.html', logged_in=current_user.is_authenticated,
                            video_count=video_count, vid_id_list=vid_id_list, vid_caption_list=vid_caption_list,
                            ws_topic=ws_topic, study_material_dict=study_material_dict, study_material_count=study_material_count,
                            assignments_dict=assignments_dict, assignments_count=assignments_count)

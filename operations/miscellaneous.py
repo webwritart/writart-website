@@ -3,10 +3,12 @@ import os
 import PIL.Image as Image
 from difflib import SequenceMatcher
 from flask_sqlalchemy import table
-from extensions import db
+from extensions import db, p
 from captcha.image import ImageCaptcha
 import random
 import base64
+from PIL import Image, ImageDraw, ImageFont
+
 
 
 def calculate_age(birthdate):
@@ -139,3 +141,60 @@ def generate_captcha():
     encoded_string = encoded_data_bytes.decode('utf-8')
     captcha_uri = f"data:image/png;base64, {encoded_string}"
     return captcha_num, captcha_uri
+
+
+def prepare_certificate(awardee_name_text, course_topic, course_period, issuing_date, certificate_id, ws_uuid, user_uuid, user_name, export_path):
+    image = Image.open("./static/images/miscellaneous/Participation-Certificate.jpg")
+    draw = ImageDraw.Draw(image)
+
+    name_word_list = awardee_name_text.split(' ')
+    name_word_count = len(name_word_list)
+    if name_word_count > 2:
+        del name_word_list[2:]
+        awardee_name = " ".join(name_word_list)
+    else:
+        awardee_name = awardee_name_text
+    course_topic = f"{course_topic} (Course)"
+    course_period = f"({course_period})"
+    certificate_id = str(certificate_id)
+
+    primary_text_color = (100, 117, 0)
+    secondary_text_color = (0, 0, 0)
+    awardee_name_font_size = 80
+    course_topic_font_size = 40
+    course_period_font_size = 36
+    issuing_date_font_size = 30
+    certificate_id_font_size = 30
+    
+    center_x = image.width // 2
+
+    name_y = 610
+    topic_y = 775
+    period_y = 830
+    issuing_y = 1090
+    id_y = 1138
+
+
+    name_font = ImageFont.truetype("arial.ttf", size=awardee_name_font_size)
+    topic_font = ImageFont.truetype("arial.ttf", size=course_topic_font_size)
+    period_font = ImageFont.truetype("arial.ttf", size=course_period_font_size)
+    issuing_font = ImageFont.truetype("arial.ttf", size=issuing_date_font_size)
+    certificate_id_font = ImageFont.truetype("arial.ttf", size=certificate_id_font_size)
+
+    draw.text((center_x, name_y), awardee_name, fill=primary_text_color, font=name_font, anchor='mm')
+    draw.text((center_x, topic_y), course_topic, fill=primary_text_color, font=topic_font, anchor='mm')
+    draw.text((center_x, period_y), course_period, fill=primary_text_color, font=period_font, anchor='mm')
+    draw.text((1470, issuing_y), issuing_date, fill=secondary_text_color, font=issuing_font)
+    draw.text((1470, id_y), certificate_id, fill=secondary_text_color, font=certificate_id_font)
+
+
+    if image.mode != 'RGB':
+        image = image.convert('RGB')
+
+
+    if not os.path.exists(export_path):
+            os.makedirs(export_path)
+    file_name = f"certificate_{ws_uuid}_{user_uuid}_{user_name}.pdf"
+    file_path = export_path + file_name
+    
+    image.save(file_path, 'PDF', resolution=100.0)
