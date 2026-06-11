@@ -455,9 +455,15 @@
                 </form>
                 <div id="basket">
                     <h2>Upload Certificates</h2>
-                    <form action="{{ url_for('manager.home') }}" method="post" id="form1" enctype="multipart/form-data">
+                    <form action="{{ url_for('manager.home') }}" method="post" id="form1" enctype="multipart/form-data" style="display: flex; flex-direction: column;">
+                        <select name="course_id" required>
+                            <option value="default">Choose Course/Workshop</option>
+                            {% for ws_id in ws_topic_dict %}
+                            <option value="{{ws_id}}">{{ws_topic_dict[ws_id]['topic']}}</option>
+                            {% endfor %}
+                        </select>
                         <input type="file" name="file" id="file" multiple>
-                        <button type="submit" name="submit" id="file-btn" class="btn btn-primary btn-block btn-large" value="upload_files">Upload Files</button>
+                        <button type="submit" name="submit" id="file-btn" class="btn btn-primary btn-block btn-large" value="upload_certificates">Upload Files</button>
                     </form>
                 </div>
             </div>

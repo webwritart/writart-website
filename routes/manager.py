@@ -531,7 +531,7 @@ def home():
                 else:
                     flash("Oops Chief! The file doesn't exist!", "error")
 
-            if request.form.get('submit') and request.form.get('submit') == 'upload_files':
+            if request.form.get('submit') and request.form.get('submit') == 'upload_certificates':
                 allowed_extensions = {'pdf', 'jpg'}
                 participants = current_workshop.participants
 

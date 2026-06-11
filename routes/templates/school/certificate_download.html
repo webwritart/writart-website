@@ -1,22 +1,57 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="background">
-    <div class="box">
-        <form method="post" action="{{url_for('school.certificate_download')}}">
-            <button type="submit" style="width: 80%; margin: 2% 0%;" class="btn btn-primary" name="submit" value="download-cert">DOWNLOAD LAST CERTIFICATE</button>
-            {% if help %}
-            <button class="btn btn-secondary" type="submit" name="submit2" value="report-problem">Report Issue</button>
-            {% endif %}
-        </form>
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                  {% for category, message in messages %}
-                    <div class="{{category}}">{{ message }}</div>
-                  {% endfor %}
-            {% endif %}
-        {% endwith %}
-    </div>
+<style>
+    #certificate-container {
+        display: flex;
+        height: 80vh;
+        width: 100%;
+        justify-content: center;
+        align-items: start;
+    }
+    #certificate-table {
+        border: solid 1px black;
+        width: 90%;
+        margin-top: 10%;
+    }
+    #column-header {
+        background: rgb(64, 143, 88);
+        color: white;
+    }
+    tr {
+        border: solid 1px black;
+    }
+    td {
+        font-size: .7rem;
+    }
+    td a {
+        background: rgb(176, 240, 98);
+        border: solid 1px black;
+        padding: .3% 5%;
+    }
+    #column-header td {
+        border: solid 1px black;
+    }
+    #certificate {
+        width: 25%;
+    }
+</style>
+
+<div id="certificate-container">
+    <table id="certificate-table">
+        <tr id="column-header">
+            <td>Courses Enrolled</td>
+            <td id="certificate">Certificate</td>
+        </tr>
+        <tr>
+            <td>Course 1 geirohgioh guiehrg oihgeg iohergoigh oierhgghwg irhgigwg</td>
+            <td><a>download</a></td>
+        </tr>
+        <tr>
+            <td>Course 1</td>
+            <td><a>download</a></td>
+        </tr>
+    </table>
 </div>
 
 

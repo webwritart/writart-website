@@ -746,16 +746,15 @@ def save_member_quiz_data():
 
 @school.route('/certificate_download', methods=['GET', 'POST'])
 def certificate_download():
+    admin = db.session.query(Role).filter_by(name='admin').scalar()
     if request.method == 'POST':
         if not current_user.is_authenticated:
             session['url'] = url_for('school.certificate_download')
             return redirect(url_for('account.login'))
         if request.form.get('submit') == 'download-cert':
-            folder_name = current_user.name.split()[0] + str(current_user.id)
-            last_workshop_name = current_user.participated[len(current_user.participated) - 1].name
-            topic = current_user.participated[len(current_user.participated) - 1].topic
-            file_name = f"{last_workshop_name}-{current_user.name.split()[0]}.jpg"
-            path = f"static/files/users/{folder_name}/certificates/{file_name}"
+            folder_name = current_user.uuid
+            path = f"static/files/users/{folder_name}/certificates/"
+
             try:
                 return send_file(path_or_file=path, as_attachment=True,
                                  download_name=f"Certificate - {topic} - Writart Gurukul.jpg")
@@ -765,12 +764,12 @@ def certificate_download():
                       "soon!")
                 send_email_support(
                     'Error:certificate_download.html',
-                    ['shwetabh@writart.com', 'shwetabhartist@gmail.com', 'writart11@gmail.com'],
+                    ['shwetabhartist@gmail.com', 'writartstudios@gmail.com'],
                     f'Chief! Error while downloading certificate\nUser affected: {current_user}',
                     '', ''
                 )
                 return redirect(request.url)
-    return render_template('certificate_download.html', logged_in=current_user.is_authenticated)
+    return render_template('certificate_download.html', logged_in=current_user.is_authenticated, admin=admin, current_year=current_year)
 
 
 @school.route('/instructor')
