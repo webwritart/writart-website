@@ -132,7 +132,7 @@ def home():
                     flash('New Workshop Added', 'success')
                     return redirect(url_for('manager.home'))
 
-            if request.form.get('category'):
+            if request.form.get('submit') == 'add_ws_details':
                 ws_name = request.form.get('ws_name')
                 description = request.form.get('description')
                 if len(description) > 500:
@@ -182,7 +182,7 @@ def home():
                     except:
                         flash("Sorry, Couldn't add, Chief!", "error")
 
-            if request.form.get('submit') == 'upload_photos':
+            if request.form.get('submit') == 'upload_ws_photos':
                 allowed_extensions = {'png', 'jpg'}
 
                 if 'file' not in request.files:
@@ -192,8 +192,8 @@ def home():
 
                 ws_id = request.form.get('ws-id')
                 if ws_id != 'default':
-                    folder_name = db.session.query(Workshop).filter_by(id=ws_id).scalar().name
-                    folder = f"./static/images/workshops/{folder_name}"
+                    folder_name = db.session.query(Workshop).filter_by(id=ws_id).scalar().uuid
+                    folder = f"./static/images/courses/{folder_name}"
                     if not os.path.exists(folder):
                         os.makedirs(folder)
                     for file in files:
@@ -279,24 +279,29 @@ def home():
                 db.session.query(Tools).filter_by(keyword='close_reg').one().data = 'Done'
                 db.session.commit()
 
-            if request.form.get('submit') == 'add_ws_files':
+            if request.form.get('submit') == 'add_ws_notes':
                 if 'file' not in request.files:
                     flash('No file part', 'error')
                     return redirect(request.url)
                 files = request.files.getlist('file')
-
-                folder_name = request.form.get('ws-name')
-                folder = f"./static/files/workshops/{folder_name}"
-                if not os.path.exists(folder):
-                    os.makedirs(folder)
-                for file in files:
-                    if file.filename == '':
-                        flash('No selected file', 'error')
-                        return redirect(request.url)
-                    if file:
-                        filename = secure_filename(file.filename)
-                        file.save(f"{folder}/{filename}")
-                        flash('Chief! Files uploaded successfully!', 'success')
+                
+                ws_id = request.form.get('ws_id')
+                if ws_id != 'default':
+                    folder_name = db.session.query(Workshop).filter_by(id=ws_id).scalar().uuid
+                    folder = f"./static/files/courses/{folder_name}/notes/"
+                    if not os.path.exists(folder):
+                        os.makedirs(folder)
+                        p(f"{folder} created!")
+                    else:
+                        p('Folder exists')
+                    for file in files:
+                        if file.filename == '':
+                            flash('No selected file', 'error')
+                            return redirect(request.url)
+                        if file:
+                            filename = secure_filename(file.filename)
+                            file.save(f"{folder}/{filename}")
+                            flash('Chief! Files uploaded successfully!', 'success')
 
             if request.form.get('submit') == 'add_quiz_data':
                 category = request.form.get('quiz-category')
@@ -845,9 +850,10 @@ def add_assignments():
             return redirect(request.url)
         files = request.files.getlist('assignments')
 
-        folder_name = request.form.get('ws_id')
+        ws_id = request.form.get('ws_id')
+        folder_name = db.session.query(Workshop).filter_by(id=ws_id).scalar().uuid
         if folder_name != 'default':
-            folder = f"./static/files/workshops/assignments/{folder_name}"
+            folder = f"./static/files/courses/{folder_name}/assignments/"
             if not os.path.exists(folder):
                 os.makedirs(folder)
             for file in files:

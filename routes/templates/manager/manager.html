@@ -312,7 +312,7 @@
                     <input name="result7" placeholder="Result7" type="text"><br>
                     <input name="result8" placeholder="Result8" type="text"><br>
                     <input name="result9" placeholder="Result9" type="text"><br>
-                    <button type="submit" class="btn btn-primary btn-block btn-large">ADD TO DATABASE</button>
+                    <button type="submit" class="btn btn-primary btn-block btn-large" value="add_ws_details">ADD TO DATABASE</button>
                 </form>
 
                 <form action="{{ url_for('manager.home') }}" method="post" id="form2" enctype="multipart/form-data">
@@ -323,7 +323,7 @@
                         {% endfor %}
                     </select>
                     <input type="file" name="file" id="file2" multiple>
-                    <button type="submit" name="submit" id="file-btn2" class="btn btn-primary btn-block btn-large" value="upload_photos">UPLOAD PHOTOS</button>
+                    <button type="submit" name="submit" id="file-btn2" class="btn btn-primary btn-block btn-large" value="upload_ws_photos">UPLOAD PHOTOS</button>
                 </form>
             </div>
             <div id="add-ws-videos">
@@ -370,9 +370,14 @@
             <div id="add-ws-files">
                 <form action="{{ url_for('manager.home') }}" method="post" enctype="multipart/form-data">
                     <h2>Add Workshop Files</h2>
-                    <input type="text" name="ws-name" placeholder="Workshop Name (like ws1)" required>
+                    <select name="ws_id">
+                        <option value="default">Choose Workshop/Course</option>
+                    {% for id in ws_topic_dict %}
+                    <option value="{{id}}">{{ws_topic_dict[id]['topic']}}</option>
+                    {% endfor %}
+                    </select>
                     <input type="file" name="file" id="file4" multiple required>
-                    <button type="submit" name="submit" id="file-btn4" class="btn btn-primary btn-block btn-large" value="add_ws_files">UPLOAD FILES</button>
+                    <button type="submit" name="submit" id="file-btn4" class="btn btn-primary btn-block btn-large" value="add_ws_notes">UPLOAD FILES</button>
                 </form>
             </div>
             <div id="add-assignments">
