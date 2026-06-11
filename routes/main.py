@@ -107,7 +107,12 @@ def verification():
 
             student_dict = {}
 
-            try:
+            certificate_no_list = []
+            all_certificates = db.session.query(Certificate).all()
+            for c in all_certificates:
+                certificate_no_list.append(c.certificate_no)
+            
+            if certificate_id in certificate_no_list:
                 certificate = db.session.query(Certificate).filter_by(certificate_no=int(certificate_id)).scalar()
                 course_topic = certificate.course_topic
                 course_period = certificate.course_period
@@ -126,8 +131,7 @@ def verification():
                     'student_name': student_name
                 }
                 return render_template('certificate_verification_details.html', current_year=current_year, dict=student_dict, status='success')
-            except Exception as e:
-                p(e)
+            else:
                 return render_template('certificate_verification_details.html', current_year=current_year, status='failed')
     return render_template('verification.html', current_year=current_year)
 
