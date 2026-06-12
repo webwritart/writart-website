@@ -61,6 +61,7 @@ class Certificate(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     certificate_no = db.Column(db.String(50), unique=True)
+    awardee_name = db.Column(db.String(100))
     course_topic = db.Column(db.String(100))
     course_period = db.Column(db.String(50))
     session_type = db.Column(db.String(50))

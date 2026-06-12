@@ -592,6 +592,7 @@ def home():
                 try:
                     entry = Certificate(
                         certificate_no=certificate_no,
+                        awardee_name=awardee_name_text,
                         course_topic=course_topic,
                         course_period=course_period,
                         session_type=session_type,

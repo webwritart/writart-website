@@ -119,8 +119,7 @@ def verification():
                 session_type = certificate.session_type
                 instructor = certificate.instructor
                 issue_date = certificate.issue_date
-                member = certificate.member
-                student_name = member.name
+                awardee_name = certificate.awardee_name
 
                 student_dict[certificate_id] = {
                     'course_topic': course_topic,
@@ -128,10 +127,10 @@ def verification():
                     'session_type': session_type,
                     'instructor': instructor,
                     'issue_date': issue_date,
-                    'student_name': student_name
+                    'awardee_name': awardee_name
                 }
-                return render_template('certificate_verification_details.html', current_year=current_year, dict=student_dict, status='success')
+                return render_template('certificate_verification_details.html', current_year=current_year, dict=student_dict, status='success', logged_in=current_user.is_authenticated)
             else:
-                return render_template('certificate_verification_details.html', current_year=current_year, status='failed')
-    return render_template('verification.html', current_year=current_year)
+                return render_template('certificate_verification_details.html', current_year=current_year, status='failed', logged_in=current_user.is_authenticated)
+    return render_template('verification.html', logged_in=current_user.is_authenticated, current_year=current_year)
 

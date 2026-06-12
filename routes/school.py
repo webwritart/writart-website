@@ -4,8 +4,8 @@ import random
 from flask import Blueprint, render_template, request, redirect, flash, send_file, session, url_for, jsonify
 from flask_login import current_user
 from werkzeug.utils import secure_filename
-
 from extensions import db, current_year,p
+from pathlib import Path
 from models.query import Query
 from models.tool import Tools
 from models.member import Workshop, Role, Member, QuizList, FeedbackCredits, FeedbackVideos
@@ -749,29 +749,54 @@ def save_member_quiz_data():
 @school.route('/certificate_download', methods=['GET', 'POST'])
 def certificate_download():
     admin = db.session.query(Role).filter_by(name='admin').scalar()
-    if request.method == 'POST':
-        if not current_user.is_authenticated:
-            session['url'] = url_for('school.certificate_download')
-            return redirect(url_for('account.login'))
-        if request.form.get('submit') == 'download-cert':
-            folder_name = current_user.uuid
-            path = f"static/files/users/{folder_name}/certificates/"
+    if not current_user.is_authenticated:
+        return redirect(url_for('account.login', instruction='Pleae Log in First'))
+    else:
+        certificate_dict = {}
 
-            try:
-                return send_file(path_or_file=path, as_attachment=True,
-                                 download_name=f"Certificate - {topic} - Writart Gurukul.jpg")
-            except Exception as e:
-                print(e)
-                flash("Oops! There is a problem! No worries! We have informed our tech support team. They'll fix it "
-                      "soon!")
-                send_email_support(
-                    'Error:certificate_download.html',
-                    ['shwetabhartist@gmail.com', 'writartstudios@gmail.com'],
-                    f'Chief! Error while downloading certificate\nUser affected: {current_user}',
-                    '', ''
-                )
-                return redirect(request.url)
-    return render_template('certificate_download.html', logged_in=current_user.is_authenticated, admin=admin, current_year=current_year)
+        user_uuid = current_user.uuid
+        folder = f"./static/files/users/{user_uuid}/certificates"
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+        all_files = os.listdir(folder)
+        for file in all_files:
+            file_path = Path(folder + '/' + file)
+            if file_path.is_file():
+                course_uuid = file.split('.')[0].split('_')[1]
+                course_topic = db.session.query(Workshop).filter_by(uuid=course_uuid).scalar().topic
+                certificate_dict[course_topic] = {
+                    'course_topic': course_topic,
+                    'certificate_path': file_path
+                }
+
+        if request.method == 'POST':
+            if not current_user.is_authenticated:
+                session['url'] = url_for('school.certificate_download')
+                return redirect(url_for('account.login'))
+            else:
+                download_path = request.form.get('submit').split('|')[0]
+                file_default_name = Path(download_path).name
+                extension = file_default_name.split('.')[1]
+                topic = request.form.get('submit').split('|')[1]
+
+                file_name = f"Certificate_{topic}_writart-studio.{extension}"
+
+                try:
+                    return send_file(path_or_file=download_path, as_attachment=True,
+                                    download_name=file_name)
+                except Exception as e:
+                    print(e)
+                    flash("Oops! There is a problem! No worries! We have informed our tech support team. They'll fix it "
+                        "soon!")
+                    send_email_support(
+                        'Error:certificate_download.html',
+                        ['shwetabhartist@gmail.com', 'writartstudios@gmail.com'],
+                        f'Chief! Error while downloading certificate\nUser affected: {current_user}',
+                        '', ''
+                    )
+                    return redirect(request.url)
+    return render_template('certificate_download.html', logged_in=current_user.is_authenticated, admin=admin, current_year=current_year,
+                           certificate_dict=certificate_dict)
 
 
 @school.route('/instructor')

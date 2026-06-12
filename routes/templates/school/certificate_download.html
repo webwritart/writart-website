@@ -22,9 +22,9 @@
         border: solid 1px black;
     }
     td {
-        font-size: .7rem;
+        font-size: .8rem;
     }
-    td a {
+    td button {
         background: rgb(176, 240, 98);
         border: solid 1px black;
         padding: .3% 5%;
@@ -35,6 +35,14 @@
     #certificate {
         width: 25%;
     }
+    .download-btn {
+        color: black;
+        text-decoration: none;
+    }
+    .download-btn:hover {
+        color: black;
+        text-decoration: none;
+    }
 </style>
 
 <div id="certificate-container">
@@ -43,14 +51,12 @@
             <td>Courses Enrolled</td>
             <td id="certificate">Certificate</td>
         </tr>
+        {% for c in certificate_dict %}
         <tr>
-            <td>Course 1 geirohgioh guiehrg oihgeg iohergoigh oierhgghwg irhgigwg</td>
-            <td><a>download</a></td>
+            <td>{{c}}</td>
+            <td><form action="{{url_for('school.certificate_download')}}" method="post"><button  type="submit" name="submit" class="download-btn" value="{{certificate_dict[c]['certificate_path']}}|{{c}}">download</button></form></td>
         </tr>
-        <tr>
-            <td>Course 1</td>
-            <td><a>download</a></td>
-        </tr>
+        {% endfor %}
     </table>
 </div>
 
