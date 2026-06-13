@@ -220,6 +220,7 @@
 
 
 <!------------------------------------------------------------------------------------------------------------------------->
+<script>
 var questions = {{ questions | tojson }};
 var loggedIn = {{ current_user.is_authenticated | tojson }};
 const role = {{ role | tojson }};
