@@ -801,7 +801,7 @@ def home():
                                current_ws_name=current_ws_name, open_reg=open_reg, promotion=promotion,
                                reminder=reminder, close_reg=close_reg,
                                certificate_distribution=certificate_distribution, upcoming_ws_dict=upcoming_ws_dict,
-                               count=count, count_list=count_list, all_workshops=all_workshops, type_list=type_list,
+                               count=count, count_list=count_list, all_workshops=all_workshops,
                                current_year=current_year, ws_topic_dict=ws_topic_dict)
     else:
         return render_template('admin_area.html', logged_in=current_user.is_authenticated, current_year=current_year)
