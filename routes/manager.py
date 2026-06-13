@@ -33,6 +33,14 @@ def home():
     current_ws_topic = current_ws.topic
     all_ws = db.session.query(Workshop).all()
 
+    ws_dict_for_add_detail = {}
+    for a in all_ws:
+        ws_uuid = a.uuid
+        ws_topic = a.topic
+        ws_dict_for_add_detail[ws_uuid] = {
+            'uuid': ws_uuid,
+            'topic': ws_topic
+        }
     if db.session.query(Role).filter(Role.name == 'admin').scalar() in current_user.role:
         if request.method == 'POST':
             if request.form.get('current_ws'):
@@ -50,8 +58,7 @@ def home():
                 db.session.commit()
                 flash('Registration opened boss!', 'success')
 
-                # --------------------------------------------------------------------------------------- GALLERY ------------------------------------------------------------------------------------ #
-
+    
             
                 # ----------------------------------------------------------------------------------- ADD NEW WORKSHOP ------------------------------------------------------------------------------- #
             if request.form.get('submit') == 'add_new_ws':
@@ -138,12 +145,12 @@ def home():
                     return redirect(url_for('manager.home'))
 
             if request.form.get('submit') == 'add_ws_details':
-                ws_name = request.form.get('ws_name')
+                ws_uuid = request.form.get('ws_uuid')
                 description = request.form.get('description')
                 if len(description) > 500:
                     flash("Description exceeds the character limit of 500!", "error")
                 else:
-                    workshop = db.session.query(Workshop).filter_by(name=ws_name).first()
+                    workshop = db.session.query(Workshop).filter_by(uuid=ws_uuid).first()
                     details = workshop.details
                     details.category = request.form.get('category')
                     details.brief = request.form.get('brief')
@@ -802,7 +809,7 @@ def home():
                                reminder=reminder, close_reg=close_reg,
                                certificate_distribution=certificate_distribution, upcoming_ws_dict=upcoming_ws_dict,
                                count=count, count_list=count_list, all_workshops=all_workshops,
-                               current_year=current_year, ws_topic_dict=ws_topic_dict)
+                               current_year=current_year, ws_topic_dict=ws_topic_dict, ws_dict_for_add_detail=ws_dict_for_add_detail)
     else:
         return render_template('admin_area.html', logged_in=current_user.is_authenticated, current_year=current_year)
 

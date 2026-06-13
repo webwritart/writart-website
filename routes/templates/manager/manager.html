@@ -280,7 +280,12 @@
             <div id="add-ws-details">
                 <form action="{{ url_for('manager.home') }}" method="post">
                     <h2>Add Ws details</h2>
-                    <input name="ws_name" placeholder="Workshop Name" type="text" required>
+                    <select name="ws_uuid" required>
+                        <option value="default">Course/Workshop Name</option>
+                        {% for w in ws_dict_for_add_detail %}
+                        <option value="{{w}}">{{ws_dict_for_add_detail[w]['topic']}}</option>
+                        {% endfor %}
+                    </select>
                     <input name="category" placeholder="category" type="text" required><br>
                     <input name="brief" placeholder="brief" type="text"><br>
                     <input name="sessions" placeholder="sessions" type="text"><br>
