@@ -463,10 +463,10 @@ def classroom():
             file_path = request.form.get('download-file')
             p(file_path)
             file_name = request.form.get('file-name')
-            ws_name = os.path.basename(os.path.dirname(file_path))
-            ws_topic = db.session.query(Workshop).filter_by(name=ws_name).one_or_none().topic
-            file_full_name = f'{ws_name}__{ws_topic}__{file_name}'
-            p(file_name)
+            ws_uuid = file_path.split('/')[-3]
+            p(ws_uuid)
+            ws_topic = db.session.query(Workshop).filter_by(uuid=ws_uuid).one_or_none().topic
+            file_full_name = f'{ws_topic}__{file_name}'
             with open("download_log.txt", "a") as f:
                 f.write(f'{file_full_name} -- downloaded by -- {current_user.name}--{current_user.email}--'
                         f'Id: {current_user.id}---Time: {time_now}\n')
@@ -706,7 +706,7 @@ def course():
                            video_count=video_count, vid_id_list=vid_id_list, vid_caption_list=vid_caption_list,
                            ws_topic=ws_topic, study_material_dict=study_material_dict, study_material_count=study_material_count,
                            assignments_dict=assignments_dict, assignments_count=assignments_count, no_ws_credit_dict=no_ws_credit_dict,
-                           total_topic_credits=total_topic_credits,
+                           total_topic_credits=total_topic_credits, ws_uuid=ws_uuid,
                            ws_credit_dict=ws_credit_dict, total_ws_credits=total_ws_credits, ws_name_list=ws_name_list)
 
 
