@@ -14,7 +14,6 @@ function closeAll() {
     document.getElementById("csv-export-cert").style.display = 'none';
     document.getElementById("open-reg").style.display = 'none';
     document.getElementById("overview-content").style.display = 'none';
-    document.getElementById("gallery").style.display = 'none';
     document.getElementById("open-demo").style.display = 'none';
     document.getElementById("send-email").style.display = 'none';
     document.getElementById("add-ws-files").style.display = 'none';
@@ -119,10 +118,7 @@ function    overview() {
     closeAll();
     document.getElementById("overview-content").style.display = 'block';
 }
-function gallery()  {
-    closeAll();
-    document.getElementById("gallery").style.display = 'block';
-}
+
 function sendEmail() {
     closeAll();
     document.getElementById("send-email").style.display = "block";

@@ -49,6 +49,11 @@ def home():
                 db.session.query(Tools).filter_by(keyword='reg_status').one().data = 'open'
                 db.session.commit()
                 flash('Registration opened boss!', 'success')
+
+                # --------------------------------------------------------------------------------------- GALLERY ------------------------------------------------------------------------------------ #
+
+            
+                # ----------------------------------------------------------------------------------- ADD NEW WORKSHOP ------------------------------------------------------------------------------- #
             if request.form.get('submit') == 'add_new_ws':
                 result = db.session.query(Workshop).filter_by(name=request.form.get('name')).first()
                 if result:
@@ -611,68 +616,6 @@ def home():
 
                 return redirect(url_for('manager.home'))
             
-            if request.form.get('submit') and request.form.get('submit') == 'upload_artworks':
-                existing_uuid_list = []
-                uuid = 0
-                filename = ''
-                path = ''
-                allowed_extensions = {'jpg', 'png'}
-                if 'file' not in request.files:
-                    flash('No file part', 'error')
-                    return redirect(request.url)
-                files = request.files.getlist('file')
-                artwork_category = request.form.get('artwork-category')
-                medium = request.form.get('medium')
-                description = request.form.get('description')
-                artist = 'Shwetabh Suman'
-                current_datetime = datetime.datetime.now()
-
-                try:
-                    all_portraits = db.session.query(Portrait).all()
-                    for portrait in all_portraits:
-                        portrait_uuid = portrait.uuid
-                        existing_uuid_list.append(portrait_uuid)
-                except:
-                    pass
-                unique = False
-                while not unique:
-                    uuid = str(random.randint(100000, 999999))
-                    if uuid not in existing_uuid_list:
-                        unique = True
-
-
-                for file in files:
-                    if file.filename == '':
-                        flash('No selected file', 'error')
-                        return redirect(request.url)
-                    if file and allowed_file(file.filename, allowed_extensions):
-                        if request.form.get('file_name'):
-                            name = request.form.get('file_name')
-                            root, extension = os.path.splitext(secure_filename(file.filename))
-                            filename = secure_filename(name + '-' + str(uuid) + extension)
-                        else:
-                            filename = secure_filename(file.filename)
-
-                        path = f'static/files/users/{current_user.uuid}/artworks/{artwork_category}'
-                        if not os.path.exists(path):
-                            os.makedirs(path)
-                        file.save(os.path.join(path, filename))
-                entry = Portrait(
-                    uuid=uuid,
-                    title=filename.split('.')[0],
-                    description=description,
-                    medium=medium,
-                    artist_name=artist,
-                    date_time=current_datetime,
-                    path=path,
-                    artist_id=current_user.id
-                )
-                db.session.add(entry)
-                db.session.commit()
-
-                image_resize_and_compress_single(filename, path)
-                flash("Chief! Artwork image added successfully!", "success")
-                return redirect(url_for('manager.home'))
 
         open_reg = db.session.query(Tools).filter_by(keyword='open_reg').scalar().data
         promotion = db.session.query(Tools).filter_by(keyword='promotion').scalar().data
@@ -853,15 +796,7 @@ def home():
 
         for ws in all_ws:
             ws_topic_dict[ws.id] = {'topic':ws.topic}
-
-
-        # ------------------------------------------------- STUDIO ---------------------------------------------------- #
-
-        type_list = []
-        result = db.session.query(ArtworkPriceTime).all()
-        for r in result:
-            type_list.append(r.type)
-
+            
         return render_template('manager.html', logged_in=current_user.is_authenticated,
                                current_ws_name=current_ws_name, open_reg=open_reg, promotion=promotion,
                                reminder=reminder, close_reg=close_reg,
@@ -1332,3 +1267,82 @@ def manual_enroll():
 @manager.route('/log')
 def log():
     return render_template('log.html', current_year=current_year)
+
+
+@manager.route('/gallery', methods=['GET', 'POST'])
+def gallery():
+    type_list = []
+    result = db.session.query(ArtworkPriceTime).all()
+    for r in result:
+        type_list.append(r.type)
+    if request.method == 'POST':
+        if request.form.get('submit') and request.form.get('submit') == 'upload_artworks':
+            existing_uuid_list = []
+            uuid = 0
+            filename = ''
+            path = ''
+            allowed_extensions = {'jpg', 'png'}
+            if 'file' not in request.files:
+                flash('No file part', 'error')
+                return redirect(request.url)
+            files = request.files.getlist('file')
+            artwork_category = request.form.get('artwork-category')
+            medium = request.form.get('medium')
+            description = request.form.get('description')
+            artist = 'Shwetabh Suman'
+            current_datetime = datetime.datetime.now()
+
+            try:
+                all_portraits = db.session.query(Portrait).all()
+                for portrait in all_portraits:
+                    portrait_uuid = portrait.uuid
+                    existing_uuid_list.append(portrait_uuid)
+            except:
+                pass
+            unique = False
+            while not unique:
+                uuid = str(random.randint(100000, 999999))
+                if uuid not in existing_uuid_list:
+                    unique = True
+
+
+            for file in files:
+                if file.filename == '':
+                    flash('No selected file', 'error')
+                    return redirect(request.url)
+                if file and allowed_file(file.filename, allowed_extensions):
+                    if request.form.get('file_name'):
+                        name = request.form.get('file_name')
+                        root, extension = os.path.splitext(secure_filename(file.filename))
+                        filename = secure_filename(name + '-' + str(uuid) + extension)
+                    else:
+                        filename = secure_filename(file.filename)
+
+                    path = f'static/files/users/{current_user.uuid}/artworks/{artwork_category}'
+                    if not os.path.exists(path):
+                        os.makedirs(path)
+                    file.save(os.path.join(path, filename))
+            entry = Portrait(
+                uuid=uuid,
+                title=filename.split('.')[0],
+                description=description,
+                medium=medium,
+                artist_name=artist,
+                date_time=current_datetime,
+                path=path,
+                artist_id=current_user.id
+            )
+            db.session.add(entry)
+            db.session.commit()
+
+            image_resize_and_compress_single(filename, path)
+            flash("Chief! Artwork image added successfully!", "success")
+            return redirect(url_for('manager.home'))
+    return render_template('gallery_manager.html', current_year=current_year, type_list=type_list)
+
+
+@manager.route('/certificate-of-authenticity', methods=['GET', 'POST'])
+def certificate_of_authenticity():
+    if request.method == 'POST':
+        if request.form.get('submit') == 'create_coa':
+            pass

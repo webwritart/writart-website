@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    #gallery {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+        min-height: 80vh;
+    }
+    .form-container {
+        width: 40%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2% 0%;
+    }
+    @media (max-width: 1200px) {
+         .form-container {
+            width: 60%;
+         }
+    }
+    @media (max-width: 900px) {
+
+    }
+    @media (max-width: 600px) {
+         .form-container {
+            width: 80%;
+         }
+    }
+</style>
+
+<div id="gallery">
+    <div class="form-container">
+        <h2>Upload artworks</h2>
+        <form action="{{ url_for('manager.gallery') }}" method="post" id="form3" enctype="multipart/form-data">
+            <input type="file" name="file" id="file3" multiple>
+            <input type="text" name="file_name" placeholder="Artwork Title (optional)">
+            <select name="artwork-category">
+                <option value="portrait">Portrait</option>
+                <option value="painting">Painting</option>
+            </select>
+            <select name="medium">
+                <option value="digital">Digital</option>
+                <option value="oil_on_canvas">Oil on Canvas</option>
+                <option value="acrylics_on_canvas">Acrylic on Canvas</option>
+                <option value="charcoal_on_paper">Charcoal on Paper</option>
+            </select>
+
+            <input type="text" placeholder="Description" name="description">
+            <button type="submit" name="submit" id="file-btn3" class="btn btn-primary btn-block btn-large" value="upload_artworks">Upload Files</button>
+        </form>
+    </div>
+    <div class="form-container">
+        <h2>Artwork Price</h2>
+        <form action="{{ url_for('manager.artwork_price_time') }}" method="post" id="artwork-price-form">
+            <select name="type">
+                {% for item in type_list %}
+                <option value={{item}}>{{item}}</option>
+                {% endfor %}
+            </select>
+            <input type="text" name="price" placeholder="Price">
+            <input type="text" name="discount_percentage" placeholder="Discount Percent">
+            <input type="text" name="time" placeholder="Time taken">
+            <button type="submit" name="submit" id="artwork-price-btn" class="btn btn-primary btn-block btn-large" value="update_artwork_price">Update Price and Time</button>
+        </form>
+    </div>
+    <div class="form-container">
+        <h2>Create Certificate of Authenticity</h2>
+        <form action="{{ url_for('manager.certificate_of_authenticity') }}" method="post">
+            <input type="text" name="client_name" placeholder="Client Name">
+            <input type="text" name="size" placeholder="Painting Size (eg. 18 x 24 inch)">
+            <input type="text" name="medium" placeholder="Medium (eg. Oil on Canvas)">
+            <input type="text" name="completion_date" placeholder="Date of Completion">
+            <input type="text" name="title" placeholder="Title">
+            <input type="file" name="painting_photo">
+            <button type="submit" name="submit" value="create_coa" class="btn btn-primary btn-block btn-large">Create Certificate</button>
+        </form>
+    </div>
+</div>
+
+
+{% endblock %}
