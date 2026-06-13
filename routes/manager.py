@@ -145,12 +145,16 @@ def home():
                     return redirect(url_for('manager.home'))
 
             if request.form.get('submit') == 'add_ws_details':
+                p('entered!')
                 ws_uuid = request.form.get('ws_uuid')
+                p(ws_uuid)
+                p(type(ws_uuid))
                 description = request.form.get('description')
                 if len(description) > 500:
                     flash("Description exceeds the character limit of 500!", "error")
                 else:
-                    workshop = db.session.query(Workshop).filter_by(uuid=ws_uuid).first()
+                    workshop = db.session.query(Workshop).filter_by(uuid=ws_uuid).scalar()
+                    ws_name = workshop.name
                     details = workshop.details
                     details.category = request.form.get('category')
                     details.brief = request.form.get('brief')
