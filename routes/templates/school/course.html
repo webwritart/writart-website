@@ -191,7 +191,7 @@
                        <span onclick="" style="color:green;"> Watch explaination video.</span></span>
                    <span id="read-less-topic-btn" onclick="readLessTopic()" style="color:blue;cursor:pointer;">Read less</span></p>
                <p>Available Feedback credits: {{ topic_credits }}</p> -->
-               <!-- <form style="width:100%;" action="{{ url_for('school.submit_feedback_files') }}" id="topic-feedback-form" method="post" enctype="multipart/form-data">
+               <form style="width:100%;" action="{{ url_for('school.submit_feedback_files') }}" id="topic-feedback-form" method="post" enctype="multipart/form-data">
                    <select style="margin-bottom:1%;" name="topic" id="topic">
                        <option value="default">Choose a Topic (Optional)</option>
                        {% for topic in feedback_topic_list %}
@@ -208,7 +208,7 @@
                            {% endfor %}
                        {% endif %}
                    {% endwith %}
-               </form> -->
+               </form>
                <!-- <button class="button" style="color:white;background:#5f9141;" onclick="purchaseCredits()">Purchase Credits</button> -->
                <!-- <form class="purchase-credits" id="purchase-credits-topic">
                    <input class="default-input" style="width:100%;" type="number" name="credits">

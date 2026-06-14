@@ -613,7 +613,7 @@ def login():
             user_no = num
         num_list.append(user_no)
     if request.method == 'POST':
-        if request.form.get('password2'):
+        if request.form.get('submit') == 'update_details':
             pwd = request.form.get('password2')
             retype_pwd = request.form.get('retype-password2')
             if pwd != retype_pwd:
@@ -638,50 +638,51 @@ def login():
             current_user.state = request.form.get('state')
             db.session.commit()
             return redirect(url_for('account.home'))
-        data = request.form.get('email-phone')
-        if '@' in data:
-            email = data
-            result = db.session.execute(db.select(Member).where(Member.email == email))
-            user = result.scalar()
-        else:
-            user_phone = ''
-            ph = data
-            if len(ph) == 10:
-                phone = f"91{ph}"
-            elif len(ph) == 11 and ph[0] == '0' or '+':
-                phone = f'91{ph[1:]}'
-            elif len(ph) == 12 and ph[:2] == '91':
-                phone = ph
-            elif len(ph) == 13 and ph[:3] == '+91':
-                phone = ph[3:]
+        if request.form.get('submit') == 'login':
+            data = request.form.get('email-phone')
+            if '@' in data:
+                email = data
+                result = db.session.execute(db.select(Member).where(Member.email == email))
+                user = result.scalar()
             else:
-                phone = ph
-            if phone in num_list:
-                index = num_list.index(phone)
-                user_phone = raw_num_list[index]
-            result = db.session.execute(db.select(Member).where(Member.phone == user_phone))
-            user = result.scalar()
-        password = request.form.get('password')
+                user_phone = ''
+                ph = data
+                if len(ph) == 10:
+                    phone = f"91{ph}"
+                elif len(ph) == 11 and ph[0] == '0' or '+':
+                    phone = f'91{ph[1:]}'
+                elif len(ph) == 12 and ph[:2] == '91':
+                    phone = ph
+                elif len(ph) == 13 and ph[:3] == '+91':
+                    phone = ph[3:]
+                else:
+                    phone = ph
+                if phone in num_list:
+                    index = num_list.index(phone)
+                    user_phone = raw_num_list[index]
+                result = db.session.execute(db.select(Member).where(Member.phone == user_phone))
+                user = result.scalar()
+            password = request.form.get('password')
 
-        # Email or Phone doesn't exist or password incorrect:
-        if not user:
-            flash("That Email or Phone does not exist, please try again.", category="error")
-        elif not check_password_hash(user.password, password):
-            flash('Password incorrect, please try again.', category='error')
-        else:
-            login_user(user)
-            session['logged_in'] = True
-            if not current_user.sex or current_user.sex == '':
-                return render_template('update_account.html')
-            if request.form.get('prev-page') == 'enroll':
-                flash("You are successfully logged in. Now proceed to enroll", "success")
-                return redirect(url_for('payment.home'))
-            if request.form.get('prev-page') == 'change-password':
-                flash("You are successfully logged in. Now proceed to change password", "success")
-                return redirect(url_for('account.change_password'))
-            if 'url' in session:
-                return redirect(session['url'])
-            return redirect(url_for('account.home', name=current_user.name.split()[0]))
+            # Email or Phone doesn't exist or password incorrect:
+            if not user:
+                flash("That Email or Phone does not exist, please try again.", category="error")
+            elif not check_password_hash(user.password, password):
+                flash('Password incorrect, please try again.', category='error')
+            else:
+                login_user(user)
+                session['logged_in'] = True
+                if not current_user.sex or current_user.sex == '':
+                    return render_template('update_account.html')
+                if request.form.get('prev-page') == 'enroll':
+                    flash("You are successfully logged in. Now proceed to enroll", "success")
+                    return redirect(url_for('payment.home'))
+                if request.form.get('prev-page') == 'change-password':
+                    flash("You are successfully logged in. Now proceed to change password", "success")
+                    return redirect(url_for('account.change_password'))
+                if 'url' in session:
+                    return redirect(session['url'])
+                return redirect(url_for('account.home', name=current_user.name.split()[0]))
 
     return render_template("login.html", instruction='login', current_year=current_year)
 
@@ -691,7 +692,7 @@ def forgot_password():
     email_list = []
 
     if request.method == 'POST':
-        if request.form.get('email_phone'):
+        if request.form.get('submit') == 'get-password-reset-email':
             results = db.session.query(Member)
             token = random.randint(1000, 9999)
 
@@ -752,7 +753,7 @@ def forgot_password():
             user.password = hash_and_salted_password
 
             db.session.commit()
-            # login_user(user)
+            login_user(user)
             flash('New password set successfully!', 'success')
             mail = render_template('mails/password_reset_notification.html')
             send_email_support('Password Reset', [email],

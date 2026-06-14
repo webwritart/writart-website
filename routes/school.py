@@ -744,8 +744,9 @@ def submit_feedback_files():
                 db.session.add(entry)
                 db.session.commit()
             flash('Successfully Submitted', 'success')
-            return redirect(request.url)
-    return redirect(request.url)
+            p('submitted')
+            return redirect(url_for('school.course', ws_uuid=session.get('ws_uuid')))
+    return redirect(url_for('school.course'), ws_uuid=session.get('ws_uuid'))
 
 
 @school.route('/save-quiz-data', methods=['POST'])
