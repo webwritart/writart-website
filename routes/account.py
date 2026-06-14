@@ -254,6 +254,16 @@ def student_dashboard():
                            admin=admin)
 
 
+@account.route('/instructor-dashboard', methods=['GET', 'POST'])
+def instructor_dashboard():
+    admin = db.session.query(Role).filter_by(name='admin').scalar()
+    instructor = db.session.query(Role).filter_by(name='instructor').scalar()
+    if instructor in current_user.role:
+        return render_template('instructor-dashboard', logged_in=current_user.is_authenticated, current_year=current_year,
+                           admin=admin)
+    else:
+        return redirect(url_for('main.home'))
+
 
 @account.route('/contact-instructor', methods=['GET', 'POST'])
 def contact_instructor():
