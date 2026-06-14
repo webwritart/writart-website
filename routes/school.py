@@ -554,7 +554,9 @@ def course():
     vid_id_list = []
     vid_caption_list = []
 
-    ws_uuid = request.args.get('ws_uuid')
+    session['ws_uuid'] = request.args.get('ws_uuid')
+    ws_uuid = session.get('ws_uuid')
+    
     workshop = db.session.query(Workshop).filter_by(uuid=ws_uuid).scalar()
     category = workshop.details.category
     ws_topic = workshop.topic
@@ -601,7 +603,6 @@ def course():
     # ----------------------------------- ASSIGNMENTS ---------------------------------------------- #
     assignments_dict = {}
     base_dir = f"static/files/courses/{ws_uuid}/assignments"
-    p(workshop.id)
     if not os.path.exists(base_dir):
         os.makedirs(base_dir)
     folder_content = os.listdir(base_dir)
@@ -614,64 +615,14 @@ def course():
             assignments_dict[f] = assignment
     assignments_count = len(assignments_dict)
 
-    # -------------------------------------------- TEACHER'S FEEDBACK ------------------------------------------------- #
-    ws_name_list = []
-
-    if request.form.get('submit-ws-feedback') == 'Submit Artworks':
-        ws_id = request.form.get('workshop_id')
-        total_ws_credits = db.session.query(FeedbackCredits).filter_by(student_id=current_user.id, workshop_id=ws_id).scalar().credits
-        if 'ws-feedback-files' not in request.files:
-            flash('No file part', 'error')
-            return redirect(request.url)
-        files = request.files.getlist('ws-feedback-files')
-        no_submitted_files = len(files)
     
-    
-    
-        folder = f'static/files/users/{current_user.id}/feedback/{ws_id}/'
-        if not os.path.exists(folder):
-            os.makedirs(folder)
-        for file in files:
-            if file.filename == '':
-                flash('No selected file', 'error')
-                return redirect(request.url)
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(folder, filename))
-    
-        # deduct total credits ----------------------------------------------------------------------
-        remaining_credits = total_ws_credits - no_submitted_files
-        db.session.query(FeedbackCredits).filter_by(student_id=current_user.id, workshop_id=ws_id).scalar().credits = remaining_credits
-        db.session.commit()
-        flash('Successfully Submitted', 'success')
-        return redirect(url_for('school.classroom', _anchor='ws-feedback-form'))
-    
-    if request.form.get('submit-topic-feedback') == 'Submit Artworks':
-        topic = request.form.get('topic')
-        total_topic_credits = db.session.query(FeedbackCredits).filter_by(student_id=current_user.id, category="topic").scalar().credits
-        if 'topic-feedback-files' not in request.files:
-            flash('No file part', 'error')
-            return redirect(request.url)
-        files = request.files.getlist('topic-feedback-files')
-        no_files = len(files)
-        folder = f'static/files/users/{current_user.id}/feedback/{topic}/'
-        if not os.path.exists(folder):
-            os.makedirs(folder)
-        for file in files:
-            if file.filename == '':
-                flash('No selected file', 'error')
-                return redirect(request.url)
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(folder, filename))
-        remaining_credits = total_topic_credits - no_files
-        db.session.query(FeedbackCredits).filter_by(student_id=current_user.id, category="topic").scalar().credits = remaining_credits
-        db.session.commit()
-        flash('Successfully Submitted', 'success')
-        return redirect(url_for('school.classroom', _anchor='topic-feedback-form'))
     
     ws_credit_dict = {}
     total_ws_credits = 0
     all_workshop_with_credit = []
     total_topic_credits = 0
+    feedback_topics_data = db.session.query(Tools).filter_by(keyword='artwork_feedback_topics').scalar().data
+    feedback_topic_list = feedback_topics_data.split('/')
     try:
         result = db.session.query(FeedbackCredits).filter_by(student_id=current_user.id, category='workshop').all()
         for r in result:
@@ -707,7 +658,94 @@ def course():
                            ws_topic=ws_topic, study_material_dict=study_material_dict, study_material_count=study_material_count,
                            assignments_dict=assignments_dict, assignments_count=assignments_count, no_ws_credit_dict=no_ws_credit_dict,
                            total_topic_credits=total_topic_credits, ws_uuid=ws_uuid,
-                           ws_credit_dict=ws_credit_dict, total_ws_credits=total_ws_credits, ws_name_list=ws_name_list)
+                           ws_credit_dict=ws_credit_dict, total_ws_credits=total_ws_credits,
+                           feedback_topic_list=feedback_topic_list)
+
+
+@school.route('/submit-feedback-files', methods=['GET', 'POST'])
+def submit_feedback_files():
+    # -------------------------------------------- TEACHER'S FEEDBACK ------------------------------------------------- #
+
+    if request.method == 'POST':
+        # if request.form.get('submit-topic-feedback') == 'Submit Artworks':
+        #     if 'ws-feedback-files' not in request.files:
+        #         flash('No file part', 'error')
+        #         return redirect(request.url)
+        #     files = request.files.getlist('ws-feedback-files')
+        #     no_submitted_files = len(files)
+
+        #     
+        #     # ----------------------------------------------------------------------------------- #
+
+        #     folder = f'static/files/users/{current_user.uuid}/teacher_feedback/pending/'
+        #     if not os.path.exists(folder):
+        #         os.makedirs(folder)
+
+        #     for file in files:
+        #         if file.filename == '':
+        #             flash('No selected file', 'error')
+        #             return redirect(request.url)
+        #         filename_base = secure_filename(file.filename)
+        #         filename =f"{feedback_uuid}$${filename_base}" 
+        #         # file.save(os.path.join(folder, filename))
+
+                
+
+        #     # deduct total credits ----------------------------------------------------------------------
+            
+        #     return redirect(url_for('school.course', _anchor='ws-feedback-form'))
+        
+        if request.form.get('submit-topic-feedback') == 'Submit Artworks':
+            all_feedback_uuid_list = []
+
+            topic = request.form.get('topic')
+            if 'topic-feedback-files' not in request.files:
+                flash('No file part', 'error')
+                return redirect(request.url)
+            files = request.files.getlist('topic-feedback-files')
+            no_files = len(files)
+            folder = f'static/files/users/{current_user.uuid}/teacher-feedbacks/pending/'
+            if not os.path.exists(folder):
+                os.makedirs(folder)
+            for file in files:
+            # -------------------------------------- CREATE FEEDBACK UUID ----------------------------- #
+                try:
+                    all_feedbacks = db.session.query(FeedbackVideos).all()
+                    for f in all_feedbacks:
+                        all_feedback_uuid_list.append(f.uuid)
+                except Exception as e:
+                    p(e)
+                
+                feedback_uuid = ''
+                process_continue = True
+                while process_continue:
+                    feedback_uuid = random.randint(10000000, 99999999)
+                    if feedback_uuid not in all_feedback_uuid_list:
+                        process_continue = False
+            # ------------------------------------------------------------------------------------------ #
+                if file.filename == '':
+                    flash('No selected file', 'error')
+                    return redirect(request.url)
+                filename_base = secure_filename(file.filename)
+                filename = f"{feedback_uuid}$${filename_base}"
+                file.save(os.path.join(folder, filename))
+
+                date_today = date.today()
+                entry = FeedbackVideos(
+                    yt_vid_id='',
+                    date=date_today,
+                    member_uuid=current_user.uuid,
+                    topic=topic,
+                    instructor='Shwetabh Suman',
+                    uuid=feedback_uuid,
+                    status='pending',
+                    artwork_title=filename_base
+                )
+                db.session.add(entry)
+                db.session.commit()
+            flash('Successfully Submitted', 'success')
+            return redirect(request.url)
+    return redirect(request.url)
 
 
 @school.route('/save-quiz-data', methods=['POST'])

@@ -183,7 +183,7 @@
            </div> -->
            <div class="topic-feedback">
 
-               <!-- <h3 style="padding-bottom:3%;">TEACHER'S FEEDBACK & CRITIQUE</h3> -->
+               <h3 style="padding-bottom:3%;">TEACHER'S FEEDBACK & CRITIQUE</h3>
                <!-- <p style="background:rgba(0,0,0,0.25);padding:2%;"> Feedback credits can be used to upload artworks and get feedback and guidance by the teacher.
                    <span id="read-more-topic-btn" onclick="readMoreTopic()" style="color:blue;cursor:pointer;"> Read more</span>
                    <span id="know-more-topic-feedback"> One credit for one artwork submission. You'll get access to a video of the feedback.
@@ -191,10 +191,12 @@
                        <span onclick="" style="color:green;"> Watch explaination video.</span></span>
                    <span id="read-less-topic-btn" onclick="readLessTopic()" style="color:blue;cursor:pointer;">Read less</span></p>
                <p>Available Feedback credits: {{ topic_credits }}</p> -->
-               <!-- <form style="width:100%;" action="{{ url_for('school.classroom') }}" id="topic-feedback-form" method="post" enctype="multipart/form-data">
-                   <select style="margin-bottom:1%;" name="topic" id="topic" required>
-                       <option value="default">Choose a Topic</option>
-                       <option value="topic1">Light and shadow (value/tone)</option>
+               <!-- <form style="width:100%;" action="{{ url_for('school.submit_feedback_files') }}" id="topic-feedback-form" method="post" enctype="multipart/form-data">
+                   <select style="margin-bottom:1%;" name="topic" id="topic">
+                       <option value="default">Choose a Topic (Optional)</option>
+                       {% for topic in feedback_topic_list %}
+                       <option value="{{topic}}">{{topic}}</option>
+                       {% endfor %}
                    </select>
                    <p id="topic-error" style="color:red;">Please choose the topic first!</p>
                    <input class="default-input" type="file" name="topic-feedback-files" id="topic-feedback-files" multiple required>
@@ -222,21 +224,7 @@
 
 <script>
 let text = "";
-var ws_list = {{ ws_name_list | tojson }};
 
-function showFiles(ws_name) {
-    var list = ws_list.slice();
-    var index = list.indexOf(ws_name);
-    if (index > -1) {
-        list.splice(index, 1);
-    }
-    for (const x of list) {
-        document.getElementById(x).style.display = 'none';
-        document.getElementById('title-'+x).style.display = 'none';
-    }
-    document.getElementById(ws_name).style.display = 'flex';
-    document.getElementById('title-'+ws_name).style.display = 'block';
-}
 
 <!--------------------------------------------- TEACHER'S FEEDBACK SCRIPT ------------------------------------------------->
 

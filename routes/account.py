@@ -702,7 +702,8 @@ def forgot_password():
                         email_list.append(email)
                         result.token = token
                         db.session.commit()
-                        send_email_support(subject="Password reset",
+                        current_date_time = datetime.now()
+                        send_email_support(subject=f"Password reset- {current_date_time}",
                                            recipients=email_list, body='',
                                            html=render_template('mails/password_reset_link.html',
                                                                 link=f"https://writart.com/account/set_new_password?token={str(token)}&email={email_list[0]}"),
@@ -729,7 +730,8 @@ def forgot_password():
                         email_list.append(email)
                         result.token = token
                         db.session.commit()
-                        send_email_support(subject="Password reset",
+                        current_date_time = datetime.now()
+                        send_email_support(subject=f"Password reset - {current_date_time}",
                                            recipients=email_list, body='',
                                            html=render_template('mails/password_reset_link.html',
                                                                 link=f"https://writart.com/account/set_new_password?token={str(token)}&email={email_list[0]}"),
@@ -773,7 +775,7 @@ def set_new_password():
         return render_template('set_new_password.html', email=email)
     else:
         flash("Some error occured!", "error")
-        send_email_support('ERROR!!!', ['writartstudios@gmail.com'], f'Problem forget password reset for {email}',
+        send_email_support('ERROR!!!', ['writartstudios@gmail.com', 'shwetabhartist@gmail.com'], f"Problem forget password reset for {email}, Tokens don't match!",
                            '', '')
         return redirect(url_for("account.login"))
 

@@ -121,9 +121,14 @@ class FeedbackCredits(db.Model):
 class FeedbackVideos(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     yt_vid_id = db.Column(db.String(100))
-    title = db.Column(db.String(200))
     date = db.Column(db.String(15))
-    workshop_id = db.Column(db.String(20))
+    member_uuid = db.Column(db.Integer)
+    topic = db.Column(db.String(100))
+    instructor = db.Column(db.String(100))
+    uuid = db.Column(db.Integer, unique=True)
+    status = db.Column(db.String(50))
+    exists = db.Column(db.Boolean, default=True, nullable=False)
+    artwork_title = db.Column(db.String(100))
 
     def __repr__(self):
         return f'Title: {self.yt_vid_id}, Date: {self.date}'
