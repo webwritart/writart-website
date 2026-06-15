@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div>
+    <canvas id="myCanvas"></canvas>
+</div>
+
+
+<script>
+    const canvas = document.getElementById('myCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // 1. Create and load the background image
+    const img = new Image();
+    img.src = './static/files/users/477706/teacher-feedbacks/pending/static/files/users/477706/teacher-feedbacks/pending/45479746$$marco-bucci-autopsyroom.jpg'; // Replace with your image path
+
+    // Render image only after it fully loads
+    img.onload = function() {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0); // Draw the base image
+        setupDrawing();
+    };
+
+    // 2. Add drawing interactivity
+    function setupDrawing() {
+        let isDrawing = false;
+
+        // Configure brush styles
+        ctx.strokeStyle = 'red';
+        ctx.lineWidth = 5;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+
+        canvas.addEventListener('mousedown', (e) => {
+            isDrawing = true;
+            ctx.beginPath();
+            // Get correct coordinates relative to the canvas
+            ctx.moveTo(e.offsetX, e.offsetY);
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (!isDrawing) return;
+            ctx.lineTo(e.offsetX, e.offsetY);
+            ctx.stroke(); // Render the line
+        });
+
+        canvas.addEventListener('mouseup', () => isDrawing = false);
+        canvas.addEventListener('mouseleave', () => isDrawing = false);
+    }
+</script>
+
+{% endblock %}

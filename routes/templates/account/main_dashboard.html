@@ -1,6 +1,43 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Main dashboard</h1>
 
+<style>
+    #container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 80vh;
+    }
+    #container h1 {
+        padding-bottom: 5%;
+        font-size: 1.5rem;
+    }
+    #container a {
+        width: 40%;
+        font-size: 1rem;
+    }
+
+    @media (max-width: 1200px) {
+    }
+    @media (max-width: 900px) {
+        #container a {
+            width: 60%;
+        }
+    }
+    @media (max-width: 600px) {
+        #container a {
+            width: 80%;
+        }
+
+    }
+</style>
+
+
+<div id="container">
+    <h1>Main dashboard</h1>
+    <a class="btn btn-primary btn-block btn-large" href="{{url_for('account.instructor_dashboard')}}">INSTRUCTOR DASHBOARD</a>
+    <a class="btn btn-primary btn-block btn-large" href="{{url_for('account.student_dashboard')}}">STUDENT DASHBOARD</a>
+</div>
 
 {% endblock %}
