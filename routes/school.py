@@ -551,107 +551,118 @@ def classroom():
 
 @school.route('/course', methods=['GET','POST'])
 def course():
-    vid_id_list = []
-    vid_caption_list = []
+    if 'ws_uuid' in session:
+        p('ws_uuid found in session')
+    if request.args.get('ws_uuid'):
+        p('ws uuid found in args')
+    if 'ws_uuid' in session or request.args.get('ws_uuid'):
+        vid_id_list = []
+        vid_caption_list = []
+        
+        if request.args.get('ws_uuid'):
+            ws_uuid = request.args.get('ws_uuid')
+            session['ws_uuid'] = request.args.get('ws_uuid')
 
-    session['ws_uuid'] = request.args.get('ws_uuid')
-    ws_uuid = session.get('ws_uuid')
-    
-    workshop = db.session.query(Workshop).filter_by(uuid=ws_uuid).scalar()
-    category = workshop.details.category
-    ws_topic = workshop.topic
-
-    if category == 'course':
-        videos_row_list = workshop.videos
-        for video in videos_row_list:
-            vid_id = video.vid_id
-            vid_id_list.append(vid_id)
-            vid_caption = video.title
-            vid_caption_list.append(vid_caption)
-    else:
-        if category != 'Q&A':
-            topic = workshop.topic
-            vid_list = [workshop.yt_p1_id, workshop.yt_p2_id, workshop.yt_p3_id, workshop.yt_p4_id]
-            for n in range(len(vid_list)):
-                if vid_list[n]:
-                    part = f"Part-{n + 1}"
-                    caption = f'{topic} | {part}'
-                    vid_id_list.append(vid_list[n])
-                    vid_caption_list.append(caption)
         else:
-            print(workshop.details.category)
+            ws_uuid = session.get('ws_uuid')
+        
+        workshop = db.session.query(Workshop).filter_by(uuid=ws_uuid).scalar()
+        category = workshop.details.category
+        ws_topic = workshop.topic
 
-    video_count = len(vid_id_list)
+        if category == 'course':
+            videos_row_list = workshop.videos
+            for video in videos_row_list:
+                vid_id = video.vid_id
+                vid_id_list.append(vid_id)
+                vid_caption = video.title
+                vid_caption_list.append(vid_caption)
+        else:
+            if category != 'Q&A':
+                topic = workshop.topic
+                vid_list = [workshop.yt_p1_id, workshop.yt_p2_id, workshop.yt_p3_id, workshop.yt_p4_id]
+                for n in range(len(vid_list)):
+                    if vid_list[n]:
+                        part = f"Part-{n + 1}"
+                        caption = f'{topic} | {part}'
+                        vid_id_list.append(vid_list[n])
+                        vid_caption_list.append(caption)
+            else:
+                print(workshop.details.category)
 
-    current_user_participated_workshops = current_user.participated
+        video_count = len(vid_id_list)
 
-    # ------------------------------ STUDY MATERIAL ----------------------------------------------- #
-    study_material_dict = {}
-    base_dir = f"static/files/courses/{ws_uuid}/notes"
-    if not os.path.exists(base_dir):
-        os.makedirs(base_dir)
-    folder_content = os.listdir(base_dir)
-    for f in folder_content:
-        f_path = base_dir + '/' + f
-        if os.path.isfile(f_path):
-            material = {
-                'file_path': f_path
-            }
-            study_material_dict[f] = material
-    study_material_count = len(study_material_dict)
+        current_user_participated_workshops = current_user.participated
 
-    # ----------------------------------- ASSIGNMENTS ---------------------------------------------- #
-    assignments_dict = {}
-    base_dir = f"static/files/courses/{ws_uuid}/assignments"
-    if not os.path.exists(base_dir):
-        os.makedirs(base_dir)
-    folder_content = os.listdir(base_dir)
-    for f in folder_content:
-        f_path = base_dir + '/' + f
-        if os.path.isfile(f_path):
-            assignment = {
-                'file_path': f_path
-            }
-            assignments_dict[f] = assignment
-    assignments_count = len(assignments_dict)
+        # ------------------------------ STUDY MATERIAL ----------------------------------------------- #
+        study_material_dict = {}
+        base_dir = f"static/files/courses/{ws_uuid}/notes"
+        if not os.path.exists(base_dir):
+            os.makedirs(base_dir)
+        folder_content = os.listdir(base_dir)
+        for f in folder_content:
+            f_path = base_dir + '/' + f
+            if os.path.isfile(f_path):
+                material = {
+                    'file_path': f_path
+                }
+                study_material_dict[f] = material
+        study_material_count = len(study_material_dict)
 
-    
-    
-    ws_credit_dict = {}
-    total_ws_credits = 0
-    all_workshop_with_credit = []
-    total_topic_credits = 0
-    feedback_topics_data = db.session.query(Tools).filter_by(keyword='artwork_feedback_topics').scalar().data
-    feedback_topic_list = feedback_topics_data.split('/')
-    try:
-        result = db.session.query(FeedbackCredits).filter_by(student_id=current_user.id, category='workshop').all()
-        for r in result:
-            if r.credits > 0:
-                all_workshop_with_credit.append(r.workshop_id)
-        for a in all_workshop_with_credit:
-            workshop_topic = db.session.query(Workshop).filter_by(id=a).scalar().topic
-            feedback_credit = db.session.query(FeedbackCredits).filter_by(workshop_id=a).scalar()
-            w_credits = feedback_credit.credits
-            total_ws_credits += int(w_credits)
-            credit_date = feedback_credit.date
-            date_object = datetime.strptime(credit_date, '%Y-%m-%d')
-            expiry_date_obj = date_object + timedelta(days=30)
-            expiry_date = expiry_date_obj.strftime('%Y-%m-%d')
-            entry = {
-                'title': workshop_topic,
-                'credits': w_credits,
-                'expiry': expiry_date
-            }
-            ws_credit_dict[a] = entry
-    except Exception as e:
-        print(e)
+        # ----------------------------------- ASSIGNMENTS ---------------------------------------------- #
+        assignments_dict = {}
+        base_dir = f"static/files/courses/{ws_uuid}/assignments"
+        if not os.path.exists(base_dir):
+            os.makedirs(base_dir)
+        folder_content = os.listdir(base_dir)
+        for f in folder_content:
+            f_path = base_dir + '/' + f
+            if os.path.isfile(f_path):
+                assignment = {
+                    'file_path': f_path
+                }
+                assignments_dict[f] = assignment
+        assignments_count = len(assignments_dict)
 
-    no_ws_credit_dict = len(ws_credit_dict)
-    total_ws_credits = ''
-    try:
-        total_topic_credits = db.session.query(FeedbackCredits).filter_by(student_id=current_user.id, category='topic').scalar().credits
-    except Exception as e:
-        print(e)
+        
+        
+        ws_credit_dict = {}
+        total_ws_credits = 0
+        all_workshop_with_credit = []
+        total_topic_credits = 0
+        feedback_topics_data = db.session.query(Tools).filter_by(keyword='artwork_feedback_topics').scalar().data
+        feedback_topic_list = feedback_topics_data.split('/')
+        try:
+            result = db.session.query(FeedbackCredits).filter_by(student_id=current_user.id, category='workshop').all()
+            for r in result:
+                if r.credits > 0:
+                    all_workshop_with_credit.append(r.workshop_id)
+            for a in all_workshop_with_credit:
+                workshop_topic = db.session.query(Workshop).filter_by(id=a).scalar().topic
+                feedback_credit = db.session.query(FeedbackCredits).filter_by(workshop_id=a).scalar()
+                w_credits = feedback_credit.credits
+                total_ws_credits += int(w_credits)
+                credit_date = feedback_credit.date
+                date_object = datetime.strptime(credit_date, '%Y-%m-%d')
+                expiry_date_obj = date_object + timedelta(days=30)
+                expiry_date = expiry_date_obj.strftime('%Y-%m-%d')
+                entry = {
+                    'title': workshop_topic,
+                    'credits': w_credits,
+                    'expiry': expiry_date
+                }
+                ws_credit_dict[a] = entry
+        except Exception as e:
+            print(e)
+
+        no_ws_credit_dict = len(ws_credit_dict)
+        total_ws_credits = ''
+        try:
+            total_topic_credits = db.session.query(FeedbackCredits).filter_by(student_id=current_user.id, category='topic').scalar().credits
+        except Exception as e:
+            print(e)
+    else:
+        return redirect(url_for('school.classroom'))
 
     return render_template('course.html', logged_in=current_user.is_authenticated,
                            video_count=video_count, vid_id_list=vid_id_list, vid_caption_list=vid_caption_list,
