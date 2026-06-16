@@ -164,6 +164,7 @@ class Workshop(db.Model):
     s4_time = db.Column(db.String(100))
     details = db.relationship('WorkshopDetails', backref='workshop', uselist=False)
     videos = db.relationship('WorkshopVideos', backref='workshop')
+    assignment_assessment_videos = db.relationship('WorkshopAssignmentAssessmentVideos', backref='workshop')
 
     def __repr__(self):
         return f'{self.name}, {self.topic}'
@@ -179,6 +180,21 @@ class WorkshopVideos(db.Model):
 
     def __repr__(self):
         return f'{self.title}'
+
+
+
+class WorkshopAssignmentAssessmentVideos(db.Model):
+    __tablename__ = 'workshop_assignment_assessment_videos'
+    id = db.Column(db.Integer, primary_key=True)
+    ws_id = db.Column(db.Integer, db.ForeignKey('workshop.id'))
+    yt_vid_id = db.Column(db.String(100))
+    vid_caption = db.Column(db.String(100))
+    instructor = db.Column(db.String(100))
+    date_time = db.Column(db.String(50))
+
+    def __repr__(self):
+        return f"{self.ws_id}-{self.vid_caption}-{self.instructor}"
+    
 
 
 class Role(db.Model):

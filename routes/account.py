@@ -5,16 +5,19 @@ from werkzeug.utils import secure_filename
 from operations.artist_tools import add_watermark
 from extensions import db, image_dict, current_year, p
 from operations.messenger import send_email_school, send_email_support, send_email_with_reply
-from models.member import Member, Workshop, Role
+from models.member import Member, Workshop, Role, WorkshopAssignmentAssessmentVideos
 from flask_login import current_user, login_required, login_user, logout_user
 from datetime import date, datetime
 import random
-from operations.miscellaneous import calculate_age, allowed_file, generate_captcha
+from operations.miscellaneous import calculate_age, allowed_file, generate_captcha, move_files
 from models.artist_data import ArtistData
 from models.news import News
 from models.tool import SupportTicket, Tools
 from routes import main
 import random
+from io import BytesIO
+from zipfile import ZipFile, ZIP_DEFLATED
+import shutil
 
 
 account = Blueprint('account', __name__, static_folder='static', template_folder='templates/account')
@@ -254,15 +257,77 @@ def student_dashboard():
                            admin=admin)
 
 
+
 @account.route('/instructor-dashboard', methods=['GET', 'POST'])
 def instructor_dashboard():
     admin = db.session.query(Role).filter_by(name='admin').scalar()
     instructor = db.session.query(Role).filter_by(name='instructor').scalar()
+
+    course_dict = {}
+    courses = db.session.query(Workshop).all()
+    for c in courses: 
+        course_uuid = c.uuid
+        course_topic = c.topic
+        course_dict[course_uuid] = {'course_uuid': course_uuid, 'course_topic': course_topic}
+
+    if request.method == 'POST':
+        if request.form.get('submit') == 'download-assignments':
+            course_uuid = request.form.get('course_uuid')
+            folder = f"./static/files/courses/{course_uuid}/assignment-submissions"
+            dest_folder = f"./static/files/courses/{course_uuid}/assignment-submissions/assessed/"
+            file_lists = []
+
+# 2. Create an in-memory byte stream --------------------------------------------
+            memory_file = BytesIO()
+
+# 3. Write files into the ZIP archive --------------------------------------------
+            with ZipFile(memory_file, 'w', ZIP_DEFLATED) as zf:
+                for root, dirs, files in os.walk(folder):
+                    for file in files:
+                        file_path = os.path.join(root, file)
+                        file_lists.append(file_path)
+                        archive_name = os.path.relpath(file_path, folder)
+                        zf.write(file_path, archive_name)
+            
+# 4. Reset the file pointer to the beginning of the stream ---------------------------
+            memory_file.seek(0)
+
+            move_files(file_lists, dest_folder)
+# 5. Return the stream as a downloadable attachment -----------------------------------
+            return send_file(
+                memory_file,
+                mimetype='application/zip',
+                as_attachment=True,
+                download_name=f"{course_uuid}_{course_topic}_assignments.zip"
+            )
+
+        if request.form.get('submit') == 'upload-assessed-video':
+            course_uuid = request.form.get('course_uuid')
+            ws_id = db.session.query(Workshop).filter_by(uuid=course_uuid).scalar().id
+            yt_vid_id = request.form.get('vid-id')
+            vid_caption = request.form.get('vid-caption')
+            teacher = 'Shwetabh Suman'
+            date_time = datetime.now().replace(microsecond=0)
+            
+            entry = WorkshopAssignmentAssessmentVideos(
+                ws_id=ws_id,
+                yt_vid_id=yt_vid_id,
+                vid_caption=vid_caption,
+                instructor=teacher,
+                date_time=date_time
+            )
+
+            db.session.add(entry)
+            db.session.commit()
+            flash('Assessment video ID successfully uploaded!', 'success')
+    
+
     if instructor in current_user.role:
-        return render_template('instructor-dashboard', logged_in=current_user.is_authenticated, current_year=current_year,
-                           admin=admin)
+        return render_template('instructor-dashboard.html', logged_in=current_user.is_authenticated, current_year=current_year,
+                           admin=admin, course_dict=course_dict)
     else:
         return redirect(url_for('main.home'))
+
 
 
 @account.route('/contact-instructor', methods=['GET', 'POST'])

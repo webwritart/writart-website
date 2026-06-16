@@ -8,7 +8,7 @@ from extensions import db, current_year,p
 from pathlib import Path
 from models.query import Query
 from models.tool import Tools
-from models.member import Workshop, Role, Member, QuizList, FeedbackCredits, FeedbackVideos
+from models.member import Workshop, Role, Member, QuizList, FeedbackCredits, FeedbackVideos, WorkshopAssignmentAssessmentVideos
 from models.videos import Demo
 from models.quiz import Quiz
 from models.workshop_details import WorkshopDetails
@@ -551,10 +551,6 @@ def classroom():
 
 @school.route('/course', methods=['GET','POST'])
 def course():
-    if 'ws_uuid' in session:
-        p('ws_uuid found in session')
-    if request.args.get('ws_uuid'):
-        p('ws uuid found in args')
     if 'ws_uuid' in session or request.args.get('ws_uuid'):
         vid_id_list = []
         vid_caption_list = []
@@ -565,6 +561,8 @@ def course():
 
         else:
             ws_uuid = session.get('ws_uuid')
+        
+        ws_id = db.session.query(Workshop).filter_by(uuid=ws_uuid).scalar().id
         
         workshop = db.session.query(Workshop).filter_by(uuid=ws_uuid).scalar()
         category = workshop.details.category
@@ -591,6 +589,17 @@ def course():
                 print(workshop.details.category)
 
         video_count = len(vid_id_list)
+
+# ----------------------------------- ASSESSMENT VIDEOS ---------------------------------------------------#
+        assessment_vid_dict = {}
+        all_assessed_videos = db.session.query(WorkshopAssignmentAssessmentVideos).filter_by(ws_id=ws_id).all()
+        for v in all_assessed_videos:
+            assessment_vid_dict[v.vid_caption] = {
+                'vid_id': v.yt_vid_id,
+                'vid_caption': v.vid_caption
+            }
+        assessment_video_count = len(assessment_vid_dict)
+        
 
         current_user_participated_workshops = current_user.participated
 
@@ -624,7 +633,29 @@ def course():
                 assignments_dict[f] = assignment
         assignments_count = len(assignments_dict)
 
-        
+        # ------------------------------- ASSIGNMENTS SUBMISSION ------------------------------------------ #
+        if request.method == 'POST':
+            if request.form.get('submit') == 'submit_assignments':
+                files = request.files.getlist('assignments')
+                ws_uuid = session.get('ws_uuid')
+                student_uuid = current_user.uuid
+                student_name = current_user.name
+
+                folder = f'./static/files/courses/{ws_uuid}/assignment-submissions/'
+                if not os.path.exists(folder):
+                    os.makedirs(folder)
+                
+                for file in files:
+                    if file.filename == '':
+                        flash('No selected file', 'error')
+                        return redirect(request.url)
+                    else:
+                        filename = secure_filename(file.filename)
+                        file_name = f"{ws_uuid}_{student_uuid}_{student_name}_{filename}"
+                        file.save(f"{folder}{file_name}")
+                flash("Images uploaded successfully!", "success")
+                return redirect(url_for('school.course') + '#submit-assignments')
+        # -------------------------------------------------------------------------------------------------- #
         
         ws_credit_dict = {}
         total_ws_credits = 0
@@ -670,7 +701,7 @@ def course():
                            assignments_dict=assignments_dict, assignments_count=assignments_count, no_ws_credit_dict=no_ws_credit_dict,
                            total_topic_credits=total_topic_credits, ws_uuid=ws_uuid,
                            ws_credit_dict=ws_credit_dict, total_ws_credits=total_ws_credits,
-                           feedback_topic_list=feedback_topic_list)
+                           feedback_topic_list=feedback_topic_list, assessment_vid_dict=assessment_vid_dict, assessment_video_count=assessment_video_count)
 
 
 @school.route('/submit-feedback-files', methods=['GET', 'POST'])

@@ -8,6 +8,7 @@ from captcha.image import ImageCaptcha
 import random
 import base64
 from PIL import Image, ImageDraw, ImageFont
+import shutil
 
 
 
@@ -97,7 +98,7 @@ def image_resize_and_compress_single(filename, root_path,):
             new_t_height = 400
             new_t_width = round(400*aspect_ratio)
         image.thumbnail((new_t_width, new_t_height), Image.Resampling.LANCZOS)
-        if filename.split('.')[1] is 'PNG' or 'png':
+        if filename.split('.')[1] == 'PNG' or 'png':
             image.convert('RGB')
             thumbnail_filename = thumbnail_filename.split('.')[0] + '.jpg'
         image.save(thumbnail_folder+thumbnail_filename, optimize=True, quality=100)
@@ -198,3 +199,17 @@ def prepare_certificate(awardee_name_text, course_topic, course_period, issuing_
     file_path = export_path + file_name
     
     image.save(file_path, 'PDF', resolution=100.0)
+
+
+
+def move_files (source_path_with_file_joined_list, destination_folder):
+    if not os.path.exists(destination_folder):
+            os.makedirs(destination_folder)
+    for file_path in source_path_with_file_joined_list:
+        if os.path.exists(file_path):
+            dir, file_name = os.path.split(file_path)
+            dest_path = os.path.join(destination_folder, file_name)
+            shutil.move(file_path, dest_path)
+            p("File moved successfully!")
+        else:
+            p("File doesn't exit")
