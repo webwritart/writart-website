@@ -746,7 +746,11 @@ def login():
                 flash('Password incorrect, please try again.', category='error')
             else:
                 login_user(user)
+                student = db.session.query(Role).filter_by(name='student').scalar()
+                user_roles = current_user.role
                 session['logged_in'] = True
+                if student in user_roles:
+                    return redirect(url_for('account.student_dashboard'))
                 if not current_user.sex or current_user.sex == '':
                     return render_template('update_account.html')
                 if request.form.get('prev-page') == 'enroll':
