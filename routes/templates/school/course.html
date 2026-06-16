@@ -23,6 +23,12 @@
     .assignment-submission-form {
         width: 50%;
     }
+    #assignment-format {
+        font-size: 1rem;
+        line-height: 1;
+        padding: 0%;
+        margin: .5%;
+    }
 
     @media (max-width: 1200px) {
         .figure {
@@ -31,6 +37,9 @@
         figcaption {
             font-size: .8rem;
             line-height: 1.2;
+        }
+        #assignment-format {
+            font-size: .8rem;
         }
     }
     @media (max-width: 900px) {
@@ -51,6 +60,9 @@
         }
         .assignment-submission-form input {
             padding: 0%;
+        }
+        #assignment-format {
+            font-size: .7rem;
         }
     }
 </style>
@@ -150,7 +162,7 @@
     <div class="width-80-container assignment-submission-form">
         <h3 style="width:100%;color:rgb(0, 0, 0);opacity:1; text-align: center;">SUBMIT ASSIGNMENTS</h3>
         <form action="{{url_for('school.course')}}" method="post" enctype="multipart/form-data" style="width:100%;">
-            <label>Only JPG, JPEG and PNG files are allowed</label>
+            <p id="assignment-format">Only JPG, JPEG and PNG files are allowed</p>
             <input type="file" name="assignments" accept=".jpg, .jpeg, .png" multiple required>
             <button type="submit" name="submit" value="submit_assignments" class="btn btn-primary btn-block btn-large">Submit</button>
             {% with messages = get_flashed_messages(with_categories=true) %}
