@@ -27,7 +27,25 @@ body {
 .navbar {
     z-index: 50;
 }
-
+#navbar-brand {
+    color: rgb(38, 128, 0);
+    font-weight: 900;
+    font-size:1.3rem;
+    padding: 0%;
+    margin: 0%;
+    line-height: 1;
+    text-decoration: none;
+}
+.nav-item {
+    line-height: 1;
+    padding: 0%;
+    margin: 0%;
+}
+.nav-link {
+    line-height: 1;
+    padding: 0%;
+    margin: 0%;
+}
 a {
     text-decoration: none;
     text-align: center;
@@ -1120,18 +1138,7 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 
 /* ------------------------------------------------------------- PORTRAITS ------------------------------------------ */
 
-.discount_advertisement {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background:#08a900;
-    color: white;
-    padding: 0% 0%;
-}
-.discount_advertisement p {
-    font-size: 1.5rem;
-    padding-top:.7%;
-}
+
 
 .painting-gallery {
     display: flex;
@@ -1703,6 +1710,10 @@ and (max-width : 992px) {
     .file-item-inner p {
         font-size: .65rem;
     }
+    #navbar-brand {
+        padding-left: 1%;
+        margin: 0%;
+    }
 }
 
 @media only screen
@@ -2062,6 +2073,10 @@ and (max-width : 576px) {
     }
     .price-table {
         width: 100%;
+    }
+    #navbar-brand {
+        padding-left: 1.5%;
+        margin: 0%;
     }
 }
  /* --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */

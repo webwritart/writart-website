@@ -1,5 +1,37 @@
 {% extends "base.html" %}
 {% block content %}
+<style>
+    .discount_advertisement {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background:#ac0000;
+        color: white;
+        padding: 0% 0%;
+    }
+    .discount_advertisement p {
+        font-size: .9rem;
+        padding: 0%;
+        margin: 0%;
+    }
+    @media (min-width: 600px) {
+        .discount_advertisement p {
+            font-size: 1.3rem;
+        }
+    }
+    @media (min-width: 768px) {
+        .discount_advertisement p {
+            font-size: 1.5rem;
+        }
+    }
+    @media (min-width: 1200px) {
+        .discount_advertisement p {
+            font-size: 1.8rem;
+        }
+    }
+    @media (min-width: 1900px) {
+    }
+</style>
 
 <div class="discount_advertisement">
   <p><span style="color:#dedede;">Upto </span><b>{{ maximum_discount }}%</b> discount on Portraits. <span style="color:#dedede;"> Hurry!</span></p>
