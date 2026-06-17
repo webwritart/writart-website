@@ -637,6 +637,7 @@ def course():
         if request.method == 'POST':
             if request.form.get('submit') == 'submit_assignments':
                 files = request.files.getlist('assignments')
+                file_count = len(files)
                 ws_uuid = session.get('ws_uuid')
                 student_uuid = current_user.uuid
                 student_name = current_user.name
@@ -653,6 +654,11 @@ def course():
                         filename = secure_filename(file.filename)
                         file_name = f"{ws_uuid}_{student_uuid}_{student_name}_{filename}"
                         file.save(f"{folder}{file_name}")
+                date_time = datetime.now().replace(microsecond=0)
+                subject = f"ASSIGNMENT SUBMISSION - {date_time}"
+                total_assignment_count = len(os.listdir(folder)) - 1
+                body = f"{file_count} assignments submitted.\nTotal submissions: {total_assignment_count}"
+                send_email_school(subject, ['shwetabhartist@gmail.com', 'writartstudios@gmail.com'], body, '', '')
                 flash("Images uploaded successfully!", "success")
                 return redirect(url_for('school.course') + '#submit-assignments')
         # -------------------------------------------------------------------------------------------------- #
