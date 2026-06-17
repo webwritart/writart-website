@@ -26,6 +26,14 @@
     font-weight: bold;
     text-align: center;
 }
+#assignment-count {
+    border: solid 1px black;
+}
+#assignment-count-display p {
+    line-height: 1;
+    padding: 1% 0% 1.5% 0%;
+    margin: 0%;
+}
 
 @media (max-width: 1200px) {
     .form-heading {
@@ -53,6 +61,24 @@
 }
 </style>
 <div id="root-container">
+    <div class="form-container">
+        <p class="form-heading">Assignments count</p>
+        <form id="assignment-count" action="{{url_for('account.instructor_dashboard')}}" method="post">
+            <select name="course_uuid" required>
+                <option value="default">Choose Course/Workshop</option>
+                {% for c in course_dict %}
+                <option value="{{c}}">{{course_dict[c]['course_topic']}}</option>
+                {% endfor %}
+            </select>
+            <button class="btn btn-primary btn-block btn-large" type="submit" name="submit" value="assignments_count">Get Count</button>
+        </form>
+        {% if pending_assignments_count != '' %}
+        <div id="assignment-count-display" style="display: flex; background: rgb(62, 82, 38); width: 40%; color: white; justify-content: space-evenly;">
+            <p>Pending: {{pending_assignments_count}}</p>
+            <p>Assessed:{{assessed_assignments_count}}</p>
+        </div>
+        {% endif %}
+    </div>
     <div class="form-container">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}

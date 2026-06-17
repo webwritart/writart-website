@@ -18,6 +18,7 @@ import random
 from io import BytesIO
 from zipfile import ZipFile, ZIP_DEFLATED
 import shutil
+from pathlib import Path
 
 
 account = Blueprint('account', __name__, static_folder='static', template_folder='templates/account')
@@ -270,56 +271,79 @@ def instructor_dashboard():
         course_topic = c.topic
         course_dict[course_uuid] = {'course_uuid': course_uuid, 'course_topic': course_topic}
 
+    pending_assignments_count = 0
+    assessed_assignments_count = 0
+    
     if request.method == 'POST':
+        if request.form.get('submit') == 'assignments_count':
+            if request.form.get('course_uuid') != 'default':
+                course_uuid = request.form.get('course_uuid')
+                pending_assignments_folder = Path(f'./static/files/courses/{course_uuid}/assignment-submissions/')
+                assessed_assignments_folder = Path(f'./static/files/courses/{course_uuid}/assignment-submissions/assessed/')
+                if not os.path.exists(pending_assignments_folder):
+                    os.makedirs(pending_assignments_folder)
+                if not os.path.exists(assessed_assignments_folder):
+                    os.makedirs(assessed_assignments_folder)
+                pending_assignments_count = sum(1 for item in pending_assignments_folder.iterdir() if item.is_file())
+                assessed_assignments_count = sum(1 for item in assessed_assignments_folder.iterdir() if item.is_file())
+                return render_template('instructor-dashboard.html', pending_assignments_count=pending_assignments_count, assessed_assignments_count=assessed_assignments_count,
+                                       logged_in=current_user.is_authenticated, current_year=current_year, admin=admin, course_dict=course_dict)
+
         if request.form.get('submit') == 'download-assignments':
             course_uuid = request.form.get('course_uuid')
-            folder = f"./static/files/courses/{course_uuid}/assignment-submissions"
-            dest_folder = f"./static/files/courses/{course_uuid}/assignment-submissions/assessed/"
-            file_lists = []
+            if course_uuid != 'default':
+                folder = f"./static/files/courses/{course_uuid}/assignment-submissions"
+                dest_folder = f"./static/files/courses/{course_uuid}/assignment-submissions/assessed/"
+                file_lists = []
 
-# 2. Create an in-memory byte stream --------------------------------------------
-            memory_file = BytesIO()
+    # 2. Create an in-memory byte stream --------------------------------------------
+                memory_file = BytesIO()
 
-# 3. Write files into the ZIP archive --------------------------------------------
-            with ZipFile(memory_file, 'w', ZIP_DEFLATED) as zf:
-                for root, dirs, files in os.walk(folder):
-                    for file in files:
-                        file_path = os.path.join(root, file)
-                        file_lists.append(file_path)
-                        archive_name = os.path.relpath(file_path, folder)
-                        zf.write(file_path, archive_name)
-            
-# 4. Reset the file pointer to the beginning of the stream ---------------------------
-            memory_file.seek(0)
+    # 3. Write files into the ZIP archive --------------------------------------------
+                with ZipFile(memory_file, 'w', ZIP_DEFLATED) as zf:
+                    for root, dirs, files in os.walk(folder):
+                        for file in files:
+                            file_path = os.path.join(root, file)
+                            file_lists.append(file_path)
+                            archive_name = os.path.relpath(file_path, folder)
+                            zf.write(file_path, archive_name)
+                
+    # 4. Reset the file pointer to the beginning of the stream ---------------------------
+                memory_file.seek(0)
 
-            move_files(file_lists, dest_folder)
-# 5. Return the stream as a downloadable attachment -----------------------------------
-            return send_file(
-                memory_file,
-                mimetype='application/zip',
-                as_attachment=True,
-                download_name=f"{course_uuid}_{course_topic}_assignments.zip"
-            )
+                move_files(file_lists, dest_folder)
+    # 5. Return the stream as a downloadable attachment -----------------------------------
+                return send_file(
+                    memory_file,
+                    mimetype='application/zip',
+                    as_attachment=True,
+                    download_name=f"{course_uuid}_{course_topic}_assignments.zip"
+                )
+            else:
+                flash('Please select the Course first!', 'error')
 
         if request.form.get('submit') == 'upload-assessed-video':
             course_uuid = request.form.get('course_uuid')
-            ws_id = db.session.query(Workshop).filter_by(uuid=course_uuid).scalar().id
-            yt_vid_id = request.form.get('vid-id')
-            vid_caption = request.form.get('vid-caption')
-            teacher = 'Shwetabh Suman'
-            date_time = datetime.now().replace(microsecond=0)
-            
-            entry = WorkshopAssignmentAssessmentVideos(
-                ws_id=ws_id,
-                yt_vid_id=yt_vid_id,
-                vid_caption=vid_caption,
-                instructor=teacher,
-                date_time=date_time
-            )
+            if course_uuid != 'default':
+                ws_id = db.session.query(Workshop).filter_by(uuid=course_uuid).scalar().id
+                yt_vid_id = request.form.get('vid-id')
+                vid_caption = request.form.get('vid-caption')
+                teacher = 'Shwetabh Suman'
+                date_time = datetime.now().replace(microsecond=0)
+                
+                entry = WorkshopAssignmentAssessmentVideos(
+                    ws_id=ws_id,
+                    yt_vid_id=yt_vid_id,
+                    vid_caption=vid_caption,
+                    instructor=teacher,
+                    date_time=date_time
+                )
 
-            db.session.add(entry)
-            db.session.commit()
-            flash('Assessment video ID successfully uploaded!', 'success')
+                db.session.add(entry)
+                db.session.commit()
+                flash('Assessment video ID successfully uploaded!', 'success')
+            else:
+                flash('Please select the course first!', 'error')
     
 
     if instructor in current_user.role:
