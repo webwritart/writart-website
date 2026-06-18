@@ -657,7 +657,7 @@ def course():
                 date_time = datetime.now().replace(microsecond=0)
                 subject = f"ASSIGNMENT SUBMISSION - {date_time}"
                 total_assignment_count = len(os.listdir(folder)) - 1
-                body = f"{file_count} assignments submitted.\nTotal submissions: {total_assignment_count}"
+                body = f"{file_count} assignments submitted by {current_user.name}.\nTotal submissions: {total_assignment_count}"
                 send_email_school(subject, ['shwetabhartist@gmail.com', 'writartstudios@gmail.com'], body, '', '')
                 flash("Images uploaded successfully!", "success")
                 return redirect(url_for('school.course') + '#submit-assignments')
