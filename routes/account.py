@@ -300,8 +300,10 @@ def instructor_dashboard():
                 memory_file = BytesIO()
 
     # 3. Write files into the ZIP archive --------------------------------------------
+                exclude_names = {'assessed'}
                 with ZipFile(memory_file, 'w', ZIP_DEFLATED) as zf:
                     for root, dirs, files in os.walk(folder):
+                        dirs[:] = [d for d in dirs if d not in exclude_names]
                         for file in files:
                             file_path = os.path.join(root, file)
                             file_lists.append(file_path)
