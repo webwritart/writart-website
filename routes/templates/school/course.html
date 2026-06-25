@@ -213,6 +213,37 @@
         {% endif %}
     </div>
 </div>
+<div class="video-wrapper" style="padding: 2% 0%; align-items:start; background: rgb(192, 192, 192);">
+    <div class="video-wrapper-container" >
+        <h3 style="color:rgb(0, 0, 0);">DEMO VIDEOS</h3>
+        <hr>
+        <div class="figure-container">
+        {% if demo_video_count > 0 %}
+            {% for v in demo_vid_dict %}
+            <figure class="figure">
+<!--                <iframe class="responsive-iframe" style="display:flex; width:25%; border:none;" src="https://www.youtube.com/embed/{{ vid_id_list[n] }}?si=2BVYS-0QHsxcX4f5&;"-->
+<!--                title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write;-->
+<!--                encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"-->
+<!--                allowfullscreen></iframe>-->
+                <iframe class="responsive-iframe" src="https://www.youtube.com/embed/{{ demo_vid_dict[v]['vid_id'] }}?si=2BVYS-0QHsxcX4f5&;"
+                title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write;
+                encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen></iframe>
+                <figcaption style="color: rgb(0, 0, 0);">{{ v }}</figcaption>
+            </figure>
+<!--                    <div class="video">-->
+<!--                        <div class="content">-->
+<!--                            <lite-youtube videoid="{{ vid_id_list[n] }}"-->
+
+<!--                                      params="controls=1"></lite-youtube>-->
+<!--                            <p>{{ vid_caption_list[n] }}</p>-->
+<!--                        </div>-->
+<!--                     </div>-->
+            {% endfor %}
+        {% endif %}
+        </div>
+    </div>
+</div>
 <!------------------------------------------------------- TEACHER'S FEEDBACK -------------------------------------------------->
 
 

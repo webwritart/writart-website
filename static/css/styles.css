@@ -2283,6 +2283,12 @@ lite-youtube.lyt-activated > .lty-playbtn {
     overflow: scroll;
     display: none;
 }
+#add-ws-demo {
+    height: 70vh;
+    width: 100%;
+    overflow: scroll;
+    display: none;
+}
 
 #notification {
     background-color: rgba(107, 72, 35, 0.5);

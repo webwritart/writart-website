@@ -8,7 +8,7 @@ from extensions import db, current_year,p
 from pathlib import Path
 from models.query import Query
 from models.tool import Tools
-from models.member import Workshop, Role, Member, QuizList, FeedbackCredits, FeedbackVideos, WorkshopAssignmentAssessmentVideos
+from models.member import Workshop, Role, Member, QuizList, FeedbackCredits, FeedbackVideos, WorkshopAssignmentAssessmentVideos, WorkshopDemo
 from models.videos import Demo
 from models.quiz import Quiz
 from models.workshop_details import WorkshopDetails
@@ -602,6 +602,15 @@ def course():
             assessment_video_count = len(assessment_vid_dict)
             
 
+    # -------------------------------------- DEMO VIDEOS ------------------------------------------------------ #
+            demo_vid_dict = {}
+            all_demo_videos = db.session.query(WorkshopDemo).filter_by(ws_id=ws_id).all()
+            for v in all_demo_videos:
+                demo_vid_dict[v.vid_caption] = {
+                    'vid_id': v.yt_vid_id,
+                    'vid_caption': v.vid_caption
+                }
+            demo_video_count = len(demo_vid_dict)
 
             # ------------------------------ STUDY MATERIAL ----------------------------------------------- #
             study_material_dict = {}
@@ -709,7 +718,8 @@ def course():
                            assignments_dict=assignments_dict, assignments_count=assignments_count, no_ws_credit_dict=no_ws_credit_dict,
                            total_topic_credits=total_topic_credits, ws_uuid=ws_uuid,
                            ws_credit_dict=ws_credit_dict, total_ws_credits=total_ws_credits,
-                           feedback_topic_list=feedback_topic_list, assessment_vid_dict=assessment_vid_dict, assessment_video_count=assessment_video_count)
+                           feedback_topic_list=feedback_topic_list, assessment_vid_dict=assessment_vid_dict, assessment_video_count=assessment_video_count,
+                           demo_vid_dict=demo_vid_dict, demo_video_count=demo_video_count)
 
 
 @school.route('/submit-feedback-files', methods=['GET', 'POST'])

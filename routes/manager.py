@@ -13,7 +13,7 @@ from operations.quiz import add_quiz_data_to_db
 from models.payment import Payment
 from models.query import Query
 from models.tool import Tools, ArtworkPriceTime
-from models.member import Member, Workshop, Role, Portrait, WorkshopVideos, Certificate
+from models.member import Member, Workshop, Role, Portrait, WorkshopVideos, Certificate, WorkshopDemo
 from models.workshop_details import WorkshopDetails
 from models.news import News
 from operations.miscellaneous import allowed_file, image_resize_and_compress_single, prepare_certificate
@@ -249,6 +249,29 @@ def home():
                         return redirect(url_for('manager.home'))
                 else:
                     flash('Aborted! Please select the Course/Workshop first!', 'error')
+            
+            if request.form.get('submit') == 'add-ws-demo':
+                ws_id = request.form.get('ws-id')
+                if ws_id != 'default':
+                    demo_title = request.form.get('title')
+                    demo_yt_url = request.form.get('url')
+                    date_time = datetime.datetime.now().replace(microsecond=0)
+                    try:
+                        workshop = db.session.query(Workshop).filter_by(id=ws_id).scalar()
+                        entry = WorkshopDemo(
+                            ws_id=workshop.id,
+                            yt_vid_id=demo_yt_url,
+                            vid_caption=demo_title,
+                            instructor='Shwetabh Suman',
+                            date_time=date_time
+                        )
+                        db.session.add(entry)
+                        db.session.commit()
+                        flash("Demo video added successfully", "success")
+                    except Exception as e:
+                        p(e)
+                        flash("Couldn't add Demo video", 'error')
+
 
             if request.form.get('session-link'):
                 j_link = request.form.get('session-link')

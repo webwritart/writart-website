@@ -20,6 +20,7 @@ function closeAll() {
     document.getElementById("add-assignments").style.display = 'none';
     document.getElementById("add-quiz-data").style.display = 'none';
     document.getElementById("add-news").style.display = 'none';
+    document.getElementById("add-ws-demo").style.display = 'none';
 }
 
 function addNewWs() {
@@ -35,6 +36,11 @@ function addWsDetails() {
 function addWsVideos() {
     closeAll();
     document.getElementById("add-ws-videos").style.display = 'block';
+}
+
+function addWsDemo() {
+    closeAll();
+    document.getElementById("add-ws-demo").style.display = 'block';
 }
 
 function openRegistration() {

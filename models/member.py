@@ -196,6 +196,19 @@ class WorkshopAssignmentAssessmentVideos(db.Model):
         return f"{self.ws_id}-{self.vid_caption}-{self.instructor}"
     
 
+class WorkshopDemo(db.Model):
+    __tablename__ = 'workshop_demo'
+    id = db.Column(db.Integer, primary_key=True)
+    ws_id = db.Column(db.Integer, db.ForeignKey('workshop.id'))
+    yt_vid_id = db.Column(db.String(100))
+    vid_caption = db.Column(db.String(100))
+    instructor = db.Column(db.String(100))
+    date_time = db.Column(db.String(50))
+
+    def __repr__(self):
+        return f"{self.ws_id}-{self.vid_caption}-{self.instructor}"
+        
+
 
 class Role(db.Model):
     __tablename__ = 'role'

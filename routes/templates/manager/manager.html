@@ -17,6 +17,7 @@
                 <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="addNewWs()" value="Add New Workshop">Add New Workshop</button>
                 <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="addWsDetails()" value="Add Workshop Details">Add Workshop Details</button>
                 <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="addWsVideos()" value="Add Workshop videos">Add Workshop Videos</button>
+                <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="addWsDemo()" value="Add Workshop Demo ">Add Workshop Demo video</button>
                 <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="openRegistration()" value="open-registration">Open Registration</button>
                 <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="addRecordingLink()" value="Add Recording Link">Add Recording Link</button>
                 <button class="btn-primary btn-block btn-large my_btn" type="button" onclick="addSessionLink()" value="Add Session Link">Add Session Link</button>
@@ -343,6 +344,20 @@
                     <input name="title" placeholder="Video Title" type="text" required>
                     <input name="url" placeholder="Video Youtube URL" type="text" required>
                     <button type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="add-ws-videos">ADD TO DATABASE</button>
+                </form>
+            </div>
+            <div id="add-ws-demo">
+                <form action="{{ url_for('manager.home') }}" method="post">
+                    <h2>Add Workshop Demo</h2>
+                    <select name="ws-id">
+                        <option value="Default">Select Course/Workshop</option>
+                        {% for id in ws_topic_dict %}
+                        <option value="{{id}}">{{ws_topic_dict[id]['topic']}}</option>
+                        {% endfor %}
+                    </select>
+                    <input name="title" placeholder="Video Title" type="text" required>
+                    <input name="url" placeholder="Video Youtube URL" type="text" required>
+                    <button type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="add-ws-demo">ADD TO DATABASE</button>
                 </form>
             </div>
             <div id="open-reg">
