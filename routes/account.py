@@ -374,7 +374,7 @@ def instructor_dashboard_canvas():
             name = s.name
             uuid = s.uuid
             for f in assessed_assignments_list:
-                if f.split('_')[1] == uuid:
+                if f.split('_')[1] == str(uuid):
                     p(f.split('_')[1])
                     p(uuid)
                     total_assessed += 1
