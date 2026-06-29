@@ -271,24 +271,14 @@ def instructor_dashboard():
         course_topic = c.topic
         course_dict[course_uuid] = {'course_uuid': course_uuid, 'course_topic': course_topic}
 
-    pending_assignments_count = 0
-    assessed_assignments_count = 0
+    
     
     if request.method == 'POST':
-        if request.form.get('submit') == 'assignments_count':
+        if request.form.get('submit') == 'assignment_details':
             if request.form.get('course_uuid') != 'default':
                 course_uuid = request.form.get('course_uuid')
-                pending_assignments_folder = Path(f'./static/files/courses/{course_uuid}/assignment-submissions/')
-                assessed_assignments_folder = Path(f'./static/files/courses/{course_uuid}/assignment-submissions/assessed/')
-                if not os.path.exists(pending_assignments_folder):
-                    os.makedirs(pending_assignments_folder)
-                if not os.path.exists(assessed_assignments_folder):
-                    os.makedirs(assessed_assignments_folder)
-                pending_assignments_count = sum(1 for item in pending_assignments_folder.iterdir() if item.is_file())
-                assessed_assignments_count = sum(1 for item in assessed_assignments_folder.iterdir() if item.is_file())
-                return render_template('instructor-dashboard.html', pending_assignments_count=pending_assignments_count, assessed_assignments_count=assessed_assignments_count,
-                                       logged_in=current_user.is_authenticated, current_year=current_year, admin=admin, course_dict=course_dict)
-
+                return redirect(url_for('account.instructor_dashboard_canvas', course_uuid=course_uuid, action='assignment_details'))
+                
         if request.form.get('submit') == 'download-assignments':
             course_uuid = request.form.get('course_uuid')
             if course_uuid != 'default':
@@ -347,14 +337,58 @@ def instructor_dashboard():
             else:
                 flash('Please select the course first!', 'error')
     
-
-    if instructor in current_user.role:
-        return render_template('instructor-dashboard.html', logged_in=current_user.is_authenticated, current_year=current_year,
+    if current_user.is_authenticated:
+        if instructor in current_user.role:
+            return render_template('instructor-dashboard.html', logged_in=current_user.is_authenticated, current_year=current_year,
                            admin=admin, course_dict=course_dict)
     else:
         return redirect(url_for('main.home'))
 
 
+@account.route('/instructor_dashboard_canvas', methods=['GET', 'POST'])
+def instructor_dashboard_canvas():
+    pending_assignments_count = 0
+    assessed_assignments_count = 0
+    student_assignment_dict = {}
+
+    admin = db.session.query(Role).filter_by(name='admin').scalar()
+    course_uuid = request.args.get('course_uuid')
+    action = request.args.get('action')
+    if action == 'assignment_details':
+        course_title = db.session.query(Workshop).filter_by(uuid=course_uuid).scalar().topic
+        pending_assignments_folder = Path(f'./static/files/courses/{course_uuid}/assignment-submissions/')
+        assessed_assignments_folder = Path(f'./static/files/courses/{course_uuid}/assignment-submissions/assessed/')
+        if not os.path.exists(pending_assignments_folder):
+            os.makedirs(pending_assignments_folder)
+        if not os.path.exists(assessed_assignments_folder):
+            os.makedirs(assessed_assignments_folder)
+        pending_assignments_count = sum(1 for item in pending_assignments_folder.iterdir() if item.is_file())
+        assessed_assignments_count = sum(1 for item in assessed_assignments_folder.iterdir() if item.is_file())
+
+        pending_assignments_list = [f.name for f in pending_assignments_folder.iterdir() if f.is_file()]
+        assessed_assignments_list = [f.name for f in assessed_assignments_folder.iterdir() if f.is_file()]
+        all_students_enrolled = db.session.query(Workshop).filter_by(uuid=course_uuid).scalar().participants
+        total_pending = 0
+        total_assessed = 0
+        for s in all_students_enrolled:
+            name = s.name
+            uuid = s.uuid
+            for f in assessed_assignments_list:
+                if f.split('_')[1] == uuid:
+                    total_assessed += 1
+            for f in pending_assignments_list:
+                if f.split('_')[1] == uuid:
+                    total_pending += 1
+            total = total_pending + total_assessed
+            student_assignment_dict[name] = {
+                'pending': total_pending,
+                'assessed': total_assessed,
+                'total': total
+            }
+
+        return render_template('instructor_dashboard_canvas.html', pending_assignments_count=pending_assignments_count, assessed_assignments_count=assessed_assignments_count,
+                                        logged_in=current_user.is_authenticated, current_year=current_year, title=course_title, action=action, admin=admin, student_assignment_dict=student_assignment_dict)
+    return render_template('account.instructor_dashboard_canvas.html', logged_in=current_user.is_authenticated, current_year=current_year, admin=admin)
 
 @account.route('/contact-instructor', methods=['GET', 'POST'])
 def contact_instructor():
@@ -775,6 +809,8 @@ def login():
                 student = db.session.query(Role).filter_by(name='student').scalar()
                 user_roles = current_user.role
                 session['logged_in'] = True
+                if session.get('url') == url_for('school.classroom'):
+                    return redirect(url_for('school.classroom'))
                 if student in user_roles:
                     return redirect(url_for('account.student_dashboard'))
                 if not current_user.sex or current_user.sex == '':

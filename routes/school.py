@@ -387,6 +387,7 @@ def upcoming_workshop():
 def classroom():
     role = ''
     session['url'] = url_for('school.classroom')
+    p(session.get('url'))
     admin = db.session.query(Role).filter_by(name='admin').one_or_none()
     if current_user.is_authenticated:
         if admin in current_user.role:

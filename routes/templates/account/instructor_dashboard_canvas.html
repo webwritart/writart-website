@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    #container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-height: 80vh;
+    }
+    #status {
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        background: black;
+        color: white;
+        min-width: 60%;
+        padding: .5%;
+        margin: 0%;
+    }
+    #status p {
+        margin: 0%;
+        padding: 0%;
+    }
+    #title {
+        font-size: 2rem;
+    }
+    table {
+        min-width: 60%;
+        border: solid 1px black;
+    }
+</style>
+<div id="container">
+    <p id="title">{{title}}</p>
+    <div id="status">
+        <p>Pending: {{pending_assignments_count}}</p>
+        <p>Assessed: {{assessed_assignments_count}}</p>
+    </div>
+    <table>
+        <tr style="background: black; color: white;">
+            <td>Name of Students</td>
+            <td>Pending</td>
+            <td>Assessed</td>
+            <td>Total</td>
+        {% for i in student_assignment_dict %}
+        </tr>
+            <td>{{i}}</td>
+            <td>{{student_assignment_dict[i]['pending']}}</td>
+            <td>{{student_assignment_dict[i]['assessed']}}</td>
+            <td>{{student_assignment_dict[i]['total']}}</td>
+        <tr>
+        {% endfor %}
+            
+        </tr>
+    </table>
+</div>
+
+
+
+{% endblock %}

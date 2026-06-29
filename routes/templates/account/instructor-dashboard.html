@@ -70,7 +70,7 @@
                 <option value="{{c}}">{{course_dict[c]['course_topic']}}</option>
                 {% endfor %}
             </select>
-            <button class="btn btn-primary btn-block btn-large" type="submit" name="submit" value="assignments_count">Get Count</button>
+            <button class="btn btn-primary btn-block btn-large" type="submit" name="submit" value="assignment_details">Get Details</button>
         </form>
         {% if pending_assignments_count != '' %}
         <div id="assignment-count-display" style="display: flex; background: rgb(62, 82, 38); width: 40%; color: white; justify-content: space-evenly;">
