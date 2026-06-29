@@ -364,6 +364,7 @@ def instructor_dashboard_canvas():
             os.makedirs(assessed_assignments_folder)
         pending_assignments_count = sum(1 for item in pending_assignments_folder.iterdir() if item.is_file())
         assessed_assignments_count = sum(1 for item in assessed_assignments_folder.iterdir() if item.is_file())
+        total_assignment_count = pending_assignments_count + assessed_assignments_count
 
         pending_assignments_list = [f.name for f in pending_assignments_folder.iterdir() if f.is_file()]
         assessed_assignments_list = [f.name for f in assessed_assignments_folder.iterdir() if f.is_file()]
@@ -391,7 +392,7 @@ def instructor_dashboard_canvas():
             total_pending = 0
             total_assessed = 0
 
-        return render_template('instructor_dashboard_canvas.html', pending_assignments_count=pending_assignments_count, assessed_assignments_count=assessed_assignments_count,
+        return render_template('instructor_dashboard_canvas.html', pending_assignments_count=pending_assignments_count, assessed_assignments_count=assessed_assignments_count, total_assignment_count=total_assignment_count,
                                         logged_in=current_user.is_authenticated, current_year=current_year, title=course_title, action=action, admin=admin, student_assignment_dict=student_assignment_dict)
     return render_template('account.instructor_dashboard_canvas.html', logged_in=current_user.is_authenticated, current_year=current_year, admin=admin)
 
