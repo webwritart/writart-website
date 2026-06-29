@@ -375,9 +375,12 @@ def instructor_dashboard_canvas():
             uuid = s.uuid
             for f in assessed_assignments_list:
                 if f.split('_')[1] == uuid:
+                    p(f.split('_')[1])
+                    p(uuid)
                     total_assessed += 1
             for f in pending_assignments_list:
-                if f.split('_')[1] == uuid:
+                if f.split('_')[1] == str(uuid):
+                    p('Found')
                     total_pending += 1
             total = total_pending + total_assessed
             student_assignment_dict[name] = {
@@ -385,6 +388,8 @@ def instructor_dashboard_canvas():
                 'assessed': total_assessed,
                 'total': total
             }
+            total_pending = 0
+            total_assessed = 0
 
         return render_template('instructor_dashboard_canvas.html', pending_assignments_count=pending_assignments_count, assessed_assignments_count=assessed_assignments_count,
                                         logged_in=current_user.is_authenticated, current_year=current_year, title=course_title, action=action, admin=admin, student_assignment_dict=student_assignment_dict)
