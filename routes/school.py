@@ -627,6 +627,7 @@ def course():
                     }
                     study_material_dict[f] = material
             study_material_count = len(study_material_dict)
+            study_material_dict = dict(sorted(study_material_dict.items()))
 
             # ----------------------------------- ASSIGNMENTS ---------------------------------------------- #
             assignments_dict = {}
