@@ -642,6 +642,7 @@ def course():
                     }
                     assignments_dict[f] = assignment
             assignments_count = len(assignments_dict)
+            assignments_dict = dict(sorted(assignments_dict.items()))
 
             # ------------------------------- ASSIGNMENTS SUBMISSION ------------------------------------------ #
             if request.method == 'POST':
