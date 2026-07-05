@@ -386,6 +386,33 @@ def instructor_dashboard():
                 except Exception as e:
                     p(e)
                     flash("Couldn't add Demo video", 'error')
+                    
+        if request.form.get('submit') == 'add-assessed-video':
+            course_uuid = request.form.get('course-uuid')
+            if course_uuid != 'default':
+                yt_vid_id = request.form.get('assessed-vid-id')
+                vid_caption = request.form.get('assessed-vid-caption')
+                teacher = 'Shwetabh Suman'
+                date_time = datetime.now().replace(microsecond=0)
+                month = request.form.get('month')
+                course_month_list = db.session.query(Workshop).filter_by(uuid=course_uuid).scalar().months
+                for m in course_month_list:
+                    if m.month == int(month):
+                        course_month = m
+                entry = MonthAssignmentAssessmentVideos(
+                    month_id= course_month.id,
+                    yt_vid_id=yt_vid_id,
+                    vid_caption=vid_caption,
+                    instructor=teacher,
+                    date_time=date_time
+                )
+
+                db.session.add(entry)
+                db.session.commit()
+                flash('Assessment video ID successfully uploaded!', 'success')
+            else:
+                flash('Please select the course first!', 'error')
+
         if request.form.get('submit') == 'new-course':
             topic = request.form.get('topic')
             category = request.form.get('category')
@@ -472,33 +499,10 @@ def instructor_dashboard():
             else:
                 flash('Please select the Course first!', 'error')
 
-        if request.form.get('submit') == 'upload-assessed-video':
-            course_uuid = request.form.get('course_uuid')
-            if course_uuid != 'default':
-                ws_id = db.session.query(Workshop).filter_by(uuid=course_uuid).scalar().id
-                yt_vid_id = request.form.get('vid-id')
-                vid_caption = request.form.get('vid-caption')
-                teacher = 'Shwetabh Suman'
-                date_time = datetime.now().replace(microsecond=0)
-                
-                entry = WorkshopAssignmentAssessmentVideos(
-                    ws_id=ws_id,
-                    yt_vid_id=yt_vid_id,
-                    vid_caption=vid_caption,
-                    instructor=teacher,
-                    date_time=date_time
-                )
-
-                db.session.add(entry)
-                db.session.commit()
-                flash('Assessment video ID successfully uploaded!', 'success')
-            else:
-                flash('Please select the course first!', 'error')
-    temp_data = 'Temporary'
     if current_user.is_authenticated:
         if instructor in current_user.role:
             return render_template('instructor-dashboard.html', logged_in=current_user.is_authenticated, current_year=current_year,
-                           admin=admin, course_dict=course_dict, temp_data=temp_data)
+                           admin=admin, course_dict=course_dict)
     else:
         return redirect(url_for('main.home'))
 

@@ -58,7 +58,7 @@
 }
 </style>
 <div id="root-container">
-    <div class="form-container">
+    <div class="form-container" style="background: rgb(164, 173, 155);">
         <p class="form-heading">Assignments count</p>
         <form id="assignment-count" action="{{url_for('account.instructor_dashboard')}}" method="post">
             <select name="course_uuid" required>
@@ -71,7 +71,7 @@
         </form>
     </div>
     
-    <div class="form-container">
+    <div class="form-container" style="background: rgb(164, 173, 155);">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
@@ -90,48 +90,7 @@
             <button class="btn btn-primary btn-block btn-large" type="submit" name="submit" value="download-assignments">Downlaod</button>
         </form>
     </div>
-
-    <div class="form-container">
-        <p class="form-heading">UPLOAD ASSESSED ASSIGNMENT VIDEO</p>
-        <form action="{{url_for('account.instructor_dashboard')}}" method="post">
-            <select name="course_uuid" required>
-                <option value="default">Choose Course/Workshop</option>
-                {% for c in course_dict %}
-                <option value="{{c}}">{{course_dict[c]['course_topic']}}</option>
-                {% endfor %}
-            </select>
-            <input type="text" name="vid-id" placeholder="Video Youtube ID" required>
-            <input type="text" name="vid-caption" placeholder="Caption" required>
-            <button class="btn btn-primary btn-block btn-large" type="submit" name="submit" value="upload-assessed-video">Upload</button>
-        </form>
-    </div>
     <hr style="background:black; opacity: .7;">
-    <div class="form-container">
-        <form action="{{ url_for('account.instructor_dashboard')}}" method="post">
-            <p class="form-heading">Add New Course</p>
-            <input name="topic" placeholder="Topic" type="text" required>
-            <select name="category">
-                <option value="default">Choose Category</option>
-                <option value="course">Course</option>
-                <option value="qa">Question-Answer</option>
-            </select>
-            <button type="submit" name="submit" value="new-course" class="btn btn-primary btn-block btn-large">Add New Course</button>
-        </form>
-    </div>
-    <div class="form-container">
-        <form action="{{ url_for('account.instructor_dashboard')}}" method="post">
-            <p class="form-heading">Add Course Months/Parts</p>
-            <select name="course-uuid">
-                <option value="default">Select Course</option>
-                {% for uuid in course_dict %}
-                <option value="{{uuid}}">{{course_dict[uuid]['course_topic']}}</option>
-                {% endfor %}
-            </select>
-            <input type="number" name="month-count" placeholder="Total months" required>
-            <button type="submit" name="submit" value="workshop-month" class="btn btn-primary btn-block btn-large">Add Months</button>
-        </form>
-    </div>
-    <div id="data-container" data-info="{{ temp_data | tojson }}"></div>
     <div class="form-container">
         <form action="{{ url_for('account.instructor_dashboard') }}" method="post" enctype="multipart/form-data">
             <p class="form-heading">COURSE OPERATIONS</p>
@@ -142,6 +101,7 @@
                 <option value="add-course-notes">Add Course Notes</option>
                 <option value="add-course-assignments">Add Course Assignments</option>
                 <option value="add-course-demo">Add Course Demo</option>
+                <option value="upload-assessed-video">Upload Assessed Assignment video</option>
             </select>
             <select id="course" name="course-uuid">
                 <option value="Default">Select Course/Workshop</option>
@@ -160,8 +120,36 @@
             <!-- ------------------------------------------- ADD COURSE DEMO ------------------------------------------ -->
             <input id="demo-title" name="demo-title" placeholder="Demo video Title" type="text">
             <input id="demo-url" name="demo-url" placeholder="Demo video Youtube URL" type="text">
-            <!-- ----------------------------------------------------------------------------- -->
+            <!-- ----------------------------------- UPLOAD ASSESSED ASSIGNMENT VIDEO --------------------------------- -->
+            <input id="assessed-vid-id" type="text" name="assessed-vid-id" placeholder="Video Youtube ID">
+            <input id="assessed-vid-caption" type="text" name="assessed-vid-caption" placeholder="Caption">
             <button type="submit" id="submit-btn" name="submit" class="btn btn-primary btn-block btn-large" value="">NONE</button>
+        </form>
+    </div>
+    <hr style="background:black; opacity: .7;">
+    <div class="form-container" style="background: rgb(164, 173, 155);">
+        <form action="{{ url_for('account.instructor_dashboard')}}" method="post">
+            <p class="form-heading">Add Course Months/Parts</p>
+            <select name="course-uuid">
+                <option value="default">Select Course</option>
+                {% for uuid in course_dict %}
+                <option value="{{uuid}}">{{course_dict[uuid]['course_topic']}}</option>
+                {% endfor %}
+            </select>
+            <input type="number" name="month-count" placeholder="Total months" required>
+            <button type="submit" name="submit" value="workshop-month" class="btn btn-primary btn-block btn-large">Add Months</button>
+        </form>
+    </div>
+    <div class="form-container" style="background: rgb(164, 173, 155);">
+        <form action="{{ url_for('account.instructor_dashboard')}}" method="post">
+            <p class="form-heading">Add New Course</p>
+            <input name="topic" placeholder="Topic" type="text" required>
+            <select name="category">
+                <option value="default">Choose Category</option>
+                <option value="course">Course</option>
+                <option value="qa">Question-Answer</option>
+            </select>
+            <button type="submit" name="submit" value="new-course" class="btn btn-primary btn-block btn-large">Add New Course</button>
         </form>
     </div>
 </div>
@@ -179,6 +167,8 @@
     const assignmentFiles = document.getElementById('assignment-files');
     const demoTitle = document.getElementById('demo-title');
     const demoUrl = document.getElementById('demo-url');
+    const assessedVidId = document.getElementById('assessed-vid-id');
+    const assessedVidCaption = document.getElementById('assessed-vid-caption');
     const submitBtn = document.getElementById('submit-btn');
 
     function hideInputs(){
@@ -189,6 +179,8 @@
         assignmentFiles.style.display = "none";
         demoTitle.style.display = "none";
         demoUrl.style.display = "none";
+        assessedVidId.style.display = "none";
+        assessedVidCaption.style.display = "none";
     }
     hideInputs();
 
@@ -217,6 +209,12 @@
             demoUrl.style.display = "block";
             submitBtn.textContent = "Add Course Demo Video";
             submitBtn.value = "add-course-demo";
+        } else if (operationValue == "upload-assessed-video") {
+            hideInputs();
+            assessedVidId.style.display = "block";
+            assessedVidCaption.style.display = "block";
+            submitBtn.textContent = "Upload Assessed Assignment Video";
+            submitBtn.value = "add-assessed-video";
         }
     });
 
