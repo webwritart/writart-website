@@ -213,3 +213,24 @@ def move_files (source_path_with_file_joined_list, destination_folder):
             p("File moved successfully!")
         else:
             p("File doesn't exit")
+
+
+def create_uuid(existing_uuid_list, uuid_length_in_digit):
+    lower_limit = '1'
+    upper_limit = '9'
+    uuid = ''
+    for i in range(uuid_length_in_digit-1):
+        lower_limit = lower_limit + '0'
+    
+    for i in range(uuid_length_in_digit-1):
+        upper_limit = upper_limit + '9'
+    
+    carry_on = True
+    while carry_on:
+        uuid = random.randint(int(lower_limit), int(upper_limit))
+        if uuid not in existing_uuid_list:
+            carry_on = False
+            
+    return uuid
+
+

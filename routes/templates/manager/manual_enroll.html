@@ -5,11 +5,11 @@
         <h1>MANUAL ENROLL</h1>
         <form action="{{ url_for('manager.manual_enroll') }}" method="post">
             <input type="text" name="email" placeholder="Student's email or emails separated by comma" required>
-            <select name="course" required>
+            <select id="course" name="course" required onchange="getWsId()">
                 <option value="default">Workshop/course Selection</option>
-                {% for ws in ws_dict %}
-                <option value="{{ws}}">{{ws_dict[ws]['topic']}}</option>
-                {% endfor %}
+            </select>
+            <select name="month" id="month_select">
+                <option value="default">Choose month</option>
             </select>
             <input type="submit" class="btn btn-primary btn-block btn-large" name="submit" value="manual_enroll">
             {% with messages = get_flashed_messages(with_categories=true) %}
@@ -23,4 +23,28 @@
     </div>
 </div>
 
+<script>
+    const wsDict = {{ ws_dict | tojson }};
+    const selectElement = document.getElementById('course');
+    const month = document.getElementById('month_select');
+
+    Object.keys(wsDict).forEach(key =>{
+        var option = document.createElement('option');
+        option.value = key;
+        option.textContent = wsDict[key]['topic'];
+        selectElement.appendChild(option);
+    });
+
+    selectElement.addEventListener('change', (event) => {
+        const selectedValue = event.target.value;
+        const monthList = wsDict[selectedValue]['months'];
+        month.replaceChildren();
+        monthList.forEach((item) => {
+            var option = document.createElement('option');
+            option.value = item;
+            option.textContent = item;
+            month.appendChild(option);
+        });
+    });
+</script>
 {% endblock %}

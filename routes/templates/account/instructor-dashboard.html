@@ -26,9 +26,6 @@
     font-weight: bold;
     text-align: center;
 }
-#assignment-count {
-    border: solid 1px black;
-}
 #assignment-count-display p {
     line-height: 1;
     padding: 1% 0% 1.5% 0%;
@@ -72,13 +69,8 @@
             </select>
             <button class="btn btn-primary btn-block btn-large" type="submit" name="submit" value="assignment_details">Get Details</button>
         </form>
-        {% if pending_assignments_count != '' %}
-        <div id="assignment-count-display" style="display: flex; background: rgb(62, 82, 38); width: 40%; color: white; justify-content: space-evenly;">
-            <p>Pending: {{pending_assignments_count}}</p>
-            <p>Assessed:{{assessed_assignments_count}}</p>
-        </div>
-        {% endif %}
     </div>
+    
     <div class="form-container">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -113,5 +105,138 @@
             <button class="btn btn-primary btn-block btn-large" type="submit" name="submit" value="upload-assessed-video">Upload</button>
         </form>
     </div>
+    <hr style="background:black; opacity: .7;">
+    <div class="form-container">
+        <form action="{{ url_for('account.instructor_dashboard')}}" method="post">
+            <p class="form-heading">Add New Course</p>
+            <input name="topic" placeholder="Topic" type="text" required>
+            <select name="category">
+                <option value="default">Choose Category</option>
+                <option value="course">Course</option>
+                <option value="qa">Question-Answer</option>
+            </select>
+            <button type="submit" name="submit" value="new-course" class="btn btn-primary btn-block btn-large">Add New Course</button>
+        </form>
+    </div>
+    <div class="form-container">
+        <form action="{{ url_for('account.instructor_dashboard')}}" method="post">
+            <p class="form-heading">Add Course Months/Parts</p>
+            <select name="course-uuid">
+                <option value="default">Select Course</option>
+                {% for uuid in course_dict %}
+                <option value="{{uuid}}">{{course_dict[uuid]['course_topic']}}</option>
+                {% endfor %}
+            </select>
+            <input type="number" name="month-count" placeholder="Total months" required>
+            <button type="submit" name="submit" value="workshop-month" class="btn btn-primary btn-block btn-large">Add Months</button>
+        </form>
+    </div>
+    <div id="data-container" data-info="{{ temp_data | tojson }}"></div>
+    <div class="form-container">
+        <form action="{{ url_for('account.instructor_dashboard') }}" method="post" enctype="multipart/form-data">
+            <p class="form-heading">COURSE OPERATIONS</p>
+            <!-- <p id="js-test">Test text</p> -->
+            <select id="operation" name="operation">
+                <option value="">Select Operation</option>
+                <option value="add-course-video">Add Course video</option>
+                <option value="add-course-notes">Add Course Notes</option>
+                <option value="add-course-assignments">Add Course Assignments</option>
+                <option value="add-course-demo">Add Course Demo</option>
+            </select>
+            <select id="course" name="course-uuid">
+                <option value="Default">Select Course/Workshop</option>
+            </select>
+            <select name="month" id="month_select">
+                <option value="default">Choose Month</option>
+            </select>
+            <!-- ----------------------------------------- ADD COURSE VIDEO ------------------------------------------ -->
+            <input id="lesson-title" name="lesson-title" placeholder="Video Title" type="text">
+            <input id="lesson-url" name="lesson-url" placeholder="Video Youtube URL" type="text">
+            <input id="lesson-detail" name="lesson-detail" placeholder="Video detail" type="text">
+            <!-- ---------------------------------------- ADD COURSE NOTES ------------------------------------------- -->
+            <input id="notes-files" type="file" name="file" multiple>
+            <!-- ------------------------------------------ ADD COURSE ASSIGNMENTS ----------------------------------- -->
+            <input id="assignment-files" type="file" name="assignments" multiple>
+            <!-- ------------------------------------------- ADD COURSE DEMO ------------------------------------------ -->
+            <input id="demo-title" name="demo-title" placeholder="Demo video Title" type="text">
+            <input id="demo-url" name="demo-url" placeholder="Demo video Youtube URL" type="text">
+            <!-- ----------------------------------------------------------------------------- -->
+            <button type="submit" id="submit-btn" name="submit" class="btn btn-primary btn-block btn-large" value="">NONE</button>
+        </form>
+    </div>
 </div>
+
+<script>
+    const courseDict = {{ course_dict | tojson }};
+    const selectElement = document.getElementById('course');
+    const month = document.getElementById('month_select');
+    const operation = document.getElementById('operation');
+
+    const lessonTitle = document.getElementById('lesson-title');
+    const lessonUrl = document.getElementById('lesson-url');
+    const lessonDetail = document.getElementById('lesson-detail');
+    const notesFiles = document.getElementById('notes-files');
+    const assignmentFiles = document.getElementById('assignment-files');
+    const demoTitle = document.getElementById('demo-title');
+    const demoUrl = document.getElementById('demo-url');
+    const submitBtn = document.getElementById('submit-btn');
+
+    function hideInputs(){
+        lessonTitle.style.display = "none";
+        lessonUrl.style.display = "none";
+        lessonDetail.style.display = "none";
+        notesFiles.style.display = "none";
+        assignmentFiles.style.display = "none";
+        demoTitle.style.display = "none";
+        demoUrl.style.display = "none";
+    }
+    hideInputs();
+
+    operation.addEventListener('change', (event) => {
+        const operationValue = event.target.value;
+        if (operationValue == "add-course-video") {
+            hideInputs();
+            lessonTitle.style.display = "block";
+            lessonUrl.style.display = "block";
+            lessonDetail.style.display = "block";
+            submitBtn.textContent = "Add Course Recording Video";
+            submitBtn.value = "add-course-video";
+        } else if (operationValue == "add-course-notes") {
+            hideInputs();
+            notesFiles.style.display = "block";
+            submitBtn.textContent = "Add Course Notes";
+            submitBtn.value = "add-course-notes";
+        } else if (operationValue == "add-course-assignments") {
+            hideInputs();
+            assignmentFiles.style.display = "block";
+            submitBtn.textContent = "Add Course assignments";
+            submitBtn.value = "add-course-assignments";
+        } else if (operationValue == "add-course-demo") {
+            hideInputs();
+            demoTitle.style.display = "block";
+            demoUrl.style.display = "block";
+            submitBtn.textContent = "Add Course Demo Video";
+            submitBtn.value = "add-course-demo";
+        }
+    });
+
+    Object.keys(courseDict).forEach(key => {
+        var option = document.createElement('option');
+        option.value = key;
+        option.textContent = courseDict[key]['course_topic'];
+        selectElement.appendChild(option);
+    });
+
+    selectElement.addEventListener('change', (event) => {
+        const selectedValue = event.target.value;
+        const monthList = courseDict[selectedValue]['months'];
+        month.replaceChildren();
+        monthList.forEach((item) => {
+            var option = document.createElement('option');
+            option.value = item;
+            option.textContent = item;
+            month.appendChild(option);
+        });
+    });
+</script>
 {% endblock %}

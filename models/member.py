@@ -19,6 +19,11 @@ member_project = db.Table('member_project',
                           db.Column('project_id', db.Integer, db.ForeignKey('project.id'))
                           )
 
+member_workshop_month = db.Table('member_workshop_month',
+                                 db.Column('member_id', db.Integer, db.ForeignKey('member.id')),
+                                 db.Column('workshop_month_id', db.Integer, db.ForeignKey('workshop_month.id'))
+                                 )
+
 
 class Member(UserMixin, db.Model):
     __tablename__ = "member"
@@ -42,6 +47,7 @@ class Member(UserMixin, db.Model):
     token = db.Column(db.String(10))
     participated = db.relationship('Workshop', secondary=member_workshop, backref='participants')
     role = db.relationship('Role', secondary=member_role, backref='members')
+    ws_months = db.relationship('WorkshopMonth', secondary=member_workshop_month, backref='members')
     demo = db.relationship('Demo', backref='creator')
     artist_data = db.relationship('ArtistData', backref='member', uselist=False)
     project = db.relationship('Project', secondary=member_project, backref='clients')
@@ -162,12 +168,92 @@ class Workshop(db.Model):
     s3_time = db.Column(db.String(100))
     s4_date = db.Column(db.String(100))
     s4_time = db.Column(db.String(100))
+    months = db.relationship('WorkshopMonth', backref='workshop')
     details = db.relationship('WorkshopDetails', backref='workshop', uselist=False)
     videos = db.relationship('WorkshopVideos', backref='workshop')
     assignment_assessment_videos = db.relationship('WorkshopAssignmentAssessmentVideos', backref='workshop')
 
     def __repr__(self):
         return f'{self.name}, {self.topic}'
+    
+
+class WorkshopMonth(db.Model):
+    __tablename__ = 'workshop_month'
+    id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.Integer, unique=True)
+    month = db.Column(db.Integer)
+    title = db.Column(db.String(50))
+    detail = db.Column(db.String(100))
+    workshop_id = db.Column(db.Integer, db.ForeignKey('workshop.id'))
+    videos = db.relationship('MonthVideos', backref='month')
+    notes = db.relationship('MonthNotes', backref='month')
+    assignments = db.relationship('MonthAssignments', backref='month')
+    assignment_assessment_videos = db.relationship('MonthAssignmentAssessmentVideos', backref='month')
+    demos = db.relationship('MonthDemo', backref='month')
+
+
+def __repr__(self):
+    return f'{self.workshop_id} - {self.month} month'
+
+
+class MonthVideos(db.Model):
+    __tablename__ = 'month_videos'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100))
+    vid_id = db.Column(db.String(100))
+    detail = db.Column(db.String(200))
+    month_id = db.Column(db.Integer, db.ForeignKey('workshop_month.id'))
+
+    def __repr__(self):
+        return f'{self.title}'
+    
+    
+class MonthNotes(db.Model):
+    __tablename__ = 'month_notes'
+    id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.Integer, unique=True)
+    file_name = db.Column(db.String(50))
+    month_id = db.Column(db.Integer, db.ForeignKey('workshop_month.id'))
+
+    def __repr__(self):
+        return f'{self.file_name}'
+    
+    
+class MonthAssignments(db.Model):
+    __tablename__ = 'month_assignments'
+    id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.Integer, unique=True)
+    file_name = db.Column(db.String(50))
+    month_id = db.Column(db.Integer, db.ForeignKey('workshop_month.id'))
+
+    def __repr__(self):
+        return f'{self.file_name}'
+    
+
+class MonthAssignmentAssessmentVideos(db.Model):
+    __tablename__ = 'month_assignment_assessment_videos'
+    id = db.Column(db.Integer, primary_key=True)
+    yt_vid_id = db.Column(db.String(100))
+    vid_caption = db.Column(db.String(100))
+    instructor = db.Column(db.String(100))
+    date_time = db.Column(db.String(50))
+    month_id = db.Column(db.Integer, db.ForeignKey('workshop_month.id'))
+
+    def __repr__(self):
+        return f'{self.vid_caption}'
+    
+
+class MonthDemo(db.Model):
+    __tablename__ = 'month_demo'
+    id = db.Column(db.Integer, primary_key=True)
+    yt_vid_id = db.Column(db.String(100))
+    vid_caption = db.Column(db.String(100))
+    instructor = db.Column(db.String(100))
+    date_time = db.Column(db.String(50))
+    month_id = db.Column(db.Integer, db.ForeignKey('workshop_month.id'))
+
+    def __repr__(self):
+        return f'{self.vid_caption}'
 
 
 class WorkshopVideos(db.Model):

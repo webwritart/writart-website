@@ -221,57 +221,7 @@ def home():
                             file.save(f"{folder}/{filename}")
                             flash('Chief! Images uploaded successfully!', 'success')
                 else:
-                    flash('Aborted! Please select Course/Workshop first!', 'error')
-
-            if request.form.get('submit') == 'add-ws-videos':
-                ws_id = request.form.get('ws-id')
-                if ws_id != 'default':
-                    title = request.form.get('title')
-                    video_yt_url = request.form.get('url')
-                    try:
-                        workshop = db.session.query(Workshop).filter_by(id=ws_id).first()
-                        ws_name = workshop.name
-                        entry = WorkshopVideos(
-                            ws_name=ws_name,
-                            title=title,
-                            vid_id=video_yt_url,
-                            workshop_id=workshop.id
-                    )
-                        try:
-                            db.session.add(entry)
-                            db.session.commit()
-                            print('committed')
-                            flash('Data added successfully, Chief!', 'success')
-                        except Exception as e:
-                            flash('Failed to add, chief!', 'error')
-                    except Exception as e:
-                        flash('No workshop found with the provided name', 'error')
-                        return redirect(url_for('manager.home'))
-                else:
-                    flash('Aborted! Please select the Course/Workshop first!', 'error')
-            
-            if request.form.get('submit') == 'add-ws-demo':
-                ws_id = request.form.get('ws-id')
-                if ws_id != 'default':
-                    demo_title = request.form.get('title')
-                    demo_yt_url = request.form.get('url')
-                    date_time = datetime.datetime.now().replace(microsecond=0)
-                    try:
-                        workshop = db.session.query(Workshop).filter_by(id=ws_id).scalar()
-                        entry = WorkshopDemo(
-                            ws_id=workshop.id,
-                            yt_vid_id=demo_yt_url,
-                            vid_caption=demo_title,
-                            instructor='Shwetabh Suman',
-                            date_time=date_time
-                        )
-                        db.session.add(entry)
-                        db.session.commit()
-                        flash("Demo video added successfully", "success")
-                    except Exception as e:
-                        p(e)
-                        flash("Couldn't add Demo video", 'error')
-
+                    flash('Aborted! Please select Course/Workshop first!', 'error')            
 
             if request.form.get('session-link'):
                 j_link = request.form.get('session-link')
@@ -317,30 +267,6 @@ def home():
                 db.session.query(Tools).filter_by(keyword='reg_status').one().data = 'close'
                 db.session.query(Tools).filter_by(keyword='close_reg').one().data = 'Done'
                 db.session.commit()
-
-            if request.form.get('submit') == 'add_ws_notes':
-                if 'file' not in request.files:
-                    flash('No file part', 'error')
-                    return redirect(request.url)
-                files = request.files.getlist('file')
-                
-                ws_id = request.form.get('ws_id')
-                if ws_id != 'default':
-                    folder_name = db.session.query(Workshop).filter_by(id=ws_id).scalar().uuid
-                    folder = f"./static/files/courses/{folder_name}/notes/"
-                    if not os.path.exists(folder):
-                        os.makedirs(folder)
-                        p(f"{folder} created!")
-                    else:
-                        p('Folder exists')
-                    for file in files:
-                        if file.filename == '':
-                            flash('No selected file', 'error')
-                            return redirect(request.url)
-                        if file:
-                            filename = secure_filename(file.filename)
-                            file.save(f"{folder}/{filename}")
-                            flash('Chief! Files uploaded successfully!', 'success')
 
             if request.form.get('submit') == 'add_quiz_data':
                 category = request.form.get('quiz-category')
@@ -843,29 +769,6 @@ def home():
 
 @manager.route('/add_assignments', methods=['GET', 'POST'])
 def add_assignments():
-    if request.method == 'POST':
-        if 'assignments' not in request.files:
-            flash('No file part', 'error')
-            return redirect(request.url)
-        files = request.files.getlist('assignments')
-
-        ws_id = request.form.get('ws_id')
-        folder_name = db.session.query(Workshop).filter_by(id=ws_id).scalar().uuid
-        if folder_name != 'default':
-            folder = f"./static/files/courses/{folder_name}/assignments/"
-            if not os.path.exists(folder):
-                os.makedirs(folder)
-            for file in files:
-                if file.filename == '':
-                    flash('No selected file', 'error')
-                    return redirect(request.url)
-                if file:
-                    filename = secure_filename(file.filename)
-                    file.save(f"{folder}/{filename}")
-                    flash('Chief! Files uploaded successfully!', 'success')
-            return redirect(request.url)
-        else:
-            flash('Aborted! Please select the Course/Workshop first!', 'error')
     return redirect(url_for('manager.home'))
 
 
@@ -1248,14 +1151,26 @@ def manual_enroll():
         data = db.session.query(Workshop).all()
         student_role = db.session.query(Role).filter_by(name='student').scalar()
         for ws in data:
+            ws_month_list = []
+
             ws_id = ws.id
             ws_topic = ws.topic
-            workshop_dict[ws_id] = {'id':ws_id, 'topic': ws_topic}
-
+            ws_month = ws.months
+            for m in ws_month:
+                ws_month_list.append(m.month)
+            workshop_dict[ws_id] = {'id':ws_id, 'topic': ws_topic, 'months':ws_month_list}
         if request.method == 'POST':
             workshop_id = request.form.get('course')
+            month = request.form.get('month')
+            p(type(month))
             if workshop_id != 'default':
                 workshop = db.session.query(Workshop).filter_by(id=workshop_id).scalar()
+                workshop_months = workshop.months
+                p(workshop_months)
+                for m in workshop_months:
+                    p(type(m.month))
+                    if m.month == int(month):
+                        req_month = m
             else:
                 flash('Aborted! Please choose the workshop/course', 'error')
             email_list = []
@@ -1266,8 +1181,8 @@ def manual_enroll():
                     email_list.append(email.strip())
                 for email in email_list:
                     student = db.session.query(Member).filter_by(email=email).scalar()
-                    if workshop not in student.participated:
-                        student.participated.append(workshop)
+                    if req_month not in student.ws_months:
+                        student.ws_months.append(req_month)
                         if student_role not in student.role:
                             student.role.append(student_role)
                         db.session.commit()
@@ -1279,8 +1194,8 @@ def manual_enroll():
                         flash('Aborted! Already enrolled!', 'error')
             else:
                 student = db.session.query(Member).filter_by(email=student_emails.strip()).scalar()
-                if workshop not in student.participated:
-                    student.participated.append(workshop)
+                if req_month not in student.ws_months:
+                    student.ws_months.append(req_month)
                     if student_role not in student.role:
                         student.role.append(student_role)
                     db.session.commit()
@@ -1290,7 +1205,6 @@ def manual_enroll():
                     flash('Student enrolled successfully!', 'success')
                 else:
                     flash('Aborted Already enrolled!', 'error')
-
 
 
 

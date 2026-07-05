@@ -332,34 +332,7 @@
                     <button type="submit" name="submit" id="file-btn2" class="btn btn-primary btn-block btn-large" value="upload_ws_photos">UPLOAD PHOTOS</button>
                 </form>
             </div>
-            <div id="add-ws-videos">
-                <form action="{{ url_for('manager.home') }}" method="post">
-                    <h2>Add Workshop Videos</h2>
-                    <select name="ws-id">
-                        <option value="Default">Select Course/Workshop</option>
-                        {% for id in ws_topic_dict %}
-                        <option value="{{id}}">{{ws_topic_dict[id]['topic']}}</option>
-                        {% endfor %}
-                    </select>
-                    <input name="title" placeholder="Video Title" type="text" required>
-                    <input name="url" placeholder="Video Youtube URL" type="text" required>
-                    <button type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="add-ws-videos">ADD TO DATABASE</button>
-                </form>
-            </div>
-            <div id="add-ws-demo">
-                <form action="{{ url_for('manager.home') }}" method="post">
-                    <h2>Add Workshop Demo</h2>
-                    <select name="ws-id">
-                        <option value="Default">Select Course/Workshop</option>
-                        {% for id in ws_topic_dict %}
-                        <option value="{{id}}">{{ws_topic_dict[id]['topic']}}</option>
-                        {% endfor %}
-                    </select>
-                    <input name="title" placeholder="Video Title" type="text" required>
-                    <input name="url" placeholder="Video Youtube URL" type="text" required>
-                    <button type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="add-ws-demo">ADD TO DATABASE</button>
-                </form>
-            </div>
+            
             <div id="open-reg">
                 <form action="{{url_for('manager.home')}}" method="post" style="padding-top: 5%;">
                     <h2>Open Registration Window</h2>
@@ -387,32 +360,7 @@
                     <button type="submit" name="close" class="btn btn-primary btn-block btn-large" value="shut-reg-door">Close Registration</button>
                 </form>
             </div>
-            <div id="add-ws-files">
-                <form action="{{ url_for('manager.home') }}" method="post" enctype="multipart/form-data">
-                    <h2>Add Workshop Files</h2>
-                    <select name="ws_id">
-                        <option value="default">Choose Workshop/Course</option>
-                    {% for id in ws_topic_dict %}
-                    <option value="{{id}}">{{ws_topic_dict[id]['topic']}}</option>
-                    {% endfor %}
-                    </select>
-                    <input type="file" name="file" id="file4" multiple required>
-                    <button type="submit" name="submit" id="file-btn4" class="btn btn-primary btn-block btn-large" value="add_ws_notes">UPLOAD FILES</button>
-                </form>
-            </div>
-            <div id="add-assignments">
-                <form action="{{ url_for('manager.add_assignments') }}" method="post" enctype="multipart/form-data">
-                    <h2>Add Workshop Assignments</h2>
-                    <select name="ws_id">
-                        <option value="default">Choose Workshop/Course</option>
-                        {% for id in ws_topic_dict %}
-                        <option value="{{id}}">{{ws_topic_dict[id]['topic']}}</option>
-                        {% endfor %}
-                    </select>
-                    <input type="file" name="assignments" id="assignment" multiple required>
-                    <button type="submit" name="submit" id="assignment-btn" class="btn btn-primary btn-block btn-large" value="add_assignments">UPLOAD FILES</button>
-                </form>
-            </div>
+            
             <div id="add-quiz-data">
                 <form action="{{ url_for('manager.home') }}" method="post" enctype="multipart/form-data">
                     <h2>Add Quiz Data</h2>

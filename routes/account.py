@@ -5,11 +5,12 @@ from werkzeug.utils import secure_filename
 from operations.artist_tools import add_watermark
 from extensions import db, image_dict, current_year, p
 from operations.messenger import send_email_school, send_email_support, send_email_with_reply
-from models.member import Member, Workshop, Role, WorkshopAssignmentAssessmentVideos
+from models.workshop_details import WorkshopDetails
+from models.member import *
 from flask_login import current_user, login_required, login_user, logout_user
 from datetime import date, datetime
 import random
-from operations.miscellaneous import calculate_age, allowed_file, generate_captcha, move_files
+from operations.miscellaneous import calculate_age, allowed_file, generate_captcha, move_files, create_uuid
 from models.artist_data import ArtistData
 from models.news import News
 from models.tool import SupportTicket, Tools
@@ -267,16 +268,173 @@ def instructor_dashboard():
     course_dict = {}
     courses = db.session.query(Workshop).all()
     for c in courses: 
+        course_month_list = []
+
         course_uuid = c.uuid
         course_topic = c.topic
-        course_dict[course_uuid] = {'course_uuid': course_uuid, 'course_topic': course_topic}
+        course_months = c.months
+        for m in course_months:
+            course_month_list.append(m.month)
+        course_dict[course_uuid] = {"course_uuid": course_uuid, "course_topic": course_topic, "months":course_month_list}
 
     
     
     if request.method == 'POST':
+        if request.form.get('submit') == 'add-course-video':
+            course_uuid = request.form.get('course-uuid')
+            if course_uuid != 'default':
+                title = request.form.get('lesson-title')
+                video_yt_url = request.form.get('lesson-url')
+                month = request.form.get('month')
+                detail = request.form.get('lesson-detail')
+                course_month_list = db.session.query(Workshop).filter_by(uuid=course_uuid).scalar().months
+                for m in course_month_list:
+                    if m.month == int(month):
+                        course_month = m
+                entry = MonthVideos(
+                    title=title,
+                    vid_id=video_yt_url,
+                    detail=detail,
+                    month_id=course_month.id
+                )
+                try:
+                    db.session.add(entry)
+                    db.session.commit()
+                    print('committed')
+                    flash('Data added successfully, Chief!', 'success')
+                except Exception as e:
+                    flash('Failed to add, chief!', 'error')
+                return redirect(url_for('account.instructor_dashboard'))
+            else:
+                flash('Aborted! Please select the Course/Workshop first!', 'error')
+            
+        if request.form.get('submit') == 'add-course-notes':
+            course_uuid = request.form.get('course-uuid')
+            if course_uuid != 'default':
+                month = request.form.get('month')
+                course_month_list = db.session.query(Workshop).filter_by(uuid=course_uuid).scalar().months
+                for m in course_month_list:
+                    if m.month == int(month):
+                        course_month = m
+                if 'file' not in request.files:
+                    flash('No file part', 'error')
+                    return redirect(request.url)
+                files = request.files.getlist('file')
+                
+                folder_name = db.session.query(Workshop).filter_by(uuid=course_uuid).scalar().uuid
+                folder = f"./static/files/courses/{folder_name}/{month}/notes/"
+                p(folder)
+                if not os.path.exists(folder):
+                    os.makedirs(folder)
+                    p(f"{folder} created!")
+                else:
+                    p('Folder exists')
+                for file in files:
+                    if file.filename == '':
+                        flash('No selected file', 'error')
+                        return redirect(request.url)
+                    if file:
+                        filename = secure_filename(file.filename)
+                        file.save(f"{folder}/{filename}")
+                        flash('Chief! Files uploaded successfully!', 'success')
+        if request.form.get('submit') == 'add-course-assignments':
+            if 'assignments' not in request.files:
+                flash('No file part', 'error')
+                return redirect(request.url)
+            files = request.files.getlist('assignments')
+
+            course_uuid = request.form.get('course-uuid')
+            month = request.form.get('month')
+            folder_name = course_uuid
+            if folder_name != 'default':
+                folder = f"./static/files/courses/{folder_name}/{month}/assignments/"
+                if not os.path.exists(folder):
+                    os.makedirs(folder)
+                for file in files:
+                    if file.filename == '':
+                        flash('No selected file', 'error')
+                        return redirect(request.url)
+                    if file:
+                        filename = secure_filename(file.filename)
+                        file.save(f"{folder}/{filename}")
+                        flash('Chief! Files uploaded successfully!', 'success')
+                return redirect(request.url)
+            else:
+                flash('Aborted! Please select the Course/Workshop first!', 'error')
+        if request.form.get('submit') == 'add-course-demo':
+            course_uuid = request.form.get('course-uuid')
+            if course_uuid != 'default':
+                demo_title = request.form.get('demo-title')
+                demo_yt_url = request.form.get('demo-url')
+                month = request.form.get('month')
+                course_month_list = db.session.query(Workshop).filter_by(uuid=course_uuid).scalar().months
+                for m in course_month_list:
+                    if m.month == int(month):
+                        course_month = m
+                date_time = datetime.now().replace(microsecond=0)
+                try:
+                    entry = MonthDemo(
+                        month_id=course_month.id,
+                        yt_vid_id=demo_yt_url,
+                        vid_caption=demo_title,
+                        instructor='Shwetabh Suman',
+                        date_time=date_time
+                    )
+                    db.session.add(entry)
+                    db.session.commit()
+                    flash("Demo video added successfully", "success")
+                except Exception as e:
+                    p(e)
+                    flash("Couldn't add Demo video", 'error')
+        if request.form.get('submit') == 'new-course':
+            topic = request.form.get('topic')
+            category = request.form.get('category')
+            course_uuid_list = []
+            for data in db.session.query(Workshop).all():
+                course_uuid_list.append(data.uuid)
+            course_uuid = create_uuid(course_uuid_list, 6)
+            entry = Workshop(
+                uuid=course_uuid,
+                topic=topic,
+                instructor='Shwetabh Suman'
+            )
+            db.session.add(entry)
+            db.session.commit()
+            course_id = db.session.query(Workshop).filter_by(uuid=course_uuid).scalar().id
+            entry2 = WorkshopDetails(
+                category=category,
+                ws_id=course_id
+            )
+            db.session.add(entry2)
+            db.session.commit()
+            flash('Course created!', 'success')
+
+        if request.form.get('submit') == 'workshop-month':
+            if request.form.get('course-uuid') != 'default':
+                month_count = request.form.get('month-count')
+                course_uuid = request.form.get('course-uuid')
+                course = db.session.query(Workshop).filter_by(uuid=course_uuid).scalar()
+                month_uuid_list = []
+                for data in db.session.query(WorkshopMonth).all():
+                    month_uuid_list.append(data.uuid)
+                for i in range(int(month_count)):
+                    month_uuid = create_uuid(month_uuid_list, 4)
+                    month_uuid_list.append(month_uuid)
+                    month_name = i+1
+                    entry = WorkshopMonth(
+                        uuid = month_uuid,
+                        month = month_name,
+                        title = '',
+                        detail = '',
+                        workshop_id = course.id
+                    )
+                    db.session.add(entry)
+                    db.session.commit()
+                    flash('Months added', 'success')
+
         if request.form.get('submit') == 'assignment_details':
             if request.form.get('course_uuid') != 'default':
-                course_uuid = request.form.get('course_uuid')
+                course_uuid = request.form.get('course-uuid')
                 return redirect(url_for('account.instructor_dashboard_canvas', course_uuid=course_uuid, action='assignment_details'))
                 
         if request.form.get('submit') == 'download-assignments':
@@ -336,11 +494,11 @@ def instructor_dashboard():
                 flash('Assessment video ID successfully uploaded!', 'success')
             else:
                 flash('Please select the course first!', 'error')
-    
+    temp_data = 'Temporary'
     if current_user.is_authenticated:
         if instructor in current_user.role:
             return render_template('instructor-dashboard.html', logged_in=current_user.is_authenticated, current_year=current_year,
-                           admin=admin, course_dict=course_dict)
+                           admin=admin, course_dict=course_dict, temp_data=temp_data)
     else:
         return redirect(url_for('main.home'))
 
