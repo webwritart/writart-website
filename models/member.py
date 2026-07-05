@@ -213,6 +213,7 @@ class MonthNotes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     uuid = db.Column(db.Integer, unique=True)
     file_name = db.Column(db.String(50))
+    date_time = db.Column(db.String(50))
     month_id = db.Column(db.Integer, db.ForeignKey('workshop_month.id'))
 
     def __repr__(self):
@@ -224,6 +225,7 @@ class MonthAssignments(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     uuid = db.Column(db.Integer, unique=True)
     file_name = db.Column(db.String(50))
+    date_time = db.Column(db.String(50))
     month_id = db.Column(db.Integer, db.ForeignKey('workshop_month.id'))
 
     def __repr__(self):
