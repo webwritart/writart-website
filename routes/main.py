@@ -79,3 +79,18 @@ def verification():
                 return render_template('certificate_verification_details.html', current_year=current_year, status='failed', logged_in=current_user.is_authenticated)
     return render_template('verification.html', logged_in=current_user.is_authenticated, current_year=current_year)
 
+@main.route('/temp', methods=['GET', 'POST'])
+def temp():
+    if request.method == 'POST':
+        if request.form.get('submit') == 'enroll':
+            course = db.session.query(Workshop).filter_by(uuid=595911).scalar()
+            course_months = course.months
+            for c in course_months:
+                if c.month == 1:
+                    month = c
+            all_enrolled = course.participants
+            for e in all_enrolled:
+                if month not in e.ws_months:
+                    e.ws_months.append(month)
+            db.session.commit()
+    return render_template('temp.html')
