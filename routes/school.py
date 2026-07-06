@@ -465,7 +465,7 @@ def classroom():
             file_name = request.form.get('file-name')
             ws_uuid = file_path.split('/')[-4]
             ws_topic = db.session.query(Workshop).filter_by(uuid=ws_uuid).one_or_none().topic
-            file_full_name = f'{ws_topic}_notes_{file_name.split('$')[1]}'
+            file_full_name = f"{ws_topic}_notes_{file_name.split('$')[1]}"
             with open("download_log.txt", "a") as f:
                 f.write(f'{file_full_name} -- downloaded by -- {current_user.name}--{current_user.email}--'
                         f'Id: {current_user.id}---Time: {time_now}\n')
@@ -475,7 +475,7 @@ def classroom():
             file_name = request.form.get('file-name')
             ws_uuid = file_path.split('/')[-4]
             ws_topic = db.session.query(Workshop).filter_by(uuid=ws_uuid).one_or_none().topic
-            file_full_name = f'{ws_topic}_assignment_{file_name.split('$')[1]}'
+            file_full_name = f"{ws_topic}_assignment_{file_name.split('$')[1]}"
             with open("download_log.txt", "a") as f:
                 f.write(f'{file_full_name} -- downloaded by -- {current_user.name}--{current_user.email}--'
                         f'Id: {current_user.id}---Time: {time_now}\n')
