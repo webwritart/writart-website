@@ -32,6 +32,21 @@
     .wrapper {
         background: rgb(39, 48, 31);
     }
+    .non_enrolment_msg {
+        background: rgb(209, 46, 9); 
+        color: white; 
+        width: 100%; 
+        display: flex; 
+        justify-content: center; 
+        text-align: center; 
+        flex-direction: column; 
+        align-items: center;
+        padding: .5% 10%;
+    }
+    .non_enrolment_msg p {
+        padding: 0%;
+        margin: 0%;
+    }
 
     @media (max-width: 1200px) {
         .figure {
@@ -73,8 +88,20 @@
 <div class="video-wrapper" style="background:#ffffff; padding: 2% 0%; align-items:start;">
     <div class="video-wrapper-container" >
         <h3 style="color:black;">{{ ws_topic }}</h3>
+        
         <hr>
         {% if logged_in %}
+        {% if enrolment_alert == 'on' %}
+        <div class="non_enrolment_msg" style="padding: 2% 0%;">
+            <p>The last month is complete.<br>Please get enrolled in the new month of the course to view new contents without any disturbance. <a href="{{url_for('school.enroll')}}" style="color: white; font-weight: bold; text-decoration: underline;">Click here to enroll</a></p>
+        </div>
+        {% endif %}
+        {% if pending_count > 0 or if %}
+        <div class="non_enrolment_msg">
+            <p>{{non_enrolment_msg}}<a href="{{url_for('school.enroll')}}" style="color: white; font-weight: bold; text-decoration: underline;">Click here to enroll</a></p>
+        </div>
+        {% endif %}
+
         <div class="figure-container">
         {% if video_count > 0 %}
             {% for n in range(video_count) %}
@@ -99,6 +126,7 @@
 <!--                     </div>-->
             {% endfor %}
         {% endif %}
+        
         </div>
         {% if video_count == 0 %}
             <p style="color: rgb(18, 59, 20);">No classes recordings yet! The Video will be uploaded after the commencement of the classes</p>
@@ -127,6 +155,7 @@
 <div class="wrapper">
     <div class="width-80-container">
         <h3 style="width:100%;color:rgb(255, 255, 255);opacity:1;">NOTES</h3>
+        <p>{{non_enrolment_msg_submissions}}</p>
         <div class="category-content">
             {% for m in study_material_dict %}
                 <div class="file-item-inner">
@@ -134,7 +163,7 @@
                         <input type="hidden" name="file-name" value="{{m}}">
                         <button type="submit" name="download-file" value="{{ study_material_dict[m]['file_path'] }}">
                             <img src="../static/images/pdf_icon.png"></button>
-                        <p>{{ m }}</p>
+                        <p>{{ study_material_dict[m]['file_name'] }}</p>
                     </form>
                 </div>
             {% endfor %}
@@ -152,9 +181,9 @@
                 <div class="file-item-inner">
                     <form method="post" action="{{ url_for('school.classroom') }}">
                         <input type="hidden" name="file-name" value="{{m}}">
-                        <button type="submit" name="download-file" value="{{ assignments_dict[m]['file_path'] }}">
+                        <button type="submit" name="download-assignment" value="{{ assignments_dict[m]['file_path'] }}">
                             <img src="../static/images/pdf_icon.png"></button>
-                        <p class="file-name">{{ m }}</p>
+                        <p class="file-name">{{ assignments_dict[m]['file_name'] }}</p>
                     </form>
                 </div>
             {% endfor %}
@@ -164,6 +193,7 @@
 <div class="wrapper" id="submit-assignments" style="background: rgb(192, 192, 192);">
     <div class="width-80-container assignment-submission-form">
         <h3 style="width:100%;color:rgb(0, 0, 0);opacity:1; text-align: center;">SUBMIT ASSIGNMENTS</h3>
+        {% if pending_count == 0 %}
         <form action="{{url_for('school.course')}}" method="post" enctype="multipart/form-data" style="width:100%;">
             <p id="assignment-format">Only JPG, JPEG and PNG files are allowed</p>
             <input type="file" name="assignments" accept=".jpg, .jpeg, .png" multiple required>
@@ -176,6 +206,11 @@
             {% endif %}
             {% endwith %}
         </form>
+        {% else %}
+        <div class="non_enrolment_msg" style="padding: 2% 0%;">
+            <p>{{non_enrolment_msg_submissions}}<br> <a href="{{url_for('school.enroll')}}" style="color: white; font-weight: bold; text-decoration: underline;">Click here to enroll</a></p>
+        </div>
+        {% endif %}
     </div>
 </div>
 {% endif %}

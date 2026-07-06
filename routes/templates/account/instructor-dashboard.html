@@ -102,6 +102,8 @@
                 <option value="add-course-assignments">Add Course Assignments</option>
                 <option value="add-course-demo">Add Course Demo</option>
                 <option value="upload-assessed-video">Upload Assessed Assignment video</option>
+                <option value="set-current-course-month">Set Currnet Course and Month</option>
+                <option value="set-current-course-fee">Set Current Course Monthly Fee</option>
             </select>
             <select id="course" name="course-uuid">
                 <option value="Default">Select Course/Workshop</option>
@@ -123,10 +125,24 @@
             <!-- ----------------------------------- UPLOAD ASSESSED ASSIGNMENT VIDEO --------------------------------- -->
             <input id="assessed-vid-id" type="text" name="assessed-vid-id" placeholder="Video Youtube ID">
             <input id="assessed-vid-caption" type="text" name="assessed-vid-caption" placeholder="Caption">
+            <!-- --------------------------------------- SET CURRENT COURSE FEE --------------------------------------- -->
+            <input type="number" name="fee" id="fee" placeholder="Monthly fee">
+            <!-- --------------------------------------------------------------------------------------------- -->
             <button type="submit" id="submit-btn" name="submit" class="btn btn-primary btn-block btn-large" value="">NONE</button>
         </form>
     </div>
     <hr style="background:black; opacity: .7;">
+    <div class="form-container" style="background: rgb(164, 173, 155);">
+        <form action="{{ url_for('account.instructor_dashboard')}}" method="post">
+            <p class="form-heading">Show Next Month enrolment Alert</p>
+            <input type="hidden" name="current-status" value="{{next_month_enrolment_alert_status}}">
+            {% if next_month_enrolment_alert_status == 'on' %}
+            <button type="submit" name="submit" value="enrolment-alert" class="btn btn-primary btn-block btn-large">Turn Alert off</button>
+            {% else %}
+            <button type="submit" name="submit" value="enrolment-alert" class="btn btn-primary btn-block btn-large">Turn Alert On</button>
+            {% endif %}
+        </form>
+    </div>
     <div class="form-container" style="background: rgb(164, 173, 155);">
         <form action="{{ url_for('account.instructor_dashboard')}}" method="post">
             <p class="form-heading">Add Course Months/Parts</p>
@@ -169,6 +185,7 @@
     const demoUrl = document.getElementById('demo-url');
     const assessedVidId = document.getElementById('assessed-vid-id');
     const assessedVidCaption = document.getElementById('assessed-vid-caption');
+    const fee = document.getElementById('fee');
     const submitBtn = document.getElementById('submit-btn');
 
     function hideInputs(){
@@ -181,6 +198,7 @@
         demoUrl.style.display = "none";
         assessedVidId.style.display = "none";
         assessedVidCaption.style.display = "none";
+        fee.style.display = "none";
     }
     hideInputs();
 
@@ -215,6 +233,15 @@
             assessedVidCaption.style.display = "block";
             submitBtn.textContent = "Upload Assessed Assignment Video";
             submitBtn.value = "add-assessed-video";
+        } else if (operationValue == "set-current-course-month") {
+            hideInputs();
+            submitBtn.textContent = "Set Current Course and Month";
+            submitBtn.value = "set-current-course-month";
+        } else if (operationValue == "set-current-course-fee") {
+            hideInputs();
+            fee.style.display = "block";
+            submitBtn.textContent = "Set Current Course Monthly Fee";
+            submitBtn.value = "set-monthly-fee";
         }
     });
 

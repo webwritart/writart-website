@@ -452,6 +452,31 @@ def instructor_dashboard():
                 flash('Assessment video ID successfully uploaded!', 'success')
             else:
                 flash('Please select the course first!', 'error')
+        
+        if request.form.get('submit') == 'enrolment-alert':
+            current_status = request.form.get('current-status')
+            if current_status == 'on':
+                db.session.query(Tools).filter_by(keyword='show_next_month_enrolment_alert').scalar().data = 'off'
+            else:
+                db.session.query(Tools).filter_by(keyword='show_next_month_enrolment_alert').scalar().data = 'on'
+            db.session.commit()
+            flash('Successfully changes the next month enrolment alert status', 'success')
+
+        if request.form.get('submit') == 'set-current-course-month':
+            course_uuid = request.form.get('course-uuid')
+            month = request.form.get('month')
+            db.session.query(Tools).filter_by(keyword="current_course_uuid").scalar().data = course_uuid
+            db.session.query(Tools).filter_by(keyword="current_course_month").scalar().data = month
+            db.session.commit()
+            flash('Current course and month successfully updated', 'success')
+
+        if request.form.get('submit') == 'set-monthly-fee':
+            course_uuid = request.form.get('course-uuid')
+            month = request.form.get('month')
+            fee = request.form.get('fee')
+            db.session.query(Tools).filter_by(keyword='current_course_monthly_fee').scalar().data = fee
+            db.session.commit()
+            flash('Current course monthly fee successfully updated', 'success')
 
         if request.form.get('submit') == 'new-course':
             topic = request.form.get('topic')
@@ -501,7 +526,7 @@ def instructor_dashboard():
 
         if request.form.get('submit') == 'assignment_details':
             if request.form.get('course_uuid') != 'default':
-                course_uuid = request.form.get('course-uuid')
+                course_uuid = request.form.get('course_uuid')
                 return redirect(url_for('account.instructor_dashboard_canvas', course_uuid=course_uuid, action='assignment_details'))
                 
         if request.form.get('submit') == 'download-assignments':
@@ -541,8 +566,10 @@ def instructor_dashboard():
 
     if current_user.is_authenticated:
         if instructor in current_user.role:
+            next_month_enrolment_alert_status = db.session.query(Tools).filter_by(keyword="show_next_month_enrolment_alert").scalar().data
+
             return render_template('instructor-dashboard.html', logged_in=current_user.is_authenticated, current_year=current_year,
-                           admin=admin, course_dict=course_dict)
+                           admin=admin, course_dict=course_dict, next_month_enrolment_alert_status=next_month_enrolment_alert_status)
     else:
         return redirect(url_for('main.home'))
 

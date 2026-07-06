@@ -462,12 +462,20 @@ def classroom():
     if request.method == 'POST':
         if request.form.get('download-file'):
             file_path = request.form.get('download-file')
-            p(file_path)
             file_name = request.form.get('file-name')
-            ws_uuid = file_path.split('/')[-3]
-            p(ws_uuid)
+            ws_uuid = file_path.split('/')[-4]
             ws_topic = db.session.query(Workshop).filter_by(uuid=ws_uuid).one_or_none().topic
-            file_full_name = f'{ws_topic}__{file_name}'
+            file_full_name = f'{ws_topic}_notes_{file_name.split('$')[1]}'
+            with open("download_log.txt", "a") as f:
+                f.write(f'{file_full_name} -- downloaded by -- {current_user.name}--{current_user.email}--'
+                        f'Id: {current_user.id}---Time: {time_now}\n')
+            return send_file(path_or_file=file_path, as_attachment=True, download_name=file_full_name)
+        if request.form.get('download-assignment'):
+            file_path = request.form.get('download-assignment')
+            file_name = request.form.get('file-name')
+            ws_uuid = file_path.split('/')[-4]
+            ws_topic = db.session.query(Workshop).filter_by(uuid=ws_uuid).one_or_none().topic
+            file_full_name = f'{ws_topic}_assignment_{file_name.split('$')[1]}'
             with open("download_log.txt", "a") as f:
                 f.write(f'{file_full_name} -- downloaded by -- {current_user.name}--{current_user.email}--'
                         f'Id: {current_user.id}---Time: {time_now}\n')
@@ -565,22 +573,53 @@ def course():
                 ws_uuid = session.get('ws_uuid')
             
             ws_id = db.session.query(Workshop).filter_by(uuid=ws_uuid).scalar().id
-            
-            workshop = db.session.query(Workshop).filter_by(uuid=ws_uuid).scalar()
-            category = workshop.details.category
-            ws_topic = workshop.topic
+            enrolment_alert = db.session.query(Tools).filter_by(keyword='show_next_month_enrolment_alert').scalar().data
+            course = db.session.query(Workshop).filter_by(uuid=ws_uuid).scalar()
+            course_month_list = course.months
+            category = course.details.category
+            course_topic = course.topic
+            non_enrolment_msg = ""
+            non_enrolment_msg_submissions = ""
+            pending_count = 0
+            pending = []
+            course_enrolled_months = []
+            all_enrolled_months = current_user.ws_months
+
+            for m in course_month_list:
+                if m not in all_enrolled_months:
+                    if len(m.videos) != 0:
+                        pending.append(m)
+                else:
+                    course_enrolled_months.append(m)
+            pending_count = len(pending)
+            if pending_count > 0:
+                enrolment_alert = ''
+            non_enrolment_msg_months = ''
+            for i in range(pending_count):
+                    if i < pending_count-2:
+                        non_enrolment_msg_months = non_enrolment_msg_months + 'month ' + str(pending[i].month) + ', '
+                    if i == pending_count-2:
+                        non_enrolment_msg_months = non_enrolment_msg_months + 'month ' + str(pending[i].month) + ' and '
+                    if i == pending_count-1:
+                        non_enrolment_msg_months = non_enrolment_msg_months + 'month ' + str(pending[i].month)
+            non_enrolment_msg = f"You have not enrolled in {non_enrolment_msg_months}. So you cannot see the contents of these months."
+            non_enrolment_msg_submissions = f"You have not enrolled in {non_enrolment_msg_months}. So you cannot submit assignments any more."
 
             if category == 'course':
-                videos_row_list = workshop.videos
-                for video in videos_row_list:
-                    vid_id = video.vid_id
+                video_list = []
+                for month in course_enrolled_months:
+                    temp_vid_list = month.videos
+                    for v in temp_vid_list:
+                        video_list.append(v)
+                for v in video_list:
+                    vid_id = v.vid_id
                     vid_id_list.append(vid_id)
-                    vid_caption = video.title
+                    vid_caption = v.title
                     vid_caption_list.append(vid_caption)
             else:
                 if category != 'Q&A':
-                    topic = workshop.topic
-                    vid_list = [workshop.yt_p1_id, workshop.yt_p2_id, workshop.yt_p3_id, workshop.yt_p4_id]
+                    topic = course.topic
+                    vid_list = [course.yt_p1_id, course.yt_p2_id, course.yt_p3_id, course.yt_p4_id]
                     for n in range(len(vid_list)):
                         if vid_list[n]:
                             part = f"Part-{n + 1}"
@@ -588,13 +627,18 @@ def course():
                             vid_id_list.append(vid_list[n])
                             vid_caption_list.append(caption)
                 else:
-                    print(workshop.details.category)
+                    print(course.details.category)
 
             video_count = len(vid_id_list)
 
     # ----------------------------------- ASSESSMENT VIDEOS ---------------------------------------------------#
             assessment_vid_dict = {}
-            all_assessed_videos = db.session.query(WorkshopAssignmentAssessmentVideos).filter_by(ws_id=ws_id).all()
+            all_assessed_videos = []
+
+            for m in course_enrolled_months:
+                videos = m.assignment_assessment_videos
+                for v in videos:
+                    all_assessed_videos.append(v)
             for v in all_assessed_videos:
                 assessment_vid_dict[v.vid_caption] = {
                     'vid_id': v.yt_vid_id,
@@ -605,7 +649,12 @@ def course():
 
     # -------------------------------------- DEMO VIDEOS ------------------------------------------------------ #
             demo_vid_dict = {}
-            all_demo_videos = db.session.query(WorkshopDemo).filter_by(ws_id=ws_id).all()
+            all_demo_videos = []
+
+            for m in course_enrolled_months:
+                videos = m.demos
+                for v in videos:
+                    all_demo_videos.append(v)
             for v in all_demo_videos:
                 demo_vid_dict[v.vid_caption] = {
                     'vid_id': v.yt_vid_id,
@@ -615,33 +664,42 @@ def course():
 
             # ------------------------------ STUDY MATERIAL ----------------------------------------------- #
             study_material_dict = {}
-            base_dir = f"static/files/courses/{ws_uuid}/notes"
-            if not os.path.exists(base_dir):
-                os.makedirs(base_dir)
-            folder_content = os.listdir(base_dir)
-            for f in folder_content:
-                f_path = base_dir + '/' + f
-                if os.path.isfile(f_path):
-                    material = {
-                        'file_path': f_path
-                    }
-                    study_material_dict[f] = material
-            study_material_count = len(study_material_dict)
+            p(course_enrolled_months)
+            for m in course_enrolled_months:
+                base_dir = f"static/files/courses/{ws_uuid}/{m.month}/notes"
+                p(base_dir)
+                if not os.path.exists(base_dir):
+                    os.makedirs(base_dir)
+                folder_content = os.listdir(base_dir)
+                p(folder_content)
+                for f in folder_content:
+                    f_path = base_dir + '/' + f
+                    if os.path.isfile(f_path):
+                        material = {
+                            'file_name': f.split('$')[1],
+                            'file_path': f_path
+                        }
+                        study_material_dict[f] = material
+            p(study_material_dict)
+            study_material_count = len(study_material_dict) 
             study_material_dict = dict(sorted(study_material_dict.items()))
+            p(study_material_count)
 
             # ----------------------------------- ASSIGNMENTS ---------------------------------------------- #
             assignments_dict = {}
-            base_dir = f"static/files/courses/{ws_uuid}/assignments"
-            if not os.path.exists(base_dir):
-                os.makedirs(base_dir)
-            folder_content = os.listdir(base_dir)
-            for f in folder_content:
-                f_path = base_dir + '/' + f
-                if os.path.isfile(f_path):
-                    assignment = {
-                        'file_path': f_path
-                    }
-                    assignments_dict[f] = assignment
+            for m in course_enrolled_months:
+                base_dir = f"static/files/courses/{ws_uuid}/{m.month}/assignments"
+                if not os.path.exists(base_dir):
+                    os.makedirs(base_dir)
+                folder_content = os.listdir(base_dir)
+                for f in folder_content:
+                    f_path = base_dir + '/' + f
+                    if os.path.isfile(f_path):
+                        assignment = {
+                            'file_name': f.split('$')[1],
+                            'file_path': f_path
+                        }
+                        assignments_dict[f] = assignment
             assignments_count = len(assignments_dict)
             assignments_dict = dict(sorted(assignments_dict.items()))
 
@@ -714,15 +772,17 @@ def course():
             return redirect(url_for('school.classroom'))
     else:
         return redirect(url_for('school.classroom'))
-
+    p(non_enrolment_msg_submissions)
+    p(non_enrolment_msg)
     return render_template('course.html', logged_in=current_user.is_authenticated,
                            video_count=video_count, vid_id_list=vid_id_list, vid_caption_list=vid_caption_list,
-                           ws_topic=ws_topic, study_material_dict=study_material_dict, study_material_count=study_material_count,
+                           ws_topic=course_topic, study_material_dict=study_material_dict, study_material_count=study_material_count,
                            assignments_dict=assignments_dict, assignments_count=assignments_count, no_ws_credit_dict=no_ws_credit_dict,
                            total_topic_credits=total_topic_credits, ws_uuid=ws_uuid,
                            ws_credit_dict=ws_credit_dict, total_ws_credits=total_ws_credits,
                            feedback_topic_list=feedback_topic_list, assessment_vid_dict=assessment_vid_dict, assessment_video_count=assessment_video_count,
-                           demo_vid_dict=demo_vid_dict, demo_video_count=demo_video_count)
+                           demo_vid_dict=demo_vid_dict, demo_video_count=demo_video_count, non_enrolment_msg=non_enrolment_msg, pending_count=pending_count, enrolment_alert=enrolment_alert,
+                           non_enrolment_msg_submissions=non_enrolment_msg_submissions)
 
 
 @school.route('/submit-feedback-files', methods=['GET', 'POST'])
@@ -903,6 +963,29 @@ def certificate_download():
                     return redirect(request.url)
     return render_template('certificate_download.html', logged_in=current_user.is_authenticated, admin=admin, current_year=current_year,
                            certificate_dict=certificate_dict)
+
+
+@school.route('/enroll', methods=['GET', 'POST'])
+def enroll():
+    if current_user.is_authenticated:
+        current_course_uuid = int(db.session.query(Tools).filter_by(keyword='current_course_uuid').scalar().data)
+        current_course_topic = db.session.query(Workshop).filter_by(uuid=current_course_uuid).scalar().topic
+        current_course_fee = db.session.query(Tools).filter_by(keyword='current_course_monthly_fee').scalar().data
+        date_time_now = datetime.now().replace(microsecond=0)
+        if request.method == 'POST':
+            if request.form.get('submit') == 'confirm-payment':
+                course_topic = request.form.get('topic')
+                member_id = request.form.get('member-id')
+                member_name = request.form.get('member-name')
+                member_email = request.form.get('member-email')
+                subject = f"Payment confirmation - {date_time_now}"
+                body = f"{course_topic}\n\nMember Name: {member_name}\nMember ID: {member_id}\nMember-email: {member_email}"
+                send_email_school(subject, ['shwetabhartist@gmail.com'], body, '', '')
+                flash('Successfully submitted. You will be enrolled soon!', 'success')
+        return render_template('enroll.html', logged_in=current_user.is_authenticated, current_year=current_year, current_course_topic=current_course_topic,
+                               current_course_fee=current_course_fee)
+    else:
+        return redirect(url_for('main.home'))
 
 
 @school.route('/instructor')

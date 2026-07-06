@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    #container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        min-height: 85vh;
+        text-align: left;
+    }
+    #box {
+        width: 40%;
+    }
+    #box p {
+        padding-left: 2%;
+    }
+    #two-section-div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        text-align: left;
+    }
+    #title {
+        font-size: 1.4rem;
+        background: black;
+        color: white;
+    }
+    #course-topic {
+        font-size: 1.3rem;
+    }
+    .heading {
+        font-size: 1.2rem;
+        font-weight: bold;
+        text-align: left;
+        line-height: 1;
+        padding: 0%;
+        margin: 0%;
+    }
+    #qr {
+        width: 30%;
+    }
+
+    @media (max-width:1200px) {
+        #box {
+            width:60%;
+        }
+        
+    }
+    @media (max-width: 900px) {
+        #box {
+            width: 80%;
+        }
+    }
+    @media (max-width: 600px) {
+        #box {
+            width: 90%;
+        }
+        p {
+            font-size: .8rem;
+        }
+        #title {
+            font-size: 1.2rem;
+        }
+        #course-topic {
+            font-size: 1rem;
+        }
+        .heading {
+            font-size: .9rem;
+        }
+    }
+
+</style>
+<div id="container">
+    <div id="box">
+        <p id="title">ENROLMENT PROCESS</p>
+        <p id="course-topic">{{current_course_topic}}</p>
+        <hr>
+        <p class="heading">Method 1</p>
+        <p>Pay ₹{{current_course_fee}} for the next one month to upi <b>8920351265@ybl</b> and after successful payment press the <b>Confirm Payment</b> button below.</p>
+        <p class="heading">Method 2</p>
+        <p>Pay ₹{{current_course_fee}} for the next one month by scanning the <b>QR code</b> and after successful payment press the <b>Confirm Payment</b> button below.</p>
+        <img id="qr" src="../static/images/miscellaneous/phonepay_qr.jpeg">
+        <form action="{{url_for('school.enroll')}}" method="post">
+            <input type="hidden" name="topic" value="{{current_course_topic}}">
+            <input type="hidden" name="member-id" value="{{current_user.id}}">
+            <input type="hidden" name="member-name" value="{{current_user.name}}">
+            <input type="hidden" name="member-email" value="{{current_user.email}}">
+            <button class="btn btn-primary btn-block btn-large" type="submit" name="submit" value="confirm-payment">Confirm Payment</button>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <p class="{{category}}">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+            {% endwith %}
+        </form>
+    </div>
+</div>
+
+{% endblock %}

@@ -28,9 +28,6 @@ manager = Blueprint('manager', __name__, static_folder='static', template_folder
 @login_required
 def home():
     global current_ws_name, current_ws, current_workshop, current_ws_topic
-    current_ws_name = db.session.query(Tools).filter_by(keyword='current_workshop').one_or_none().data
-    current_ws = current_workshop = db.session.query(Workshop).filter_by(name=current_ws_name).one_or_none()
-    current_ws_topic = current_ws.topic
     all_ws = db.session.query(Workshop).all()
 
     ws_dict_for_add_detail = {}
@@ -758,7 +755,7 @@ def home():
             ws_topic_dict[ws.id] = {'topic':ws.topic}
             
         return render_template('manager.html', logged_in=current_user.is_authenticated,
-                               current_ws_name=current_ws_name, open_reg=open_reg, promotion=promotion,
+                               open_reg=open_reg, promotion=promotion,
                                reminder=reminder, close_reg=close_reg,
                                certificate_distribution=certificate_distribution, upcoming_ws_dict=upcoming_ws_dict,
                                count=count, count_list=count_list, all_workshops=all_workshops,
@@ -1162,13 +1159,10 @@ def manual_enroll():
         if request.method == 'POST':
             workshop_id = request.form.get('course')
             month = request.form.get('month')
-            p(type(month))
             if workshop_id != 'default':
                 workshop = db.session.query(Workshop).filter_by(id=workshop_id).scalar()
                 workshop_months = workshop.months
-                p(workshop_months)
                 for m in workshop_months:
-                    p(type(m.month))
                     if m.month == int(month):
                         req_month = m
             else:
