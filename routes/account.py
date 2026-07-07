@@ -1046,6 +1046,8 @@ def login():
                 session['logged_in'] = True
                 if session.get('url') == url_for('school.classroom'):
                     return redirect(url_for('school.classroom'))
+                if session.get('url') == url_for('school.enroll'):
+                    return redirect(url_for('school.enroll'))
                 if student in user_roles:
                     return redirect(url_for('account.student_dashboard'))
                 if not current_user.sex or current_user.sex == '':

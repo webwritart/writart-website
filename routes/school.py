@@ -387,7 +387,6 @@ def upcoming_workshop():
 def classroom():
     role = ''
     session['url'] = url_for('school.classroom')
-    p(session.get('url'))
     admin = db.session.query(Role).filter_by(name='admin').one_or_none()
     if current_user.is_authenticated:
         if admin in current_user.role:
@@ -975,6 +974,7 @@ def certificate_download():
 
 @school.route('/enroll', methods=['GET', 'POST'])
 def enroll():
+    session['url'] = url_for('school.classroom')
     if current_user.is_authenticated:
         current_course_uuid = int(db.session.query(Tools).filter_by(keyword='current_course_uuid').scalar().data)
         current_course_topic = db.session.query(Workshop).filter_by(uuid=current_course_uuid).scalar().topic
@@ -993,7 +993,7 @@ def enroll():
         return render_template('enroll.html', logged_in=current_user.is_authenticated, current_year=current_year, current_course_topic=current_course_topic,
                                current_course_fee=current_course_fee)
     else:
-        return redirect(url_for('main.home'))
+        return redirect(url_for('account.login'))
 
 
 @school.route('/instructor')
