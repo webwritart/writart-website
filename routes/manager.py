@@ -1181,7 +1181,7 @@ def manual_enroll():
                             student.role.append(student_role)
                         db.session.commit()
                         subject = 'Enrolment Success'
-                        message = f"Dear {student.name},\n\nHooray! You have been successfully enrolled in the course: {workshop.topic}!"
+                        message = f"Dear {student.name},\n\nHooray! You have been successfully enrolled in the month {req_month.month} of {workshop.topic}!"
                         send_email_school(subject, [email], message, '', '')
                         flash('Student enrolled successfully', 'success')
                     else:
@@ -1194,7 +1194,7 @@ def manual_enroll():
                         student.role.append(student_role)
                     db.session.commit()
                     subject = "Enrolment Success"
-                    message = f"Dear {student.name},\n\nHooray! You have been successfully enrolled in the course: {workshop.topic}!"
+                    message = f"Dear {student.name},\n\nHooray! You have been successfully enrolled in the month {req_month.month} of {workshop.topic}!"
                     send_email_school(subject, [student_emails.strip()], message, '', '')
                     flash('Student enrolled successfully!', 'success')
                 else:
