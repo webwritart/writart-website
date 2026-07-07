@@ -993,7 +993,7 @@ def enroll():
         return render_template('enroll.html', logged_in=current_user.is_authenticated, current_year=current_year, current_course_topic=current_course_topic,
                                current_course_fee=current_course_fee)
     else:
-        return redirect(url_for('account.login'))
+        return redirect(url_for('account.login', instruction='Login first to continue'))
 
 
 @school.route('/instructor')

@@ -968,6 +968,10 @@ def login():
     num_list = []
     raw_num_list = []
     result = db.session.query(Member)
+    if request.args.get('instruction'):
+        instruction = request.args.get('instruction')
+    else:
+        instruction = 'Login'
     for user in result:
         num = user.phone
         raw_num_list.append(num)
@@ -1062,7 +1066,7 @@ def login():
                     return redirect(session['url'])
                 return redirect(url_for('account.home', name=current_user.name.split()[0]))
 
-    return render_template("login.html", instruction='login', current_year=current_year)
+    return render_template("login.html", instruction=instruction, current_year=current_year)
 
 
 @account.route('/forgot_password', methods=['GET', 'POST'])
