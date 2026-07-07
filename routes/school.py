@@ -974,7 +974,7 @@ def certificate_download():
 
 @school.route('/enroll', methods=['GET', 'POST'])
 def enroll():
-    session['url'] = url_for('school.classroom')
+    session['url'] = url_for('school.enroll')
     if current_user.is_authenticated:
         current_course_uuid = int(db.session.query(Tools).filter_by(keyword='current_course_uuid').scalar().data)
         current_course_topic = db.session.query(Workshop).filter_by(uuid=current_course_uuid).scalar().topic
