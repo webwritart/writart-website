@@ -89,8 +89,8 @@ def api():
         return quarter_payments
 
     def all_enrolled_current_workshop():
-        current_ws_name = db.session.query(Tools).filter_by(keyword='current_workshop').one_or_none().data
-        current_ws_enrolled = db.session.query(Workshop).filter_by(name=current_ws_name).one_or_none().participants
+        current_ws_uuid = db.session.query(Tools).filter_by(keyword='current_course_uuid').one_or_none().data
+        current_ws_enrolled = db.session.query(Workshop).filter_by(uuid=current_ws_uuid).one_or_none().participants
         current_ws_enrolled_students = {}
 
         for st in current_ws_enrolled:
@@ -99,10 +99,31 @@ def api():
                 'name': st.name,
                 'email': st.email,
                 'phone': st.phone,
-                'whatsapp': st.whatsapp,
+                'whatsapp': st.whatsapp
             }
             current_ws_enrolled_students[st.id] = es
         return current_ws_enrolled_students
+    
+    def all_enrolled_current_course_month():
+        current_course_month_enrolled_students = {}
+        current_course_uuid = db.session.query(Tools).filter_by(keyword='current_course_uuid').scalar().data
+        course_months = db.session.query(Workshop).filter_by(uuid=current_course_uuid).scalar.months
+        current_month_no = db.session.query(Tools).filter_by(keyword='current_course_month').scalar().data
+        for cm in course_months:
+            if cm.month == int(current_month_no):
+                current_course_month = cm
+        current_course_month_students_list = current_course_month.members
+        for st in current_course_month_students_list:
+            es = {
+                'id': st.id,
+                'name': st.name,
+                'email': st.email,
+                'phone': st.phone,
+                'whatsapp': st.whatsapp
+            }
+            current_course_month_enrolled_students[st.id] = es
+        return current_course_month_enrolled_students
+
 
     for m in all_members:
         all_members_phone.append(m.phone)
@@ -196,8 +217,8 @@ def api():
         workshops[w.id] = workshop_dict
 
     def current_session_url():
-        current_ws_name = db.session.query(Tools).filter_by(keyword='current_workshop').one().data
-        current_ws = db.session.query(Workshop).filter_by(name=current_ws_name).one_or_none()
+        current_ws_uuid = db.session.query(Tools).filter_by(keyword='current_course_uuid').one().data
+        current_ws = db.session.query(Workshop).filter_by(uuid=current_ws_uuid).one_or_none()
         url = ''
         if current_ws.joining_link4:
             url = current_ws.joining_link4
@@ -226,6 +247,8 @@ def api():
             return jsonify(payments_by_quarter(end_month_name, year))
         elif data == 'current_ws_enrolled':
             return jsonify(all_enrolled_current_workshop())
+        elif data == 'current_course_month_enrolled':
+            return jsonify(all_enrolled_current_course_month())
         elif data == 'collection':
             return jsonify(total_collection_current_workshop())
         elif data == 'current-session-url':
