@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, request, jsonify
 from models.member import Member, Workshop
 from models.query import Query
 from models.payment import Payment
-from extensions import db
+from extensions import db, p
 from models.tool import Tools
 
 api_page = Blueprint('api', __name__, static_folder='static', template_folder='templates/api')
@@ -107,7 +107,7 @@ def api():
     def all_enrolled_current_course_month():
         current_course_month_enrolled_students = {}
         current_course_uuid = db.session.query(Tools).filter_by(keyword='current_course_uuid').scalar().data
-        course_months = db.session.query(Workshop).filter_by(uuid=current_course_uuid).scalar.months
+        course_months = db.session.query(Workshop).filter_by(uuid=current_course_uuid).scalar().months
         current_month_no = db.session.query(Tools).filter_by(keyword='current_course_month').scalar().data
         for cm in course_months:
             if cm.month == int(current_month_no):
