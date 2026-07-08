@@ -823,25 +823,71 @@ def vis_user_by_workshop():
         if request.method == 'POST':
             students_dict = {}
             workshop_id = request.form.get('ws')
+            option = request.form.get('option')
+            
             if workshop_id != 'default':
                 ws = db.session.query(Workshop).filter_by(id=workshop_id).scalar()
-                try:
-                    students_enrolled = ws.participants
-                    for s in students_enrolled:
-                        students_dict[s.id] = {
-                            'name': s.name,
-                            'email': s.email,
-                            'phone': s.phone,
-                            'whatsapp': s.whatsapp,
-                            'state': s.state,
-                            'reg':s.registration_date,
-                            'roles':s.role
-                        }
-                        
-                        
-                    total_enrolled = len(students_enrolled)
-                except Exception as e:
-                    print('No students enrolled')
+                current_month_no = db.session.query(Tools).filter_by(keyword='current_course_month').scalar().data
+                all_course_months = ws.months
+                for m in all_course_months:
+                    if m.month == int(current_month_no):
+                        current_month = m
+                    if m.month == int(current_month_no)+1:
+                        next_month = m
+                if option == 'course':
+                    try:
+                        students_enrolled = ws.participants
+                        for s in students_enrolled:
+                            students_dict[s.id] = {
+                                'name': s.name,
+                                'email': s.email,
+                                'phone': s.phone,
+                                'whatsapp': s.whatsapp,
+                                'state': s.state,
+                                'reg':s.registration_date,
+                                'roles':s.role
+                            }
+                            
+                            
+                        total_enrolled = len(students_enrolled)
+                    except Exception as e:
+                        print('No students enrolled')
+                elif option == 'current':
+                    try:
+                        students_enrolled = current_month.members
+                        for s in students_enrolled:
+                            students_dict[s.id] = {
+                                'name': s.name,
+                                'email': s.email,
+                                'phone': s.phone,
+                                'whatsapp': s.whatsapp,
+                                'state': s.state,
+                                'reg':s.registration_date,
+                                'roles':s.role
+                            }
+                            
+                            
+                        total_enrolled = len(students_enrolled)
+                    except Exception as e:
+                        print('No students enrolled')
+                elif option == 'next':
+                    try:
+                        students_enrolled = next_month.members
+                        for s in students_enrolled:
+                            students_dict[s.id] = {
+                                'name': s.name,
+                                'email': s.email,
+                                'phone': s.phone,
+                                'whatsapp': s.whatsapp,
+                                'state': s.state,
+                                'reg':s.registration_date,
+                                'roles':s.role
+                            }
+                            
+                            
+                        total_enrolled = len(students_enrolled)
+                    except Exception as e:
+                        print('No students enrolled')
                 return render_template('vis_user_by_workshop.html', logged_in=current_user.is_authenticated, admin=admin,
                                     current_year=current_year, ws_dict=ws_dict, students_dict=students_dict, enrolled_count=total_enrolled)
 

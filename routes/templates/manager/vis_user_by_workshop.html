@@ -9,6 +9,11 @@
             <option value="{{ws}}">{{ws_dict[ws]['topic']}}</option>
             {% endfor %}
         </select>
+        <select name="option" required>
+            <option value="course">Course</option>
+            <option value="current">Current Month</option>
+            <option value="next">Next Month</option>
+        </select>
         <button type="submit" value="submit">View Enrolled Students</button>
     </form>
 </div>
