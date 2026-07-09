@@ -186,6 +186,8 @@ def main_dashboard():
         return redirect(url_for('account.login'))
     admin = db.session.query(Role).filter_by(name='admin').scalar()
     student = db.session.query(Role).filter_by(name='student').scalar()
+    artist = db.session.query(Role).filter_by(name='artist').scalar()
+    instructor = db.session.query(Role).filter_by(name='instructor').scalar()
 
     roles = current_user.role
     if admin in roles:
@@ -195,7 +197,8 @@ def main_dashboard():
         if student in roles:
             return redirect(url_for('account.student_dashboard', logged_in=current_user.is_authenticated, current_year=current_year))
 
-    return render_template('main_dashboard.html', logged_in=current_user.is_authenticated, current_year=current_year, admin=admin)
+    return render_template('main_dashboard.html', logged_in=current_user.is_authenticated, current_year=current_year, admin=admin,
+                           artist=artist, instructor=instructor)
 
 
 

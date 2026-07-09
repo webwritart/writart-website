@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+A{% extends "base.html" %}
 {% block content %}
 
 <style>
@@ -36,8 +36,15 @@
 
 <div id="container">
     <h1>Main dashboard</h1>
+    {% if instructor in current_user.role %}
     <a class="btn btn-primary btn-block btn-large" href="{{url_for('account.instructor_dashboard')}}">INSTRUCTOR DASHBOARD</a>
+    {% endif %}
+    {% if student in current_user.role %}
     <a class="btn btn-primary btn-block btn-large" href="{{url_for('account.student_dashboard')}}">STUDENT DASHBOARD</a>
+    {% endif %}
+    {% if artist in current_user.role %}
+    <a class="btn btn-primary btn-block btn-large" href="{{url_for('account.artist_dashboard')}}">ARTIST DASHBOARD</a>
+    {% endif %}
 </div>
 
 {% endblock %}
