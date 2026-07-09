@@ -198,7 +198,7 @@ def main_dashboard():
             return redirect(url_for('account.student_dashboard', logged_in=current_user.is_authenticated, current_year=current_year))
 
     return render_template('main_dashboard.html', logged_in=current_user.is_authenticated, current_year=current_year, admin=admin,
-                           artist=artist, instructor=instructor)
+                           artist=artist, instructor=instructor, student=student)
 
 
 
