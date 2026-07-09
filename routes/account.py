@@ -207,8 +207,8 @@ def student_dashboard():
     multiple_roles = False
     roles = current_user.role
     admin = db.session.query(Role).filter_by(name='admin').scalar()
-    artist = db.session.query(Role).filter_by(name='admin').scalar()
-    instructor = db.session.query(Role).filter_by(name='admin').scalar()
+    artist = db.session.query(Role).filter_by(name='artist').scalar()
+    instructor = db.session.query(Role).filter_by(name='instructor').scalar()
     if len(roles) > 1:
         multiple_roles = True
 
