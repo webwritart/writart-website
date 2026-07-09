@@ -207,8 +207,8 @@ def student_dashboard():
     multiple_roles = False
     roles = current_user.role
     admin = db.session.query(Role).filter_by(name='admin').scalar()
-    if admin in roles:
-        roles.remove(admin)
+    artist = db.session.query(Role).filter_by(name='admin').scalar()
+    instructor = db.session.query(Role).filter_by(name='admin').scalar()
     if len(roles) > 1:
         multiple_roles = True
 
@@ -255,9 +255,21 @@ def student_dashboard():
 
 
     return render_template('student_dashboard.html', logged_in=current_user.is_authenticated, current_year=current_year,
-                           multiple_roles=multiple_roles, school_news_dict=school_news_dict, common_news_dict=common_news_dict,
-                           admin=admin)
+                            school_news_dict=school_news_dict, common_news_dict=common_news_dict,
+                           admin=admin, artist=artist, instructor=instructor, multiple_roles=multiple_roles)
 
+
+@account.route('/artist-dashboard', methods=['GET', 'POST'])
+def artist_dashboard():
+    admin = db.session.query(Role).filter_by(name='admin').scalar()
+    artist = db.session.query(Role).filter_by(name='artist').scalar()
+    if current_user.is_authenticated:
+        if artist in current_user.role:
+            return render_template('artist_dashboard.html', logged_in=current_user.is_authenticated, current_year=current_year, admin=admin)
+        else:
+            return redirect(url_for('main.home'))
+    else:
+        return redirect(url_for('main.home'))
 
 
 @account.route('/instructor-dashboard', methods=['GET', 'POST'])
@@ -1046,25 +1058,39 @@ def login():
             else:
                 login_user(user)
                 student = db.session.query(Role).filter_by(name='student').scalar()
+                admin = db.session.query(Role).filter_by(name='admin').scalar()
+                instructor = db.session.query(Role).filter_by(name='instructor').scalar()
+                artist = db.session.query(Role).filter_by(name='artist').scalar()
                 user_roles = current_user.role
                 session['logged_in'] = True
                 if session.get('url') == url_for('school.classroom'):
                     return redirect(url_for('school.classroom'))
                 if session.get('url') == url_for('school.enroll'):
                     return redirect(url_for('school.enroll'))
-                if student in user_roles:
-                    return redirect(url_for('account.student_dashboard'))
-                if not current_user.sex or current_user.sex == '':
-                    return render_template('update_account.html')
-                if request.form.get('prev-page') == 'enroll':
-                    flash("You are successfully logged in. Now proceed to enroll", "success")
-                    return redirect(url_for('payment.home'))
-                if request.form.get('prev-page') == 'change-password':
-                    flash("You are successfully logged in. Now proceed to change password", "success")
-                    return redirect(url_for('account.change_password'))
-                if 'url' in session:
-                    return redirect(session['url'])
-                return redirect(url_for('account.home', name=current_user.name.split()[0]))
+                if len(user_roles) > 1:
+                    return redirect(url_for('account.main_dashboard'))
+                else:
+                    if student in user_roles:
+                        return redirect(url_for('account.student_dashboard'))
+                    if admin in user_roles:
+                        return redirect(url_for('manager.home'))
+                    if instructor in user_roles:
+                        return redirect(url_for('account.instructor_dashboard'))
+                    if artist in user_roles:
+                        return redirect(url_for('account.artist_dashboard'))
+                    if not current_user.sex or current_user.sex == '':
+                        return render_template('update_account.html')
+                    if request.form.get('prev-page') == 'enroll':
+                        flash("You are successfully logged in. Now proceed to enroll", "success")
+                        return redirect(url_for('payment.home'))
+                    if request.form.get('prev-page') == 'change-password':
+                        flash("You are successfully logged in. Now proceed to change password", "success")
+                        return redirect(url_for('account.change_password'))
+                    if 'url' in session:
+                        return redirect(session['url'])
+                    else:
+                        return redirect(url_for('main.home'))
+                # return redirect(url_for('account.home', name=current_user.name.split()[0]))
 
     return render_template("login.html", instruction=instruction, current_year=current_year)
 

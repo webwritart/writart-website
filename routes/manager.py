@@ -1221,6 +1221,9 @@ def manual_enroll():
                     email_list.append(email.strip())
                 for email in email_list:
                     student = db.session.query(Member).filter_by(email=email).scalar()
+                    if int(month) == 1:
+                        if workshop not in  student.participated:
+                            student.participated.append(workshop)
                     if req_month not in student.ws_months:
                         student.ws_months.append(req_month)
                         if student_role not in student.role:
@@ -1234,6 +1237,10 @@ def manual_enroll():
                         flash('Aborted! Already enrolled!', 'error')
             else:
                 student = db.session.query(Member).filter_by(email=student_emails.strip()).scalar()
+                
+                if int(month) == 1:
+                        if workshop not in  student.participated:
+                            student.participated.append(workshop)
                 if req_month not in student.ws_months:
                     student.ws_months.append(req_month)
                     if student_role not in student.role:

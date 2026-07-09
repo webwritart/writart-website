@@ -200,11 +200,18 @@
     </div>
     <div class="child-20-right">
         <a class="dashboard-operation-btn" href="{{ url_for('account.home') }}">Account Details</a>
+        <a class="dashboard-operation-btn" href="{{ url_for('account.contact_instructor') }}">Contact Instructor</a>
+        <a class="dashboard-operation-btn" href="{{ url_for('school.certificate_download') }}">Certificates</a>
+        <hr>
         {% if multiple_roles %}
         <a class="dashboard-operation-btn" href="{{ url_for('account.main_dashboard') }}">Main Dashboard</a>
         {% endif %}
-        <a class="dashboard-operation-btn" href="{{ url_for('account.contact_instructor') }}">Contact Instructor</a>
-        <a class="dashboard-operation-btn" href="{{ url_for('school.certificate_download') }}">Certificates</a>
+        {% if artist in current_user.role %}
+        <a class="dashboard-operation-btn" href="{{url_for('account.artist_dashboard')}}">Artist Dashboard</a>
+        {% endif %}
+        {% if instructor in current_user.role %}
+        <a class="dashboard-operation-btn" href="{{url_for('account.instructor_dashboard')}}">Instructor Dashboard</a>
+        {% endif %}
     </div>
 </div>
 
