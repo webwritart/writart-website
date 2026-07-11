@@ -47,7 +47,16 @@
         padding: 0%;
         margin: 0%;
     }
-
+    #vid-btn-container {
+        width: 100%;
+        padding: 0% 20%;
+        display:flex;
+        flex-wrap: wrap;
+    }
+    #vid-btn {
+        max-width: 25%;
+        margin: .5% 1%;
+    }
     @media (max-width: 1200px) {
         .figure {
             width: 30%;
@@ -84,6 +93,11 @@
         }
     }
 </style>
+<!-- <div class="video-wrapper" id="vid-btn-container">
+    {% for n in range(video_count) %}
+    <button class="btn btn-primary btn-block btn-large" id="vid-btn">{{vid_caption_list[n]}}</button>
+    {% endfor %}
+</div> -->
 
 <div class="video-wrapper" style="background:#ffffff; padding: 2% 0%; align-items:start;">
     <div class="video-wrapper-container" >
@@ -193,7 +207,6 @@
 <div class="wrapper" id="submit-assignments" style="background: rgb(192, 192, 192);">
     <div class="width-80-container assignment-submission-form">
         <h3 style="width:100%;color:rgb(0, 0, 0);opacity:1; text-align: center;">SUBMIT ASSIGNMENTS</h3>
-        {% if pending_count == 0 %}
         <form action="{{url_for('school.course')}}" method="post" enctype="multipart/form-data" style="width:100%;">
             <p id="assignment-format">Only JPG, JPEG and PNG files are allowed</p>
             <input type="file" name="assignments" accept=".jpg, .jpeg, .png" multiple required>
@@ -206,11 +219,9 @@
             {% endif %}
             {% endwith %}
         </form>
-        {% else %}
-        <div class="non_enrolment_msg" style="padding: 2% 0%;">
-            <p>{{non_enrolment_msg_submissions}}<br> <a href="{{url_for('school.enroll')}}" style="color: white; font-weight: bold; text-decoration: underline;">Click here to enroll</a></p>
-        </div>
-        {% endif %}
+        <!-- <div class="non_enrolment_msg" style="padding: 2% 0%;"> -->
+            <!-- <p>{{non_enrolment_msg_submissions}}<br> <a href="{{url_for('school.enroll')}}" style="color: white; font-weight: bold; text-decoration: underline;">Click here to enroll</a></p> -->
+        <!-- </div> -->
     </div>
 </div>
 {% endif %}

@@ -675,7 +675,6 @@ def course():
             p(course_enrolled_months)
             for m in course_enrolled_months:
                 base_dir = f"static/files/courses/{ws_uuid}/{m.month}/notes"
-                p(base_dir)
                 if not os.path.exists(base_dir):
                     os.makedirs(base_dir)
                 folder_content = os.listdir(base_dir)
@@ -688,10 +687,8 @@ def course():
                             'file_path': f_path
                         }
                         study_material_dict[f] = material
-            p(study_material_dict)
             study_material_count = len(study_material_dict) 
             study_material_dict = dict(sorted(study_material_dict.items()))
-            p(study_material_count)
 
             # ----------------------------------- ASSIGNMENTS ---------------------------------------------- #
             assignments_dict = {}
