@@ -124,6 +124,31 @@ def api():
             current_course_month_enrolled_students[st.id] = es
         return current_course_month_enrolled_students
 
+    def all_pending_current_course_month():
+        current_course_enrolment_pending_students = {}
+        current_course_uuid = db.session.query(Tools).filter_by(keyword='current_course_uuid').scalar().data
+        current_course = db.session.query(Workshop).filter_by(uuid=current_course_uuid).scalar()
+        current_course_all_enrolled = current_course.participants
+        course_months = current_course.months
+        enrolment_month_list = []
+        for m in course_months:
+            if len(m.members) > 0:
+                enrolment_month_list.append(m.month)
+        last_enrolment_month_no = max(enrolment_month_list)
+        for m in course_months:
+            if m.month == last_enrolment_month_no:
+                last_enrolment_month = m
+        for s in current_course_all_enrolled:
+            if s not in last_enrolment_month.members:
+                es = {
+                    'id':s.id,
+                    'name':s.name,
+                    'email':s.email,
+                    'phone':s.phone,
+                    'whatsapp':s.whatsapp
+                }
+                current_course_enrolment_pending_students[s.id] = es
+        return current_course_enrolment_pending_students
 
     for m in all_members:
         all_members_phone.append(m.phone)
@@ -249,6 +274,8 @@ def api():
             return jsonify(all_enrolled_current_workshop())
         elif data == 'current_course_month_enrolled':
             return jsonify(all_enrolled_current_course_month())
+        elif data == 'current_course_enrolment_pending':
+            return jsonify(all_pending_current_course_month())
         elif data == 'collection':
             return jsonify(total_collection_current_workshop())
         elif data == 'current-session-url':
