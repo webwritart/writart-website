@@ -559,6 +559,7 @@ def classroom():
 
 @school.route('/course', methods=['GET','POST'])
 def course():
+    global current_course_month
     if current_user.is_authenticated:
         if 'ws_uuid' in session or request.args.get('ws_uuid'):
             vid_id_list = []
