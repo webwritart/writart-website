@@ -583,7 +583,6 @@ def course():
             pending = []
             course_enrolled_months = []
             all_enrolled_months = current_user.ws_months
-            current_course_month = ''
 
             for m in course_month_list:
                 if m not in all_enrolled_months:
@@ -598,9 +597,9 @@ def course():
         
             next_course_month_no = int(current_course_month_no) + 1
             for m in course_month_list:
-                if m.month == current_course_month_no:
+                if m.month == int(current_course_month_no):
                     current_course_month = m
-            if current_course_month in all(all_enrolled_months):
+            if current_course_month in all_enrolled_months:
                 enrolment_alert = ''
 
             non_enrolment_msg_months = ''
