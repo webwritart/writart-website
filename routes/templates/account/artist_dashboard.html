@@ -1,6 +1,19 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1>Temporary Artist Dashboard text</h1>
-
+<div>
+    <div>
+        <form>
+            <p>Create Invoice</p>
+            <input type="text" name="name" placeholder="Customer's name" required>
+            <input type="text" name="address" placeholder="Customer's address" required>
+            <input type="text" name="phone" placeholder="Customer's phone" required>
+            <input type="text" name="email" placeholder="Customer's email" required>
+            <input type="text" name="email" placeholder="Customer's email" required>
+            <input type="number" name="item_count" id="item_count" placeholder="Total Items" required>
+            <input type="text" name="tax_percentage" placeholder="Tax percentage">
+            <input type="date" name="date" placeholder="Date">
+        </form>
+    </div>
+</div>
 {% endblock %}

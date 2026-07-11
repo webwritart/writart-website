@@ -189,15 +189,6 @@ def main_dashboard():
     artist = db.session.query(Role).filter_by(name='artist').scalar()
     instructor = db.session.query(Role).filter_by(name='instructor').scalar()
 
-    if request.method == 'POST':
-        if request.form.get('submit') == 'remove':
-            months = db.session.query(Workshop).filter_by(uuid=595911).scalar().months
-            for m in months:
-                if m.month == 2:
-                    current_month = m
-            current_user.ws_months.remove(current_month)
-            db.session.commit()
-
     roles = current_user.role
     if admin in roles:
         roles.remove(admin)
