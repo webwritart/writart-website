@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, date
 import os
 import PIL.Image as Image
 from difflib import SequenceMatcher
@@ -9,6 +9,8 @@ import random
 import base64
 from PIL import Image, ImageDraw, ImageFont
 import shutil
+from models.tool import Tools
+from pathlib import Path
 
 
 
@@ -200,6 +202,127 @@ def prepare_certificate(awardee_name_text, course_topic, course_period, issuing_
     
     image.save(file_path, 'PDF', resolution=100.0)
 
+
+def prepare_invoice(customer_name, customer_address, customer_phone, customer_email, item_dict, tax_percent, date_, user_uuid):
+    image = Image.open("./static/images/miscellaneous/invoice_base_design.png")
+    if image.mode != 'RGBA':
+        image = image.convert('RGBA')
+    draw = ImageDraw.Draw(image)
+
+    date_today = str(date_)
+    if not date_:
+        date_today = str(date.today())
+    
+    large_name = True
+    while large_name:
+        if len(customer_name) > 26:
+            customer_name = customer_name.split(' ')
+            customer_name.pop()
+            customer_name = " ".join(customer_name)
+        else:
+            large_name = False
+    
+    
+    # ---------------------------------- INVOICE NO -------------------------------------- #
+    last_invoice_no = db.session.query(Tools).filter_by(keyword='last_invoice').scalar().data
+    current_invoice_no = f"INV-8000{int(last_invoice_no)+1}"
+    db.session.query(Tools).filter_by(keyword='last_invoice').scalar().data = int(last_invoice_no)+1
+    db.session.commit()
+    
+    primary_text_color = (0, 0, 0)
+    secondary_text_color = (0, 0, 0, 200)
+    tertiary_text_color = (255,255,255)
+    primary_font_size = 47
+    secondary_font_size = 35
+    tertiary_font_size = 35
+    numeral_primary_size = 33
+    numeral_bold_size = 40
+    
+    # ----------------------- Position coordinates --------------------------------------- #
+    customer_name_coord = (129, 625)
+    customer_address_coord = (129, 675)
+    customer_phone_coord = (250, 727)
+    invoice_no_coord = (1020, 680)
+    date_coord = (1020, 730)
+
+    # ---------------------------- Font -------------------------------------------------- #
+    primary_font = ImageFont.truetype("./static/fonts/myriad_pro/MYRIADPRO-BOLD.OTF", size=primary_font_size)
+    secondary_font = ImageFont.truetype("./static/fonts/arial/ARIALBD.TTF", size=secondary_font_size)
+    tertiary_font = ImageFont.truetype("./static/fonts/myriad_pro/MyriadPro-Light.otf", size=tertiary_font_size)
+    numeral_primary_font = ImageFont.truetype("./static/fonts/myriad_pro/MyriadPro-Light.otf", size=numeral_primary_size)
+    numeral_bold_font = ImageFont.truetype("./static/fonts/arial/ARIBLK.TTF", size=numeral_bold_size)
+
+    draw.text(customer_name_coord, customer_name, fill=primary_text_color, font=primary_font)
+    draw.text(customer_address_coord, customer_address, fill=primary_text_color, font=tertiary_font)
+    draw.text(customer_phone_coord, customer_phone, fill=primary_text_color, font=numeral_primary_font)
+    draw.text(invoice_no_coord, current_invoice_no, fill=primary_text_color, font=numeral_primary_font)
+    draw.text(date_coord, date_today, fill=primary_text_color, font=numeral_primary_font)
+    draw.text(date_coord, date_today, fill=primary_text_color, font=numeral_primary_font)
+    
+    grand_total = 0
+    y = 935
+    y2 = 930
+    for item in item_dict:
+        item_serial = item + '.'
+        item_description = item_dict[item]['item_description']
+        price = item_dict[item]['price']
+        price_entry = f"₹{item_dict[item]['price']}"
+        qty = item_dict[item]['qty']
+        total = int(price) * int(qty)
+        total_entry = f"₹{int(price) * int(qty):,}"
+        item_serial_coord = (129, y2)
+        item_description_coord = (180, y2)
+        price_coord = (1035, y)
+        qty_coord = (1280, y)
+        total_coord = (1552, y)
+        draw.text(item_serial_coord, item_serial, fill=secondary_text_color, font=secondary_font)
+        draw.text(item_description_coord, item_description, fill=(secondary_text_color), font=secondary_font)
+        draw.text(price_coord, price_entry, fill=secondary_text_color, font=secondary_font, anchor='ra')
+        draw.text(qty_coord, qty, fill=secondary_text_color, font=secondary_font, anchor='ra')
+        draw.text(total_coord, total_entry, fill=secondary_text_color, font=secondary_font, anchor='ra')
+        y+=70
+        y2+=70
+        grand_total += total
+    
+    if tax_percent:
+        tax_amount = round((int(tax_percent)/100)*grand_total)
+        tax_amount_entry = f"₹{tax_amount:,}"
+        grand_total_entry = f"₹{round(grand_total + (int(tax_percent)/100)*grand_total):,}"
+
+        tax = f"Tax GST {tax_percent}%"
+        tax_coord = (1070, 1640)
+        tax_amount_coord = (1560, 1660)
+        draw.text(tax_coord, tax, fill=secondary_text_color, font=secondary_font)
+        draw.text(tax_amount_coord, tax_amount_entry, fill=secondary_text_color, font=secondary_font, anchor='rm')
+    else:
+        grand_total_entry = f"₹{round(grand_total):,}"
+    
+    grand_total_coord = (1565, 1735)
+    draw.text(grand_total_coord, grand_total_entry, fill=primary_text_color, font=numeral_bold_font, anchor='rm')
+    save_path = f"./static/files/users/{user_uuid}/documents/invoices/"
+    
+    if save_path[-1] != '/':
+        save_path + '/'
+    temp_img_path = f'{save_path}temp_img/'
+    if not os.path.exists(temp_img_path):
+        os.makedirs(temp_img_path)
+    filename = f"{user_uuid}_{current_invoice_no}"
+    temp_img_filepath = temp_img_path+filename+'.png'
+
+    image.save(temp_img_filepath, 'PNG', resolution=100.0)
+
+
+def png_to_pdf(file_directory, export_path):
+    dir_path = Path(file_directory)
+    files = [str(f) for f in dir_path.iterdir() if f.is_file()]
+    if export_path[-1] != '/':
+        export_path = export_path + '/'
+    for file in files:
+        img = Image.open(file)
+        rgb_img = img.convert('RGB')
+        filename = Path(file).stem
+        rgb_img.save(export_path + filename + '.pdf')
+    p('Converted png to pdf')
 
 
 def move_files (source_path_with_file_joined_list, destination_folder):

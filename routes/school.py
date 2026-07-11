@@ -594,11 +594,14 @@ def course():
             if pending_count > 0:
                 enrolment_alert = ''
             current_course_month_no = db.session.query(Tools).filter_by(keyword='current_course_month').scalar().data
+        
             next_course_month_no = int(current_course_month_no) + 1
             for m in course_month_list:
                 if m.month == next_course_month_no:
                     next_course_month = m
-            if next_course_month in all_enrolled_months:
+                if m.month == current_course_month_no:
+                    current_course_month = m
+            if current_course_month in all(all_enrolled_months):
                 enrolment_alert = ''
 
             non_enrolment_msg_months = ''
@@ -779,8 +782,6 @@ def course():
             return redirect(url_for('school.classroom'))
     else:
         return redirect(url_for('school.classroom'))
-    p(non_enrolment_msg_submissions)
-    p(non_enrolment_msg)
     return render_template('course.html', logged_in=current_user.is_authenticated,
                            video_count=video_count, vid_id_list=vid_id_list, vid_caption_list=vid_caption_list,
                            ws_topic=course_topic, study_material_dict=study_material_dict, study_material_count=study_material_count,
