@@ -598,8 +598,6 @@ def course():
         
             next_course_month_no = int(current_course_month_no) + 1
             for m in course_month_list:
-                if m.month == next_course_month_no:
-                    next_course_month = m
                 if m.month == current_course_month_no:
                     current_course_month = m
             if current_course_month in all(all_enrolled_months):
