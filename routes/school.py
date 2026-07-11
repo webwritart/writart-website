@@ -785,7 +785,7 @@ def course():
                            ws_credit_dict=ws_credit_dict, total_ws_credits=total_ws_credits,
                            feedback_topic_list=feedback_topic_list, assessment_vid_dict=assessment_vid_dict, assessment_video_count=assessment_video_count,
                            demo_vid_dict=demo_vid_dict, demo_video_count=demo_video_count, non_enrolment_msg=non_enrolment_msg, pending_count=pending_count, enrolment_alert=enrolment_alert,
-                           non_enrolment_msg_submissions=non_enrolment_msg_submissions)
+                           non_enrolment_msg_submissions=non_enrolment_msg_submissions, current_year=current_year)
 
 
 @school.route('/submit-feedback-files', methods=['GET', 'POST'])
