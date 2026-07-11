@@ -45,6 +45,9 @@
     {% if artist in current_user.role %}
     <a class="btn btn-primary btn-block btn-large" href="{{url_for('account.artist_dashboard')}}">ARTIST DASHBOARD</a>
     {% endif %}
+    <form action="{{url_for('account.main_dashboard')}}" method="post">
+        <button class="btn btn-primary btn-block btn-large" type="submit" name="submit" value="remove">Remove from Month 2</button>
+    </form>
 </div>
 
 {% endblock %}
