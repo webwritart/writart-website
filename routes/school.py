@@ -559,7 +559,6 @@ def classroom():
 
 @school.route('/course', methods=['GET','POST'])
 def course():
-    global current_course_month
     if current_user.is_authenticated:
         if 'ws_uuid' in session or request.args.get('ws_uuid'):
             vid_id_list = []
@@ -584,6 +583,7 @@ def course():
             pending = []
             course_enrolled_months = []
             all_enrolled_months = current_user.ws_months
+            current_course_month = ''
 
             for m in course_month_list:
                 if m not in all_enrolled_months:
