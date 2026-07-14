@@ -38,6 +38,7 @@ class Member(UserMixin, db.Model):
     profession = db.Column(db.String(100))
     sex = db.Column(db.String(10))
     dob = db.Column(db.String(15))
+    address = db.Column(db.String(200))
     state = db.Column(db.String(100))
     website = db.Column(db.String(100))
     fb_url = db.Column(db.String(100))
@@ -56,6 +57,7 @@ class Member(UserMixin, db.Model):
     feedback_credits = db.relationship('FeedbackCredits', backref='student')
     portraits = db.relationship('Portrait', backref='artist')
     certificates = db.relationship('Certificate', backref='member')
+    invoices = db.relationship('Invoice', backref='member')
 
     def __repr__(self):
         return f'{self.name.split()[0]} -- {self.email}'

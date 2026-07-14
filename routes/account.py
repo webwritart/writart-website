@@ -266,6 +266,20 @@ def student_dashboard():
 def artist_dashboard():
     admin = db.session.query(Role).filter_by(name='admin').scalar()
     artist = db.session.query(Role).filter_by(name='artist').scalar()
+
+    if request.method == 'POST':
+        if request.form.get('submit') == 'create_document':
+            document = request.form.get('document')
+            name = request.form.get('name')
+            address = request.form.get('address')
+            phone = request.form.get('phone')
+            email = request.form.get('email')
+            item_count = request.form.get('item_count')
+            tax_percentage = request.form.get('tax_percentage')
+            date = request.form.get('date')
+            payment_type = request.form.get('payment_type')
+            partial_payment_amount_paid = request.form.get('partial_payment_amount')
+            
     if current_user.is_authenticated:
         if artist in current_user.role:
             return render_template('artist_dashboard.html', logged_in=current_user.is_authenticated, current_year=current_year, admin=admin)

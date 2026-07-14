@@ -7,6 +7,7 @@ from time import sleep
 from urllib.parse import quote
 import os
 from flask import flash
+from pathlib import Path
 
 load_dotenv()
 
@@ -69,3 +70,14 @@ def send_email_with_reply(subject, sender_mail, recipients_list, message_body):
     print("mail sent")
 
 
+def send_email_with_pdf_attachment(subject, reply_back_email, recipients_list, message_body, attachment_file_path):
+    message = Message(subject, sender=("Writart Studio", "writartstudios@gmail.com"), recipients=recipients_list, reply_to=reply_back_email)
+    message.body = message_body
+    with open(attachment_file_path, 'rb') as fp:
+        message.attach(
+            filename=Path(attachment_file_path).name,
+            content_type="application/pdf", 
+            data=fp.read()
+        )
+    mail.send(message)
+    print("mail sent")

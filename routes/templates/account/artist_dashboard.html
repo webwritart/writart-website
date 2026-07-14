@@ -1,19 +1,123 @@
 {% extends "base.html" %}
 {% block content %}
-
-<div>
-    <div>
-        <form>
-            <p>Create Invoice</p>
+<style>
+    #root-container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+        min-height: 90vh;
+    }
+    #form-container {
+        width: 50%;
+    }
+    select {
+        width: 100%;
+    }
+    .form-heading {
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+    @media (max-width: 700px) {
+        #form-container {
+            width: 80%;
+        }
+    }
+</style>
+<div id="root-container">
+    <div id="form-container">
+        <form id="my_form" action="{{url_for('account.artist_dashboard')}}" method="post">
+            <p class="form-heading">Create Invoice/Recipt</p>
+            <select name="document" id="document">
+                <option value="">Choose Document Type</option>
+                <option value="invoice">Invoice</option>
+                <option value="receipt">Receipt</option>
+            </select>
             <input type="text" name="name" placeholder="Customer's name" required>
             <input type="text" name="address" placeholder="Customer's address" required>
             <input type="text" name="phone" placeholder="Customer's phone" required>
             <input type="text" name="email" placeholder="Customer's email" required>
-            <input type="text" name="email" placeholder="Customer's email" required>
             <input type="number" name="item_count" id="item_count" placeholder="Total Items" required>
             <input type="text" name="tax_percentage" placeholder="Tax percentage">
             <input type="date" name="date" placeholder="Date">
+            <select id="payment_type" name="payment_type">
+                <option value="">Select Payment type</option>
+                <option value="full">Full</option>
+                <option value="partial">Partial</option>
+            </select>
+            <input id="partial_payment_amt" type="text" name="partial_payment_amount" placeholder="Partial Payment Amount Paid">
+            <button type="submit" id="submit-btn" name="submit" value="create_document" class="btn btn-primary btn-block btn-large">Create Document</button>
         </form>
     </div>
 </div>
+
+<script>
+    const documentType = document.getElementById('document');
+    const paymentType = document.getElementById('payment_type');
+    const partialPaymentAmount = document.getElementById('partial_payment_amt');
+    const itemCount = document.getElementById('item_count');
+    const myForm = document.getElementById('my_form');
+    const submitBtn = document.getElementById('submit-btn');
+
+    function hideInputs() {
+        paymentType.style.display = "none";
+        partialPaymentAmount.style.display = "none";
+    }
+    hideInputs();
+
+    // Generates a customized range array
+    const range = (start, end, step = 1) => 
+    Array.from({ length: Math.ceil((end - start) / step) }, (_, i) => start + i * step);
+
+   
+    
+
+    documentType.addEventListener('change', (event) => {
+        const documentValue = event.target.value;
+        if (documentValue == 'invoice') {
+            paymentType.style.display = "none";
+        partialPaymentAmount.style.display = "none";
+        } else if (documentValue == 'receipt') {
+            paymentType.style.display = "block";
+        }
+    });
+    paymentType.addEventListener('change', (event) => {
+        const paymentTypeValue = event.target.value;
+        if (paymentTypeValue == 'full') {
+            partialPaymentAmount.style.display = "none";
+        } else {
+            partialPaymentAmount.style.display = "block";
+        }
+    });
+    itemCount.addEventListener('change', (event) => {
+        const itemCountValue = event.target.value;
+        for (const num of range(0, itemCountValue, 1)) {
+            const newInput = document.createElement('input');
+            const newItemPrice = document.createElement('input');
+            const newItemQty = document.createElement('input');
+            const itemNo = num+1;
+            newInput.type = 'text';
+            newInput.name = 'item'+itemNo;
+            newInput.placeholder = 'Item '+itemNo;
+            myForm.appendChild(newInput);
+
+            newItemPrice.type = 'number';
+            newItemPrice.name = 'item'+itemNo+'price';
+            newItemPrice.placeholder = 'Item '+itemNo+' Price';
+            myForm.appendChild(newItemPrice);
+
+            newItemQty.type = 'number';
+            newItemQty.name = 'item'+itemNo+'qty';
+            newItemQty.placeholder = 'Item '+itemNo+' Quantity';
+            myForm.appendChild(newItemQty);
+
+            myForm.appendChild(submitBtn);
+            }
+        });
+</script>
+
+
 {% endblock %}

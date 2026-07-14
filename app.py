@@ -23,6 +23,8 @@ from models.artist_data import ArtistData
 from sqlalchemy import create_engine, text
 from models.tool import Tools, ArtworkPriceTime, SupportTicket
 from models.news import News
+from models.transactions import *
+
 
 load_dotenv()
 
