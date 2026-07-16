@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+    #root-container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+        min-height: 85vh;
+        background: rgb(89, 103, 89);
+    }
+    #preview_img {
+        max-height: 85vh;
+        max-width: 80vw;
+    }
+    #heading {
+        font-weight: bold;
+        font-size: 1.5rem;
+        color: white;
+        padding-top: 1%;
+    }
+  
+    #form {
+        width: 100%;
+        display:flex;
+        padding: 1% 10%;
+        justify-content: center;
+        align-items: center;
+    }
+    .fbtn {
+        margin: 2%;
+        padding: 1% 2%;
+        width: 25%;
+        background: rgb(83, 94, 9);
+        color: white;
+    }
+    .fbtn:hover {
+        background: rgb(40, 71, 9);
+    }
+    @media (max-width: 900px) {
+        #form {
+            padding: 1% 5%;
+        }
+        .fbtn {
+            width: 30%;
+        }
+    }
+    @media (max-width: 600px) {
+        #form {
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 1% 5%;
+        }
+        .fbtn {
+            width: 100%;
+        }
+    }
+</style>
+<div id="root-container">
+    <p id="heading">{{document}} Preview</p>
+    <img id="preview_img" src="{{preview_path}}">
+    <form id="form" action="{{url_for('account.artist_dashboard')}}" method="post">
+        <button class="fbtn" id="save-email" name="submit" value="save_email">Save & Mail</button>
+        <button class="fbtn" id="save-download" name="submit" value="save_download">Save & Download</button>
+        <button class="fbtn" id="save-email-download" name="submit" value="save_email_download">Save, Mail & Download</button>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <p class="{{category}}">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <p id="document-alert"></p>
+    </form>
+</div>
+
+<script>
+    const documentType = {{ document | tojson }};
+    const documentAlert = document.getElementById('document-alert');
+
+    const saveEmailBtn = document.getElementById('save-email');
+    const saveDownloadBtn = document.getElementById('save-download');
+    const saveEmailDownloadBtn = document.getElementById('save-email-download');
+
+    if (documentType == "receipt") {
+        saveEmailBtn.value = "receipt-save-email";
+        saveDownloadBtn.value = "receipt-save-download";
+        saveEmailDownloadBtn.value = "receipt-save-email-download";
+    } else if (documentType == "invoice") {
+        saveEmailBtn.value = "save-email";
+        saveDownloadBtn.value = "save-download";
+        saveEmailDownloadBtn.value = "save-email-download";
+    }
+    
+</script>
+
+{% endblock %}

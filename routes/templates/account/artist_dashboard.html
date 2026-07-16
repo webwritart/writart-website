@@ -38,6 +38,7 @@
             </select>
             <input type="text" name="name" placeholder="Customer's name" required>
             <input type="text" name="address" placeholder="Customer's address" required>
+            <input type="text" name="state" placeholder="State" required>
             <input type="text" name="phone" placeholder="Customer's phone" required>
             <input type="text" name="email" placeholder="Customer's email" required>
             <input type="number" name="item_count" id="item_count" placeholder="Total Items" required>
@@ -49,6 +50,7 @@
                 <option value="partial">Partial</option>
             </select>
             <input id="partial_payment_amt" type="text" name="partial_payment_amount" placeholder="Partial Payment Amount Paid">
+            <input id="rec_inv_no" type="text" name="receipt_invoice_no" placeholder="Receipt against Invoice No">
             <button type="submit" id="submit-btn" name="submit" value="create_document" class="btn btn-primary btn-block btn-large">Create Document</button>
         </form>
     </div>
@@ -58,6 +60,7 @@
     const documentType = document.getElementById('document');
     const paymentType = document.getElementById('payment_type');
     const partialPaymentAmount = document.getElementById('partial_payment_amt');
+    const receiptInvoiceNo = document.getElementById('rec_inv_no');
     const itemCount = document.getElementById('item_count');
     const myForm = document.getElementById('my_form');
     const submitBtn = document.getElementById('submit-btn');
@@ -65,6 +68,7 @@
     function hideInputs() {
         paymentType.style.display = "none";
         partialPaymentAmount.style.display = "none";
+        receiptInvoiceNo.style.display = "none";
     }
     hideInputs();
 
@@ -82,6 +86,7 @@
         partialPaymentAmount.style.display = "none";
         } else if (documentValue == 'receipt') {
             paymentType.style.display = "block";
+            receiptInvoiceNo.style.display = "block";
         }
     });
     paymentType.addEventListener('change', (event) => {
@@ -94,6 +99,12 @@
     });
     itemCount.addEventListener('change', (event) => {
         const itemCountValue = event.target.value;
+        const itemElements = document.querySelectorAll('.item');
+
+        itemElements.forEach(element => {
+            element.style.display = "none";
+        });
+
         for (const num of range(0, itemCountValue, 1)) {
             const newInput = document.createElement('input');
             const newItemPrice = document.createElement('input');
@@ -101,16 +112,19 @@
             const itemNo = num+1;
             newInput.type = 'text';
             newInput.name = 'item'+itemNo;
+            newInput.classList.add("item");
             newInput.placeholder = 'Item '+itemNo;
             myForm.appendChild(newInput);
 
             newItemPrice.type = 'number';
             newItemPrice.name = 'item'+itemNo+'price';
+            newItemPrice.classList.add("item");
             newItemPrice.placeholder = 'Item '+itemNo+' Price';
             myForm.appendChild(newItemPrice);
 
             newItemQty.type = 'number';
             newItemQty.name = 'item'+itemNo+'qty';
+            newItemQty.classList.add("item");
             newItemQty.placeholder = 'Item '+itemNo+' Quantity';
             myForm.appendChild(newItemQty);
 
