@@ -7,7 +7,7 @@ from models.query import Query
 from models.tool import Tools, ArtworkPriceTime
 from flask_login import current_user
 from operations.miscellaneous import log
-from models.artist_data import ArtistData
+from models.artist_data import *
 from operations.artist_tools import delete_watermarked_images
 from operations.miscellaneous import image_resize_and_compress_single
 
@@ -83,3 +83,23 @@ def verification():
 def temp():
     
     return render_template('temp.html')
+
+@main.route('/qr_verification', methods=['GET', 'POST'])
+def qr_verification():
+    token = request.args.get('token')
+    category = request.args.get('category')
+    if category == 'coa':
+        coa_data = db.session.query(Coa).filter_by(serial_no=token).scalar()
+        coa_dict = {
+            'Serial No':coa_data.serial_no,
+            'Title':coa_data.title,
+            'Artist':coa_data.artist_name,
+            'Size':coa_data.size,
+            'Medium':coa_data.medium,
+            'Year':coa_data.year,
+            'Client Name':coa_data.client_name
+        }
+        return render_template('qr_verification.html', logged_in=current_user.is_authenticated, current_year=current_year,
+                            category=category, coa_dict=coa_dict)
+        
+    return render_template('qr_verification.html', logged_in=current_user.is_authenticated, current_year=current_year)

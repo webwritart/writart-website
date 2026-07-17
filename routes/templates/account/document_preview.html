@@ -12,7 +12,7 @@
         background: rgb(89, 103, 89);
     }
     #preview_img {
-        max-height: 85vh;
+        max-height: 70vh;
         max-width: 80vw;
     }
     #heading {
@@ -85,14 +85,18 @@
     const saveDownloadBtn = document.getElementById('save-download');
     const saveEmailDownloadBtn = document.getElementById('save-email-download');
 
-    if (documentType == "receipt") {
+    if (documentType == "Receipt") {
         saveEmailBtn.value = "receipt-save-email";
         saveDownloadBtn.value = "receipt-save-download";
         saveEmailDownloadBtn.value = "receipt-save-email-download";
-    } else if (documentType == "invoice") {
+    } else if (documentType == "Invoice") {
         saveEmailBtn.value = "save-email";
         saveDownloadBtn.value = "save-download";
         saveEmailDownloadBtn.value = "save-email-download";
+    } else if (documentType == "COA") {
+        saveEmailBtn.value = "coa-save-email";
+        saveDownloadBtn.value = "coa-save-download";
+        saveEmailDownloadBtn.value = "coa-save-email-download";
     }
     
 </script>

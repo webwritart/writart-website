@@ -58,6 +58,9 @@ class Member(UserMixin, db.Model):
     portraits = db.relationship('Portrait', backref='artist')
     certificates = db.relationship('Certificate', backref='member')
     invoices = db.relationship('Invoice', backref='member')
+    given_coas = db.relationship('Coa', foreign_keys='Coa.artist_id', back_populates='artist')
+    taken_coas = db.relationship('Coa', foreign_keys='Coa.client_id', back_populates='client')
+
 
     def __repr__(self):
         return f'{self.name.split()[0]} -- {self.email}'
@@ -71,6 +74,7 @@ class Certificate(db.Model):
     certificate_no = db.Column(db.String(50), unique=True)
     awardee_name = db.Column(db.String(100))
     course_topic = db.Column(db.String(100))
+    course_uuid = db.Column(db.String(10))
     course_period = db.Column(db.String(50))
     session_type = db.Column(db.String(50))
     instructor = db.Column(db.String(100))

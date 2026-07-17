@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+#root-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 80vh;
+}
+#table-container {
+    width: 40%;
+}
+#heading {
+    color: green;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+}
+td {
+    font-weight: 900;
+    border: solid 1px black;
+    padding-left: 2%;
+}
+#header {
+    background: rgb(9, 21, 1);
+    color: white;
+    font-weight: 900;
+    
+}
+table {
+    width:100%;
+}
+
+@media (max-width: 1200px) {
+    #table-container {
+        width: 50%;
+    }
+}
+@media (max-width: 900px) {
+    #table-container {
+        width: 70%;
+    }
+}
+@media (max-width: 600px) {
+    #table-container {
+        width: 80%;
+    }
+}
+</style>
+<div id="root-container">
+    {% if category == 'coa' %}
+    <div id="table-container">
+        <p id="heading">Artwork Verified Successfully!</p>
+        <table>
+            <tr id="header">
+                <td>KEY</td>
+                <td>DATA</td>
+            </tr>
+            {% for item in coa_dict %} 
+            <tr>
+                <td>{{item}}</td>
+                <td style="color:green;">{{coa_dict[item]}}</tc>
+            </tr>
+            {% endfor %}
+        </table>
+        <p style="color:green;">The Artwork is successfully verified as an authentic piece by the artist.</p>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

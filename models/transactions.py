@@ -50,3 +50,4 @@ class Receipt(db.Model):
 
     def __repr__(self):
         return f'{self.receipt_no}--{self.name}--{self.grand_total}'
+    

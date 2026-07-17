@@ -1,8 +1,5 @@
 function closeAll() {
     document.getElementById("manager-img").style.display = 'none';
-    document.getElementById("add-ws").style.display = 'none';
-    document.getElementById("add-ws-details").style.display = 'none';
-    document.getElementById("add-ws-videos").style.display = 'none';
     document.getElementById("add-recording-link").style.display = 'none';
     document.getElementById("add-session-link").style.display = 'none';
     document.getElementById("close-reg").style.display = 'none';
@@ -31,16 +28,6 @@ function addNewWs() {
 function addWsDetails() {
     closeAll();
     document.getElementById("add-ws-details").style.display = 'block';
-}
-
-function addWsVideos() {
-    closeAll();
-    document.getElementById("add-ws-videos").style.display = 'block';
-}
-
-function addWsDemo() {
-    closeAll();
-    document.getElementById("add-ws-demo").style.display = 'block';
 }
 
 function openRegistration() {
@@ -83,15 +70,6 @@ function sessionReminder() {
     document.getElementById("session-reminder").style.display = 'block';
 }
 
-function addAssignments() {
-    closeAll();
-    document.getElementById("add-assignments").style.display = 'block';
-}
-
-function addWsFiles() {
-    closeAll();
-    document.getElementById("add-ws-files").style.display = 'block';
-}
 function openQuizData() {
     closeAll();
     document.getElementById("add-quiz-data").style.display = 'block';
@@ -120,7 +98,7 @@ function gstFilingSheet() {
     closeAll();
 }
 
-function    overview() {
+function overview() {
     closeAll();
     document.getElementById("overview-content").style.display = 'block';
 }
@@ -153,7 +131,7 @@ function recipientPopup() {
     }
 }
 
-function    workshopDetails(n, count_list) {
+function workshopDetails(n, count_list) {
     var list = count_list
     for (var i in list) {
         if (i != n) {

@@ -11,7 +11,7 @@ from flask_login import current_user, login_required, login_user, logout_user
 from datetime import date, datetime
 import random
 from operations.miscellaneous import *
-from models.artist_data import ArtistData
+from models.artist_data import *
 from models.news import News
 from models.tool import SupportTicket, Tools
 from models.transactions import *
@@ -340,6 +340,7 @@ def artist_dashboard():
                 session['file_directory'] = file_directory
 
                 return render_template('document_preview.html', preview_path=inv_preview_path, current_year=current_year, admin=admin, logged_in=current_user.is_authenticated, document='Invoice')
+            
             elif document == 'receipt':
                 address = address + ', ' + state
                 result = prepare_receipt(name, address, phone, item_dict, tax_percentage, date_, current_user.uuid, payment_type, partial_payment_amount_paid)
@@ -359,7 +360,7 @@ def artist_dashboard():
                 session['attachment_path'] = attachment_file_path
                 session['file_directory'] = file_directory
 
-                return render_template('document_preview.html', preview_path=rec_preview_path, current_year=current_year, admin=admin, logged_in=current_user.is_authenticated, document='Invoice')
+                return render_template('document_preview.html', preview_path=rec_preview_path, current_year=current_year, admin=admin, logged_in=current_user.is_authenticated, document='Receipt')
 
         if request.form.get('submit') == 'save_email':
             # Save PDF of the Invoice ...........................................................................
@@ -444,7 +445,6 @@ def artist_dashboard():
             
 
         elif request.form.get('submit') == 'save_download':
-            p('Form posted')
             # Save PDF of the Invoice ...........................................................................
             png_path = session.get('file_directory')
             pdf_export_path = session.get('invoice_pdf_path')
@@ -608,11 +608,9 @@ def artist_dashboard():
                 download_name=f"{filename}.pdf"  # Sets the default name for the downloaded file
             )
         if request.form.get('submit') == 'receipt-save-email':
-            p('Form posted')
             # Save PDF of the Receipt ...........................................................................
             png_path = session.get('file_directory')
             pdf_export_path = session.get('receipt_pdf_path')
-            p(pdf_export_path)
             png_to_pdf(png_path, pdf_export_path)
 
             # Add Customer to MEMBER table database............................................................
@@ -697,7 +695,7 @@ def artist_dashboard():
             # Save PDF of the Receipt ...........................................................................
             png_path = session.get('file_directory')
             pdf_export_path = session.get('receipt_pdf_path')
-            png_to_pdf(png_path, pdf_export_path)
+            filename = png_to_pdf(png_path, pdf_export_path)[0]
 
             # Add Customer to MEMBER table database............................................................
             existing_uuid_list = []
@@ -777,7 +775,7 @@ def artist_dashboard():
             # Save PDF of the Receipt ...........................................................................
             png_path = session.get('file_directory')
             pdf_export_path = session.get('receipt_pdf_path')
-            png_to_pdf(png_path, pdf_export_path)
+            filename = png_to_pdf(png_path, pdf_export_path)[0]
 
             # Add Customer to MEMBER table database............................................................
             existing_uuid_list = []
@@ -863,6 +861,205 @@ def artist_dashboard():
                 download_name=f"{filename}.pdf"  # Sets the default name for the downloaded file
             )
             
+        if request.form.get('submit') == 'create-coa':
+            file = request.files.get('artwork-img')
+            s_no = request.form.get('serial_no')
+            title = request.form.get('title')
+            size = request.form.get('size')
+            medium = request.form.get('medium')
+            year = request.form.get('year')
+            client_name = request.form.get('client_name')
+            client_email = request.form.get('client_email')
+            varnished = request.form.get('varnished')
+            signed = request.form.get('signed')
+            statement = request.form.get('statement')
+            copyright_type = request.form.get('copyright')
+
+            if file:
+                filename = secure_filename(file.filename)
+            
+            temp_artwork_img_folder = f"./static/files/users/{current_user.uuid}/temp/artwork/"
+            if not os.path.exists(temp_artwork_img_folder):
+                os.makedirs(temp_artwork_img_folder)
+            dir_path = Path(temp_artwork_img_folder)
+            files = [str(f) for f in dir_path.iterdir() if f.is_file()]
+            if len(files) > 0:
+                for f in files:
+                    os.remove(f)
+            artwork_path = f"{temp_artwork_img_folder}{filename}"
+            file.save(artwork_path)
+
+            temp_coa_img_path = prepare_coa(title, current_user.name, size, medium, varnished, year, signed, s_no, statement, copyright_type, artwork_path, current_user.uuid)[0]
+
+            session['s_no'] = s_no
+            session['title'] = title
+            session['size'] = size
+            session['medium'] = medium
+            session['year'] = year
+            session['client_name'] = client_name
+            session['client_email'] = client_email
+            session['varnished'] = varnished
+            session['signed'] = signed
+            session['statement'] = statement
+            session['copyright_type'] = copyright_type
+            session['coa_img_path'] = str(Path(temp_coa_img_path).parent)
+            
+            return render_template('document_preview.html', preview_path='.'+temp_coa_img_path, current_year=current_year, admin=admin, logged_in=current_user.is_authenticated, document='COA')
+        
+        if request.form.get('submit') == 'coa-save-email':
+            # -------------------------------- ADD TO DATABASE----------------------------------------------------------------- #
+            s_no = session.get('s_no')
+            title = session.get('title')
+            size = session.get('size')
+            medium = session.get('medium')
+            year = session.get('year')
+            client_name = session.get('client_name')
+            client_email = session.get('client_email')
+            varnished = session.get('varnished')
+            signed = session.get('signed')
+            statement = session.get('statement')
+            copyright_type = session.get('copyright_type')
+            coa_img_path = session.get('coa_img_path')
+            export_path = f"./static/files/users/{current_user.uuid}/documents/coa/"
+
+            coa_pdf_path = png_to_pdf(coa_img_path, export_path)[1]
+    
+            if client_email:
+                client = db.session.query(Member).filter_by(email=client_email).scalar()
+                client_id = client.id
+            else:
+                client_id = ''
+
+            entry = Coa(
+                serial_no=s_no,
+                title=title,
+                artist_name=current_user.name,
+                size=size,
+                medium=medium,
+                varnished=varnished,
+                year=year,
+                signed=signed,
+                statement=statement,
+                copyright=copyright_type,
+                client_name=client_name,
+                artist_id=current_user.id,
+                client_id=client_id
+            )
+            db.session.add(entry)
+            db.session.commit()
+
+            # ------------------------------- Email --------------------------------------------- #
+            if client_email:
+                subject = f"Certificate of Authenticity - Artwork_{s_no}"
+                body = f"Dear {client_name}\n\nPlease find the Certificate of Authenticity for the artwork attached in the attachment."
+                send_email_with_pdf_attachment(subject, 'shwetabhartist@gmail.com', [client_email], body, coa_pdf_path)
+
+        elif request.form.get('submit') == 'coa-save-download':
+            # -------------------------------- ADD TO DATABASE----------------------------------------------------------------- #
+            s_no = session.get('s_no')
+            title = session.get('title')
+            size = session.get('size')
+            medium = session.get('medium')
+            year = session.get('year')
+            client_name = session.get('client_name')
+            client_email = session.get('client_email')
+            varnished = session.get('varnished')
+            signed = session.get('signed')
+            statement = session.get('statement')
+            copyright_type = session.get('copyright_type')
+            coa_img_path = session.get('coa_img_path')
+            export_path = f"./static/files/users/{current_user.uuid}/documents/coa/"
+
+            coa_pdf_path = png_to_pdf(coa_img_path, export_path)[1]
+    
+            if client_email:
+                client = db.session.query(Member).filter_by(email=client_email).scalar()
+                client_id = client.id
+            else:
+                client_id = ''
+
+            entry = Coa(
+                serial_no=s_no,
+                title=title,
+                artist_name=current_user.name,
+                size=size,
+                medium=medium,
+                varnished=varnished,
+                year=year,
+                signed=signed,
+                statement=statement,
+                copyright=copyright_type,
+                client_name=client_name,
+                artist_id=current_user.id,
+                client_id=client_id
+            )
+            db.session.add(entry)
+            db.session.commit()
+
+            # ------------------------------------- DOWNLOAD ------------------------------------------- #
+            filename = Path(coa_pdf_path).name
+            return send_file(
+                coa_pdf_path,
+                as_attachment=True,         # True forces a browser download prompt
+                download_name=f"{filename}"  # Sets the default name for the downloaded file
+            )
+
+        elif request.form.get('submit') == 'coa-save-email-download':
+            # -------------------------------- ADD TO DATABASE----------------------------------------------------------------- #
+            s_no = session.get('s_no')
+            title = session.get('title')
+            size = session.get('size')
+            medium = session.get('medium')
+            year = session.get('year')
+            client_name = session.get('client_name')
+            client_email = session.get('client_email')
+            varnished = session.get('varnished')
+            signed = session.get('signed')
+            statement = session.get('statement')
+            copyright_type = session.get('copyright_type')
+            coa_img_path = session.get('coa_img_path')
+            export_path = f"./static/files/users/{current_user.uuid}/documents/coa/"
+
+            coa_pdf_path = png_to_pdf(coa_img_path, export_path)[1]
+    
+            if client_email:
+                client = db.session.query(Member).filter_by(email=client_email).scalar()
+                client_id = client.id
+            else:
+                client_id = ''
+
+            entry = Coa(
+                serial_no=s_no,
+                title=title,
+                artist_name=current_user.name,
+                size=size,
+                medium=medium,
+                varnished=varnished,
+                year=year,
+                signed=signed,
+                statement=statement,
+                copyright=copyright_type,
+                client_name=client_name,
+                artist_id=current_user.id,
+                client_id=client_id
+            )
+            db.session.add(entry)
+            db.session.commit()
+
+            # ------------------------------- Email --------------------------------------------- #
+            if client_email:
+                subject = f"Certificate of Authenticity - Artwork_{s_no}"
+                body = f"Dear {client_name}\n\nPlease find the Certificate of Authenticity for the artwork attached in the attachment."
+                send_email_with_pdf_attachment(subject, 'shwetabhartist@gmail.com', [client_email], body, coa_pdf_path)
+
+             # ------------------------------------- DOWNLOAD ------------------------------------------- #
+            filename = Path(coa_pdf_path).name
+            return send_file(
+                coa_pdf_path,
+                as_attachment=True,         # True forces a browser download prompt
+                download_name=f"{filename}"  # Sets the default name for the downloaded file
+            )
+
 
     if current_user.is_authenticated:
         if artist in current_user.role:

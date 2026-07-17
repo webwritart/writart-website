@@ -10,7 +10,13 @@
         min-height: 90vh;
     }
     #form-container {
+        display: flex;
         width: 50%;
+    }
+    #form-container form {
+        padding: 2%;
+        border: solid 2px black;
+        width:50%;
     }
     select {
         width: 100%;
@@ -21,9 +27,19 @@
         font-weight: bold;
         text-transform: uppercase;
     }
-    @media (max-width: 700px) {
+
+    @media (max-width: 1200px) {
         #form-container {
             width: 80%;
+        }
+    }
+    @media (max-width: 700px) {
+        #form-container {
+            flex-direction: column;
+            width: 80%;
+        }
+        #form-container form {
+            width: 100%;
         }
     }
 </style>
@@ -52,6 +68,41 @@
             <input id="partial_payment_amt" type="text" name="partial_payment_amount" placeholder="Partial Payment Amount Paid">
             <input id="rec_inv_no" type="text" name="receipt_invoice_no" placeholder="Receipt against Invoice No">
             <button type="submit" id="submit-btn" name="submit" value="create_document" class="btn btn-primary btn-block btn-large">Create Document</button>
+        </form>
+        <form action="{{url_for('account.artist_dashboard')}}" method="post" enctype="multipart/form-data">
+            <p class="form-heading">Create COA</p>
+            <label>Artwork Image</label>
+            <input type="file" name="artwork-img" accept="image/*">
+            <input type="text" name="serial_no" placeholder="Serial No" required>
+            <input type="text" name="title" placeholder="title" required>
+            <input type="text" name="size" placeholder="size" required>
+            <input type="text" name="medium" placeholder="medium" required>
+            <input type="text" name="year" placeholder="year" required>
+            <input type="text" name="client_name" placeholder="Client name" required>
+            <input type="email" name="client_email" placeholder="Client Email (optional)">
+            <select name="varnished">
+                <option value="">Varnished?</option>
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+            </select>
+            <select name="signed">
+                <option value="">Signed?</option>
+                <option value="true">True</option>
+                <option value="false">False</option>
+            </select>
+            <select name="statement">
+                <option value="">Statement?</option>
+                <option value="unique">Unique</option>
+                <option value="print">Print</option>
+                <option value="self-copy">Self Copy</option>
+            </select>
+            <select name="copyright">
+                <option value="">Copyright Type</option>
+                <option value="allow-none">Allow None</option>
+                <option value="allow-reproduction">Allow Reproduction</option>
+                <option value="allow-reproduction-commercial">Allow Reproduction and Commercial</option>
+            </select>
+            <button type="submit" name="submit" value="create-coa" class="btn btn-primary btn-block btn-large">Create COA</button>
         </form>
     </div>
 </div>

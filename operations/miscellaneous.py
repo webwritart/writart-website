@@ -1,4 +1,5 @@
 from datetime import datetime, date
+from flask import session
 import os
 import PIL.Image as Image
 from difflib import SequenceMatcher
@@ -11,6 +12,8 @@ from PIL import Image, ImageDraw, ImageFont
 import shutil
 from models.tool import Tools
 from pathlib import Path
+import qrcode
+
 
 
 
@@ -373,12 +376,13 @@ def prepare_receipt(customer_name, customer_address, customer_phone, item_dict, 
     
     primary_text_color = (0, 0, 0)
     secondary_text_color = (0, 0, 0, 200)
-    tertiary_text_color = (255,255,255)
+    tertiary_text_color = (189,34,23)
     primary_font_size = 47
     secondary_font_size = 35
     tertiary_font_size = 35
     numeral_primary_size = 33
     numeral_bold_size = 40
+    dues_font_size = 50
 
     # ----------------------- Position coordinates --------------------------------------- #
     customer_name_coord = (129, 625)
@@ -393,6 +397,7 @@ def prepare_receipt(customer_name, customer_address, customer_phone, item_dict, 
     tertiary_font = ImageFont.truetype("./static/fonts/myriad_pro/MyriadPro-Light.otf", size=tertiary_font_size)
     numeral_primary_font = ImageFont.truetype("./static/fonts/myriad_pro/MyriadPro-Light.otf", size=numeral_primary_size)
     numeral_bold_font = ImageFont.truetype("./static/fonts/arial/ARIBLK.TTF", size=numeral_bold_size)
+    dues_bold_font = ImageFont.truetype("./static/fonts/arial/ARIBLK.TTF", size=dues_font_size)
 
     draw.text(customer_name_coord, customer_name, fill=primary_text_color, font=primary_font)
     draw.text(customer_address_coord, customer_address, fill=primary_text_color, font=tertiary_font)
@@ -448,6 +453,17 @@ def prepare_receipt(customer_name, customer_address, customer_phone, item_dict, 
     
     grand_total_coord = (1565, 1735)
     draw.text(grand_total_coord, grand_total_entry, fill=primary_text_color, font=numeral_bold_font, anchor='rm')
+
+    if payment_type == 'partial':
+        paid_amt = partial_payment_amount_paid
+        paid_entry = f"₹{int(paid_amt):,}"
+        dues = grand_total - int(paid_amt)
+        dues_entry = f"₹{round(dues):,}"
+        paid_coord = (350, 1874)
+        dues_coord = (350, 1937)
+        draw.text(paid_coord, paid_entry, fill=secondary_text_color, font=numeral_bold_font)
+        draw.text(dues_coord, dues_entry, fill=tertiary_text_color, font=dues_bold_font)
+
     save_path = f"./static/files/users/{user_uuid}/documents/receipts/"
     if not os.path.exists(save_path):
         os.makedirs(save_path)
@@ -472,18 +488,171 @@ def prepare_receipt(customer_name, customer_address, customer_phone, item_dict, 
 
     return ['.'+temp_img_filepath, save_path, current_receipt_no, sub_total, grand_total, attachment_file_path, temp_img_path]
 
+
+def prepare_coa(title, artist_name, size, medium, varnished, year, signed, serial_no, statement, copyright, artwork_path, user_uuid):
+    image = Image.open("./static/images/miscellaneous/COA-base-design.png")
+
+    if image.mode != 'RGBA':
+        image = image.convert('RGBA')
+    draw = ImageDraw.Draw(image)
+
+    date_today = str(date.today())
+
+    # PRINT THE CERTIFICATE.........................................................................................
+    primary_text_color = (10, 105, 12)
+    secondary_text_color = (0, 0, 0)
+
+    primary_font_size = 40
+    secondary_font_size = 34
+    tertiary_font_size = 38
+
+    primary_font = ImageFont.truetype("./static/fonts/roboto/Roboto-Regular.ttf", size=primary_font_size)
+    secondary_font = ImageFont.truetype("./static/fonts/roboto/Roboto-Regular.ttf", size=secondary_font_size)
+    tertiary_font = ImageFont.truetype("./static/fonts/roboto/Roboto-regular.ttf", size=tertiary_font_size)
+
+    title_coord = (165, 380)
+    artist_coord = (165, 495)
+    size_coord = (165, 620)
+    medium_coord = (165, 665)
+    varnished_coord = (165, 710)
+    year_coord = (165, 755)
+    signed_coord = (165, 800)
+    s_no_coord = (165, 845)
+    statement_coord = (155, 1170)
+    copyright_coord = (155, 1270)
+    qr_coord = (1810, 1120)
+    date_coord = (1420, 1480)
+
+    size_entry = f"Size: {size}"
+    medium_entry = f"Medium: {medium}"
+    varnished_entry = f"Varnished: {varnished}"
+    year_entry = f"Year: {year}"
+    if signed == 'true':
+        if statement == 'unique' or statement == 'self-copy':
+            signed_entry = f"Signed: Front & Back"
+        elif statement == 'print':
+            signed_entry = f"Signed: Back"
+    elif signed == 'false':
+        signed_entry = f"Signed: Not-signed"
+    s_no_entry = f"Serial No.: {serial_no}"
+    if statement == 'unique':
+        statement_entry = "The artist declares that this artwork is one-of-a-kind authentic, original, artwork."
+    elif statement == 'print':
+        statement_entry = "The artist declares that this artwork is a print copy of self-created artwork."
+    elif statement == 'self-copy':
+        statement_entry = "The artist declares that this artwork is a hand-painted copy of self-created artwork."
+    if copyright == "allow-reproduction":
+        copyright_entry = "The reproduction rights are transferred to the client, but commercial and other copyrights are resereved with the artist.\nViolation may attract legal action."
+    elif copyright == "allow-none":
+        copyright_entry = "All the copyrights including reproduction and commercial rights are reserved with the artist.\nViolation may attract legal action."
+    elif copyright == "allow-reproduction-commercial":
+        copyright_entry = "The reproduction and commercial rights are transferred to the client. Other copyrights are reserved with the artist.\nViolation may attract legal action."
+
+    qr_data = f"https://writart.com/qr_verification?token={serial_no}&category=coa"
+    bg_color = (252, 255, 228)
+    qr_path = create_qr_code(qr_data, 2, 1, bg_color, user_uuid)
+    qr_img_raw = Image.open(qr_path)
+    qr_img = qr_img_raw.resize((round(qr_img_raw.width*.8), round(qr_img_raw.height*.8)), Image.Resampling.LANCZOS)
+    artwork_img = Image.open(artwork_path)
+    w = artwork_img.width
+    h = artwork_img.height
+    aspect_ratio = w/h
+    if max(w, h) == w:
+        new_w = 800
+        new_h = 800/aspect_ratio
+        artwork_img_entry = artwork_img.resize((round(new_w), round(new_h)), Image.Resampling.LANCZOS)
+        artwork_y = 290 + (400-(new_h/2))
+        artwork_img_entry_coord = (1380, round(artwork_y))
+    else:
+        new_h = 800
+        new_w = 800*aspect_ratio
+        artwork_img_entry = artwork_img.resize((round(new_w), round(new_h)), Image.Resampling.LANCZOS)
+        artwork_x = 1380 + (400-(new_w/2))
+        artwork_img_entry_coord = (round(artwork_x), 290)
+    
+
+    # rectangle_coord = [(1380, 290), (2180,1090)]
+    # draw.rectangle(rectangle_coord, fill='black')
+
+    draw.text(title_coord, title, fill=primary_text_color, font=primary_font)
+    draw.text(artist_coord, artist_name, fill=primary_text_color, font=primary_font)
+    draw.text(size_coord, size_entry, fill=primary_text_color, font=secondary_font)
+    draw.text(medium_coord, medium_entry, fill=primary_text_color, font=secondary_font)
+    draw.text(varnished_coord, varnished_entry, fill=primary_text_color, font=secondary_font)
+    draw.text(year_coord, year_entry, fill=primary_text_color, font=secondary_font)
+    draw.text(signed_coord, signed_entry, fill=primary_text_color, font=secondary_font)
+    draw.text(s_no_coord, s_no_entry, fill=primary_text_color, font=secondary_font)
+    draw.text(statement_coord, statement_entry, fill=secondary_text_color, font=secondary_font)
+    draw.text(copyright_coord, copyright_entry, fill=secondary_text_color, font=secondary_font)
+    draw.text(date_coord, date_today, fill= secondary_text_color, font=tertiary_font)
+    image.paste(qr_img, qr_coord)
+    image.paste(artwork_img_entry, artwork_img_entry_coord)
+    
+
+    temp_coa_img_path = f"./static/files/users/{user_uuid}/temp/coa/"
+    if not os.path.exists(temp_coa_img_path):
+        os.makedirs(temp_coa_img_path)
+    file_name = f"coa_{user_uuid}_{serial_no}.png"
+
+    dir_path = Path(temp_coa_img_path)
+    files = [str(f) for f in dir_path.iterdir() if f.is_file()]
+    if len(files) > 0:
+        for f in files:
+            os.remove(f)
+    image.save(temp_coa_img_path+file_name, 'PNG', resolution=100.0)
+    artwork_img_dir_path = Path(artwork_path).parent
+    files = [str(f) for f in artwork_img_dir_path.iterdir() if f.is_file()]
+    if len(files) > 0:
+        for f in files:
+            os.remove(f)
+
+    return [temp_coa_img_path+file_name]
+
+
+
 def png_to_pdf(file_directory, export_path):
     dir_path = Path(file_directory)
     files = [str(f) for f in dir_path.iterdir() if f.is_file()]
     if export_path[-1] != '/':
         export_path = export_path + '/'
+    
+    if not os.path.exists(export_path):
+        os.makedirs(export_path)
+        
     for file in files:
         img = Image.open(file)
         rgb_img = img.convert('RGB')
         filename = Path(file).stem
         rgb_img.save(export_path + filename + '.pdf')
-    return [filename]
+    return [filename, export_path+filename+'.pdf']
 
+
+def create_qr_code(data, box_size, border, background_color, user_uuid):
+    qr = qrcode.QRCode(
+        version=4,  # Controls the size of the QR Code (1 is 21x21 matrix)
+        error_correction=qrcode.constants.ERROR_CORRECT_H,  # High error tolerance (~30%)
+        box_size=10,  # Size of each individual square pixel
+        border=border,     # Thickness of the outer border (minimum is 4)
+    )
+    qr.add_data(data)
+    qr.make(fit=True)
+
+    img = qr.make_image(fill_color=(0, 0, 0, 255), back_color=background_color)
+    if img.mode != 'RGBA':
+        img = img.convert('RGBA')
+    temp_qr_img_path = "./static/files/users/"+str(user_uuid)+"/temp/qr/"
+    if not os.path.exists(temp_qr_img_path):
+        os.makedirs(temp_qr_img_path)
+    dir_path = Path(temp_qr_img_path)
+    files = [str(f) for f in dir_path.iterdir() if f.is_file()]
+    if len(files) > 0:
+        for f in files:
+            os.remove(f)
+    
+    filename = 'qr.png'
+    filepath = temp_qr_img_path+filename
+    img.save(filepath)
+    return filepath
 
 
 def move_files (source_path_with_file_joined_list, destination_folder):
@@ -516,5 +685,4 @@ def create_uuid(existing_uuid_list, uuid_length_in_digit):
             carry_on = False
             
     return uuid
-
 

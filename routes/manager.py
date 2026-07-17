@@ -556,6 +556,7 @@ def home():
                         certificate_no=certificate_no,
                         awardee_name=awardee_name_text,
                         course_topic=course_topic,
+                        course_uuid=ws_uuid,
                         course_period=course_period,
                         session_type=session_type,
                         instructor=instructor,
