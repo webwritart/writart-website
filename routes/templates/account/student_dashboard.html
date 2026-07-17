@@ -7,12 +7,13 @@
         width: 100%;
         height: 80vh;
         overflow:auto;
+        background: rgb(176, 190, 163);
     }
     .child-20-left {
         display:flex;
         flex-direction:column;
         width:20%;
-        background:#DEFFC2;
+        background:#9fb68b;
         border:solid 1px black;
         overflow:auto;
         padding: 0% 1%;
@@ -41,7 +42,7 @@
         align-items:center;
         width:300px;
         height: 200px;
-        color: white;
+        color: rgb(228, 233, 202);
         margin:2%;
         transition: transform 0.2s ease-in-out;
         box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.4);
@@ -84,23 +85,24 @@
     #school-news {
         display: flex;
         flex-direction: column;
-        background:#F1FFE3;
+        background:#dfe8d6;
         height:60%;
         overflow: auto;
     }
     #common-news {
-        background:#F1FFE3;
+        background:#dfe8d6;
         height:30%;
         overflow: auto;
     }
     .news-section-heading {
-        background: #696811;
+        background: #5e5d28;
         color: white;
         padding: 1% 2%;
         margin-bottom: 0%;
     }
     .dashboard-operation-btn {
         font-size: 1rem;
+        background: rgb(221, 224, 182);
     }
 
     @media screen and (max-width: 1200px) {
@@ -163,7 +165,7 @@
     }
 </style>
 
-<div class="title" style="background:#083011; color:white; padding: 1% 0%;">
+<div class="title" style="background:#45563c; color:white; padding: 1% 0%;">
     <h1>STUDENT DASHBOARD</h1>
 </div>
 <div class="container-full-width">
@@ -191,10 +193,10 @@
         </div>
     </div>
     <div class="child-60">
-        <a class="card" style="background-image: linear-gradient(45deg, #25A19F, #25A12B);" href="{{ url_for('school.classroom') }}">
+        <a class="card" style="background: rgb(61, 138, 64);" href="{{ url_for('school.classroom') }}">
             <p class="card-text">CLASSROOM</p>
         </a>
-        <a class="card" style="background-image: linear-gradient(45deg, #56BD33, #9BC936);" href="{{ url_for('school.home') }}">
+        <a class="card" style="background: rgb(64, 117, 65);" href="{{ url_for('school.home') }}">
             <p class="card-text">UPCOMING COURSE INFO</p>
         </a>
     </div>
