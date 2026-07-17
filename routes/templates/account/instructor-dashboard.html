@@ -2,50 +2,80 @@
 {% block content %}
 
 <style>
+    #title {
+        font-weight: 900;
+        font-size: 1.2rem;
+    }
 #root-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     min-height: 80vh;
+    background: rgb(164, 173, 155);
+    width: 100%;
 }
 .form-container {
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
     width: 100%;
+    flex-wrap: wrap;
 }
 .form-container form {
-    width: 40%;
+    width: 22%;
     display: flex;
     flex-direction: column;
+    padding: 1% 2%;
+    background: rgb(188, 192, 174);
+    margin: .5%;
+}
+.form-container form button {
+    background: rgb(149, 160, 134);
 }
 .form-heading {
-    font-size: 1.5rem;
-    font-weight: bold;
+    font-size: 1rem;
+    font-weight: 600;
     text-align: center;
+    margin: 0%;
+    color: rgba(0, 0, 0, 0.6)
 }
 #assignment-count-display p {
     line-height: 1;
     padding: 1% 0% 1.5% 0%;
     margin: 0%;
 }
+.form-button {
+    background: rgb(83, 93, 62) !important;
+    padding: .8% 2% !important;
+    font-size: .9rem;
+    color: rgb(213, 213, 213);
+}
+select {
+    padding: 0% !important;
+    font-size: .9rem;
+    background: rgb(234, 231, 201);
+}
+input {
+    padding: 0% !important;
+    margin: 0%;
+    background: rgb(234, 231, 201)
+}
 
 @media (max-width: 1200px) {
     .form-heading {
-        font-size: 1.3rem;
+        font-size: .85rem;
     }
     .form-container form {
-        width: 50%;
+        width: 32%;
     }
 }
 @media (max-width: 900px) {
     .form-heading {
-        font-size: 1.1rem;
+        font-size: .85rem;
     }
     .form-container form {
-        width: 60%;
+        width: 45%;
     }
 }
 @media (max-width: 600px) {
@@ -58,42 +88,31 @@
 }
 </style>
 <div id="root-container">
-    <div class="form-container" style="background: rgb(164, 173, 155);">
-        <p class="form-heading">Assignments count</p>
-        <form id="assignment-count" action="{{url_for('account.instructor_dashboard')}}" method="post">
-            <select name="course_uuid" required>
-                <option value="default">Choose Course/Workshop</option>
-                {% for c in course_dict %}
-                <option value="{{c}}">{{course_dict[c]['course_topic']}}</option>
-                {% endfor %}
-            </select>
-            <button class="btn btn-primary btn-block btn-large" type="submit" name="submit" value="assignment_details">Get Details</button>
-        </form>
-    </div>
-    
-    <div class="form-container" style="background: rgb(164, 173, 155);">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                <p class="{{category}}">{{ message }}</p>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-        <p class="form-heading">DOWNLOAD ASSIGNMENT SUBMISSIONS</p>
-        <form action="{{url_for('account.instructor_dashboard')}}" method="post">
-            <select name="course_uuid" required>
-                <option value="default">Choose Course/Workshop</option>
-                {% for c in course_dict %}
-                <option value="{{c}}">{{course_dict[c]['course_topic']}}</option>
-                {% endfor %}
-            </select>
-            <button class="btn btn-primary btn-block btn-large" type="submit" name="submit" value="download-assignments">Downlaod</button>
-        </form>
-    </div>
-    <hr style="background:black; opacity: .7;">
+        <p id="title">INSTRUCTOR DASHBOARD</p>
+
     <div class="form-container">
+        <form id="assignment-count" action="{{url_for('account.instructor_dashboard')}}" method="post">
+            <p class="form-heading">Assignments count</p>
+            <select name="course_uuid" required>
+                <option value="default">Choose Course/Workshop</option>
+                {% for c in course_dict %}
+                <option value="{{c}}">{{course_dict[c]['course_topic']}}</option>
+                {% endfor %}
+            </select>
+            <button class="btn btn-primary btn-block btn-large form-button" type="submit" name="submit" value="assignment_details">Get Details</button>
+        </form>
+        <form action="{{url_for('account.instructor_dashboard')}}" method="post">
+            <p class="form-heading">Download Assignment Submission</p>
+            <select name="course_uuid" required>
+                <option value="default">Choose Course/Workshop</option>
+                {% for c in course_dict %}
+                <option value="{{c}}">{{course_dict[c]['course_topic']}}</option>
+                {% endfor %}
+            </select>
+            <button class="btn btn-primary btn-block btn-large form-button" type="submit" name="submit" value="download-assignments">Downlaod</button>
+        </form>
         <form action="{{ url_for('account.instructor_dashboard') }}" method="post" enctype="multipart/form-data">
-            <p class="form-heading">COURSE OPERATIONS</p>
+            <p class="form-heading">Course Operations</p>
             <!-- <p id="js-test">Test text</p> -->
             <select id="operation" name="operation">
                 <option value="">Select Operation</option>
@@ -128,22 +147,17 @@
             <!-- --------------------------------------- SET CURRENT COURSE FEE --------------------------------------- -->
             <input type="number" name="fee" id="fee" placeholder="Monthly fee">
             <!-- --------------------------------------------------------------------------------------------- -->
-            <button type="submit" id="submit-btn" name="submit" class="btn btn-primary btn-block btn-large" value="">NONE</button>
+            <button type="submit" id="submit-btn" name="submit" class="btn btn-primary btn-block btn-large form-button" value="">NONE</button>
         </form>
-    </div>
-    <hr style="background:black; opacity: .7;">
-    <div class="form-container" style="background: rgb(164, 173, 155);">
         <form action="{{ url_for('account.instructor_dashboard')}}" method="post">
             <p class="form-heading">Show Next Month enrolment Alert</p>
             <input type="hidden" name="current-status" value="{{next_month_enrolment_alert_status}}">
             {% if next_month_enrolment_alert_status == 'on' %}
-            <button type="submit" name="submit" value="enrolment-alert" class="btn btn-primary btn-block btn-large">Turn Alert off</button>
+            <button type="submit" name="submit" value="enrolment-alert" class="btn btn-primary btn-block btn-large form-button">Turn Alert off</button>
             {% else %}
-            <button type="submit" name="submit" value="enrolment-alert" class="btn btn-primary btn-block btn-large">Turn Alert On</button>
+            <button type="submit" name="submit" value="enrolment-alert" class="btn btn-primary btn-block btn-large form-button">Turn Alert On</button>
             {% endif %}
         </form>
-    </div>
-    <div class="form-container" style="background: rgb(164, 173, 155);">
         <form action="{{ url_for('account.instructor_dashboard')}}" method="post">
             <p class="form-heading">Add Course Months/Parts</p>
             <select name="course-uuid">
@@ -153,10 +167,8 @@
                 {% endfor %}
             </select>
             <input type="number" name="month-count" placeholder="Total months" required>
-            <button type="submit" name="submit" value="workshop-month" class="btn btn-primary btn-block btn-large">Add Months</button>
+            <button type="submit" name="submit" value="workshop-month" class="btn btn-primary btn-block btn-large form-button">Add Months</button>
         </form>
-    </div>
-    <div class="form-container" style="background: rgb(164, 173, 155);">
         <form action="{{ url_for('account.instructor_dashboard')}}" method="post">
             <p class="form-heading">Add New Course</p>
             <input name="topic" placeholder="Topic" type="text" required>
@@ -165,8 +177,27 @@
                 <option value="course">Course</option>
                 <option value="qa">Question-Answer</option>
             </select>
-            <button type="submit" name="submit" value="new-course" class="btn btn-primary btn-block btn-large">Add New Course</button>
+            <button type="submit" name="submit" value="new-course" class="btn btn-primary btn-block btn-large form-button">Add New Course</button>
         </form>
+    </div>
+    
+    <div class="form-container" >
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <p class="{{category}}">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+    </div>
+    <div class="form-container">
+        
+        
+    </div>
+    <div class="form-container" style="background: rgb(164, 173, 155);">
+        
+        
     </div>
 </div>
 
