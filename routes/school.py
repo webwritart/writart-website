@@ -636,6 +636,8 @@ def course():
                     vid = db.session.query(MonthVideos).filter_by(date_time=date).scalar()
                     vid_id_list.append(vid.vid_id)
                     vid_caption_list.append(vid.title)
+                vid_id_list.reverse()
+                vid_caption_list.reverse()
 
             else:
                 if category != 'Q&A':
@@ -697,7 +699,7 @@ def course():
                         'file_path': base_dir+'/'+file_name
                     }
                     study_material_dict[a.date_time] = material
-
+            study_material_dict = dict(reversed(study_material_dict.items()))
             study_material_count = len(study_material_dict) 
 
             # ----------------------------------- ASSIGNMENTS ---------------------------------------------- #
@@ -714,6 +716,7 @@ def course():
                         'file_path': base_dir+'/'+file_name
                     }
                     assignments_dict[a.date_time] = material
+            assignments_dict = dict(reversed(assignments_dict.items()))
             assignments_count = len(assignments_dict)
             # ------------------------------ SUBMITTED ASSIGNMENTS GALLERY --------------------------------------- #
             submitted_assignments_list = []
