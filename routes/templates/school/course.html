@@ -104,6 +104,44 @@
         font-size: 1rem;
         background: rgb(50, 60, 26);
     }
+    #testimonial-root-container {
+        padding: 0% 10% 2% 10%;
+    }
+    #testimonial-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+    }
+    .testimonial-card {
+        background-image: url('../static/images/miscellaneous/testimonial.png');
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+        height: 240px;
+        width: 360px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 2% 2%;
+        filter: drop-shadow(5px 5px 5px rgba(0, 0, 0, 0.5));
+        margin: 1%;
+    }
+    .testimonial {
+        width: 100%;
+        font-size: .75rem;
+        padding: 0%;
+        margin: 0%;
+    }     
+    .testimonial-person {
+        width: 100%;
+        text-align: right;
+        font-size: .8rem;
+        padding: 0%;
+        margin: 0%;
+    }
+
     @media (max-width: 1200px) {
         .figure {
             width: 70%;
@@ -180,6 +218,17 @@
         .section-title {
             font-size: .8rem;
         }
+        .testimonial-card {
+            padding: 2% 8%;
+            margin: 0%;
+        }
+        .testimonial {
+            font-size: .6rem;
+        }     
+        .testimonial-person {
+            font-size: .65rem;
+        }
+        
     }
 </style>
 <div class="light-canvas">
@@ -326,7 +375,7 @@
         <!-- </div> -->
     </div>
 </div>
-<div class="video-wrapper" style="padding: 2% 0%; align-items:start; background: rgb(192, 192, 192);">
+<div class="video-wrapper" style="padding: 0% 0%; align-items:start; background: rgb(192, 192, 192);">
     <div class="video-wrapper-container" >
         <p class="section-title">ASSIGNMENT ASSESSMENT</p>
         <hr>
@@ -348,7 +397,7 @@
         {% endif %}
     </div>
 </div>
-<div class="video-wrapper" style="padding: 2% 0%; align-items:start; background: rgb(192, 192, 192);">
+<div class="video-wrapper" style="padding: 0% 0%; align-items:start; background: rgb(192, 192, 192);">
     <div class="video-wrapper-container" >
         <p class="section-title">DEMO VIDEOS</p>
         <hr>
@@ -376,6 +425,25 @@
 <!--                     </div>-->
             {% endfor %}
         {% endif %}
+        </div>
+    </div>
+</div>
+<div class="light-canvas">
+    <div id="testimonial-root-container">
+        <p class="section-title">WHAT STUDENTS SAY</p>
+        <div id="testimonial-container">
+            <div class="testimonial-card">
+                <p class="testimonial">"He makes you understand the basics, which is most important pillar of art career."</p>
+                <p class="testimonial-person"><b>- Razz<br>&nbsp;&nbsp;(Graphic Designer, Pune)</b></p>
+            </div>
+            <div class="testimonial-card">
+                <p class="testimonial">"Shwetabh sir is very well versed with the field, enthusiastic and a great teacher. The sessions are friendly and fun, but the concepts about softwares are made easy to understand. He takes efforts to cover the important aspects of the software and shows how to apply them. Really great classes so far!"</p>
+                <p class="testimonial-person"><b>- Koshin<br>&nbsp;&nbsp;(Game artist, Spain)</b></p>
+            </div>
+            <div class="testimonial-card">
+                <p class="testimonial">"I feel so lucky that you are my teacher .you have always encouraged me and boosted my confidence level.The quality and variety of techniques that i have learned from you have raised my artwork and my skill to greater heights."</p>
+                <p class="testimonial-person"><b>- Minakshi<br>&nbsp;&nbsp;(Artist, Pune)</b></p>
+            </div>
         </div>
     </div>
 </div>
