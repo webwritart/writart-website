@@ -501,6 +501,7 @@ def prepare_coa(title, artist_name, size, medium, varnished, year, signed, seria
     # PRINT THE CERTIFICATE.........................................................................................
     primary_text_color = (10, 105, 12)
     secondary_text_color = (0, 0, 0)
+    tertiary_text_color = (56, 56, 56)
 
     primary_font_size = 40
     secondary_font_size = 34
@@ -542,11 +543,11 @@ def prepare_coa(title, artist_name, size, medium, varnished, year, signed, seria
     elif statement == 'self-copy':
         statement_entry = "The artist declares that this artwork is a hand-painted copy of self-created artwork."
     if copyright == "allow-reproduction":
-        copyright_entry = "The reproduction rights are transferred to the client, but commercial and other copyrights are resereved with the artist.\nViolation may attract legal action."
+        copyright_entry = "The reproduction rights are transferred to the client, but commercial and other copyrights are resereved\nwith the artist, Violation may attract legal action."
     elif copyright == "allow-none":
         copyright_entry = "All the copyrights including reproduction and commercial rights are reserved with the artist.\nViolation may attract legal action."
     elif copyright == "allow-reproduction-commercial":
-        copyright_entry = "The reproduction and commercial rights are transferred to the client. Other copyrights are reserved with the artist.\nViolation may attract legal action."
+        copyright_entry = "The reproduction and commercial rights are transferred to the client. Other copyrights are reserved with\nthe artist. Violation may attract legal action."
 
     qr_data = f"https://writart.com/qr_verification?token={serial_no}&category=coa"
     bg_color = (252, 255, 228)
@@ -582,9 +583,9 @@ def prepare_coa(title, artist_name, size, medium, varnished, year, signed, seria
     draw.text(year_coord, year_entry, fill=primary_text_color, font=secondary_font)
     draw.text(signed_coord, signed_entry, fill=primary_text_color, font=secondary_font)
     draw.text(s_no_coord, s_no_entry, fill=primary_text_color, font=secondary_font)
-    draw.text(statement_coord, statement_entry, fill=secondary_text_color, font=secondary_font)
-    draw.text(copyright_coord, copyright_entry, fill=secondary_text_color, font=secondary_font)
-    draw.text(date_coord, date_today, fill= secondary_text_color, font=tertiary_font)
+    draw.text(statement_coord, statement_entry, fill=tertiary_text_color, font=secondary_font)
+    draw.text(copyright_coord, copyright_entry, fill=tertiary_text_color, font=secondary_font)
+    draw.text(date_coord, date_today, fill=tertiary_text_color, font=tertiary_font)
     image.paste(qr_img, qr_coord)
     image.paste(artwork_img_entry, artwork_img_entry_coord)
     
