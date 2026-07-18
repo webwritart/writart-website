@@ -698,25 +698,22 @@ def course():
                     study_material_dict[a.date_time] = material
 
             study_material_count = len(study_material_dict) 
-            # study_material_dict = dict(sorted(study_material_dict.items()))
 
             # ----------------------------------- ASSIGNMENTS ---------------------------------------------- #
             assignments_dict = {}
+            all_datetime_list = []
             for m in course_enrolled_months:
                 base_dir = f"static/files/courses/{ws_uuid}/{m.month}/assignments"
-                if not os.path.exists(base_dir):
-                    os.makedirs(base_dir)
-                folder_content = os.listdir(base_dir)
-                for f in folder_content:
-                    f_path = base_dir + '/' + f
-                    if os.path.isfile(f_path):
-                        assignment = {
-                            'file_name': f.split('$')[1],
-                            'file_path': f_path
-                        }
-                        assignments_dict[f] = assignment
+                all_assignments = db.session.query(MonthAssignments).filter_by(month_id=m.month).all()
+                for a in all_assignments:
+                    file_name = a.file_name.split('$')[1]
+                    all_datetime_list.append(a.date_time)
+                    material = {
+                        'file_name': file_name,
+                        'file_path': base_dir+'/'+file_name
+                    }
+                    assignments_dict[a.date_time] = material
             assignments_count = len(assignments_dict)
-            assignments_dict = dict(sorted(assignments_dict.items()))
 
             # ------------------------------- ASSIGNMENTS SUBMISSION ------------------------------------------ #
             if request.method == 'POST':
