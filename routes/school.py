@@ -561,7 +561,7 @@ def classroom():
 def course():
     if current_user.is_authenticated:               
         if 'ws_uuid' in session or request.args.get('ws_uuid'):
-            if request.method == 'POST':
+            if request.method == 'POST' and request.is_json:
                 data = request.get_json()
 
                 if data['category'] == 'notes':
@@ -714,7 +714,14 @@ def course():
                     }
                     assignments_dict[a.date_time] = material
             assignments_count = len(assignments_dict)
-
+            # ------------------------------ SUBMITTED ASSIGNMENTS GALLERY --------------------------------------- #
+            submitted_assignments_list = []
+            current_course_all_assignments_dir = f"static/files/courses/{ws_uuid}/assignment-submissions/"
+            dir_path = Path(current_course_all_assignments_dir)
+            all_submitted_assignments = [str(f) for f in dir_path.iterdir() if f.is_file()]
+            for a in all_submitted_assignments:
+                submitted_assignments_list.append('../'+a)
+            
             # ------------------------------- ASSIGNMENTS SUBMISSION ------------------------------------------ #
             if request.method == 'POST':
                 if request.form.get('submit') == 'submit_assignments':
@@ -792,7 +799,7 @@ def course():
                            ws_credit_dict=ws_credit_dict, total_ws_credits=total_ws_credits,
                            feedback_topic_list=feedback_topic_list, assessment_vid_dict=assessment_vid_dict, assessment_video_count=assessment_video_count,
                            demo_vid_dict=demo_vid_dict, demo_video_count=demo_video_count, non_enrolment_msg=non_enrolment_msg, pending_count=pending_count, enrolment_alert=enrolment_alert,
-                           non_enrolment_msg_submissions=non_enrolment_msg_submissions, current_year=current_year)
+                           non_enrolment_msg_submissions=non_enrolment_msg_submissions, current_year=current_year, submitted_assignments_list=submitted_assignments_list)
 
 
 @school.route('/submit-feedback-files', methods=['GET', 'POST'])

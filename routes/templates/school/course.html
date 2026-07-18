@@ -63,6 +63,21 @@
         padding: 0%;
         margin: .5%;
     }
+    #submitted-assignments-gallery {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 0% 10% 2% 10%;
+    }
+    #submitted-assignments-container {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .submitted-assignments-image-box img{
+        max-height: 200px;
+        border: solid 1px black;
+    }
     .wrapper {
         background: rgb(39, 48, 31);
     }
@@ -123,6 +138,13 @@
         .root-container {
             padding: 0% 10% 4% 10%;
         }
+        .submitted-assignments-image-box img{
+            max-height: 100px;
+            max-width: 150px;
+        }
+        .section-title {
+            font-size: 1rem;
+        }
     }
     @media (max-width: 600px) {
         .figure {
@@ -150,6 +172,13 @@
         }
         .root-container {
             padding: 0% 10% 5% 10%;
+        }
+        .submitted-assignments-image-box img{
+            max-height: 75px;
+            max-width: 100px;
+        }
+        .section-title {
+            font-size: .8rem;
         }
     }
 </style>
@@ -267,9 +296,19 @@
     </div>
 </div>
 {% endif %} -->
+<div id="submitted-assignments-gallery">
+    <p class="section-title">PENDING SUBMITTED ASSIGNMENTS</p>
+    <div id="submitted-assignments-container">
+        {% for a in submitted_assignments_list %}
+        <div class="submitted-assignments-image-box">
+            <img src="{{a}}" width: 100%;>
+        </div>
+        {% endfor %}
+    </div>
+</div>
 <div class="wrapper" id="submit-assignments" style="background: rgb(192, 192, 192);">
     <div class="width-80-container assignment-submission-form">
-        <h3 style="width:100%;color:rgb(0, 0, 0);opacity:1; text-align: center;">SUBMIT ASSIGNMENTS</h3>
+        <p class="section-title">SUBMIT ASSIGNMENTS</p>
         <form action="{{url_for('school.course')}}" method="post" enctype="multipart/form-data" style="width:100%;">
             <p id="assignment-format">Only JPG, JPEG and PNG files are allowed</p>
             <input type="file" name="assignments" accept=".jpg, .jpeg, .png" multiple required>
@@ -289,30 +328,18 @@
 </div>
 <div class="video-wrapper" style="padding: 2% 0%; align-items:start; background: rgb(192, 192, 192);">
     <div class="video-wrapper-container" >
-        <h3 style="color:rgb(0, 0, 0);">ASSIGNMENT ASSESSMENT</h3>
+        <p class="section-title">ASSIGNMENT ASSESSMENT</p>
         <hr>
         <div class="figure-container">
         {% if assessment_video_count > 0 %}
             {% for v in assessment_vid_dict %}
             <figure class="figure2">
-<!--                <iframe class="responsive-iframe" style="display:flex; width:25%; border:none;" src="https://www.youtube.com/embed/{{ vid_id_list[n] }}?si=2BVYS-0QHsxcX4f5&;"-->
-<!--                title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write;-->
-<!--                encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"-->
-<!--                allowfullscreen></iframe>-->
                 <iframe class="responsive-iframe" src="https://www.youtube.com/embed/{{ assessment_vid_dict[v]['vid_id'] }}?si=2BVYS-0QHsxcX4f5&;"
                 title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write;
                 encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
                 allowfullscreen></iframe>
                 <figcaption style="color: rgb(0, 0, 0);">{{ v }}</figcaption>
             </figure>
-<!--                    <div class="video">-->
-<!--                        <div class="content">-->
-<!--                            <lite-youtube videoid="{{ vid_id_list[n] }}"-->
-
-<!--                                      params="controls=1"></lite-youtube>-->
-<!--                            <p>{{ vid_caption_list[n] }}</p>-->
-<!--                        </div>-->
-<!--                     </div>-->
             {% endfor %}
         {% endif %}
         </div>
@@ -323,7 +350,7 @@
 </div>
 <div class="video-wrapper" style="padding: 2% 0%; align-items:start; background: rgb(192, 192, 192);">
     <div class="video-wrapper-container" >
-        <h3 style="color:rgb(0, 0, 0);">DEMO VIDEOS</h3>
+        <p class="section-title">DEMO VIDEOS</p>
         <hr>
         <div class="figure-container">
         {% if demo_video_count > 0 %}
