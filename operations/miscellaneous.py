@@ -508,7 +508,7 @@ def prepare_coa(title, artist_name, size, medium, varnished, year, signed, seria
 
     primary_font = ImageFont.truetype("./static/fonts/roboto/Roboto-Regular.ttf", size=primary_font_size)
     secondary_font = ImageFont.truetype("./static/fonts/roboto/Roboto-Regular.ttf", size=secondary_font_size)
-    tertiary_font = ImageFont.truetype("./static/fonts/roboto/Roboto-regular.ttf", size=tertiary_font_size)
+    tertiary_font = ImageFont.truetype("./static/fonts/roboto/Roboto-Regular.ttf", size=tertiary_font_size)
 
     title_coord = (165, 380)
     artist_coord = (165, 495)
