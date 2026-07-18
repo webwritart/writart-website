@@ -8,7 +8,7 @@ from extensions import db, current_year,p
 from pathlib import Path
 from models.query import Query
 from models.tool import Tools
-from models.member import Workshop, Role, Member, QuizList, FeedbackCredits, FeedbackVideos, WorkshopAssignmentAssessmentVideos, WorkshopDemo
+from models.member import *
 from models.videos import Demo
 from models.quiz import Quiz
 from models.workshop_details import WorkshopDetails
@@ -684,21 +684,21 @@ def course():
 
             # ------------------------------ STUDY MATERIAL ----------------------------------------------- #
             study_material_dict = {}
+            all_datetime_list = []
             for m in course_enrolled_months:
                 base_dir = f"static/files/courses/{ws_uuid}/{m.month}/notes"
-                if not os.path.exists(base_dir):
-                    os.makedirs(base_dir)
-                folder_content = os.listdir(base_dir)
-                for f in folder_content:
-                    f_path = base_dir + '/' + f
-                    if os.path.isfile(f_path):
-                        material = {
-                            'file_name': f.split('$')[1],
-                            'file_path': f_path
-                        }
-                        study_material_dict[f] = material
+                all_notes = db.session.query(MonthNotes).filter_by(month_id=m.month).all()
+                for a in all_notes:
+                    file_name = a.file_name.split('$')[1]
+                    all_datetime_list.append(a.date_time)
+                    material = {
+                        'file_name': file_name,
+                        'file_path': base_dir+'/'+file_name
+                    }
+                    study_material_dict[a.date_time] = material
+
             study_material_count = len(study_material_dict) 
-            study_material_dict = dict(sorted(study_material_dict.items()))
+            # study_material_dict = dict(sorted(study_material_dict.items()))
 
             # ----------------------------------- ASSIGNMENTS ---------------------------------------------- #
             assignments_dict = {}
