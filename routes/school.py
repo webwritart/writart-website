@@ -625,17 +625,18 @@ def course():
             non_enrolment_msg = f"You have not enrolled in {non_enrolment_msg_months}. So you cannot see the contents of these months."
             non_enrolment_msg_submissions = f"You have not enrolled in {non_enrolment_msg_months}. So you cannot submit assignments any more."
 
+    # ------------------------------------------ RECORDED VIDEO ------------------------------------------------------- #
             if category == 'course':
-                video_list = []
+                vid_date_list = []
                 for month in course_enrolled_months:
                     temp_vid_list = month.videos
                     for v in temp_vid_list:
-                        video_list.append(v)
-                for v in video_list:
-                    vid_id = v.vid_id
-                    vid_id_list.append(vid_id)
-                    vid_caption = v.title
-                    vid_caption_list.append(vid_caption)
+                        vid_date_list.append(v.date_time)
+                for date in vid_date_list:
+                    vid = db.session.query(MonthVideos).filter_by(date_time=date).scalar()
+                    vid_id_list.append(vid.vid_id)
+                    vid_caption_list.append(vid.title)
+
             else:
                 if category != 'Q&A':
                     topic = course.topic

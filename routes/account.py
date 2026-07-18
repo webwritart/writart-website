@@ -1078,6 +1078,7 @@ def artist_dashboard():
 def instructor_dashboard():
     admin = db.session.query(Role).filter_by(name='admin').scalar()
     instructor = db.session.query(Role).filter_by(name='instructor').scalar()
+    date_time = datetime.now().replace(microsecond=0)
 
     course_dict = {}
     courses = db.session.query(Workshop).all()
@@ -1109,6 +1110,7 @@ def instructor_dashboard():
                     title=title,
                     vid_id=video_yt_url,
                     detail=detail,
+                    date_time=date_time,
                     month_id=course_month.id
                 )
                 try:

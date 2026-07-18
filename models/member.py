@@ -208,6 +208,7 @@ class MonthVideos(db.Model):
     title = db.Column(db.String(100))
     vid_id = db.Column(db.String(100))
     detail = db.Column(db.String(200))
+    date_time = db.Column(db.String(50))
     month_id = db.Column(db.Integer, db.ForeignKey('workshop_month.id'))
 
     def __repr__(self):
