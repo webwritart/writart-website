@@ -717,10 +717,12 @@ def course():
             # ------------------------------ SUBMITTED ASSIGNMENTS GALLERY --------------------------------------- #
             submitted_assignments_list = []
             current_course_all_assignments_dir = f"static/files/courses/{ws_uuid}/assignment-submissions/"
+            student_uuid = current_user.uuid
             dir_path = Path(current_course_all_assignments_dir)
             all_submitted_assignments = [str(f) for f in dir_path.iterdir() if f.is_file()]
             for a in all_submitted_assignments:
-                submitted_assignments_list.append('../'+a)
+                if a.split('_')[1] == str(student_uuid):
+                    submitted_assignments_list.append('../'+a)
             
             # ------------------------------- ASSIGNMENTS SUBMISSION ------------------------------------------ #
             if request.method == 'POST':
