@@ -976,7 +976,7 @@ def artist_dashboard():
                 client = db.session.query(Member).filter_by(email=client_email).scalar()
                 client_id = client.id
             else:
-                client_id = ''
+                client_id = None
 
             entry = Coa(
                 serial_no=s_no,
