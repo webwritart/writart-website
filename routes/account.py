@@ -889,7 +889,9 @@ def artist_dashboard():
             artwork_path = f"{temp_artwork_img_folder}{filename}"
             file.save(artwork_path)
 
-            temp_coa_img_path = prepare_coa(title, current_user.name, size, medium, varnished, year, signed, s_no, statement, copyright_type, artwork_path, current_user.uuid)[0]
+            prepare_coa_result = prepare_coa(title, current_user.name, size, medium, varnished, year, signed, s_no, statement, copyright_type, artwork_path, current_user.uuid)[0]
+            temp_coa_img_path = prepare_coa_result[0]
+            date_today = prepare_coa_result[1]
 
             session['s_no'] = s_no
             session['title'] = title
@@ -903,6 +905,7 @@ def artist_dashboard():
             session['statement'] = statement
             session['copyright_type'] = copyright_type
             session['coa_img_path'] = str(Path(temp_coa_img_path).parent)
+            session['date_today'] = date_today
             
             return render_template('document_preview.html', preview_path='.'+temp_coa_img_path, current_year=current_year, admin=admin, logged_in=current_user.is_authenticated, document='COA')
         
@@ -920,6 +923,7 @@ def artist_dashboard():
             statement = session.get('statement')
             copyright_type = session.get('copyright_type')
             coa_img_path = session.get('coa_img_path')
+            date_today = session.get('date_today')
             export_path = f"./static/files/users/{current_user.uuid}/documents/coa/"
 
             coa_pdf_path = png_to_pdf(coa_img_path, export_path)[1]

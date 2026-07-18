@@ -607,7 +607,7 @@ def prepare_coa(title, artist_name, size, medium, varnished, year, signed, seria
         for f in files:
             os.remove(f)
 
-    return [temp_coa_img_path+file_name]
+    return [temp_coa_img_path+file_name, date_today]
 
 
 

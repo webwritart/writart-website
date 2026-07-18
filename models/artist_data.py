@@ -38,6 +38,7 @@ class Coa(db.Model):
     statement = db.Column(db.String(50))
     copyright = db.Column(db.String(50))
     client_name = db.Column(db.String(100))
+    issue_date = db.Column(db.String(15))
     artist_id = db.Column(db.Integer, db.ForeignKey('member.id'))
     client_id = db.Column(db.Integer, db.ForeignKey('member.id'))
 

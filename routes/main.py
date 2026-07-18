@@ -97,7 +97,8 @@ def qr_verification():
             'Size':coa_data.size,
             'Medium':coa_data.medium,
             'Year':coa_data.year,
-            'Client Name':coa_data.client_name
+            'Client Name':coa_data.client_name,
+            'Date Issued':coa_data.issue_date
         }
         return render_template('qr_verification.html', logged_in=current_user.is_authenticated, current_year=current_year,
                             category=category, coa_dict=coa_dict)
