@@ -623,8 +623,9 @@ def png_to_pdf(file_directory, export_path):
     for file in files:
         img = Image.open(file)
         rgb_img = img.convert('RGB')
+        dpi = img.info.get("dpi", (300, 300))
         filename = Path(file).stem
-        rgb_img.save(export_path + filename + '.pdf')
+        rgb_img.save(export_path + filename + '.pdf', "PDF", resolution=dpi[0], quality=100)
     return [filename, export_path+filename+'.pdf']
 
 
