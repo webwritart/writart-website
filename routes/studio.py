@@ -4,7 +4,7 @@ import os
 import random
 from flask_login import current_user
 from werkzeug.utils import secure_filename
-from extensions import db, current_year, list_files_in_directory, list_folders_in_directory
+from extensions import db, current_year, list_files_in_directory, list_folders_in_directory, p
 from models.member import Member, Portrait, Role
 from operations.miscellaneous import allowed_file, text_match
 from operations.artist_tools import add_watermark, delete_single_watermarked_image, delete_all_from_user
@@ -151,9 +151,11 @@ def portraits():
     artwork_dict = {}
 
     base_path = 'static/files/users/477706/artworks/portrait/thumbnail'
-    for file in list_files_in_directory(base_path):
-        title_raw = PureWindowsPath(file).name
-        path = file
+    dir_path = Path(base_path)
+    all_portrait_files = [str(f) for f in dir_path.iterdir() if f.is_file()]
+    for f in all_portrait_files:
+        title_raw = PureWindowsPath(f).name
+        path = f
         uuid = title_raw.split('.')[0].split('-')[1].split('_')[0]
         artist = db.session.query(Portrait).filter_by(uuid=uuid).scalar().artist
         title = title_raw.split('.')[0].split('-')[0].replace('_', ' ')
