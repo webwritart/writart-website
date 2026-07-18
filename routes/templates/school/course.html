@@ -1,13 +1,46 @@
 {% extends "base.html" %}
 {% block content %}
 <style>
+    .light-canvas {
+        background: rgb(209, 220, 200);
+    }
+    .dark-canvas {
+        background: rgb(170, 180, 162);
+    }
+    .root-container {
+        padding: 0% 10% 2% 10%;
+        display: flex;
+        flex-direction: column;
+    }
+    #lesson-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    .option-list {
+        width: 100%;
+    }
+   
+    #lesson-iframe-box {
+        display: none;
+    }
     .figure-container {
         display:flex;
         flex-wrap:wrap;
         width:100%;
         justify-content: center;
     }
+    .section-title {
+        font-size: 1.2rem;
+        font-weight: 900;
+        padding-top: 2%;
+    }
     .figure {
+        margin: 1%;
+        width: 50%;
+    }
+    .figure2 {
         margin: 1%;
         width: 20%;
     }
@@ -19,6 +52,7 @@
         color: black;
         font-weight: semibold;
         text-align: center;
+        font-size: 1.3rem;
     }
     .assignment-submission-form {
         width: 50%;
@@ -47,22 +81,23 @@
         padding: 0%;
         margin: 0%;
     }
-    #vid-btn-container {
-        width: 100%;
-        padding: 0% 20%;
-        display:flex;
-        flex-wrap: wrap;
-    }
-    #vid-btn {
-        max-width: 25%;
+    
+     #vid-btn {
+        max-width: 23%;
         margin: .5% 1%;
+        padding:.5% 1%;
+        font-size: 1rem;
+        background: rgb(50, 60, 26);
     }
     @media (max-width: 1200px) {
         .figure {
+            width: 70%;
+        }
+        .figure2 {
             width: 30%;
         }
         figcaption {
-            font-size: .8rem;
+            font-size: 1.1rem;
             line-height: 1.2;
         }
         #assignment-format {
@@ -73,13 +108,31 @@
         .assignment-submission-form input {
             padding: 0%;
         }
+        
+        #vid-btn {
+            min-width: 30%;
+            font-size: .9rem;
+        }
+        .figure {
+            margin: 1%;
+            width: 70%;
+        }
+        .figure2 {
+            width: 45%;
+        }
+        .root-container {
+            padding: 0% 10% 4% 10%;
+        }
     }
     @media (max-width: 600px) {
         .figure {
             width: 100%;
         }
+        .figure2 {
+            width: 90%;
+        }
         figcaption {
-            font-size: .7rem;
+            font-size: .9rem;
             
         }
         .assignment-submission-form {
@@ -91,20 +144,18 @@
         #assignment-format {
             font-size: .7rem;
         }
+        #vid-btn {
+            min-width: 45%;
+            font-size: .8rem;
+        }
+        .root-container {
+            padding: 0% 10% 5% 10%;
+        }
     }
 </style>
-<!-- <div class="video-wrapper" id="vid-btn-container">
-    {% for n in range(video_count) %}
-    <button class="btn btn-primary btn-block btn-large" id="vid-btn">{{vid_caption_list[n]}}</button>
-    {% endfor %}
-</div> -->
-
-<div class="video-wrapper" style="background:#ffffff; padding: 2% 0%; align-items:start;">
-    <div class="video-wrapper-container" >
-        <h3 style="color:black;">{{ ws_topic }}</h3>
-        
-        <hr>
-        {% if logged_in %}
+<div class="light-canvas">
+    <div class="root-container">
+        <p class="section-title">RECORDED LESSONS</p>
         {% if enrolment_alert == 'on' %}
         <div class="non_enrolment_msg" style="padding: 2% 0%;">
             <p>The last month is complete.<br>Please get enrolled in the new month of the course to view new contents without any disturbance. <a href="{{url_for('school.enroll')}}" style="color: white; font-weight: bold; text-decoration: underline;">Click here to enroll</a></p>
@@ -115,57 +166,68 @@
             <p>{{non_enrolment_msg}}<a href="{{url_for('school.enroll')}}" style="color: white; font-weight: bold; text-decoration: underline;">Click here to enroll</a></p>
         </div>
         {% endif %}
+        <div id="lesson-container">
+            <select class="option-list" id="lesson-list" onchange="showVideo()">
+                <option value="">Select Lesson to watch</option>
+                {% for n in range(video_count) %}
+                <option value="{{n}}">{{vid_caption_list[n]}}</option>
+                {% endfor %}
+            </select>
+            <div class="figure-container">
+            {% if video_count > 0 %}
+                {% for n in range(video_count) %}
+                <figure class="figure" id="lesson-iframe-box">
+                    <iframe class="responsive-iframe" id="lesson-iframe" src=""
+                    title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write;
+                    encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
+                    <figcaption id="lesson-caption">{{vid_caption_list[n]}}</figcaption>
+                </figure>
+    <!--                    <div class="video">-->
+    <!--                        <div class="content">-->
+    <!--                            <lite-youtube videoid="{{ vid_id_list[n] }}"-->
 
-        <div class="figure-container">
-        {% if video_count > 0 %}
-            {% for n in range(video_count) %}
-            <figure class="figure">
-<!--                <iframe class="responsive-iframe" style="display:flex; width:25%; border:none;" src="https://www.youtube.com/embed/{{ vid_id_list[n] }}?si=2BVYS-0QHsxcX4f5&;"-->
-<!--                title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write;-->
-<!--                encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"-->
-<!--                allowfullscreen></iframe>-->
-                <iframe class="responsive-iframe" src="https://www.youtube.com/embed/{{ vid_id_list[n] }}?si=2BVYS-0QHsxcX4f5&;"
-                title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write;
-                encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
-                allowfullscreen></iframe>
-                <figcaption>{{vid_caption_list[n]}}</figcaption>
-            </figure>
-<!--                    <div class="video">-->
-<!--                        <div class="content">-->
-<!--                            <lite-youtube videoid="{{ vid_id_list[n] }}"-->
-
-<!--                                      params="controls=1"></lite-youtube>-->
-<!--                            <p>{{ vid_caption_list[n] }}</p>-->
-<!--                        </div>-->
-<!--                     </div>-->
-            {% endfor %}
-        {% endif %}
-        
-        </div>
-        {% if video_count == 0 %}
-            <p style="color: rgb(18, 59, 20);">No classes recordings yet! The Video will be uploaded after the commencement of the classes</p>
-        {% endif %}
-<!--            {% if video_count == 0 %}-->
-<!--                <div class="">-->
-<!--                    <p style="color: white;">If you can't see any video in Workshops section it means you haven't enrolled in any workshop till now. Please check our current workshop and enroll if the registration is open..</p>-->
-<!--                    <a href="{{url_for('school.home')}}" class="button quiz-btn" type="button" style="background:#180e05; color:white; text-decoration:none;">OUR WORKSHOPS</a>-->
-<!--                </div>-->
-<!--            {% endif %}-->
-        {% endif %}
-
-        {% if not logged_in %}
-            <div class="course-btn">
-                <div class="text-button-center">
-                    <p style="color: rgb(40, 105, 27);">Please Log in to watch</p>
-                    <div style="display: flex; justify-content: center;">
-                        <a style="background:#FFC6C6;color:black;" href="{{url_for('account.login')}}" class="btn btn-primary btn-block btn-large button_medium button" role="button">LOG IN</a>
-                    </div>
-                </div>
+    <!--                                      params="controls=1"></lite-youtube>-->
+    <!--                            <p>{{ vid_caption_list[n] }}</p>-->
+    <!--                        </div>-->
+    <!--                     </div>-->
+                {% endfor %}
+            {% else %}
+                <p style="color: rgb(18, 59, 20);">No classes recordings yet! The Video will be uploaded after the commencement of the classes</p>
+            {% endif %}
+            
             </div>
-        {% endif %}
+        </div>
     </div>
 </div>
-{% if study_material_count > 0 %}
+<div class="dark-canvas">
+    <div class="root-container">
+        <p class="section-title">NOTES</p>
+        <div id="lesson-container">
+            <select class="option-list" id="notes-list" onchange="downloadNotes()">
+                <option value="">Select Notes to download</option>
+                {% for m in study_material_dict %}
+                <option value="{{study_material_dict[m]['file_path']}}">{{study_material_dict[m]['file_name']}}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+</div>
+<div class="dark-canvas">
+    <div class="root-container">
+        <p class="section-title">ASSIGNMENTS</p>
+        <div id="lesson-container">
+            <select class="option-list" id="assignment-list" onchange="downloadAssignment()">
+                <option value="">Select Assignment to download</option>
+                {% for m in assignments_dict %}
+                <option value="{{assignments_dict[m]['file_path']}}">{{assignments_dict[m]['file_name']}}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+</div>
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+<!-- {% if study_material_count > 0 %}
 <div class="wrapper">
     <div class="width-80-container">
         <h3 style="width:100%;color:rgb(255, 255, 255);opacity:1;">NOTES</h3>
@@ -204,6 +266,7 @@
         </div>
     </div>
 </div>
+{% endif %} -->
 <div class="wrapper" id="submit-assignments" style="background: rgb(192, 192, 192);">
     <div class="width-80-container assignment-submission-form">
         <h3 style="width:100%;color:rgb(0, 0, 0);opacity:1; text-align: center;">SUBMIT ASSIGNMENTS</h3>
@@ -224,7 +287,6 @@
         <!-- </div> -->
     </div>
 </div>
-{% endif %}
 <div class="video-wrapper" style="padding: 2% 0%; align-items:start; background: rgb(192, 192, 192);">
     <div class="video-wrapper-container" >
         <h3 style="color:rgb(0, 0, 0);">ASSIGNMENT ASSESSMENT</h3>
@@ -232,7 +294,7 @@
         <div class="figure-container">
         {% if assessment_video_count > 0 %}
             {% for v in assessment_vid_dict %}
-            <figure class="figure">
+            <figure class="figure2">
 <!--                <iframe class="responsive-iframe" style="display:flex; width:25%; border:none;" src="https://www.youtube.com/embed/{{ vid_id_list[n] }}?si=2BVYS-0QHsxcX4f5&;"-->
 <!--                title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write;-->
 <!--                encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"-->
@@ -266,7 +328,7 @@
         <div class="figure-container">
         {% if demo_video_count > 0 %}
             {% for v in demo_vid_dict %}
-            <figure class="figure">
+            <figure class="figure2">
 <!--                <iframe class="responsive-iframe" style="display:flex; width:25%; border:none;" src="https://www.youtube.com/embed/{{ vid_id_list[n] }}?si=2BVYS-0QHsxcX4f5&;"-->
 <!--                title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write;-->
 <!--                encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"-->
@@ -375,11 +437,107 @@
        </div>
    </div>
 </div>
-
 <script src="../static/lite-yt-embed.js"></script>
 <script src="../static/js/school.js"></script>
 
 <script>
+// ---------------------------------------- RECORDED LESSONS ------------------------------------------------
+const lessonList = document.getElementById('lesson-list');
+const lessonIframeBox = document.getElementById('lesson-iframe-box');
+const lessonIframe = document.getElementById('lesson-iframe');
+const lessonCaption = document.getElementById('lesson-caption');
+const lessonVidIdList = {{ vid_id_list | tojson }};
+const lessonCaptionList = {{ vid_caption_list | tojson }};
+const endpointUrl = "{{ url_for('school.course') }}";
+const courseTopic = {{ ws_topic | tojson }};
+
+function showVideo() {
+    const lessonListValue = lessonList.value;
+    lessonIframe.src = "https://www.youtube.com/embed/"+lessonVidIdList[lessonListValue]+"?si=2BVYS-0QHsxcX4f5&;";
+    lessonCaption.innerHTML = lessonCaptionList[lessonListValue];
+    lessonIframeBox.style.display = "block";
+}
+// ---------------------------------------- DOWNLOAD NOTES --------------------------------------------------------
+async function downloadNotes() {
+    const notesList = document.getElementById('notes-list');
+    const notesListValue = notesList.value;
+    const fileName = notesList.options[notesList.selectedIndex].text;
+    if (notesListValue != '') {
+        const notesData = {
+            category: "notes",
+            notes_path: notesListValue
+        };
+
+        const response = await fetch(endpointUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(notesData)
+        });
+        if (!response.ok) throw new Error('Download Failed');
+        
+        // 1. Convert response to a blob stream instead of .json()
+        const blob = await response.blob();
+
+        // 2. Create a temporary local URL for the blob data
+        const downloadUrl = window.URL.createObjectURL(blob);
+
+        // 3. Inject a hidden <a> tag to click programmatically
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = courseTopic+"_notes_"+fileName; // Set target file name here
+        document.body.appendChild(link);
+
+        link.click(); // Triggers real browser download popup
+
+        // 4. Clean up memory
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(downloadUrl);
+
+    };
+}
+
+// ----------------------------------------------- DOWNLOAD ASSIGNMENT --------------------------------------------------
+async function downloadAssignment() {
+    const assignmentList = document.getElementById('assignment-list');
+    const assignmentListValue = assignmentList.value;
+    const fileName = assignmentList.options[assignmentList.selectedIndex].text;
+    if (assignmentListValue != '') {
+        const assignmentData = {
+            category: "assignment",
+            assignment_path: assignmentListValue
+        };
+
+        const response = await fetch(endpointUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(assignmentData)
+        });
+        if (!response.ok) throw new Error('Download Failed');
+        
+        // 1. Convert response to a blob stream instead of .json()
+        const blob = await response.blob();
+
+        // 2. Create a temporary local URL for the blob data
+        const downloadUrl = window.URL.createObjectURL(blob);
+
+        // 3. Inject a hidden <a> tag to click programmatically
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = courseTopic+"_assignment_"+fileName; // Set target file name here
+        document.body.appendChild(link);
+
+        link.click(); // Triggers real browser download popup
+
+        // 4. Clean up memory
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(downloadUrl);
+
+    };
+}
 // ------------------------------------------- ALERTS -----------------------------------------
 
 // --------------------------------------------------------------------------------------------
@@ -388,6 +546,9 @@ let text = "";
 
 
 // --------------------------------------------- TEACHER'S FEEDBACK SCRIPT -------------------------------------------------
+
+
+
 
 const wsFeedbackForm = document.getElementById('ws-feedback-form');
 const topicFeedbackForm = document.getElementById('topic-feedback-form');

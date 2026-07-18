@@ -559,8 +559,20 @@ def classroom():
 
 @school.route('/course', methods=['GET','POST'])
 def course():
-    if current_user.is_authenticated:
+    if current_user.is_authenticated:               
         if 'ws_uuid' in session or request.args.get('ws_uuid'):
+            if request.method == 'POST':
+                data = request.get_json()
+
+                if data['category'] == 'notes':
+                    notes_path = data['notes_path']
+                    return send_file(notes_path, as_attachment=True)
+                
+                elif data['category'] == 'assignment':
+                    p('enered send file post')
+                    assignment_path = data['assignment_path']
+                    return send_file(assignment_path, as_attachment=True)
+
             vid_id_list = []
             vid_caption_list = []
             
@@ -672,13 +684,11 @@ def course():
 
             # ------------------------------ STUDY MATERIAL ----------------------------------------------- #
             study_material_dict = {}
-            p(course_enrolled_months)
             for m in course_enrolled_months:
                 base_dir = f"static/files/courses/{ws_uuid}/{m.month}/notes"
                 if not os.path.exists(base_dir):
                     os.makedirs(base_dir)
                 folder_content = os.listdir(base_dir)
-                p(folder_content)
                 for f in folder_content:
                     f_path = base_dir + '/' + f
                     if os.path.isfile(f_path):
