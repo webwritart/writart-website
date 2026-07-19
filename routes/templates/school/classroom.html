@@ -149,7 +149,7 @@
         <h3 style="color:black; padding: 0%; margin: 0%;">MY COURSES AND WORKSHOPS</h3>
         <p style="color:black; line-height: 1; padding: none; margin: none;">This section contains recorded sessions of all the workshops you get enrolled in.</p>
         {% if logged_in %}
-        <div class="ws-thumbnail-container" style="">
+        <div class="ws-thumbnail-container">
         {% if workshop_count > 0 %}
             {% for ws in ws_thumbnail_dict %}
                 <a href="{{url_for('school.course', ws_uuid=ws_thumbnail_dict[ws].uuid)}}"><img src="{{ ws_thumbnail_dict[ws].thumbnail_url}}"></a>
@@ -169,7 +169,7 @@
                 <div class="text-button-center">
                     <p style="color: rgb(0, 0, 0); padding: 0%; margin: 0%;">Please Login to watch</p>
                     <div style="display: flex; justify-content: center;">
-                        <a style="background:#ffffff;color:black; border: solid 2px black;" href="{{url_for('account.login')}}" class="btn btn-primary btn-block btn-large button_medium button" role="button">LOG IN</a>
+                        <a style="background:#9d701d;color:rgb(255, 255, 255); border: solid 1px rgb(227, 190, 121); box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);" href="{{url_for('account.login')}}" class="btn btn-primary btn-block btn-large button_medium button" role="button">LOG IN</a>
                     </div>
                 </div>
             </div>
