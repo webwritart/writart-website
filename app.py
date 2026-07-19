@@ -13,6 +13,7 @@ from routes.payment import payment
 from routes.school import school
 from routes.gallery import gallery
 from routes.studio import studio
+from routes.tools import tools
 from routes.animation_admin import animation_admin
 from routes.client_section import client_section
 from routes.api import api_page
@@ -61,6 +62,7 @@ app.register_blueprint(client_section, url_prefix='/client_section')
 app.register_blueprint(animation_admin, url_prefix='/animation_admin')
 app.register_blueprint(api_page, url_prefix='/api')
 app.register_blueprint(b2b, url_prefix='/b2b')
+app.register_blueprint(tools, url_prefix='/tools')
 
 with app.app_context():
     db.create_all()

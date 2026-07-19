@@ -1134,45 +1134,40 @@ def instructor_dashboard():
                     flash('No file part', 'error')
                     return redirect(request.url)
                 files = request.files.getlist('file')
+                notes_pdf_output_name = request.form.get('note_file_name')
                 
                 folder_name = course_uuid
                 folder = f"./static/files/courses/{folder_name}/{month}/notes/"
                 if not os.path.exists(folder):
                     os.makedirs(folder)
-                    p(f"{folder} created!")
-                else:
-                    p('Folder exists')
                 existing_notes_uuid = []
                 existing_notes = db.session.query(MonthNotes).all()
                 for n in existing_notes:
                     existing_notes_uuid.append(n.uuid)
 
-                for file in files:
-                    if file.filename == '':
-                        flash('No selected file', 'error')
-                        return redirect(request.url)
-                    if file:
-                        uuid = create_uuid(existing_notes_uuid, 4)
-                        existing_notes_uuid.append(uuid)
-                        filename = str(uuid) + '$' + secure_filename(file.filename)
-                        file.save(f"{folder}/{filename}")
-                        date_time = datetime.now().replace(microsecond=0)
-                        
-                        entry = MonthNotes(
-                            uuid=uuid,
-                            file_name=filename,
-                            month_id=course_month.id,
-                            date_time=date_time
-                        )
-                        db.session.add(entry)
-                        db.session.commit()
-                        flash('Chief! Files uploaded successfully!', 'success')
+                uuid = create_uuid(existing_notes_uuid, 4)
+                existing_notes_uuid.append(uuid)
+                filename = str(uuid) + str('$') + str(notes_pdf_output_name)
+                multiple_images_to_pdf(filestorage_list=files, image_directory='', output_pdf_directory=folder, output_pdf_file_name=filename, quality=50)
+                
+                date_time = datetime.now().replace(microsecond=0)
+                
+                entry = MonthNotes(
+                    uuid=uuid,
+                    file_name=filename,
+                    month_id=course_month.id,
+                    date_time=date_time
+                )
+                db.session.add(entry)
+                db.session.commit()
+                flash('Chief! Files uploaded successfully!', 'success')
 
         if request.form.get('submit') == 'add-course-assignments':
             if 'assignments' not in request.files:
                 flash('No file part', 'error')
                 return redirect(request.url)
             files = request.files.getlist('assignments')
+            assignment_pdf_output_name = request.form.get('assignment_file_name')
 
             course_uuid = request.form.get('course-uuid')
             if course_uuid != 'default':
@@ -1191,26 +1186,21 @@ def instructor_dashboard():
                     for a in existing_assignments:
                         existing_assignments_uuid.append(a.uuid)
 
-                    for file in files:
-                        if file.filename == '':
-                            flash('No selected file', 'error')
-                            return redirect(request.url)
-                        if file:
-                            uuid = create_uuid(existing_assignments_uuid, 4)
-                            existing_assignments_uuid.append(uuid)
-                            filename = str(uuid) + "$" + secure_filename(file.filename)
-                            file.save(f"{folder}/{filename}")
-                            date_time = datetime.now().replace(microsecond=0)
+                    uuid = create_uuid(existing_assignments_uuid, 4)
+                    filename = str(uuid) + str("$") + str(assignment_pdf_output_name)
+                    multiple_images_to_pdf(filestorage_list=files, image_directory='', output_pdf_directory=folder, output_pdf_file_name=filename, quality=50)
 
-                            entry = MonthAssignments(
-                                uuid=uuid,
-                                file_name=filename,
-                                month_id=course_month.id,
-                                date_time=date_time
-                            )
-                            db.session.add(entry)
-                            db.session.commit()
-                            flash('Chief! Files uploaded successfully!', 'success')
+                    date_time = datetime.now().replace(microsecond=0)
+
+                    entry = MonthAssignments(
+                        uuid=uuid,
+                        file_name=filename,
+                        month_id=course_month.id,
+                        date_time=date_time
+                    )
+                    db.session.add(entry)
+                    db.session.commit()
+                    flash('Chief! Files uploaded successfully!', 'success')
                     return redirect(request.url)
                 else:
                     flash('Aborted! Please select the Course/Workshop first!', 'error')

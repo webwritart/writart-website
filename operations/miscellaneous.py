@@ -551,7 +551,7 @@ def prepare_coa(title, artist_name, size, medium, varnished, year, signed, seria
 
     qr_data = f"https://writart.com/qr_verification?token={serial_no}&category=coa"
     bg_color = (252, 255, 228)
-    qr_path = create_qr_code(qr_data, 2, 1, bg_color, user_uuid)
+    qr_path = create_qr_code(qr_data, 10, 1, bg_color, user_uuid)
     qr_img_raw = Image.open(qr_path)
     qr_img = qr_img_raw.resize((round(qr_img_raw.width*.8), round(qr_img_raw.height*.8)), Image.Resampling.LANCZOS)
     artwork_img = Image.open(artwork_path)
@@ -606,9 +606,7 @@ def prepare_coa(title, artist_name, size, medium, varnished, year, signed, seria
     if len(files) > 0:
         for f in files:
             os.remove(f)
-
     return [temp_coa_img_path+file_name, date_today]
-
 
 
 def png_to_pdf(file_directory, export_path):
@@ -629,11 +627,51 @@ def png_to_pdf(file_directory, export_path):
     return [filename, export_path+filename+'.pdf']
 
 
+def multiple_images_to_pdf(filestorage_list, image_directory, output_pdf_directory, output_pdf_file_name, quality):
+    input_type = ''
+    if len(filestorage_list) > 0:
+        input_type = 'filestorage_list'
+        image_files_list = filestorage_list
+    elif image_directory != '':
+        input_type = 'dir'
+        image_files_list = [f for f in Path(image_directory).iterdir() if f.is_file()]
+    
+    if input_type == 'filestorage_list':
+        sorted_image_file_list = sorted(image_files_list, key=lambda f: f.filename.lower())
+    elif input_type == 'dir':
+        sorted_image_file_list = sorted(image_files_list, key=lambda x: os.path.basename(x).lower())
+
+    if output_pdf_directory[-1] != '/':
+        output_pdf_directory = output_pdf_directory + '/'
+    if '.pdf' not in output_pdf_file_name:
+        output_pdf_file_name = output_pdf_file_name + '.pdf'
+    output_pdf_filepath_with_name = output_pdf_directory + output_pdf_file_name
+    if quality == '':
+        quality = 80
+
+    main_image = Image.open(sorted_image_file_list[0]).convert('RGB')
+
+    image_list = []
+    for file in sorted_image_file_list[1:]:
+        img = Image.open(file).convert('RGB')
+        image_list.append(img)
+    
+    main_image.save(
+        output_pdf_filepath_with_name,
+        save_all=True,
+        append_images=image_list,
+        quality=quality,
+        optimize=True
+    )
+    p('Conversion to pdf is done!')
+    return output_pdf_filepath_with_name
+
+
 def create_qr_code(data, box_size, border, background_color, user_uuid):
     qr = qrcode.QRCode(
         version=4,  # Controls the size of the QR Code (1 is 21x21 matrix)
         error_correction=qrcode.constants.ERROR_CORRECT_H,  # High error tolerance (~30%)
-        box_size=10,  # Size of each individual square pixel
+        box_size=box_size,  # Size of each individual square pixel
         border=border,     # Thickness of the outer border (minimum is 4)
     )
     qr.add_data(data)
@@ -668,6 +706,13 @@ def move_files (source_path_with_file_joined_list, destination_folder):
             p("File moved successfully!")
         else:
             p("File doesn't exit")
+
+
+def delete_all_files_in_directory(directory):
+    dir_path = Path(directory)
+    files = [str(f) for f in dir_path.iterdir() if f.is_file()]
+    for f in files:
+        os.remove(f)
 
 
 def create_uuid(existing_uuid_list, uuid_length_in_digit):

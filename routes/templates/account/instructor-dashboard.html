@@ -59,7 +59,15 @@ select {
 input {
     padding: 0% !important;
     margin: 0%;
-    background: rgb(234, 231, 201)
+    background: rgb(234, 231, 201);
+    color: black;
+}
+input::placeholder {
+    color: rgb(84, 90, 65);
+}
+.file-upload-input::file-selector-button {
+    background-color: rgb(172, 174, 139);
+    border: solid 1px rgb(136, 155, 94);
 }
 
 @media (max-width: 1200px) {
@@ -117,8 +125,8 @@ input {
             <select id="operation" name="operation">
                 <option value="">Select Operation</option>
                 <option value="add-course-video">Add Course video</option>
-                <option value="add-course-notes">Add Course Notes</option>
-                <option value="add-course-assignments">Add Course Assignments</option>
+                <option value="add-course-notes">Add Course Note</option>
+                <option value="add-course-assignments">Add Course Assignment</option>
                 <option value="add-course-demo">Add Course Demo</option>
                 <option value="upload-assessed-video">Upload Assessed Assignment video</option>
                 <option value="set-current-course-month">Set Currnet Course and Month</option>
@@ -135,9 +143,11 @@ input {
             <input id="lesson-url" name="lesson-url" placeholder="Video Youtube URL" type="text">
             <input id="lesson-detail" name="lesson-detail" placeholder="Video detail" type="text">
             <!-- ---------------------------------------- ADD COURSE NOTES ------------------------------------------- -->
-            <input id="notes-files" type="file" name="file" multiple>
+            <input id="notes-file-name" type="text" name="note_file_name" placeholder="Output PDF file name">
+            <input id="notes-files" class="file-upload-input" type="file" name="file" accept=".jpg, .jpeg, .png" multiple>
             <!-- ------------------------------------------ ADD COURSE ASSIGNMENTS ----------------------------------- -->
-            <input id="assignment-files" type="file" name="assignments" multiple>
+            <input id="assignment-file-name" type="text" name="assignment_file_name" placeholder="Output PDF file name">
+            <input id="assignment-files" class="file-upload-input" type="file" name="assignments" accept=".jpg, .jpeg, .png" multiple>
             <!-- ------------------------------------------- ADD COURSE DEMO ------------------------------------------ -->
             <input id="demo-title" name="demo-title" placeholder="Demo video Title" type="text">
             <input id="demo-url" name="demo-url" placeholder="Demo video Youtube URL" type="text">
@@ -179,7 +189,14 @@ input {
             </select>
             <button type="submit" name="submit" value="new-course" class="btn btn-primary btn-block btn-large form-button">Add New Course</button>
         </form>
+        <form action="{{url_for('tools.image_to_pdf')}}" method="post" enctype="multipart/form-data">
+            <p class="form-heading">Multiple/Single Image to PDF</p>
+            <input type="text" name="file_name" placeholder="Output PDF file name" required>
+            <input class="file-upload-input" type="file" name="files" accept=".jpg, .jpeg, .png" multiple required>
+            <button type="submit" name="submit" value="images_to_pdf" class="btn btn-primary btn-block btn-large form-button">Create PDF</button>
+        </form>
     </div>
+    
     
     <div class="form-container" >
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -191,10 +208,7 @@ input {
         {% endwith %}
         
     </div>
-    <div class="form-container">
-        
-        
-    </div>
+    
     <div class="form-container" style="background: rgb(164, 173, 155);">
         
         
@@ -206,11 +220,12 @@ input {
     const selectElement = document.getElementById('course');
     const month = document.getElementById('month_select');
     const operation = document.getElementById('operation');
-
     const lessonTitle = document.getElementById('lesson-title');
     const lessonUrl = document.getElementById('lesson-url');
     const lessonDetail = document.getElementById('lesson-detail');
+    const notesFileName = document.getElementById('notes-file-name');
     const notesFiles = document.getElementById('notes-files');
+    const assignmentFileName = document.getElementById('assignment-file-name');
     const assignmentFiles = document.getElementById('assignment-files');
     const demoTitle = document.getElementById('demo-title');
     const demoUrl = document.getElementById('demo-url');
@@ -230,6 +245,8 @@ input {
         assessedVidId.style.display = "none";
         assessedVidCaption.style.display = "none";
         fee.style.display = "none";
+        notesFileName.style.display = "none";
+        assignmentFileName.style.display = "none";
     }
     hideInputs();
 
@@ -244,11 +261,13 @@ input {
             submitBtn.value = "add-course-video";
         } else if (operationValue == "add-course-notes") {
             hideInputs();
+            notesFileName.style.display = "block";
             notesFiles.style.display = "block";
             submitBtn.textContent = "Add Course Notes";
             submitBtn.value = "add-course-notes";
         } else if (operationValue == "add-course-assignments") {
             hideInputs();
+            assignmentFileName.style.display = "block";
             assignmentFiles.style.display = "block";
             submitBtn.textContent = "Add Course assignments";
             submitBtn.value = "add-course-assignments";
