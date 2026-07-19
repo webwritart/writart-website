@@ -2,9 +2,11 @@ import csv
 import pprint
 import hmac
 import hashlib
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash
+import requests
+import json
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash, jsonify
 from flask_login import current_user, login_required
-from extensions import image_dict, current_year
+from extensions import image_dict, current_year, p
 from dotenv import load_dotenv
 from datetime import date
 import razorpay
@@ -14,6 +16,9 @@ from models.payment import Payment
 from models.tool import Tools
 from models.member import *
 from datetime import datetime
+import paytmchecksum
+from paytmpg import EnumCurrency, EChannelId, UserSubWalletType
+from paytmPgSDK import *
 
 now = datetime.now()
 
@@ -25,6 +30,13 @@ KEY_ID = os.environ.get('RAZORPAY_KEY_ID_TEST')
 KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET_TEST')
 
 client = razorpay.Client(auth=(KEY_ID, KEY_SECRET))
+
+# ---------------------------------- PAYTM PAYMENT GATEWAY ---------------------------------------------------------------- #
+PAYTM_MERCHANT_ID = os.environ.get("PAYTM_MERCHANT_ID", "TEST_MERCHANT_ID")
+PAYTM_MERCHANT_KEY = os.environ.get("PAYTM_MERCHANT_KEY", "TEST_MERCHANT_KEY")
+PAYTM_WEBSITE = "WEBSTAGING"  # or "DEFAULT" for production
+PAYTM_INDUSTRY_TYPE = "Retail"
+PAYTM_CALLBACK_URL = "http://127.0.0.1:5000/payment/callback"
 
 today_date = date.today()
 payment_ = {}
@@ -48,6 +60,73 @@ def home():
         instruction = 'Please first login to enroll'
         return render_template('account/login.html', prev_page='enroll', instruction=instruction)
 
+
+# @payment.route('/paytm_checkout', methods=['GET', 'POST'])
+# def paytm_checkout():
+#     return render_template('paytm_checkout.html')
+
+
+# @payment.route('/initiate_paytm_payment', methods=['GET', 'POST'])
+# def initiate_paytm_payment():
+#     if request.method == 'POST':
+#         data = request.json
+#         order_id = "ORDER_" + str(os.urandom(4).hex())
+#         amount = str(data.get("amount", "10.00"))
+        
+#         paytm_params = {
+#             "body": {
+#                 "channel_id": EChannelId.WEB,
+#                 "requestType": "Payment",
+#                 "mid": PAYTM_MERCHANT_ID,
+#                 "websiteName": PAYTM_WEBSITE,
+#                 "orderId": order_id,
+#                 "callbackUrl": PAYTM_CALLBACK_URL,
+#                 "txnAmount": {
+#                     "value": amount,
+#                     "currency": "INR",
+#                 },
+#                 "userInfo": {
+#                     "custId": "CUST_002",
+#                 },
+#             }
+#         }
+
+#         # Generate checksum
+#         checksum = paytmchecksum.generateSignature(json.dumps(paytm_params["body"]), "z3%ykv9U5@Ze5aQ6")
+#         paytm_params["head"] = {"signature": checksum}
+
+#         # Hit Paytm Initiate Transaction API
+#         # Use 'securegw-stage.paytm.in' for staging or 'securegw.paytm.in' for production
+#         url = f"https://securegw-stage.paytm.in?QJhTIQ79012618309891&orderId={order_id}"
+#         p('passed url')
+#         response = requests.post(url, json=paytm_params)
+#         p(response.status_code)
+#         response_data = response.json()
+#         p(json.dumps(response_data, indent=4))
+#         return jsonify({
+#             "orderId": order_id,
+#             "txnToken": response_data['body']['txnToken'],
+#             "mid": "QJhTIQ79012618309891",
+#             "amount": amount
+#         })
+
+
+# @payment.route('/callback', methods=['POST'])
+# def callback():
+#     # Paytm sends a form post back to this URL upon payment completion
+#     response_data = request.form.to_dict()
+    
+#     # Verify checksum to ensure the response hasn't been tampered with
+#     checksum_hash = response_data.get('CHECKSUMHASH', '')
+#     is_valid = paytmchecksum.verifySignature(response_data, PAYTM_MERCHANT_KEY, checksum_hash)
+    
+#     if is_valid and response_data.get('STATUS') == 'TXN_SUCCESS':
+#         p(response_data)
+#         return render_template('success.html', data=response_data)
+#     else:
+#         return render_template('failed.html', data=response_data)
+
+# --------------------------------------------- RAZORPAY ----------------------------------------------------
 
 @login_required
 @payment.route('/checkout', methods=['POST'])

@@ -191,8 +191,6 @@ def main_dashboard():
     instructor = db.session.query(Role).filter_by(name='instructor').scalar()
 
     roles = current_user.role
-    if admin in roles:
-        roles.remove(admin)
 
     if len(roles) == 1:
         if student in roles:

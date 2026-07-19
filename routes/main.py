@@ -104,3 +104,8 @@ def qr_verification():
                             category=category, coa_dict=coa_dict)
         
     return render_template('qr_verification.html', logged_in=current_user.is_authenticated, current_year=current_year)
+
+
+@main.route('/paytm_payment', methods=['GET', 'POST'])
+def paytm_payment():
+    pass

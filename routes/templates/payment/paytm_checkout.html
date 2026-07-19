@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+
+<script type="application/javascript" src="https://paytm.in"></script>
+
+<style>
+    #btn-div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+</style>
+
+<div id="btn-div">
+    <button class="btn btn-primary btn-block btn-large" id="pay-btn">Pay ₹10.00</button>
+</div>
+
+<script>
+    const initiatePaytmUrl = "{{ url_for('payment.initiate_paytm_payment') }}";
+    document.getElementById("pay-btn").addEventListener("click", async () => {
+        // 1. Call Flask backend to initiate transaction
+        const res = await fetch(initiatePaytmUrl, {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ amount: "10.00" })
+        });
+        const data = await res.json();
+        // 2. Open Paytm Checkout
+        var config = {
+            "root": "",
+            "flow": "DEFAULT",
+            "data": {
+                "orderId": data.orderId,
+                "token": data.txnToken,
+                "tokenType": "TXN_TOKEN",
+                "amount": data.amount
+            },
+            "handler": {
+                "notifyMerchant": function(eventName, data){
+                    console.log("notify merchant: ", eventName);
+                }
+            }
+        };
+        
+        if(window.Paytm && window.Paytm.CheckoutJS){
+            window.Paytm.CheckoutJS.init(config).then(function onSuccess() {
+                window.Paytm.CheckoutJS.invoke();
+            }).catch(function onError(error){
+                console.log("Error => ", error);
+            });
+        }
+    });
+</script>
+
+{% endblock %}
