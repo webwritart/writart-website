@@ -16,9 +16,6 @@ from models.payment import Payment
 from models.tool import Tools
 from models.member import *
 from datetime import datetime
-import paytmchecksum
-from paytmpg import EnumCurrency, EChannelId, UserSubWalletType
-from paytmPgSDK import *
 
 now = datetime.now()
 
