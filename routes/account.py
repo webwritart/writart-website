@@ -1135,6 +1135,8 @@ def instructor_dashboard():
                     return redirect(request.url)
                 files = request.files.getlist('file')
                 notes_pdf_output_name = request.form.get('note_file_name')
+                if '.pdf' not in notes_pdf_output_name:
+                    notes_pdf_output_name = str(notes_pdf_output_name) + '.pdf'
                 
                 folder_name = course_uuid
                 folder = f"./static/files/courses/{folder_name}/{month}/notes/"
@@ -1168,6 +1170,8 @@ def instructor_dashboard():
                 return redirect(request.url)
             files = request.files.getlist('assignments')
             assignment_pdf_output_name = request.form.get('assignment_file_name')
+            if '.pdf' not in assignment_pdf_output_name:
+                assignment_pdf_output_name = str(assignment_pdf_output_name) + '.pdf'
 
             course_uuid = request.form.get('course-uuid')
             if course_uuid != 'default':

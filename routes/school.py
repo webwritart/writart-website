@@ -566,11 +566,10 @@ def course():
                 data = request.get_json()
 
                 if data['category'] == 'notes':
-                    notes_path = data['notes_path']
+                    notes_path = os.path.relpath(data['notes_path'])
                     return send_file(notes_path, as_attachment=True)
                 
                 elif data['category'] == 'assignment':
-                    p('enered send file post')
                     assignment_path = data['assignment_path']
                     return send_file(assignment_path, as_attachment=True)
 
@@ -693,11 +692,12 @@ def course():
                 base_dir = f"static/files/courses/{ws_uuid}/{m.month}/notes"
                 all_notes = db.session.query(MonthNotes).filter_by(month_id=m.month).all()
                 for a in all_notes:
+                    full_file_name = a.file_name
                     file_name = a.file_name.split('$')[1]
                     all_datetime_list.append(a.date_time)
                     material = {
                         'file_name': file_name,
-                        'file_path': base_dir+'/'+file_name
+                        'file_path': base_dir+'/'+full_file_name
                     }
                     study_material_dict[a.date_time] = material
             study_material_dict = dict(reversed(study_material_dict.items()))
@@ -710,11 +710,12 @@ def course():
                 base_dir = f"static/files/courses/{ws_uuid}/{m.month}/assignments"
                 all_assignments = db.session.query(MonthAssignments).filter_by(month_id=m.month).all()
                 for a in all_assignments:
+                    full_file_name = a.file_name
                     file_name = a.file_name.split('$')[1]
                     all_datetime_list.append(a.date_time)
                     material = {
                         'file_name': file_name,
-                        'file_path': base_dir+'/'+file_name
+                        'file_path': base_dir+'/'+full_file_name
                     }
                     assignments_dict[a.date_time] = material
             assignments_dict = dict(reversed(assignments_dict.items()))
