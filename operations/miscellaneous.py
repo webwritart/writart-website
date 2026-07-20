@@ -672,13 +672,13 @@ def multiple_images_to_pdf(filestorage_list, image_directory, output_pdf_directo
         img = Image.open(file).convert('RGB')
         image_list.append(img)
     
-    # main_image.save(
-    #     output_pdf_filepath_with_name,
-    #     save_all=True,
-    #     append_images=image_list,
-    #     quality=quality,
-    #     optimize=True
-    # )
+    main_image.save(
+        output_pdf_filepath_with_name,
+        save_all=True,
+        append_images=image_list,
+        quality=quality,
+        optimize=True
+    )
     p('Conversion to pdf is done!')
     return output_pdf_filepath_with_name
 
