@@ -17,6 +17,13 @@ studio = Blueprint('studio', __name__, static_folder="static", template_folder='
 
 @studio.route('/', methods=['GET', 'POST'])
 def home():
+    admin = db.session.query(Role).filter_by(name='admin').scalar()
+    return render_template('studio.html', current_year=current_year, logged_in=current_user.is_authenticated, admin=admin)
+
+
+@studio.route('/artists', methods=['GET', 'POST'])
+def artists():
+    admin = db.session.query(Role).filter_by(name='admin').scalar()
     members = []
     result = db.session.query(Member).all()
     for member in result:
@@ -29,11 +36,12 @@ def home():
         member = db.session.query(Member).filter_by(uuid=member_uuid).one()
 
         return redirect(url_for('studio.portfolio', member_uuid=member_uuid))
-    return render_template('studio.html', members=members)
+    return render_template('artists.html', members=members, current_year=current_year, logged_in=current_user.is_authenticated, admin=admin)
 
 
 @studio.route('/portfolio/<member_uuid>')
 def portfolio(member_uuid):
+    admin = db.session.query(Role).filter_by(name='admin').scalar()
     member_uuid = member_uuid
     member = db.session.query(Member).filter_by(uuid=member_uuid).one_or_none()
     member_id = member.id
@@ -54,11 +62,12 @@ def portfolio(member_uuid):
             }
             artist_dict[index] = img
             index += 1
-    return render_template('portfolio.html', dict=artist_dict)
+    return render_template('portfolio.html', dict=artist_dict, current_year=current_year, logged_in=current_user.is_authenticated, admin=admin)
 
 
 @studio.route('/artist_tools', methods=['GET', 'POST'])
 def artist_tools():
+    admin = db.session.query(Role).filter_by(name='admin').scalar()
     total_file_size = 0
     total_final_file_size = 0
     file_no = 0
@@ -143,7 +152,7 @@ def artist_tools():
     total_watermarked_photos = len(photo_path_list)
 
     return render_template('artist_tools.html', folder_name=folder_name, photo_list=photo_list,
-                           logged_in=current_user.is_authenticated, total_watermarked=total_watermarked_photos)
+                           logged_in=current_user.is_authenticated, total_watermarked=total_watermarked_photos, current_year=current_year, admin=admin)
 
 @studio.route('/portraits', methods=['GET', 'POST'])
 def portraits():
