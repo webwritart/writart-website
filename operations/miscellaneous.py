@@ -13,6 +13,7 @@ import shutil
 from models.tool import Tools
 from pathlib import Path
 import qrcode
+import re
 
 
 
@@ -628,18 +629,33 @@ def png_to_pdf(file_directory, export_path):
 
 
 def multiple_images_to_pdf(filestorage_list, image_directory, output_pdf_directory, output_pdf_file_name, quality):
-    input_type = ''
+    sorted_image_serial_list = []
+    sorted_image_file_list = []
+
     if len(filestorage_list) > 0:
-        input_type = 'filestorage_list'
-        image_files_list = filestorage_list
+        for f in filestorage_list:
+            digits = re.findall(r"\d+", f.filename.split('.')[0].split('_')[-1])
+            sorted_image_serial_list.append(int(digits[0]))
+        sorted_image_serial_list.sort()
+        for i in sorted_image_serial_list:
+            serial = i
+            for im in filestorage_list:
+                im_digits = int(re.findall(r"\d+", im.filename.split('_')[-1])[0])
+                if serial == im_digits:
+                    sorted_image_file_list.append(im)
+
     elif image_directory != '':
-        input_type = 'dir'
         image_files_list = [f for f in Path(image_directory).iterdir() if f.is_file()]
-    
-    if input_type == 'filestorage_list':
-        sorted_image_file_list = sorted(image_files_list, key=lambda f: f.filename.lower())
-    elif input_type == 'dir':
-        sorted_image_file_list = sorted(image_files_list, key=lambda x: os.path.basename(x).lower())
+        for f in image_files_list:
+            digits = re.findall(r"\d+", Path(f).name.split('.')[0])
+            sorted_image_serial_list.append(int(digits[0]))
+        sorted_image_serial_list.sort()
+        for i in sorted_image_serial_list:
+            serial = i
+            for im in image_files_list:
+                im_digit = int(re.findall(r"\d+", str(Path(im).name.split('_')[-1]))[0])
+                if serial == im_digit:
+                    sorted_image_file_list.append(im)
 
     if output_pdf_directory[-1] != '/':
         output_pdf_directory = output_pdf_directory + '/'
@@ -656,13 +672,13 @@ def multiple_images_to_pdf(filestorage_list, image_directory, output_pdf_directo
         img = Image.open(file).convert('RGB')
         image_list.append(img)
     
-    main_image.save(
-        output_pdf_filepath_with_name,
-        save_all=True,
-        append_images=image_list,
-        quality=quality,
-        optimize=True
-    )
+    # main_image.save(
+    #     output_pdf_filepath_with_name,
+    #     save_all=True,
+    #     append_images=image_list,
+    #     quality=quality,
+    #     optimize=True
+    # )
     p('Conversion to pdf is done!')
     return output_pdf_filepath_with_name
 

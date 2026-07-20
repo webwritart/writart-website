@@ -33,6 +33,7 @@ def image_to_pdf():
                 os.makedirs(output_pdf_directory)
 
             delete_all_files_in_directory(output_pdf_directory)
+
             pdf_file_path = multiple_images_to_pdf(files, '', output_pdf_directory, file_name, 50)
             return send_file(pdf_file_path, as_attachment=True)
     return '', 204 
