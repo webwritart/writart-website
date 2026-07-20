@@ -43,14 +43,19 @@ def artists():
 def portfolio(member_uuid):
     admin = db.session.query(Role).filter_by(name='admin').scalar()
     member_uuid = member_uuid
-    member = db.session.query(Member).filter_by(uuid=member_uuid).one_or_none()
-    member_id = member.id
-    first_name = member.name.split(' ')[0]
+    member = db.session.query(Member).filter_by(uuid=member_uuid).scalar()
+    artist_name = member.name
     artist_dict = {}
-    artworks_thumbnail_dir = f'static/files/users/{member_id}/artworks/thumbnail/'
-    artworks_large_dir = f'static/files/users/{member_id}/artworks/large/'
+    artworks_thumbnail_dir = f'static/files/users/{member_uuid}/artworks/spiritual/thumbnail/'
+    artworks_large_dir = f'static/files/users/{member_uuid}/artworks/spiritual/large/'
+    if not os.path.exists(artworks_thumbnail_dir):
+        os.makedirs(artworks_thumbnail_dir)
+    if not os.path.exists(artworks_large_dir):
+        os.makedirs(artworks_large_dir)
+    
     index = 1
-    for entry in os.scandir(artworks_thumbnail_dir):
+    artworks_thumbnail_list = [f for f in Path(artworks_thumbnail_dir).iterdir() if f.is_file()]
+    for entry in artworks_thumbnail_list:
         if entry.is_file():
             thumbnail_path = f'/{artworks_thumbnail_dir}{entry.name}'
             large_path = f'/{artworks_large_dir}{entry.name}'
@@ -62,7 +67,8 @@ def portfolio(member_uuid):
             }
             artist_dict[index] = img
             index += 1
-    return render_template('portfolio.html', dict=artist_dict, current_year=current_year, logged_in=current_user.is_authenticated, admin=admin)
+    profile_pic_url = f"/static/files/users/{member_uuid}/profile/profile-pic.jpg"
+    return render_template('portfolio.html',artist_name=artist_name, dict=artist_dict, profile_pic_url=profile_pic_url, current_year=current_year, logged_in=current_user.is_authenticated, admin=admin)
 
 
 @studio.route('/artist_tools', methods=['GET', 'POST'])
@@ -224,10 +230,11 @@ def portrait_detail():
                            portrait_price_time_dict=portrait_price_time_dict)
 
 
-@studio.route('/paintings', methods=['GET', 'POST'])
-def paintings():
-    admin = db.session.query(Role).filter_by(name='admin').one_or_none()
-    return render_template('paintings.html', logged_in=current_user.is_authenticated, admin=admin)
+@studio.route('/artwork_product', methods=['GET', 'POST'])
+def artwork_product():
+    admin = db.session.query(Role).filter_by(name='admin').scalar()
+
+    return render_template('artwork_product.html', logged_in=current_user.is_authenticated, admin=admin)
 
 
 @studio.route('/artwork-pricing', methods=['GET', 'POST'])

@@ -79,10 +79,11 @@ def verification():
                 return render_template('certificate_verification_details.html', current_year=current_year, status='failed', logged_in=current_user.is_authenticated)
     return render_template('verification.html', logged_in=current_user.is_authenticated, current_year=current_year)
 
+
 @main.route('/temp', methods=['GET', 'POST'])
 def temp():
-    
     return render_template('temp.html')
+
 
 @main.route('/qr_verification', methods=['GET', 'POST'])
 def qr_verification():
@@ -106,6 +107,3 @@ def qr_verification():
     return render_template('qr_verification.html', logged_in=current_user.is_authenticated, current_year=current_year)
 
 
-@main.route('/paytm_payment', methods=['GET', 'POST'])
-def paytm_payment():
-    pass
