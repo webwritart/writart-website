@@ -251,10 +251,8 @@ def prepare_invoice(customer_name, customer_address, customer_phone_or_email, it
 
     # ----------------------------------- PHONE OR EMAIL ------------------------------------#
     if '@' in customer_phone_or_email:
-        ph_email = 'email'
         contact_label = 'Email: '
     else:
-        ph_email = 'phone'
         contact_label = 'Phone: '
     # ----------------------- Position coordinates --------------------------------------- #
     customer_name_coord = (129, 625)
@@ -350,7 +348,7 @@ def prepare_invoice(customer_name, customer_address, customer_phone_or_email, it
     return ['.'+temp_img_filepath, save_path, current_invoice_no, sub_total, grand_total, attachment_file_path, temp_img_path]
 
 
-def prepare_receipt(customer_name, customer_address, customer_phone, item_dict, tax_percent, date_, user_uuid, payment_type, partial_payment_amount_paid):
+def prepare_receipt(customer_name, customer_address, customer_phone_or_email, item_dict, tax_percent, date_, user_uuid, payment_type, partial_payment_amount_paid):
     global image
     if payment_type == 'full':
         image = Image.open("./static/images/miscellaneous/Receipt_paid_base_design.png")
@@ -364,7 +362,6 @@ def prepare_receipt(customer_name, customer_address, customer_phone, item_dict, 
     date_today = str(date_)
     if not date_:
         date_today = str(date.today())
-    
     large_name = True
     while large_name:
         if len(customer_name) > 26:
@@ -396,10 +393,16 @@ def prepare_receipt(customer_name, customer_address, customer_phone, item_dict, 
     numeral_bold_size = 40
     dues_font_size = 50
 
+    # ----------------------------------- PHONE OR EMAIL ------------------------------------#
+    if '@' in customer_phone_or_email:
+        contact_label = 'Email: '
+    else:
+        contact_label = 'Phone: '
     # ----------------------- Position coordinates --------------------------------------- #
     customer_name_coord = (129, 625)
     customer_address_coord = (129, 675)
-    customer_phone_coord = (250, 727)
+    customer_contact_label_coord = (129, 722)
+    customer_contact_coord = (250, 727)
     receipt_no_coord = (1020, 680)
     date_coord = (1020, 730)
 
@@ -407,13 +410,15 @@ def prepare_receipt(customer_name, customer_address, customer_phone, item_dict, 
     primary_font = ImageFont.truetype("./static/fonts/myriad_pro/MYRIADPRO-BOLD.OTF", size=primary_font_size)
     secondary_font = ImageFont.truetype("./static/fonts/arial/ARIALBD.TTF", size=secondary_font_size)
     tertiary_font = ImageFont.truetype("./static/fonts/myriad_pro/MyriadPro-Light.otf", size=tertiary_font_size)
+    contact_label_font = ImageFont.truetype("./static/fonts/myriad_pro/MYRIADPRO-SEMIBOLD.OTF", size=tertiary_font_size)
     numeral_primary_font = ImageFont.truetype("./static/fonts/myriad_pro/MyriadPro-Light.otf", size=numeral_primary_size)
     numeral_bold_font = ImageFont.truetype("./static/fonts/arial/ARIBLK.TTF", size=numeral_bold_size)
     dues_bold_font = ImageFont.truetype("./static/fonts/arial/ARIBLK.TTF", size=dues_font_size)
 
     draw.text(customer_name_coord, customer_name, fill=primary_text_color, font=primary_font)
     draw.text(customer_address_coord, customer_address, fill=primary_text_color, font=tertiary_font)
-    draw.text(customer_phone_coord, customer_phone, fill=primary_text_color, font=numeral_primary_font)
+    draw.text(customer_contact_label_coord, contact_label, fill=primary_text_color, font=contact_label_font)
+    draw.text(customer_contact_coord, customer_phone_or_email, fill=primary_text_color, font=numeral_primary_font)
     draw.text(receipt_no_coord, current_receipt_no, fill=primary_text_color, font=numeral_primary_font)
     draw.text(date_coord, date_today, fill=primary_text_color, font=numeral_primary_font)
     draw.text(date_coord, date_today, fill=primary_text_color, font=numeral_primary_font)

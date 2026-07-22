@@ -95,13 +95,16 @@
     }
     .inline-inputs {
         display: flex;
-        justify-content: space-between;
         width: 100%;
     }
-    .inline-inputs label, input {
+    #checkbox-label{
         margin: 0%;
         padding: 0%;
-        width: 100%;
+    }
+    #billing-shipping-same-checkbox {
+        margin: 0%;
+        padding: 0%;
+        width: 10%;
     }
     input::placeholder {
         color: rgb(84, 90, 65);
@@ -181,7 +184,7 @@
                     <input type="text" name="billing_country" placeholder="billing Country" required>
                     <input type="text" name="billing_pincode" placeholder="billing Pincode" required>
                     <div class="inline-inputs">
-                        <label>Shipping billing same</label>
+                        <label id="checkbox-label">Shipping billing same</label>
                         <input type="checkbox" name="same_billing_shipping" id="billing-shipping-same-checkbox" onchange="hideShippingInputs()">
                     </div>
                     <input id="shipping-address" type="text" name="shipping_address" placeholder="Customer's shipping address">
@@ -190,7 +193,7 @@
                     <input id="shipping-pincode"  type="text" name="shipping_pincode" placeholder="shipping Pincode">
                     <input type="text" name="phone" placeholder="Customer's phone" required>
                     <input type="text" name="email" placeholder="Customer's email">
-                    <input type="number" name="item_count" id="item_count" placeholder="Total Items" required>
+                    <input type="number" name="item_count" id="item_count" placeholder="Total Items" required onchange="showItemInputs()">
                     <input type="text" name="tax_percentage" placeholder="Tax percentage">
                     <input type="date" name="date" placeholder="Date">
                     <select id="payment_type" name="payment_type">
@@ -315,13 +318,12 @@ document.getElementById("upload-artwork-form").addEventListener('submit', async 
     const range = (start, end, step = 1) => 
     Array.from({ length: Math.ceil((end - start) / step) }, (_, i) => start + i * step);
 
-   
     
-
     documentType.addEventListener('change', (event) => {
         const documentValue = event.target.value;
         if (documentValue == 'invoice') {
             paymentType.style.display = "none";
+            receiptInvoiceNo.style.display = "none";
         partialPaymentAmount.style.display = "none";
         } else if (documentValue == 'receipt') {
             paymentType.style.display = "block";
@@ -336,8 +338,8 @@ document.getElementById("upload-artwork-form").addEventListener('submit', async 
             partialPaymentAmount.style.display = "block";
         }
     });
-    itemCount.addEventListener('change', (event) => {
-        const itemCountValue = event.target.value;
+    function showItemInputs() {
+        const itemCountValue = itemCount.value;
         const itemElements = document.querySelectorAll('.item');
 
         itemElements.forEach(element => {
@@ -369,7 +371,8 @@ document.getElementById("upload-artwork-form").addEventListener('submit', async 
 
             myForm.appendChild(submitBtn);
             }
-        });
+    }
+    
 </script>
 
 
