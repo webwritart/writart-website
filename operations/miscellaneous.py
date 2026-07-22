@@ -237,8 +237,6 @@ def prepare_invoice(customer_name, customer_address, customer_phone_or_email, it
     for n in range(zeros_count):
         prefix = prefix + '0'
     current_invoice_no = prefix + str(current_i_no)
-    db.session.query(Tools).filter_by(keyword='last_invoice').scalar().data = int(last_invoice_no)+1
-    db.session.commit()
 
     primary_text_color = (0, 0, 0)
     secondary_text_color = (0, 0, 0, 200)
@@ -380,8 +378,6 @@ def prepare_receipt(customer_name, customer_address, customer_phone_or_email, it
     for n in range(zeros_count):
         prefix = prefix + '0'
     current_receipt_no = prefix + str(current_r_no)
-    db.session.query(Tools).filter_by(keyword='last_receipt').scalar().data = int(last_receipt_no)+1
-    db.session.commit()
     
     primary_text_color = (0, 0, 0)
     secondary_text_color = (0, 0, 0, 200)

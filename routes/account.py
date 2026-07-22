@@ -467,6 +467,9 @@ def artist_dashboard():
                 date_time = date_time,
                 member_id=member_id
             )
+            current_invoice_no = db.session.query(Tools).filter_by(keyword='last_invoice').scalar().data
+            db.session.query(Tools).filter_by(keyword='last_invoice').scalar().data = int(current_invoice_no)+1
+
             db.session.add(entry)
             db.session.commit()
 
@@ -561,6 +564,8 @@ def artist_dashboard():
                 date_time = date_time,
                 member_id=member_id
             )
+            current_invoice_no = db.session.query(Tools).filter_by(keyword='last_invoice').scalar().data
+            db.session.query(Tools).filter_by(keyword='last_invoice').scalar().data = int(current_invoice_no)+1
             db.session.add(entry)
             db.session.commit()
             # DOWNLOAD ................................................................................
@@ -650,6 +655,8 @@ def artist_dashboard():
                 date_time = date_time,
                 member_id=member_id
             )
+            current_invoice_no = db.session.query(Tools).filter_by(keyword='last_invoice').scalar().data
+            db.session.query(Tools).filter_by(keyword='last_invoice').scalar().data = int(current_invoice_no)+1
             db.session.add(entry)
             db.session.commit()
 
@@ -750,6 +757,8 @@ def artist_dashboard():
                 date_time = date_time,
                 member_id=member_id
             )
+            current_receipt_no = db.session.query(Tools).filter_by(keyword='last_receipt').scalar().data
+            db.session.query(Tools).filter_by(keyword='last_receipt').scalar().data = int(current_receipt_no)+1
             db.session.add(entry)
             db.session.commit()
 
@@ -846,6 +855,8 @@ def artist_dashboard():
                 date_time = date_time,
                 member_id=member_id
             )
+            current_receipt_no = db.session.query(Tools).filter_by(keyword='last_receipt').scalar().data
+            db.session.query(Tools).filter_by(keyword='last_receipt').scalar().data = int(current_receipt_no)+1
             db.session.add(entry)
             db.session.commit()
 
@@ -938,6 +949,8 @@ def artist_dashboard():
                 date_time = date_time,
                 member_id=member_id
             )
+            current_receipt_no = db.session.query(Tools).filter_by(keyword='last_receipt').scalar().data
+            db.session.query(Tools).filter_by(keyword='last_receipt').scalar().data = int(current_receipt_no)+1
             db.session.add(entry)
             db.session.commit()
 
