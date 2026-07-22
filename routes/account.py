@@ -731,7 +731,10 @@ def artist_dashboard():
                     items_quantity = f"{items_quantity}%{item_dict[i]['qty']}"
             date_time = datetime.now().replace(microsecond=0)
             member_id = db.session.query(Member).filter_by(email=data_dict['email']).scalar().id
-
+            if payment_type == 'partial':
+                amount_paid = data_dict['partial_payment_amount_paid']
+            elif payment_type == 'full':
+                amount_paid = data_dict['grand_total']
             entry = Receipt(
                 receipt_no=session.get('receipt_no'),
                 name=data_dict['name'],
@@ -752,7 +755,7 @@ def artist_dashboard():
                 sub_total=session.get('sub_total'),
                 grand_total=session.get('grand_total'),
                 payment_type=data_dict['payment_type'],
-                amount_paid=data_dict['partial_payment_amount_paid'],
+                amount_paid=amount_paid,
                 invoice_no=data_dict['receipt_invoice_no'],
                 date_time = date_time,
                 member_id=member_id
@@ -829,7 +832,10 @@ def artist_dashboard():
                     items_quantity = f"{items_quantity}%{item_dict[i]['qty']}"
             date_time = datetime.now().replace(microsecond=0)
             member_id = db.session.query(Member).filter_by(email=data_dict['email']).scalar().id
-
+            if payment_type == 'partial':
+                amount_paid = data_dict['partial_payment_amount_paid']
+            elif payment_type == 'full':
+                amount_paid = data_dict['grand_total']
             entry = Receipt(
                 receipt_no=session.get('receipt_no'),
                 name=data_dict['name'],
@@ -850,7 +856,7 @@ def artist_dashboard():
                 sub_total=session.get('sub_total'),
                 grand_total=session.get('grand_total'),
                 payment_type=data_dict['payment_type'],
-                amount_paid=data_dict['partial_payment_amount_paid'],
+                amount_paid=amount_paid,
                 invoice_no=data_dict['receipt_invoice_no'],
                 date_time = date_time,
                 member_id=member_id
@@ -923,7 +929,10 @@ def artist_dashboard():
                     items_quantity = f"{items_quantity}%{item_dict[i]['qty']}"
             date_time = datetime.now().replace(microsecond=0)
             member_id = db.session.query(Member).filter_by(email=data_dict['email']).scalar().id
-
+            if payment_type == 'partial':
+                amount_paid = data_dict['partial_payment_amount_paid']
+            elif payment_type == 'full':
+                amount_paid = data_dict['grand_total']
             entry = Receipt(
                 receipt_no=session.get('receipt_no'),
                 name=data_dict['name'],
@@ -944,7 +953,7 @@ def artist_dashboard():
                 sub_total=session.get('sub_total'),
                 grand_total=session.get('grand_total'),
                 payment_type=data_dict['payment_type'],
-                amount_paid=data_dict['partial_payment_amount_paid'],
+                amount_paid=amount_paid,
                 invoice_no=data_dict['receipt_invoice_no'],
                 date_time = date_time,
                 member_id=member_id

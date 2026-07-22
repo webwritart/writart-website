@@ -405,9 +405,9 @@ def prepare_receipt(customer_name, customer_address, customer_phone_or_email, it
     # ---------------------------- Font -------------------------------------------------- #
     primary_font = ImageFont.truetype("./static/fonts/myriad_pro/MYRIADPRO-BOLD.OTF", size=primary_font_size)
     secondary_font = ImageFont.truetype("./static/fonts/arial/ARIALBD.TTF", size=secondary_font_size)
-    tertiary_font = ImageFont.truetype("./static/fonts/myriad_pro/MyriadPro-Light.otf", size=tertiary_font_size)
+    tertiary_font = ImageFont.truetype("./static/fonts/myriad_pro/MYRIADPRO-REGULAR.OTF", size=tertiary_font_size)
     contact_label_font = ImageFont.truetype("./static/fonts/myriad_pro/MYRIADPRO-SEMIBOLD.OTF", size=tertiary_font_size)
-    numeral_primary_font = ImageFont.truetype("./static/fonts/myriad_pro/MyriadPro-Light.otf", size=numeral_primary_size)
+    numeral_primary_font = ImageFont.truetype("./static/fonts/myriad_pro/MYRIADPRO-REGULAR.OTF", size=numeral_primary_size)
     numeral_bold_font = ImageFont.truetype("./static/fonts/arial/ARIBLK.TTF", size=numeral_bold_size)
     dues_bold_font = ImageFont.truetype("./static/fonts/arial/ARIBLK.TTF", size=dues_font_size)
 
@@ -416,7 +416,6 @@ def prepare_receipt(customer_name, customer_address, customer_phone_or_email, it
     draw.text(customer_contact_label_coord, contact_label, fill=primary_text_color, font=contact_label_font)
     draw.text(customer_contact_coord, customer_phone_or_email, fill=primary_text_color, font=numeral_primary_font)
     draw.text(receipt_no_coord, current_receipt_no, fill=primary_text_color, font=numeral_primary_font)
-    draw.text(date_coord, date_today, fill=primary_text_color, font=numeral_primary_font)
     draw.text(date_coord, date_today, fill=primary_text_color, font=numeral_primary_font)
     
     grand_total = 0
