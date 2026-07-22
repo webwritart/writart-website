@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
 <style>
+#captcha {
+    width: 100%;
+    padding: 0%;
+    margin: 0%;
+}
 #captcha-refresh {
     background: rgb(57, 119, 99); 
     color:white; 
@@ -15,6 +20,33 @@
     text-decoration: none;
     color: white;
 }
+#captcha_input {
+    padding: 0% 1%;
+    color: black;
+    margin: 0%;
+}
+#captcha_input::placeholder {
+    color: rgb(81, 85, 59);
+}
+#privacy-agreement-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+#privacy-agreement-container input {
+    padding: 0%;
+    margin-right: 2%;
+    width: 5%;
+}
+#captcha-btn {
+    padding: 0%;
+    background: rgb(98, 104, 49);
+    border-radius: 0%;
+}
+#captcha-btn:hover {
+    background-color: rgb(74, 81, 21);
+}
+
 
 </style>
 <div style="display:flex; flex-direction:column; height: 90vh; justify-content:center;">
@@ -34,8 +66,12 @@
                     <a href="{{url_for('account.captcha_verification')}}" id="captcha-refresh">Refresh Captcha</a>
                     <input id="captcha_input" type="text" name="captcha" placeholder="Enter Captcha" required>
                 </div>
-                By clicking REGISTER button you agree to our <a href="{{url_for('main.privacy_policy')}}" target="_blank">privacy policy</a>
-                <button type="submit" name="submit" class="btn btn-primary btn-block btn-large" value="register">REGISTER</button>
+                <div id="privacy-agreement-container">
+                    <input type="checkbox" name="agree" required>
+                    <p>I agree to the <a href="{{url_for('main.privacy_policy')}}" target="_blank">privacy policy</a></p>
+                </div>
+                
+                <button type="submit" name="submit" class="btn btn-primary btn-block btn-large" id="captcha-btn" value="register">REGISTER</button>
             </form>
         </div>
     </div>

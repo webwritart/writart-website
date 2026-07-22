@@ -1622,7 +1622,9 @@ def registration_form():
                 phone = ph
 
             email = request.form.get('email')
-            state = request.form.get('state')
+            billing_state = request.form.get('billing_state')
+            billing_country = request.form.get('billing_country')
+            billing_pincode = request.form.get('billing_pincode')
             result = db.session.execute(db.select(Member).where(Member.email == email))
             user = result.scalar()
             if user:
@@ -1637,29 +1639,16 @@ def registration_form():
                 method='pbkdf2:sha256',
                 salt_length=8
             )
-            date_ = request.form.get('date')
-            if len(date_) < 2:
-                date_ = "0" + date_
-            month = request.form.get('month')
-            if len(month) < 2:
-                month = "0" + month
-            year = request.form.get('year')
-            dob = f"{year}-{month}-{date_}"
+            
+            dob = request.form.get('dob')
             age = calculate_age(dob)
 
-            artist_account = request.form.get('artist_account')
 
             # if age < 13:
             #     flash("You're below 13 year. Really very sorry we cannot take you in!", "error")
             #     return redirect(request.url)
 
-            unique = False
-            uuid = ''
-            while not unique:
-                u = random.randint(100000, 999999)
-                if u not in uuid_list:
-                    uuid = u
-                    unique = True
+            uuid = create_uuid(uuid_list, 6)
 
         # ------------------------------------------ Add details to session ----------------------------------------- #
             session['name'] = request.form.get('name')
@@ -1670,7 +1659,9 @@ def registration_form():
             session['sex'] = request.form.get('sex')
             session['dob'] = dob
             session['profession'] = request.form.get('profession')
-            session['state'] = state
+            session['billing_state'] = billing_state
+            session['billing_country'] = billing_country
+            session['billing_pincode'] = billing_pincode
             session['uuid'] = uuid
             return redirect(url_for('account.captcha_verification'))
 
@@ -1690,83 +1681,88 @@ def captcha_verification():
 def register():
     if request.method == 'POST':
         if request.form.get('submit') == 'register':
-            captcha = request.form.get('captcha')
-            captcha_value = session['captcha_value']
-            if captcha == captcha_value:
-                name = session['name']
-                email = session['email']
-                password = session['password']
-                phone = session['phone']
-                whatsapp = session['whatsapp']
-                sex = session['sex']
-                dob = session['dob']
-                profession = session['profession']
-                state = session['state']
-                uuid = session['uuid']
+            if request.form.get('agree'):
+                captcha = request.form.get('captcha')
+                captcha_value = session['captcha_value']
+                if captcha == captcha_value:
+                    name = session['name']
+                    email = session['email']
+                    password = session['password']
+                    phone = session['phone']
+                    whatsapp = session['whatsapp']
+                    sex = session['sex']
+                    dob = session['dob']
+                    profession = session['profession']
+                    billing_state = session['billing_state']
+                    billing_country = session['billing_country']
+                    billing_pincode = session['billing_pincode']
+                    uuid = session['uuid']
 
-                new_user = Member(
-                    email=email,
-                    password=password,
-                    name=name,
-                    phone=phone,
-                    whatsapp=whatsapp,
-                    profession=profession,
-                    sex=sex,
-                    dob=dob,
-                    state=state,
-                    registration_date=today_date,
-                    uuid=uuid
-                )
-                db.session.add(new_user)
-                db.session.commit()
-
-                all_users = db.session.query(Member)
-                admin = db.session.query(Role).filter_by(name='admin').scalar()
-
-                if len(all_users.all()) == 1:
-                    all_users[0].role.append(admin)
+                    new_user = Member(
+                        email=email,
+                        password=password,
+                        name=name,
+                        phone=phone,
+                        whatsapp=whatsapp,
+                        profession=profession,
+                        sex=sex,
+                        dob=dob,
+                        billing_state=billing_state,
+                        billing_country=billing_country,
+                        billing_pincode=billing_pincode,
+                        registration_date=today_date,
+                        uuid=uuid
+                    )
+                    db.session.add(new_user)
                     db.session.commit()
 
-                login_user(new_user)
-                session['logged_in'] = True
+                    all_users = db.session.query(Member).all()
+                    admin = db.session.query(Role).filter_by(name='admin').scalar()
 
-                # if artist_account == 'yes':
-                #     artist = db.session.query(Role).filter_by(name='artist').one()
-                #
-                #     current_user.role.append(artist)
-                #     db.session.commit()
-                #     entry = ArtistData(
-                #         artist=current_user.name,
-                #         watermarked_artworks=0,
-                #         gallery_artworks=0,
-                #         all_collections=0,
-                #         commission_collections=0,
-                #         sold_artworks=0,
-                #         queried_artworks=0,
-                #         shipped_artworks=0,
-                #         contracted_artworks=0,
-                #         sold_commissions=0,
-                #         memory_occupied_total=0,
-                #         memory_occupied_gallery=0,
-                #         member=current_user,
-                #     )
-                #     db.session.add(entry)
-                #     db.session.commit()
+                    if len(all_users) == 1:
+                        all_users[0].role.append(admin)
+                        db.session.commit()
 
-                mail = render_template('mails/registration_success.html')
-                send_email_support('Registration success!', [email],
-                                '',
-                                mail, '')
-                mail_message = f'New Registration:\n\nName: {name}\nEmail: {email}\n' \
-                            f'Phone: {phone}\n' \
-                            f'Sex: {sex}\nProfession: {profession}\n' \
-                            f'State: {state}\n\n'
-                send_email_support('New Registration!', ['writartstudios@gmail.com'], mail_message, '', '')
-                if 'url' in session:
-                    return redirect(session['url'])
-                return redirect(url_for('account.home', name=current_user.name.split()[0]))
-            else:
-                flash("Aborted! Captcha doesn't match!", "error")
+                    login_user(new_user)
+                    session['logged_in'] = True
+
+                    # if artist_account == 'yes':
+                    #     artist = db.session.query(Role).filter_by(name='artist').one()
+                    #
+                    #     current_user.role.append(artist)
+                    #     db.session.commit()
+                    #     entry = ArtistData(
+                    #         artist=current_user.name,
+                    #         watermarked_artworks=0,
+                    #         gallery_artworks=0,
+                    #         all_collections=0,
+                    #         commission_collections=0,
+                    #         sold_artworks=0,
+                    #         queried_artworks=0,
+                    #         shipped_artworks=0,
+                    #         contracted_artworks=0,
+                    #         sold_commissions=0,
+                    #         memory_occupied_total=0,
+                    #         memory_occupied_gallery=0,
+                    #         member=current_user,
+                    #     )
+                    #     db.session.add(entry)
+                    #     db.session.commit()
+
+                    mail = render_template('mails/registration_success.html')
+                    send_email_support('Registration success!', [email],
+                                    '',
+                                    mail, '')
+                    mail_message = f'New Registration:\n\nName: {name}\nEmail: {email}\n' \
+                                f'Phone: {phone}\n' \
+                                f'Sex: {sex}\nProfession: {profession}\n' \
+                                f'State: {billing_state}\n Country: {billing_country}\n Pincode: {billing_pincode}\n'
+                    send_email_support('New Registration!', ['writartstudios@gmail.com'], mail_message, '', '')
+                    if 'url' in session:
+                        return redirect(session['url'])
+                    return redirect(url_for('account.home', name=current_user.name.split()[0]))
+                else:
+                    flash("Aborted! Captcha doesn't match!", "error")
                 
     return render_template("register.html", logged_in=current_user.is_authenticated, current_year=current_year)
 
