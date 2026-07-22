@@ -207,7 +207,7 @@ def prepare_certificate(awardee_name_text, course_topic, course_period, issuing_
     image.save(file_path, 'PDF', resolution=100.0)
 
 
-def prepare_invoice(customer_name, customer_address, customer_phone, item_dict, tax_percent, date_, user_uuid):
+def prepare_invoice(customer_name, customer_address, customer_phone_or_email, item_dict, tax_percent, date_, user_uuid):
     image = Image.open("./static/images/miscellaneous/invoice_base_design.png")
     if image.mode != 'RGBA':
         image = image.convert('RGBA')
@@ -225,7 +225,8 @@ def prepare_invoice(customer_name, customer_address, customer_phone, item_dict, 
             customer_name = " ".join(customer_name)
         else:
             large_name = False
-    
+
+    contact_label = ''
     
     # ---------------------------------- INVOICE NO -------------------------------------- #
     last_invoice_no = db.session.query(Tools).filter_by(keyword='last_invoice').scalar().data
@@ -247,11 +248,19 @@ def prepare_invoice(customer_name, customer_address, customer_phone, item_dict, 
     tertiary_font_size = 35
     numeral_primary_size = 33
     numeral_bold_size = 40
-    
+
+    # ----------------------------------- PHONE OR EMAIL ------------------------------------#
+    if '@' in customer_phone_or_email:
+        ph_email = 'email'
+        contact_label = 'Email: '
+    else:
+        ph_email = 'phone'
+        contact_label = 'Phone: '
     # ----------------------- Position coordinates --------------------------------------- #
     customer_name_coord = (129, 625)
     customer_address_coord = (129, 675)
-    customer_phone_coord = (250, 727)
+    customer_contact_label_coord = (129, 722)
+    customer_contact_coord = (250, 727)
     invoice_no_coord = (1020, 680)
     date_coord = (1020, 730)
 
@@ -259,12 +268,14 @@ def prepare_invoice(customer_name, customer_address, customer_phone, item_dict, 
     primary_font = ImageFont.truetype("./static/fonts/myriad_pro/MYRIADPRO-BOLD.OTF", size=primary_font_size)
     secondary_font = ImageFont.truetype("./static/fonts/arial/ARIALBD.TTF", size=secondary_font_size)
     tertiary_font = ImageFont.truetype("./static/fonts/myriad_pro/MyriadPro-Light.otf", size=tertiary_font_size)
+    contact_label_font = ImageFont.truetype("./static/fonts/myriad_pro/MYRIADPRO-SEMIBOLD.OTF", size=tertiary_font_size)
     numeral_primary_font = ImageFont.truetype("./static/fonts/myriad_pro/MyriadPro-Light.otf", size=numeral_primary_size)
     numeral_bold_font = ImageFont.truetype("./static/fonts/arial/ARIBLK.TTF", size=numeral_bold_size)
 
     draw.text(customer_name_coord, customer_name, fill=primary_text_color, font=primary_font)
     draw.text(customer_address_coord, customer_address, fill=primary_text_color, font=tertiary_font)
-    draw.text(customer_phone_coord, customer_phone, fill=primary_text_color, font=numeral_primary_font)
+    draw.text(customer_contact_label_coord, contact_label, fill=primary_text_color, font=contact_label_font)
+    draw.text(customer_contact_coord, customer_phone_or_email, fill=primary_text_color, font=numeral_primary_font)
     draw.text(invoice_no_coord, current_invoice_no, fill=primary_text_color, font=numeral_primary_font)
     draw.text(date_coord, date_today, fill=primary_text_color, font=numeral_primary_font)
     draw.text(date_coord, date_today, fill=primary_text_color, font=numeral_primary_font)

@@ -4,110 +4,278 @@
     #root-container {
         display: flex;
         flex-direction: column;
-        width: 100%;
         align-items: center;
         justify-content: center;
-        min-height: 90vh;
+        min-height: 80vh;
+        background: rgb(164, 173, 155);
+        width: 100%;
+        padding: 0% 3%;
+    }
+    #title {
+        font-weight: 900;
+        font-size: 1.2rem;
+    }
+    #column-container {
+        display: flex;
+        width: 100%;
+    }
+    #left-side-bar {
+        width: 15%;
+        display: flex;
+        flex-direction: column;
+        padding-right: .5%;
+        border-right: solid 1px rgba(0, 0, 0, 0.372);
+    }
+    #main-area {
+        width: 85%;
+    }
+    #right-side-bar {
+        width: 15%;
+        display: flex;
+        flex-direction: column;
+        padding-left: .5%;
+        border-left: solid 1px rgba(0, 0, 0, 0.372);
+    }
+    #right-side-bar-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+    }
+    #right-side-bar-container form {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        padding: 1% 2%;
+        background: rgb(188, 192, 174);
+        margin: .5%;
     }
     #form-container {
         display: flex;
-        width: 50%;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        flex-wrap: wrap;
     }
     #form-container form {
-        padding: 2%;
-        border: solid 2px black;
-        width:50%;
+        width: 22%;
+        display: flex;
+        flex-direction: column;
+        padding: 1% 2%;
+        background: rgb(188, 192, 174);
+        margin: .5%;
+    }
+    .form-container form button {
+        background: rgb(149, 160, 134);
     }
     select {
-        width: 100%;
+        padding: 0% !important;
+        font-size: .9rem;
+        background: rgb(234, 231, 201);
     }
     .form-heading {
+        font-size: 1rem;
+        font-weight: 600;
         text-align: center;
-        font-size: 1.5rem;
-        font-weight: bold;
-        text-transform: uppercase;
+        margin: 0%;
+        color: rgba(0, 0, 0, 0.6)
+    }
+    .form-button {
+        background: rgb(83, 93, 62) !important;
+        padding: .8% 2% !important;
+        font-size: .9rem;
+        color: rgb(213, 213, 213);
+    }
+    input {
+        padding: 0% !important;
+        margin: 0%;
+        background: rgb(234, 231, 201);
+        color: black;
+    }
+    .inline-inputs {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+    }
+    .inline-inputs label, input {
+        margin: 0%;
+        padding: 0%;
+        width: 100%;
+    }
+    input::placeholder {
+        color: rgb(84, 90, 65);
+    }
+    label {
+        font-size: .8rem;
+        margin: 0%;
+    }
+    .file-upload-input::file-selector-button {
+        background-color: rgb(172, 174, 139);
+        border: solid 1px rgb(136, 155, 94);
     }
 
+
     @media (max-width: 1200px) {
-        #form-container {
-            width: 80%;
+            .form-heading {
+            font-size: .85rem;
+        }
+        .form-container form {
+            width: 32%;
         }
     }
-    @media (max-width: 700px) {
-        #form-container {
-            flex-direction: column;
-            width: 80%;
+    @media (max-width: 900px) {
+        .form-heading {
+            font-size: .85rem;
         }
-        #form-container form {
-            width: 100%;
+        .form-container form {
+            width: 45%;
         }
+    }
+    @media (max-width: 600px) {
+        .form-heading {
+        font-size: 1rem;
+    }
+    .form-container form {
+        width: 70%;
+    }
     }
 </style>
 <div id="root-container">
-    <div id="form-container">
-        <form id="my_form" action="{{url_for('account.artist_dashboard')}}" method="post">
-            <p class="form-heading">Create Invoice/Recipt</p>
-            <select name="document" id="document">
-                <option value="">Choose Document Type</option>
-                <option value="invoice">Invoice</option>
-                <option value="receipt">Receipt</option>
-            </select>
-            <input type="text" name="name" placeholder="Customer's name" required>
-            <input type="text" name="address" placeholder="Customer's address" required>
-            <input type="text" name="state" placeholder="State" required>
-            <input type="text" name="phone" placeholder="Customer's phone" required>
-            <input type="text" name="email" placeholder="Customer's email" required>
-            <input type="number" name="item_count" id="item_count" placeholder="Total Items" required>
-            <input type="text" name="tax_percentage" placeholder="Tax percentage">
-            <input type="date" name="date" placeholder="Date">
-            <select id="payment_type" name="payment_type">
-                <option value="">Select Payment type</option>
-                <option value="full">Full</option>
-                <option value="partial">Partial</option>
-            </select>
-            <input id="partial_payment_amt" type="text" name="partial_payment_amount" placeholder="Partial Payment Amount Paid">
-            <input id="rec_inv_no" type="text" name="receipt_invoice_no" placeholder="Receipt against Invoice No">
-            <button type="submit" id="submit-btn" name="submit" value="create_document" class="btn btn-primary btn-block btn-large">Create Document</button>
-        </form>
-        <form action="{{url_for('account.artist_dashboard')}}" method="post" enctype="multipart/form-data">
-            <p class="form-heading">Create COA</p>
-            <label>Artwork Image</label>
-            <input type="file" name="artwork-img" accept="image/*">
-            <input type="text" name="serial_no" placeholder="Serial No" required>
-            <input type="text" name="title" placeholder="title" required>
-            <input type="text" name="size" placeholder="size" required>
-            <input type="text" name="medium" placeholder="medium" required>
-            <input type="text" name="year" placeholder="year" required>
-            <input type="text" name="client_name" placeholder="Client name" required>
-            <input type="email" name="client_email" placeholder="Client Email (optional)">
-            <select name="varnished">
-                <option value="">Varnished?</option>
-                <option value="no">No</option>
-                <option value="yes">Yes</option>
-            </select>
-            <select name="signed">
-                <option value="">Signed?</option>
-                <option value="true">True</option>
-                <option value="false">False</option>
-            </select>
-            <select name="statement">
-                <option value="">Statement?</option>
-                <option value="unique">Unique</option>
-                <option value="print">Print</option>
-                <option value="self-copy">Self Copy</option>
-            </select>
-            <select name="copyright">
-                <option value="">Copyright Type</option>
-                <option value="allow-none">Allow None</option>
-                <option value="allow-reproduction">Allow Reproduction</option>
-                <option value="allow-reproduction-commercial">Allow Reproduction and Commercial</option>
-            </select>
-            <button type="submit" name="submit" value="create-coa" class="btn btn-primary btn-block btn-large">Create COA</button>
-        </form>
+    <p id="title">Artist Dashboard</p>
+    <div id="column-container">
+        <div id="left-side-bar">
+
+        </div>
+        <div id="main-area">
+            <div id="form-container">
+                <form id="upload-artwork-form" action="{{url_for('artist_dashboard_operations.upload_artwork')}}" method="post" enctype="multipart/form-data">
+                    <p class="form-heading">Upload Artwork</p>
+                    <label>Upload artwork image</label>
+                    <input type="file" name="artwork-file" class="file-upload-input" accept=".jpg, .jpeg, .png, image/jpeg, image/png" required>
+                    <input type="text" name="title" placeholder="Title of the artwork" required>
+                    <input type="hidden" name="form-name" value="upload-artwork">
+                    <select name="category" required>
+                        <option value="">Choose category</option>
+                        <option value="print">Print</option>
+                        <option value="original">Original</option>
+                        <option value="recreation">Recreation</option>
+                    </select>
+                    <button type="submit" id="add_artwork_submit-btn" name="submit_upload_artwork" value="upload_artwork" class="btn btn-primary btn-block btn-large form-button">Uplaod artwork</button>
+                </form>
+            </div>
+        </div>
+        <div id="right-side-bar">
+            <div id="right-side-bar-container">
+                <form id="my_form" action="{{url_for('account.artist_dashboard')}}" method="post">
+                    <p class="form-heading">Create Invoice/Recipt</p>
+                    <select name="document" id="document">
+                        <option value="">Choose Document Type</option>
+                        <option value="invoice">Invoice</option>
+                        <option value="receipt">Receipt</option>
+                    </select>
+                    <input type="text" name="name" placeholder="Customer's name" required>
+                    <input type="text" name="billing_address" placeholder="Customer's billing address" required>
+                    <input type="text" name="billing_state" placeholder="billing State" required>
+                    <input type="text" name="billing_country" placeholder="billing Country" required>
+                    <input type="text" name="billing_pincode" placeholder="billing Pincode" required>
+                    <div class="inline-inputs">
+                        <label>Shipping billing same</label>
+                        <input type="checkbox" name="same_billing_shipping">
+                    </div>
+                    <input type="text" name="shipping_address" placeholder="Customer's shipping address">
+                    <input type="text" name="shipping_state" placeholder="shipping State">
+                    <input type="text" name="shipping_country" placeholder="shipping Country">
+                    <input type="text" name="shipping_pincode" placeholder="shipping Pincode">
+                    <input type="text" name="phone" placeholder="Customer's phone" required>
+                    <input type="text" name="email" placeholder="Customer's email">
+                    <input type="number" name="item_count" id="item_count" placeholder="Total Items" required>
+                    <input type="text" name="tax_percentage" placeholder="Tax percentage">
+                    <input type="date" name="date" placeholder="Date">
+                    <select id="payment_type" name="payment_type">
+                        <option value="">Select Payment type</option>
+                        <option value="full">Full</option>
+                        <option value="partial">Partial</option>
+                    </select>
+                    <input id="partial_payment_amt" type="text" name="partial_payment_amount" placeholder="Partial Payment Amount Paid">
+                    <input id="rec_inv_no" type="text" name="receipt_invoice_no" placeholder="Receipt against Invoice No">
+                    <button type="submit" id="submit-btn" name="submit" value="create_document" class="btn btn-primary btn-block btn-large form-button">Create Document</button>
+                </form>
+                <form action="{{url_for('account.artist_dashboard')}}" method="post" enctype="multipart/form-data">
+                    <p class="form-heading">Create COA</p>
+                    <label>Artwork Image</label>
+                    <input type="file" name="artwork-img" accept="image/*" class="file-upload-input">
+                    <input type="text" name="serial_no" placeholder="Serial No" required>
+                    <input type="text" name="title" placeholder="title" required>
+                    <input type="text" name="size" placeholder="size" required>
+                    <input type="text" name="medium" placeholder="medium" required>
+                    <input type="text" name="year" placeholder="year" required>
+                    <input type="text" name="client_name" placeholder="Client name" required>
+                    <input type="email" name="client_email" placeholder="Client Email (optional)">
+                    <select name="varnished">
+                        <option value="">Varnished?</option>
+                        <option value="no">No</option>
+                        <option value="yes">Yes</option>
+                    </select>
+                    <select name="signed">
+                        <option value="">Signed?</option>
+                        <option value="true">True</option>
+                        <option value="false">False</option>
+                    </select>
+                    <select name="statement">
+                        <option value="">Statement?</option>
+                        <option value="unique">Unique</option>
+                        <option value="print">Print</option>
+                        <option value="self-copy">Self Copy</option>
+                    </select>
+                    <select name="copyright">
+                        <option value="">Copyright Type</option>
+                        <option value="allow-none">Allow None</option>
+                        <option value="allow-reproduction">Allow Reproduction</option>
+                        <option value="allow-reproduction-commercial">Allow Reproduction and Commercial</option>
+                    </select>
+                    <button type="submit" name="submit" value="create-coa" class="btn btn-primary btn-block btn-large form-button">Create COA</button>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
+// ------------------------------------------- FORM POST ADD ARTWORK ------------------------------------------
+const addArtworkEndpointUrl = "{{ url_for('artist_dashboard_operations.upload_artwork') }}";
+document.getElementById("upload-artwork-form").addEventListener('submit', async function(event) {
+    event.preventDefault();
+    
+    const addArtworkSubmitBtn = document.getElementById("add_artwork_submit-btn");
+
+    addArtworkSubmitBtn.ariaDisabled = true;
+    addArtworkSubmitBtn.innerText = 'Sending...';
+
+    const addArtworkFormData = new FormData(this);
+
+    try {
+        const response = await fetch(addArtworkEndpointUrl, {
+            method: 'POST',
+            body: addArtworkFormData
+        });
+        if (response.ok) {
+            const result = await response.json();
+            alert('New artwork uploaded successfully!');
+            this.reset();
+        } else {
+            alert('Server error: ' + response.statusText);
+        }
+    } catch (error) {
+        alert('Network error: Could not reach the server.');
+        console.error(error);
+    } finally {
+        addArtworkSubmitBtn.ariaDisabled = false;
+        addArtworkSubmitBtn.innerText = 'Upload artwork';
+    }
+});
+
+// --------------------------------------------- Invoice/Receipt --------------------------------------------------
     const documentType = document.getElementById('document');
     const paymentType = document.getElementById('payment_type');
     const partialPaymentAmount = document.getElementById('partial_payment_amt');

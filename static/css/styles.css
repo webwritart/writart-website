@@ -13,9 +13,71 @@
 
 html { width: 100%; height:100%; overflow:auto; }
 
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 100;
+    src: url('/static/fonts/roboto/Roboto-Thin.ttf') format('ttf');
+}
+@font-face {
+    font-family: 'Roboto';
+    font-style: italic;
+    font-weight: 100;
+    src: url('/static/fonts/roboto/Roboto-ThinItalic.ttf') format('ttf');
+}
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    src: url('/static/fonts/roboto/Roboto-Regular.ttf') format('ttf');
+}
+@font-face {
+    font-family: 'Roboto';
+    font-style: italic;
+    font-weight: 400;
+    src: url('/static/fonts/roboto/Roboto-Italic.ttf') format('ttf');
+}
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 500;
+    src: url('/static/fonts/roboto/Roboto-Medium.ttf') format('ttf');
+}
+@font-face {
+    font-family: 'Roboto';
+    font-style: italic;
+    font-weight: 500;
+    src: url('/static/fonts/roboto/Roboto-MediumItalic.ttf') format('ttf');
+}
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    src: url('/static/fonts/roboto/Roboto-Bold.ttf') format('ttf');
+}
+@font-face {
+    font-family: 'Roboto';
+    font-style: italic;
+    font-weight: 700;
+    src: url('/static/fonts/roboto/Roboto-BoldItalic.ttf') format('ttf');
+}
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 900;
+    src: url('/static/fonts/roboto/Roboto-Black.ttf') format('ttf');
+}
+@font-face {
+    font-family: 'Roboto';
+    font-style: italic;
+    font-weight: 900;
+    src: url('/static/fonts/roboto/Roboto-BlackItalic.ttf') format('ttf');
+}
+
 body { 
 	height: auto;
-	font-family: 'Open Sans', sans-serif;
+	font-family: 'Roboto', sans-serif;
+    font-weight: 400;
     background-color: #FFFFFF;
 	
 }
@@ -50,7 +112,17 @@ a {
     text-decoration: none;
     text-align: center;
 }
-
+.btn-transparent {
+    border: solid 1px black;
+    border-radius: 1rem;
+    color: black;
+    padding: 1% 0%;
+}
+.btn-transparent:hover {
+    background: rgb(245, 245, 245);
+    text-decoration: none;
+    color: black;
+}
 .box {
     display: flex;
     justify-content: center;
@@ -1500,7 +1572,8 @@ and (max-width : 1440px) {
     width: 30%;
 }
 .section-heading {
-    font-size: 1.3rem;
+    font-size: 1rem;
+    font-weight: ;
 }
 .title-workshop-study-materials {
     font-size: 1.1rem;

@@ -270,8 +270,15 @@ def artist_dashboard():
         if request.form.get('submit') == 'create_document':
             document = request.form.get('document')
             name = request.form.get('name')
-            address = request.form.get('address')
-            state = request.form.get('state')
+            billing_address = request.form.get('address')
+            billing_state = request.form.get('state')
+            billing_country = request.form.get('country')
+            billing_pincode = request.form.get('pincode')
+            shipping_address = request.form.get('shipping_address')
+            shipping_state = request.form.get('shipping_state')
+            shipping_country = request.form.get('shipping_country')
+            shipping_pincode = request.form.get('shipping_pincode')
+            shipping_same_as_billing = request.form.get('same_billing_shipping')
             phone = request.form.get('phone')
             email = request.form.get('email')
             item_count = int(request.form.get('item_count'))
@@ -280,6 +287,12 @@ def artist_dashboard():
             payment_type = request.form.get('payment_type')
             partial_payment_amount_paid = request.form.get('partial_payment_amount')
             receipt_invoice_no = request.form.get('receipt_invoice_no')
+
+            if shipping_same_as_billing:
+                shipping_address = billing_address
+                shipping_state = billing_state
+                shipping_country = billing_country
+                shipping_pincode = billing_pincode
 
             if not date_:
                 date_ = str(date.today())
@@ -302,8 +315,14 @@ def artist_dashboard():
             inv_receipt_data_dict = {
                 'document': document,
                 'name': name,
-                'address': address,
-                'state': state,
+                'billing_address': billing_address,
+                'billing_state': billing_state,
+                'billing_country': billing_country,
+                'billing_pincode': billing_pincode,
+                'shipping_address': shipping_address,
+                'shipping_state': shipping_state,
+                'shipping_country': shipping_country,
+                'shipping_pincode': shipping_pincode,
                 'phone': phone,
                 'email': email,
                 'item_count': item_count,
@@ -319,8 +338,12 @@ def artist_dashboard():
                 flash('Aborted! Please select the document type first', 'error')
                 return redirect(request.url)
             if document == 'invoice':
-                address = address + ', ' + state
-                result = prepare_invoice(name, address, phone, item_dict, tax_percentage, date_, current_user.uuid)
+                if email:
+                    customer_contact = email
+                else:
+                    customer_contact = phone
+                document_state_country = f"{billing_state}, {billing_country}"
+                result = prepare_invoice(name, document_state_country, customer_contact, item_dict, tax_percentage, date_, current_user.uuid)
                 inv_preview_path = result[0]
                 inv_pdf_path = result[1]
                 inv_no = result[2]
@@ -340,8 +363,12 @@ def artist_dashboard():
                 return render_template('document_preview.html', preview_path=inv_preview_path, current_year=current_year, admin=admin, logged_in=current_user.is_authenticated, document='Invoice')
             
             elif document == 'receipt':
-                address = address + ', ' + state
-                result = prepare_receipt(name, address, phone, item_dict, tax_percentage, date_, current_user.uuid, payment_type, partial_payment_amount_paid)
+                if email:
+                    customer_contact = email
+                else:
+                    customer_contact = phone
+                    document_state_country = f"{billing_state}, {billing_country}"
+                result = prepare_receipt(name, document_state_country, customer_contact, item_dict, tax_percentage, date_, current_user.uuid, payment_type, partial_payment_amount_paid)
                 rec_preview_path = result[0]
                 rec_pdf_path = result[1]
                 rec_no = result[2]
@@ -382,8 +409,14 @@ def artist_dashboard():
                     email=data_dict['email'],
                     name=data_dict['name'],
                     phone=data_dict['phone'],
-                    address=data_dict['address'],
-                    state=data_dict['state'],
+                    billing_address=data_dict['billing_address'],
+                    billing_state=data_dict['billing_state'],
+                    billing_country=data_dict['billing_country'],
+                    billing_pincode=data_dict['billing_pincode'],
+                    shipping_address=data_dict['shipping_address'],
+                    shipping_state=data_dict['shipping_state'],
+                    shipping_country=data_dict['shipping_country'],
+                    shipping_pincode=data_dict['shipping_pincode'],
                     registration_date = str(date.today()),
                 )
                 db.session.add(entry)
@@ -464,8 +497,14 @@ def artist_dashboard():
                     email=data_dict['email'],
                     name=data_dict['name'],
                     phone=data_dict['phone'],
-                    address=data_dict['address'],
-                    state=data_dict['state'],
+                    billing_address=data_dict['billing_address'],
+                    billing_state=data_dict['billing_state'],
+                    billing_country=data_dict['billing_country'],
+                    billing_pincode=data_dict['billing_pincode'],
+                    shipping_address=data_dict['shipping_address'],
+                    shipping_state=data_dict['shipping_state'],
+                    shipping_country=data_dict['shipping_country'],
+                    shipping_pincode=data_dict['shipping_pincode'],
                     registration_date = str(date.today()),
                 )
                 db.session.add(entry)
@@ -541,8 +580,14 @@ def artist_dashboard():
                     email=data_dict['email'],
                     name=data_dict['name'],
                     phone=data_dict['phone'],
-                    address=data_dict['address'],
-                    state=data_dict['state'],
+                    billing_address=data_dict['billing_address'],
+                    billing_state=data_dict['billing_state'],
+                    billing_country=data_dict['billing_country'],
+                    billing_pincode=data_dict['billing_pincode'],
+                    shipping_address=data_dict['shipping_address'],
+                    shipping_state=data_dict['shipping_state'],
+                    shipping_country=data_dict['shipping_country'],
+                    shipping_pincode=data_dict['shipping_pincode'],
                     registration_date = str(date.today()),
                 )
                 db.session.add(entry)
@@ -627,8 +672,14 @@ def artist_dashboard():
                     email=data_dict['email'],
                     name=data_dict['name'],
                     phone=data_dict['phone'],
-                    address=data_dict['address'],
-                    state=data_dict['state'],
+                    billing_address=data_dict['billing_address'],
+                    billing_state=data_dict['billing_state'],
+                    billing_country=data_dict['billing_country'],
+                    billing_pincode=data_dict['billing_pincode'],
+                    shipping_address=data_dict['shipping_address'],
+                    shipping_state=data_dict['shipping_state'],
+                    shipping_country=data_dict['shipping_country'],
+                    shipping_pincode=data_dict['shipping_pincode'],
                     registration_date = str(date.today()),
                 )
                 db.session.add(entry)
@@ -711,8 +762,14 @@ def artist_dashboard():
                     email=data_dict['email'],
                     name=data_dict['name'],
                     phone=data_dict['phone'],
-                    address=data_dict['address'],
-                    state=data_dict['state'],
+                    billing_address=data_dict['billing_address'],
+                    billing_state=data_dict['billing_state'],
+                    billing_country=data_dict['billing_country'],
+                    billing_pincode=data_dict['billing_pincode'],
+                    shipping_address=data_dict['shipping_address'],
+                    shipping_state=data_dict['shipping_state'],
+                    shipping_country=data_dict['shipping_country'],
+                    shipping_pincode=data_dict['shipping_pincode'],
                     registration_date = str(date.today()),
                 )
                 db.session.add(entry)
@@ -791,8 +848,14 @@ def artist_dashboard():
                     email=data_dict['email'],
                     name=data_dict['name'],
                     phone=data_dict['phone'],
-                    address=data_dict['address'],
-                    state=data_dict['state'],
+                    billing_address=data_dict['billing_address'],
+                    billing_state=data_dict['billing_state'],
+                    billing_country=data_dict['billing_country'],
+                    billing_pincode=data_dict['billing_pincode'],
+                    shipping_address=data_dict['shipping_address'],
+                    shipping_state=data_dict['shipping_state'],
+                    shipping_country=data_dict['shipping_country'],
+                    shipping_pincode=data_dict['shipping_pincode'],
                     registration_date = str(date.today()),
                 )
                 db.session.add(entry)

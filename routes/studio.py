@@ -233,8 +233,8 @@ def portrait_detail():
 @studio.route('/artwork_product', methods=['GET', 'POST'])
 def artwork_product():
     admin = db.session.query(Role).filter_by(name='admin').scalar()
-
-    return render_template('artwork_product.html', logged_in=current_user.is_authenticated, admin=admin)
+    product_url = "http://127.0.0.1:5000/studio/artwork_product/"
+    return render_template('artwork_product.html', logged_in=current_user.is_authenticated, admin=admin, product_url=product_url)
 
 
 @studio.route('/artwork-pricing', methods=['GET', 'POST'])

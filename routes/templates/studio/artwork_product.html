@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
 <style>
+    p {
+        font-size: .9rem;
+    }
     #root-container {
         display: flex;
         flex-direction: column;
@@ -8,44 +11,300 @@
         align-items: center;
         padding: 0%;
     }
+
+    /* -------------------------------------- HEAD ---------------------------------------- */
     #head-container {
         display: flex;
-        width: 100%;
-        padding-top: 2%;
+        width: 70%;
+        padding: 2% 0%;
         justify-content: center;
-        background: blue;
     }
     #image-container {
-        width: 60%;
+        width: 55%;
         display: flex;
         flex-direction: column;
         align-items: end;
     }
     #main-img-container {
-        max-width: 700px;
-        max-height: 700px;
-        background-color: blue;
     }
     #main-img-container img {
         width: 100%;
         height: 100%;
-        border: solid 1px black;
         object-fit: contain;
     }
+    #images-thumbnails-container {
+        display: flex;
+        width: 100%;
+        overflow-x: auto;
+    }
+    
+    #images-thumbnails-container img {
+        width: 150px;
+        height: 150px;
+        object-fit: contain;
+        padding: 2%;
+    }
     #purchase-container {
-        width: 40%;
+        width: 45%;
         display: flex;
         flex-direction: column;
-        padding-left: 1%;
+        padding-left: 3%;
     }
     #artwork-title {
         font-size: 1.3rem;
         font-weight: 600;
-        color: gray;
-        margin: 0% 0% % 0%;
+        color: black;
     }
     #short-description {
+        margin: 0%;
     }
+    #rating {
+        font-weight: bold;
+        color: green;
+    }
+    #category {
+        font-weight:600;
+    }
+    select {
+        margin: 1% 0%;
+        background-color: rgb(223, 230, 210);
+    }
+    #price {
+        font-size: 2rem;
+    }
+    #quantity-div {
+        display: flex;
+        align-items:first baseline;
+    }
+    #quantity-div p {
+        margin-right: 2%;
+    }
+    #qty {
+        padding: 0%;
+        width: 10%;
+        color: black;
+        text-align: center;
+    }
+
+    #buy-btn-div {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 2%;
+    }
+    .btn {
+        padding-top: .6%;
+        padding-bottom: .6%;
+    }
+    #btn1, #btn2 {
+        background: rgb(255, 161, 19);
+        color: black;
+        text-shadow: none;
+        border: solid 1px rgb(183, 121, 7);
+    }
+    #btn1 {
+        width: 49%;
+        margin: 0%;
+    }
+    #btn2 {
+        width: 49%;
+        margin: 0%;
+    }
+    .btn3 {
+        background: rgb(180, 201, 142);
+        margin: 0%;
+        color: black;
+        text-shadow: none;
+        border: none;
+    }
+    #social {
+        padding: 2% 0%;
+        display: flex;
+    }
+    #social img {
+        width: 25px;
+        margin: 0% 1%;
+    }
+    #icons-container {
+        display: flex;
+        justify-content: space-evenly;
+        border: solid 1px rgba(0, 0, 0, 0.268);
+        border-left: 0;
+        border-right: 0;
+        padding: 0%;
+    }
+    #icon-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100px;
+        justify-content: center;
+        text-align: center;
+        padding: 0%;
+    }
+    #icon-box p {
+        font-size: .7rem;
+        margin: 0%;
+    }
+    #icon-box img {
+        width: 50px;
+    }
+    #detail-description-container {
+        padding: 0%;
+        margin: 2% 0%;
+    }
+    #detail-description-container p {
+        margin: .5%;
+        opacity: .9;
+    }
+    #detail-description-header {
+        display: flex;
+        justify-content: space-evenly;
+        background: rgb(218, 232, 207);
+        border: solid 1px black;
+        padding: 0%;
+    }
+    #detail-description-header p {
+        font-weight: 600;
+        font-size: 1.2rem;
+        opacity: .9;
+        text-align: center;
+        padding: 0%;
+    }
+    .detail-description-content {
+        padding: 1%;
+        border: 1px solid black;
+        border-top: 0;
+    }
+    #description-content {
+        display: none;
+    }
+    #details {
+        width: 50%;
+        background: rgb(160, 187, 140);
+        padding: 0%;
+    }
+    #details:hover {
+        cursor: pointer;
+    }
+    #description {
+        width: 50%;
+    }
+    #description:hover {
+        cursor: pointer;
+    }
+
+    /* ------------------------------------- BODY ------------------------------------- */
+    #body-container {
+        display: flex;
+        flex-direction: column;
+        width: 70%;
+    }
+    .body-section {
+        display: flex;
+        flex-direction: column;
+        border-top: solid 1px rgba(0, 0, 0, 0.197);
+    }
+    .body-section-heading {
+        font-weight: 700;
+        font-size: 1.3rem;
+    }
+    .body-section-sub-heading {
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+    #related-items-container {
+        display: flex;
+        align-items: center;
+        width: 100%;
+    }
+    .related-item-card {
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        justify-content: center;
+        width: 180px;
+        margin: 1%;
+        margin-top: 0%;
+    }
+    .related-item-card img {
+        width: 100%;
+    }
+    .related-item-title {
+        min-width: 0;
+        overflow-wrap: break-word;
+        margin: 0%;
+        font-weight: 500;
+        color:rgb(58, 117, 158);
+    }
+    .related-item-rating {
+        color: green;
+        font-weight: bold;
+        margin: 0%;
+    }
+    .related-item-price {
+        margin: 0%;
+        font-size: 1rem;
+        font-weight: 500;
+    }
+    .related-item-delivery {
+        margin: 0.5%;
+        font-size: .8rem;
+    }
+    #about-writart-img {
+        margin-bottom: 1%;
+    }
+    #review-container {
+        display: flex;
+        width: 100%;
+    }
+    #review-stats {
+        width: 25%;
+        display: flex;
+        flex-direction: column;
+        height: auto;
+    }
+   #review-text {
+        display: flex;
+        flex-direction: column;
+        width: 75%;
+   }
+   .star-rating {
+    --percent: calc(var(--rating) / 5 * 100%);
+    display: inline-block;
+    font-size: 24px;
+    font-family: sans-serif;
+    line-height: 1;
+    }
+
+    .star-rating::before {
+    content: "★★★★★";
+    letter-spacing: 2px;
+    background: linear-gradient(90deg, #38ae05 var(--percent), #c3c6c3 var(--percent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    }
+    #total-rating {
+        opacity: .7;
+    }
+    #reviews {
+        padding-left: 10%;
+        width: 75%;
+    }
+    #review-photo-slider-container {
+        display: flex;
+        border-bottom: solid 1px rgba(0, 0, 0, 0.198);
+        width: 100%;
+        overflow-x: auto;
+
+    }
+    .review-photo-box {
+        padding: 1%;
+    }
+    .review-photo-box img {
+        width: 150px;
+        border-radius: .6rem;
+    }
+
 
 </style>
 
@@ -53,17 +312,177 @@
     <div id="head-container">
         <div id="image-container">
             <div id="main-img-container">
-                <img src="/static/files/users/477706/profile/profile-pic.jpg">
+                <img src="/static/files/users/477706/temp/artwork/Bhairav.jpg">
+            </div>
+            <div id="images-thumbnails-container">
+                <img src="/static/files/users/477706/artworks/spiritual/thumbnail/tmb1.jpg">
+                <img src="/static/files/users/477706/artworks/spiritual/thumbnail/tmb2.jpg">
+                <img src="/static/files/users/477706/artworks/spiritual/thumbnail/tmb3.jpg">
+                <img src="/static/files/users/477706/artworks/spiritual/thumbnail/tmb4.jpg">
+                <img src="/static/files/users/477706/artworks/spiritual/thumbnail/tmb5.jpg">
+                <img src="/static/files/users/477706/artworks/spiritual/thumbnail/tmb5.jpg">
             </div>
         </div>
         <div id="purchase-container">
             <p id="artwork-title">Artwork Title</p>
             <p id="short-description">It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English.</p>
+            <div class="star-rating" style="--rating: 4.5;" aria-label="Rating of this product is 3.5 out of 5"><p>4.5 out of 5</p></div>
+            <p id="artist-name"><b>Artist:</b> Artist Name</p>
+            <p id="category">PRINT</p>
+            <select id="size">
+                <option value="">Choose size</option>
+                {% for s in size_list %}
+                <option value="{{s}}">{{s}}</option>
+                {% endfor %}
+            </select>
+            <select id="material">
+                <option value="">Choose material</option>
+                {% for m in material_list %}
+                <option value="{{m}}">{{m}}</option>
+                {% endfor %}
+            </select>
+            <p id="price">₹32,000</p>
+            <div id="quantity-div">
+                <p>Quantity</p>
+                <input id="qty" name="qty" type="number" value="1">
+            </div>
+            <div id="buy-btn-div">
+                <btn id="btn1" class="btn btn-primary btn-block btn-large">Buy Now</btn>
+                <btn id="btn2" class="btn btn-primary btn-block btn-large">Add to Cart</btn>
+            </div>
+            <btn class="btn btn-primary btn-block btn-large btn3">Propose your price</btn>
+            <btn class="btn btn-primary btn-block btn-large btn3">Request Original</btn>
+            <div id="social">
+                <img src="/static/images/social-icons/whatsapp.jpg">
+                <a href="https://facebook.com/sharer/sharer.php?u={{ request.url }}"
+                    target="_blank"><img src="/static/images/social-icons/facebook.jpg"></a>
+                <img src="/static/images/social-icons/instagram.jpg">
+                <img src="/static/images/social-icons/twitter.jpg">
+            </div>
+            <div id="icons-container">
+                <div id="icon-box">
+                    <img src="/static/images/icons/free-shipping.png">
+                    <p>Free delivery inside India</p>
+                </div>
+                <div id="icon-box">
+                    <img src="/static/images/icons/free-shipping.png">
+                    <p>Free delivery inside India</p>
+                </div>
+                <div id="icon-box">
+                    <img src="/static/images/icons/free-shipping.png">
+                    <p>Free delivery inside India</p>
+                </div>
+                <div id="icon-box">
+                    <img src="/static/images/icons/free-shipping.png">
+                    <p>Free delivery inside India</p>
+                </div>
+            </div>
+            <div id="detail-description-container">
+                <div id="detail-description-header">
+                    <p id="details">Details</p>
+                    <p id="description">Description</p>
+                </div>
+                <div class="detail-description-content" id="details-content">
+                    <p><b>Category:</b> Print</p>
+                    <p><b>Created:</b> 2026</p>
+                    <p><b>Delivered as:</b> Rolled</p>
+                    <p><b>Quality:</b> It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here'</p>
+                    <p><b>Shipping:</b> We use trustworthy shipping partners like Bluedart, Amazon shipping, Delhivery etc and choose the partner with the best service in your pincode region.</p>
+                </div>
+                <div class="detail-description-content" id="description-content">
+                    <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English.</p>
+                </div>
+            </div>
         </div>
     </div>
-    <div>
-
+    <div id="body-container">
+        <div class="body-section">
+            <p class="body-section-heading">Related items</p>
+            <div id="related-items-container">
+                {% for i in range(4) %}
+                <div class="related-item-card">
+                    <img src="/static/files/users/477706/temp/artwork/Bhairav.jpg">
+                    <p class="related-item-title">Artwork title in brief or in detail with many paramters</p>
+                    <p class="related-item-rating">Rating: 4.2/5</p>
+                    <p class="related-item-price">₹32,000</p>
+                    <p class="related-item-delivery">FREE Delivery</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="body-section">
+            <p class="body-section-heading">About WritArt</p>
+            <img id="about-writart-img" src="/static/images/art_shop/about_writart.jpg">
+        </div>
+        <div class="body-section">
+            <p class="body-section-heading">Customer Reviews</p>
+            <div id="review-container">
+                <div id="review-stats">
+                    <div class="star-rating" style="--rating: 4.5;" aria-label="Rating of this product is 3.5 out of 5"><p>4.5 out of 5</p></div>
+                    <p id="total-rating">51 ratings</p>
+                    <p class="body-section-sub-heading" style="margin-bottom: 0%;">Write Review</p>
+                    <p id="submit-review-text">Share your thoughts with other customers</p>
+                    <a class="btn-transparent">Write review</a>
+                    
+                </div>
+                <div id="reviews">
+                    <p class="body-section-sub-heading">Customer photos</p>
+                    <div id="review-photo-slider-container">
+                        <div class="review-photo-box">
+                            <img src="/static/files/users/477706/artworks/spiritual/thumbnail/tmb1.jpg">
+                        </div>
+                        <div class="review-photo-box">
+                            <img src="/static/files/users/477706/artworks/spiritual/thumbnail/tmb1.jpg">
+                        </div>
+                        <div class="review-photo-box">
+                            <img src="/static/files/users/477706/artworks/spiritual/thumbnail/tmb1.jpg">
+                        </div>
+                        <div class="review-photo-box">
+                            <img src="/static/files/users/477706/artworks/spiritual/thumbnail/tmb1.jpg">
+                        </div>
+                        <div class="review-photo-box">
+                            <img src="/static/files/users/477706/artworks/spiritual/thumbnail/tmb1.jpg">
+                        </div>
+                        <div class="review-photo-box">
+                            <img src="/static/files/users/477706/artworks/spiritual/thumbnail/tmb1.jpg">
+                        </div>
+                        <div class="review-photo-box">
+                            <img src="/static/files/users/477706/artworks/spiritual/thumbnail/tmb1.jpg">
+                        </div>
+                        <div class="review-photo-box">
+                            <img src="/static/files/users/477706/artworks/spiritual/thumbnail/tmb1.jpg">
+                        </div>
+                        <div class="review-photo-box">
+                            <img src="/static/files/users/477706/artworks/spiritual/thumbnail/tmb1.jpg">
+                        </div>
+                        <div class="review-photo-box">
+                            <img src="/static/files/users/477706/artworks/spiritual/thumbnail/tmb1.jpg">
+                        </div>
+                        <div class="review-photo-box">
+                            <img src="/static/files/users/477706/artworks/spiritual/thumbnail/tmb1.jpg">
+                        </div>
+                        <div class="review-photo-box">
+                            <img src="/static/files/users/477706/artworks/spiritual/thumbnail/tmb1.jpg">
+                        </div>
+                        <div class="review-photo-box">
+                            <img src="/static/files/users/477706/artworks/spiritual/thumbnail/tmb1.jpg">
+                        </div>
+                        <div class="review-photo-box">
+                            <img src="/static/files/users/477706/artworks/spiritual/thumbnail/tmb1.jpg">
+                        </div>
+                        <div class="review-photo-box">
+                            <img src="/static/files/users/477706/artworks/spiritual/thumbnail/tmb1.jpg">
+                        </div>
+                    </div>
+                    <p class="body-section-sub-heading">Reviews</p>
+                    <div></div>
+                    
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+<script src="/static/js/studio.js"></script>
 
 {% endblock %}
