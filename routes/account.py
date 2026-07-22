@@ -367,7 +367,7 @@ def artist_dashboard():
                     customer_contact = email
                 else:
                     customer_contact = phone
-                    document_state_country = f"{billing_state}, {billing_country}"
+                document_state_country = f"{billing_state}, {billing_country}"
                 result = prepare_receipt(name, document_state_country, customer_contact, item_dict, tax_percentage, date_, current_user.uuid, payment_type, partial_payment_amount_paid)
                 rec_preview_path = result[0]
                 rec_pdf_path = result[1]
