@@ -174,6 +174,7 @@
                         <option value="invoice">Invoice</option>
                         <option value="receipt">Receipt</option>
                     </select>
+                    <input id="rec_inv_no" type="text" name="receipt_invoice_no" placeholder="Receipt against Invoice No">
                     <input type="text" name="name" placeholder="Customer's name" required>
                     <input type="text" name="billing_address" placeholder="Customer's billing address" required>
                     <input type="text" name="billing_state" placeholder="billing State" required>
@@ -181,12 +182,12 @@
                     <input type="text" name="billing_pincode" placeholder="billing Pincode" required>
                     <div class="inline-inputs">
                         <label>Shipping billing same</label>
-                        <input type="checkbox" name="same_billing_shipping">
+                        <input type="checkbox" name="same_billing_shipping" id="billing-shipping-same-checkbox" onchange="hideShippingInputs()">
                     </div>
-                    <input type="text" name="shipping_address" placeholder="Customer's shipping address">
-                    <input type="text" name="shipping_state" placeholder="shipping State">
-                    <input type="text" name="shipping_country" placeholder="shipping Country">
-                    <input type="text" name="shipping_pincode" placeholder="shipping Pincode">
+                    <input id="shipping-address" type="text" name="shipping_address" placeholder="Customer's shipping address">
+                    <input id="shipping-state" type="text" name="shipping_state" placeholder="shipping State">
+                    <input id="shipping-country" type="text" name="shipping_country" placeholder="shipping Country">
+                    <input id="shipping-pincode"  type="text" name="shipping_pincode" placeholder="shipping Pincode">
                     <input type="text" name="phone" placeholder="Customer's phone" required>
                     <input type="text" name="email" placeholder="Customer's email">
                     <input type="number" name="item_count" id="item_count" placeholder="Total Items" required>
@@ -198,7 +199,6 @@
                         <option value="partial">Partial</option>
                     </select>
                     <input id="partial_payment_amt" type="text" name="partial_payment_amount" placeholder="Partial Payment Amount Paid">
-                    <input id="rec_inv_no" type="text" name="receipt_invoice_no" placeholder="Receipt against Invoice No">
                     <button type="submit" id="submit-btn" name="submit" value="create_document" class="btn btn-primary btn-block btn-large form-button">Create Document</button>
                 </form>
                 <form action="{{url_for('account.artist_dashboard')}}" method="post" enctype="multipart/form-data">
@@ -283,6 +283,26 @@ document.getElementById("upload-artwork-form").addEventListener('submit', async 
     const itemCount = document.getElementById('item_count');
     const myForm = document.getElementById('my_form');
     const submitBtn = document.getElementById('submit-btn');
+    
+
+    function hideShippingInputs() {
+        const billingShippingSameCheckbox = document.getElementById('billing-shipping-same-checkbox');
+        const shippingAddress = document.getElementById('shipping-address');
+        const shippingState = document.getElementById('shipping-state');
+        const shippingCountry = document.getElementById('shipping-country');
+        const shippingPincode = document.getElementById('shipping-pincode');
+        if (billingShippingSameCheckbox.checked) {
+            shippingAddress.style.display = 'none';
+            shippingState.style.display = 'none';
+            shippingCountry.style.display = 'none';
+            shippingPincode.style.display = 'none';
+        } else {
+            shippingAddress.style.display = 'block';
+            shippingState.style.display = 'block';
+            shippingCountry.style.display = 'block';
+            shippingPincode.style.display = 'block';
+        }
+    }
 
     function hideInputs() {
         paymentType.style.display = "none";
