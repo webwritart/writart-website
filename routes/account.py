@@ -7,6 +7,7 @@ from extensions import db, image_dict, current_year, p
 from operations.messenger import *
 from models.workshop_details import WorkshopDetails
 from models.member import *
+from models.artwork import *
 from flask_login import current_user, login_required, login_user, logout_user
 from datetime import date, datetime
 import random
@@ -265,6 +266,29 @@ def student_dashboard():
 def artist_dashboard():
     admin = db.session.query(Role).filter_by(name='admin').scalar()
     artist = db.session.query(Role).filter_by(name='artist').scalar()
+
+    pending_details_artworks_uuid_list = []
+    pending_details_artworks_dict = {}
+    all_artworks = current_user.artworks
+    for a in all_artworks:
+        if a.category == 'original':
+            details = [a.theme, a.product_title, a.short_description, a.media, a.original_price, a.original_available, a.creation_year, a.main_photo_path,
+                       a.sale_status]
+            if any(item is None for item in details):
+                pending_details_artworks_uuid_list.append(a.uuid)
+        elif a.category == 'print':
+            pass
+        elif a.category == 'recreation':
+            pass
+    for uuid in pending_details_artworks_uuid_list:
+        a = db.session.query(Artwork).filter_by(uuid=uuid).scalar()
+        artwork_title = a.title
+        category = a.category
+        main_photo_path = a.main_photo_path[1:]
+        uuid = a.uuid
+
+        pending_details_artworks_dict[artwork_title] = {'category': category, 'main_photo_path': main_photo_path, 'uuid': uuid}
+    pending_artwork_count = len(pending_details_artworks_dict)
 
     if request.method == 'POST':
         if request.form.get('submit') == 'create_document':
@@ -1186,7 +1210,8 @@ def artist_dashboard():
 
     if current_user.is_authenticated:
         if artist in current_user.role:
-            return render_template('artist_dashboard.html', logged_in=current_user.is_authenticated, current_year=current_year, admin=admin)
+            return render_template('artist_dashboard.html', logged_in=current_user.is_authenticated, current_year=current_year, admin=admin,
+                                   pending_details_artworks_dict=pending_details_artworks_dict, pending_artwork_count=pending_artwork_count)
         else:
             return redirect(url_for('main.home'))
     else:

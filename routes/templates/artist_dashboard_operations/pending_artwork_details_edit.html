@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+#root-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+</style>
+
+<div id="root-container">
+    <p>{{artwork_details_dict['title']}}</p>
+    <p>{{artwork_details_dict['theme']}}</p>
+    <p>{{artwork_details_dict['category']}}</p>
+    <p>{{artwork_details_dict['date_time_uploaded']}}</p>
+    <img src="{{artwork_details_dict['main_photo_path']}}">
+</div>
+
+{% endblock %}

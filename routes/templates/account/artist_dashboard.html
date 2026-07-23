@@ -23,11 +23,55 @@
         width: 15%;
         display: flex;
         flex-direction: column;
-        padding-right: .5%;
+        align-items: center;
+        padding: 2%;
         border-right: solid 1px rgba(0, 0, 0, 0.372);
+        background: rgb(211, 216, 186);
+    }
+    #pending-heading {
+        font-size: 1rem;
+        font-weight: 700;
+        color: red;
+        margin: 0%;
+    }
+    #pending-text {
+        font-size: .9rem;
+        line-height: 1;
+    }
+    .pending-artwork-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        padding: 5%;
+        margin-bottom: 5%;
+        background: rgb(254, 255, 244);
+        text-align: center;
+    }
+    .pending-artwork-card:hover {
+        cursor: pointer;
+    }
+    .pending-artwork-card img {
+        width: 100%;
+        padding-bottom: 2%;
+    }
+    .pending-artwork-card p {
+        margin: 0%;
+        padding: 0%;
+        line-height: 1;
+    }
+    .pending-artwork-title {
+        font-weight: 500;
+        font-size: .9rem;
+    }
+    .pending-artwork-category-text {
+        opacity: .6;
+        font-size: .8rem;
     }
     #main-area {
+        display: flex;
         width: 85%;
+        min-height: 85vh;
     }
     #right-side-bar {
         width: 15%;
@@ -148,7 +192,17 @@
     <p id="title">Artist Dashboard</p>
     <div id="column-container">
         <div id="left-side-bar">
-
+            {% if pending_artwork_count > 0 %}
+                <p id="pending-heading">Pending Artworks</p>
+                <p id="pending-text">Please complete details to add artwork to shop.</p>
+            {% endif %}
+            {% for a in pending_details_artworks_dict %}
+            <div class="pending-artwork-card" id="pending-artwork-card" onclick="openPendingArtworkEdit({{pending_details_artworks_dict[a]['uuid']}})">
+                <img src="{{pending_details_artworks_dict[a]['main_photo_path']}}">
+                <p class="pending-artwork-title">{{a}}</p>
+                <p class="pending-artwork-category-text">Category: {{pending_details_artworks_dict[a]['category']}}</p>
+            </div>
+            {% endfor %}
         </div>
         <div id="main-area">
             <div id="form-container">
@@ -166,6 +220,7 @@
                     </select>
                     <button type="submit" id="add_artwork_submit-btn" name="submit_upload_artwork" value="upload_artwork" class="btn btn-primary btn-block btn-large form-button">Uplaod artwork</button>
                 </form>
+                
             </div>
         </div>
         <div id="right-side-bar">
@@ -245,6 +300,28 @@
 </div>
 
 <script>
+// ------------------------------------------ PENDING ARTWORK CLICK -------------------------------------------
+function openPendingArtworkEdit(artwork_uuid) {
+    const artworkUuid = artwork_uuid;
+    const endpointUrl = "{{url_for('artist_dashboard_operations.pending_artwork_details_edit')}}";
+
+    fetch(endpointUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(artworkUuid)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.redirect_url) {
+            window.location.href = data.redirect_url;
+        }
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
 // ------------------------------------------- FORM POST ADD ARTWORK ------------------------------------------
 const addArtworkEndpointUrl = "{{ url_for('artist_dashboard_operations.upload_artwork') }}";
 document.getElementById("upload-artwork-form").addEventListener('submit', async function(event) {

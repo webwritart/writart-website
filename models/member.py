@@ -52,6 +52,7 @@ class Member(UserMixin, db.Model):
     x = db.Column(db.String(100))
     registration_date = db.Column(db.String(50))
     token = db.Column(db.String(10))
+    artworks = db.relationship('Artwork', backref='artist')
     participated = db.relationship('Workshop', secondary=member_workshop, backref='participants')
     role = db.relationship('Role', secondary=member_role, backref='members')
     ws_months = db.relationship('WorkshopMonth', secondary=member_workshop_month, backref='members')
