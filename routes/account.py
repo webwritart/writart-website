@@ -266,956 +266,951 @@ def student_dashboard():
 def artist_dashboard():
     admin = db.session.query(Role).filter_by(name='admin').scalar()
     artist = db.session.query(Role).filter_by(name='artist').scalar()
-
-    pending_details_artworks_uuid_list = []
-    pending_details_artworks_dict = {}
-    all_artworks = current_user.artworks
-    for a in all_artworks:
-        if a.category == 'original':
-            details = [a.theme, a.product_title, a.short_description, a.media, a.original_price, a.original_available, a.creation_year, a.main_photo_path,
-                       a.sale_status]
-            if any(item is None for item in details):
-                pending_details_artworks_uuid_list.append(a.uuid)
-        elif a.category == 'print':
-            pass
-        elif a.category == 'recreation':
-            pass
-    for uuid in pending_details_artworks_uuid_list:
-        a = db.session.query(Artwork).filter_by(uuid=uuid).scalar()
-        artwork_title = a.title
-        category = a.category
-        main_photo_path = a.main_photo_path[1:]
-        uuid = a.uuid
-
-        pending_details_artworks_dict[artwork_title] = {'category': category, 'main_photo_path': main_photo_path, 'uuid': uuid}
-    pending_artwork_count = len(pending_details_artworks_dict)
-
-    if request.method == 'POST':
-        if request.form.get('submit') == 'create_document':
-            document = request.form.get('document')
-            name = request.form.get('name')
-            billing_address = request.form.get('billing_address')
-            billing_state = request.form.get('billing_state')
-            billing_country = request.form.get('billing_country')
-            billing_pincode = request.form.get('billing_pincode')
-            shipping_address = request.form.get('shipping_address')
-            shipping_state = request.form.get('shipping_state')
-            shipping_country = request.form.get('shipping_country')
-            shipping_pincode = request.form.get('shipping_pincode')
-            shipping_same_as_billing = request.form.get('same_billing_shipping')
-            phone = request.form.get('phone')
-            email = request.form.get('email')
-            item_count = int(request.form.get('item_count'))
-            tax_percentage = request.form.get('tax_percentage')
-            date_ = request.form.get('date')
-            payment_type = request.form.get('payment_type')
-            partial_payment_amount_paid = request.form.get('partial_payment_amount')
-            receipt_invoice_no = request.form.get('receipt_invoice_no')
-
-            if shipping_same_as_billing:
-                shipping_address = billing_address
-                shipping_state = billing_state
-                shipping_country = billing_country
-                shipping_pincode = billing_pincode
-
-            if not date_:
-                date_ = str(date.today())
-        
-            item_dict = {}
-
-            for i in range(item_count):
-                item_name = f'item{i+1}'
-                item_price = f'{item_name}price'
-                item_qty = f'{item_name}qty'
-                item_n = request.form.get(item_name)
-                item_p = request.form.get(item_price)
-                item_q = request.form.get(item_qty)
-                item_dict[i] = {
-                    'item_description': item_n,
-                    'price': item_p,
-                    'qty': item_q
-                }
-
-            inv_receipt_data_dict = {
-                'document': document,
-                'name': name,
-                'billing_address': billing_address,
-                'billing_state': billing_state,
-                'billing_country': billing_country,
-                'billing_pincode': billing_pincode,
-                'shipping_address': shipping_address,
-                'shipping_state': shipping_state,
-                'shipping_country': shipping_country,
-                'shipping_pincode': shipping_pincode,
-                'phone': phone,
-                'email': email,
-                'item_count': item_count,
-                'tax_percentage': tax_percentage,
-                'date': date_,
-                'payment_type': payment_type,
-                'partial_payment_amount_paid': partial_payment_amount_paid,
-                'receipt_invoice_no': receipt_invoice_no,
-                'item_dict': item_dict
-            }
-            session['inv_receipt_data_dict'] = inv_receipt_data_dict
-            if document == '':
-                flash('Aborted! Please select the document type first', 'error')
-                return redirect(request.url)
-            if document == 'invoice':
-                if email:
-                    customer_contact = email
-                else:
-                    customer_contact = phone
-                document_state_country = f"{billing_state}, {billing_country}"
-                result = prepare_invoice(name, document_state_country, customer_contact, item_dict, tax_percentage, date_, current_user.uuid)
-                inv_preview_path = result[0]
-                inv_pdf_path = result[1]
-                inv_no = result[2]
-                sub_total = result[3]
-                grand_total = result[4]
-                attachment_file_path = result[5]
-                file_directory = result[6]
-
-                session['invoice_preview_path'] = inv_preview_path
-                session['invoice_pdf_path'] = inv_pdf_path
-                session['invoice_no'] = inv_no
-                session['sub_total'] = sub_total
-                session['grand_total'] = grand_total
-                session['attachment_path'] = attachment_file_path
-                session['file_directory'] = file_directory
-
-                return render_template('document_preview.html', preview_path=inv_preview_path, current_year=current_year, admin=admin, logged_in=current_user.is_authenticated, document='Invoice')
-            
-            elif document == 'receipt':
-                if email:
-                    customer_contact = email
-                else:
-                    customer_contact = phone
-                document_state_country = f"{billing_state}, {billing_country}"
-                result = prepare_receipt(name, document_state_country, customer_contact, item_dict, tax_percentage, date_, current_user.uuid, payment_type, partial_payment_amount_paid)
-                rec_preview_path = result[0]
-                rec_pdf_path = result[1]
-                rec_no = result[2]
-                sub_total = result[3]
-                grand_total = result[4]
-                attachment_file_path = result[5]
-                file_directory = result[6]
-
-                session['receipt_preview_path'] = rec_preview_path
-                session['receipt_pdf_path'] = rec_pdf_path
-                session['receipt_no'] = rec_no
-                session['sub_total'] = sub_total
-                session['grand_total'] = grand_total
-                session['attachment_path'] = attachment_file_path
-                session['file_directory'] = file_directory
-
-                return render_template('document_preview.html', preview_path=rec_preview_path, current_year=current_year, admin=admin, logged_in=current_user.is_authenticated, document='Receipt')
-
-        if request.form.get('submit') == 'save_email':
-            # Save PDF of the Invoice ...........................................................................
-            png_path = session.get('file_directory')
-            pdf_export_path = session.get('invoice_pdf_path')
-            png_to_pdf(png_path, pdf_export_path)
-
-            # Add Customer to MEMBER table database............................................................
-            existing_uuid_list = []
-            all_members = db.session.query(Member).all()
-            for m in all_members:
-                existing_uuid_list.append(m.uuid)
-
-            uuid = create_uuid(existing_uuid_list, 6)
-            data_dict = session.get('inv_receipt_data_dict')
-            if db.session.query(Member).filter_by(email=data_dict['email']).scalar():
-                pass
-            else:
-                entry = Member(
-                    uuid = uuid,
-                    email=data_dict['email'],
-                    name=data_dict['name'],
-                    phone=data_dict['phone'],
-                    billing_address=data_dict['billing_address'],
-                    billing_state=data_dict['billing_state'],
-                    billing_country=data_dict['billing_country'],
-                    billing_pincode=data_dict['billing_pincode'],
-                    shipping_address=data_dict['shipping_address'],
-                    shipping_state=data_dict['shipping_state'],
-                    shipping_country=data_dict['shipping_country'],
-                    shipping_pincode=data_dict['shipping_pincode'],
-                    registration_date = str(date.today()),
-                )
-                db.session.add(entry)
-                db.session.commit()
-
-            # Add Invoice details to database..................................................................
-            item_dict = data_dict['item_dict']
-            items_name = ''
-            items_price = ''
-            items_quantity = ''
-
-            for i in item_dict:
-                if items_name == '':
-                    items_name = item_dict[i]['item_description']
-                else:
-                    items_name = f"{items_name}%{item_dict[i]['item_description']}"
-                if items_price == '':
-                    items_price = item_dict[i]['price']
-                else:
-                    items_price = f"{items_price}%{item_dict[i]['price']}"
-                if items_quantity == "":
-                    items_quantity = item_dict[i]['qty']
-                else:
-                    items_quantity = f"{items_quantity}%{item_dict[i]['qty']}"
-            date_time = datetime.now().replace(microsecond=0)
-            member_id = db.session.query(Member).filter_by(email=data_dict['email']).scalar().id
-
-            entry = Invoice(
-                invoice_no = session.get('invoice_no'),
-                name=data_dict['name'],
-                billing_address=data_dict['billing_address'],
-                billing_state=data_dict['billing_state'],
-                billing_country=data_dict['billing_country'],
-                billing_pincode=data_dict['billing_pincode'],
-                shipping_address=data_dict['shipping_address'],
-                shipping_state=data_dict['shipping_state'],
-                shipping_country=data_dict['shipping_country'],
-                shipping_pincode=data_dict['shipping_pincode'],
-                phone=data_dict['phone'],
-                email=data_dict['email'],
-                items_name=items_name,
-                items_price=items_price,
-                items_quantity=items_quantity,
-                tax_percent=data_dict['tax_percentage'],
-                sub_total=session.get('sub_total'),
-                grand_total=session.get('grand_total'),
-                status='Unpaid',
-                date_time = date_time,
-                member_id=member_id
-            )
-            current_invoice_no = db.session.query(Tools).filter_by(keyword='last_invoice').scalar().data
-            db.session.query(Tools).filter_by(keyword='last_invoice').scalar().data = int(current_invoice_no)+1
-
-            db.session.add(entry)
-            db.session.commit()
-
-            # SEND EMAIL ..............................................................................
-            subject = f"Invoice-{session.get('invoice_no')}"
-            reply_back_email = 'shwetabhartist@gmail.com'
-            recipients_list = [data_dict['email']]
-            body = f"Dear {data_dict['name'].split(' ')[0]}\n\nPlease find the invoice attached!"
-            attachment_file_path = session.get('attachment_path')
-            send_email_with_pdf_attachment(subject, reply_back_email, recipients_list, body, attachment_file_path)
-            flash('Saved and Mailed successfully', 'success')
-            return redirect(request.url)
-            
-
-        elif request.form.get('submit') == 'save_download':
-            # Save PDF of the Invoice ...........................................................................
-            png_path = session.get('file_directory')
-            pdf_export_path = session.get('invoice_pdf_path')
-            filename = png_to_pdf(png_path, pdf_export_path)[0]
-
-            # Add Customer to MEMBER table database............................................................
-            existing_uuid_list = []
-            all_students = db.session.query(Member).all()
-            for s in all_students:
-                existing_uuid_list.append(s.uuid)
-
-            uuid = create_uuid(existing_uuid_list, 6)
-            data_dict = session.get('inv_receipt_data_dict')
-            if db.session.query(Member).filter_by(email=data_dict['email']).scalar():
-                pass
-            else:
-                entry = Member(
-                    uuid = uuid,
-                    email=data_dict['email'],
-                    name=data_dict['name'],
-                    phone=data_dict['phone'],
-                    billing_address=data_dict['billing_address'],
-                    billing_state=data_dict['billing_state'],
-                    billing_country=data_dict['billing_country'],
-                    billing_pincode=data_dict['billing_pincode'],
-                    shipping_address=data_dict['shipping_address'],
-                    shipping_state=data_dict['shipping_state'],
-                    shipping_country=data_dict['shipping_country'],
-                    shipping_pincode=data_dict['shipping_pincode'],
-                    registration_date = str(date.today()),
-                )
-                db.session.add(entry)
-                db.session.commit()
-
-            # Add Invoice details to database..................................................................
-            item_dict = data_dict['item_dict']
-            items_name = ''
-            items_price = ''
-            items_quantity = ''
-
-            for i in item_dict:
-                if items_name == '':
-                    items_name = item_dict[i]['item_description']
-                else:
-                    items_name = f"{items_name}%{item_dict[i]['item_description']}"
-                if items_price == '':
-                    items_price = item_dict[i]['price']
-                else:
-                    items_price = f"{items_price}%{item_dict[i]['price']}"
-                if items_quantity == "":
-                    items_quantity = item_dict[i]['qty']
-                else:
-                    items_quantity = f"{items_quantity}%{item_dict[i]['qty']}"
-            date_time = datetime.now().replace(microsecond=0)
-            member_id = db.session.query(Member).filter_by(email=data_dict['email']).scalar().id
-
-            entry = Invoice(
-                invoice_no = session.get('invoice_no'),
-                name=data_dict['name'],
-                billing_address=data_dict['billing_address'],
-                billing_state=data_dict['billing_state'],
-                billing_country=data_dict['billing_country'],
-                billing_pincode=data_dict['billing_pincode'],
-                shipping_address=data_dict['shipping_address'],
-                shipping_state=data_dict['shipping_state'],
-                shipping_country=data_dict['shipping_country'],
-                shipping_pincode=data_dict['shipping_pincode'],
-                phone=data_dict['phone'],
-                email=data_dict['email'],
-                items_name=items_name,
-                items_price=items_price,
-                items_quantity=items_quantity,
-                tax_percent=data_dict['tax_percentage'],
-                sub_total=session.get('sub_total'),
-                grand_total=session.get('grand_total'),
-                status='Unpaid',
-                date_time = date_time,
-                member_id=member_id
-            )
-            current_invoice_no = db.session.query(Tools).filter_by(keyword='last_invoice').scalar().data
-            db.session.query(Tools).filter_by(keyword='last_invoice').scalar().data = int(current_invoice_no)+1
-            db.session.add(entry)
-            db.session.commit()
-            # DOWNLOAD ................................................................................
-            invoice_file_path = pdf_export_path + filename + '.pdf'
-            return send_file(
-                invoice_file_path,
-                as_attachment=True,         # True forces a browser download prompt
-                download_name=f"{filename}.pdf"  # Sets the default name for the downloaded file
-            )
-        elif request.form.get('submit') == 'save_email_download':
-            # Save PDF of the Invoice ...........................................................................
-            png_path = session.get('file_directory')
-            pdf_export_path = session.get('invoice_pdf_path')
-            filename = png_to_pdf(png_path, pdf_export_path)[0]
-
-            # Add Customer to MEMBER table database............................................................
-            existing_uuid_list = []
-            all_students = db.session.query(Member).all()
-            for s in all_students:
-                existing_uuid_list.append(s.uuid)
-
-            uuid = create_uuid(existing_uuid_list, 6)
-            data_dict = session.get('inv_receipt_data_dict')
-            if db.session.query(Member).filter_by(email=data_dict['email']).scalar():
-                pass
-            else:
-                entry = Member(
-                    uuid = uuid,
-                    email=data_dict['email'],
-                    name=data_dict['name'],
-                    phone=data_dict['phone'],
-                    billing_address=data_dict['billing_address'],
-                    billing_state=data_dict['billing_state'],
-                    billing_country=data_dict['billing_country'],
-                    billing_pincode=data_dict['billing_pincode'],
-                    shipping_address=data_dict['shipping_address'],
-                    shipping_state=data_dict['shipping_state'],
-                    shipping_country=data_dict['shipping_country'],
-                    shipping_pincode=data_dict['shipping_pincode'],
-                    registration_date = str(date.today()),
-                )
-                db.session.add(entry)
-                db.session.commit()
-
-            # Add Invoice details to database..................................................................
-            item_dict = data_dict['item_dict']
-            items_name = ''
-            items_price = ''
-            items_quantity = ''
-
-            for i in item_dict:
-                if items_name == '':
-                    items_name = item_dict[i]['item_description']
-                else:
-                    items_name = f"{items_name}%{item_dict[i]['item_description']}"
-                if items_price == '':
-                    items_price = item_dict[i]['price']
-                else:
-                    items_price = f"{items_price}%{item_dict[i]['price']}"
-                if items_quantity == "":
-                    items_quantity = item_dict[i]['qty']
-                else:
-                    items_quantity = f"{items_quantity}%{item_dict[i]['qty']}"
-            date_time = datetime.now().replace(microsecond=0)
-            member_id = db.session.query(Member).filter_by(email=data_dict['email']).scalar().id
-
-            entry = Invoice(
-                invoice_no = session.get('invoice_no'),
-                name=data_dict['name'],
-                billing_address=data_dict['billing_address'],
-                billing_state=data_dict['billing_state'],
-                billing_country=data_dict['billing_country'],
-                billing_pincode=data_dict['billing_pincode'],
-                shipping_address=data_dict['shipping_address'],
-                shipping_state=data_dict['shipping_state'],
-                shipping_country=data_dict['shipping_country'],
-                shipping_pincode=data_dict['shipping_pincode'],
-                phone=data_dict['phone'],
-                email=data_dict['email'],
-                items_name=items_name,
-                items_price=items_price,
-                items_quantity=items_quantity,
-                tax_percent=data_dict['tax_percentage'],
-                sub_total=session.get('sub_total'),
-                grand_total=session.get('grand_total'),
-                status='Unpaid',
-                date_time = date_time,
-                member_id=member_id
-            )
-            current_invoice_no = db.session.query(Tools).filter_by(keyword='last_invoice').scalar().data
-            db.session.query(Tools).filter_by(keyword='last_invoice').scalar().data = int(current_invoice_no)+1
-            db.session.add(entry)
-            db.session.commit()
-
-            # SEND EMAIL ..............................................................................
-            subject = f"Invoice-{session.get('invoice_no')}"
-            reply_back_email = 'shwetabhartist@gmail.com'
-            recipients_list = [data_dict['email']]
-            body = f"Dear {data_dict['name'].split(' ')[0]}\n\nPlease find the invoice attached!"
-            attachment_file_path = session.get('attachment_path')
-            send_email_with_pdf_attachment(subject, reply_back_email, recipients_list, body, attachment_file_path)
-
-            # DOWNLOAD ................................................................................
-            invoice_file_path = pdf_export_path + filename + '.pdf'
-            return send_file(
-                invoice_file_path,
-                as_attachment=True,         # True forces a browser download prompt
-                download_name=f"{filename}.pdf"  # Sets the default name for the downloaded file
-            )
-        if request.form.get('submit') == 'receipt-save-email':
-            # Save PDF of the Receipt ...........................................................................
-            png_path = session.get('file_directory')
-            pdf_export_path = session.get('receipt_pdf_path')
-            png_to_pdf(png_path, pdf_export_path)
-
-            # Add Customer to MEMBER table database............................................................
-            existing_uuid_list = []
-            all_members = db.session.query(Member).all()
-            for m in all_members:
-                existing_uuid_list.append(m.uuid)
-
-            uuid = create_uuid(existing_uuid_list, 6)
-            data_dict = session.get('inv_receipt_data_dict')
-            if db.session.query(Member).filter_by(email=data_dict['email']).scalar():
-                pass
-            else:
-                entry = Member(
-                    uuid = uuid,
-                    email=data_dict['email'],
-                    name=data_dict['name'],
-                    phone=data_dict['phone'],
-                    billing_address=data_dict['billing_address'],
-                    billing_state=data_dict['billing_state'],
-                    billing_country=data_dict['billing_country'],
-                    billing_pincode=data_dict['billing_pincode'],
-                    shipping_address=data_dict['shipping_address'],
-                    shipping_state=data_dict['shipping_state'],
-                    shipping_country=data_dict['shipping_country'],
-                    shipping_pincode=data_dict['shipping_pincode'],
-                    registration_date = str(date.today()),
-                )
-                db.session.add(entry)
-                db.session.commit()
-
-            # Add Receipt details to database..................................................................
-            item_dict = data_dict['item_dict']
-            items_name = ''
-            items_price = ''
-            items_quantity = ''
-
-            for i in item_dict:
-                if items_name == '':
-                    items_name = item_dict[i]['item_description']
-                else:
-                    items_name = f"{items_name}%{item_dict[i]['item_description']}"
-                if items_price == '':
-                    items_price = item_dict[i]['price']
-                else:
-                    items_price = f"{items_price}%{item_dict[i]['price']}"
-                if items_quantity == "":
-                    items_quantity = item_dict[i]['qty']
-                else:
-                    items_quantity = f"{items_quantity}%{item_dict[i]['qty']}"
-            date_time = datetime.now().replace(microsecond=0)
-            member_id = db.session.query(Member).filter_by(email=data_dict['email']).scalar().id
-            if payment_type == 'partial':
-                amount_paid = data_dict['partial_payment_amount_paid']
-            elif payment_type == 'full':
-                amount_paid = data_dict['grand_total']
-            entry = Receipt(
-                receipt_no=session.get('receipt_no'),
-                name=data_dict['name'],
-                billing_address=data_dict['billing_address'],
-                billing_state=data_dict['billing_state'],
-                billing_country=data_dict['billing_country'],
-                billing_pincode=data_dict['billing_pincode'],
-                shipping_address=data_dict['shipping_address'],
-                shipping_state=data_dict['shipping_state'],
-                shipping_country=data_dict['shipping_country'],
-                shipping_pincode=data_dict['shipping_pincode'],
-                phone=data_dict['phone'],
-                email=data_dict['email'],
-                items_name=items_name,
-                items_price=items_price,
-                items_quantity=items_quantity,
-                tax_percent=data_dict['tax_percentage'],
-                sub_total=session.get('sub_total'),
-                grand_total=session.get('grand_total'),
-                payment_type=data_dict['payment_type'],
-                amount_paid=amount_paid,
-                invoice_no=data_dict['receipt_invoice_no'],
-                date_time = date_time,
-                member_id=member_id
-            )
-            current_receipt_no = db.session.query(Tools).filter_by(keyword='last_receipt').scalar().data
-            db.session.query(Tools).filter_by(keyword='last_receipt').scalar().data = int(current_receipt_no)+1
-            db.session.add(entry)
-            db.session.commit()
-
-            # SEND EMAIL ..............................................................................
-            subject = f"Receipt-{session.get('receipt_no')}"
-            reply_back_email = 'shwetabhartist@gmail.com'
-            recipients_list = [data_dict['email']]
-            body = f"Dear {data_dict['name'].split(' ')[0]}\n\nPlease find the receipt attached!"
-            attachment_file_path = session.get('attachment_path')
-            send_email_with_pdf_attachment(subject, reply_back_email, recipients_list, body, attachment_file_path)
-            flash('Saved and Mailed successfully', 'success')
-            return redirect(request.url)
-            
-
-        elif request.form.get('submit') == 'receipt-save-download':
-            # Save PDF of the Receipt ...........................................................................
-            png_path = session.get('file_directory')
-            pdf_export_path = session.get('receipt_pdf_path')
-            filename = png_to_pdf(png_path, pdf_export_path)[0]
-
-            # Add Customer to MEMBER table database............................................................
-            existing_uuid_list = []
-            all_members = db.session.query(Member).all()
-            for m in all_members:
-                existing_uuid_list.append(m.uuid)
-
-            uuid = create_uuid(existing_uuid_list, 6)
-            data_dict = session.get('inv_receipt_data_dict')
-            if db.session.query(Member).filter_by(email=data_dict['email']).scalar():
-                pass
-            else:
-                entry = Member(
-                    uuid = uuid,
-                    email=data_dict['email'],
-                    name=data_dict['name'],
-                    phone=data_dict['phone'],
-                    billing_address=data_dict['billing_address'],
-                    billing_state=data_dict['billing_state'],
-                    billing_country=data_dict['billing_country'],
-                    billing_pincode=data_dict['billing_pincode'],
-                    shipping_address=data_dict['shipping_address'],
-                    shipping_state=data_dict['shipping_state'],
-                    shipping_country=data_dict['shipping_country'],
-                    shipping_pincode=data_dict['shipping_pincode'],
-                    registration_date = str(date.today()),
-                )
-                db.session.add(entry)
-                db.session.commit()
-
-            # Add Receipt details to database..................................................................
-            item_dict = data_dict['item_dict']
-            items_name = ''
-            items_price = ''
-            items_quantity = ''
-
-            for i in item_dict:
-                if items_name == '':
-                    items_name = item_dict[i]['item_description']
-                else:
-                    items_name = f"{items_name}%{item_dict[i]['item_description']}"
-                if items_price == '':
-                    items_price = item_dict[i]['price']
-                else:
-                    items_price = f"{items_price}%{item_dict[i]['price']}"
-                if items_quantity == "":
-                    items_quantity = item_dict[i]['qty']
-                else:
-                    items_quantity = f"{items_quantity}%{item_dict[i]['qty']}"
-            date_time = datetime.now().replace(microsecond=0)
-            member_id = db.session.query(Member).filter_by(email=data_dict['email']).scalar().id
-            if payment_type == 'partial':
-                amount_paid = data_dict['partial_payment_amount_paid']
-            elif payment_type == 'full':
-                amount_paid = data_dict['grand_total']
-            entry = Receipt(
-                receipt_no=session.get('receipt_no'),
-                name=data_dict['name'],
-                billing_address=data_dict['billing_address'],
-                billing_state=data_dict['billing_state'],
-                billing_country=data_dict['billing_country'],
-                billing_pincode=data_dict['billing_pincode'],
-                shipping_address=data_dict['shipping_address'],
-                shipping_state=data_dict['shipping_state'],
-                shipping_country=data_dict['shipping_country'],
-                shipping_pincode=data_dict['shipping_pincode'],
-                phone=data_dict['phone'],
-                email=data_dict['email'],
-                items_name=items_name,
-                items_price=items_price,
-                items_quantity=items_quantity,
-                tax_percent=data_dict['tax_percentage'],
-                sub_total=session.get('sub_total'),
-                grand_total=session.get('grand_total'),
-                payment_type=data_dict['payment_type'],
-                amount_paid=amount_paid,
-                invoice_no=data_dict['receipt_invoice_no'],
-                date_time = date_time,
-                member_id=member_id
-            )
-            current_receipt_no = db.session.query(Tools).filter_by(keyword='last_receipt').scalar().data
-            db.session.query(Tools).filter_by(keyword='last_receipt').scalar().data = int(current_receipt_no)+1
-            db.session.add(entry)
-            db.session.commit()
-
-            # DOWNLOAD ................................................................................
-            receipt_file_path = pdf_export_path + filename + '.pdf'
-            return send_file(
-                receipt_file_path,
-                as_attachment=True,         # True forces a browser download prompt
-                download_name=f"{filename}.pdf"  # Sets the default name for the downloaded file
-            )
-        elif request.form.get('submit') == 'receipt-save-email-download':
-            # Save PDF of the Receipt ...........................................................................
-            png_path = session.get('file_directory')
-            pdf_export_path = session.get('receipt_pdf_path')
-            filename = png_to_pdf(png_path, pdf_export_path)[0]
-
-            # Add Customer to MEMBER table database............................................................
-            existing_uuid_list = []
-            all_members = db.session.query(Member).all()
-            for m in all_members:
-                existing_uuid_list.append(m.uuid)
-
-            uuid = create_uuid(existing_uuid_list, 6)
-            data_dict = session.get('inv_receipt_data_dict')
-            if db.session.query(Member).filter_by(email=data_dict['email']).scalar():
-                pass
-            else:
-                entry = Member(
-                    uuid = uuid,
-                    email=data_dict['email'],
-                    name=data_dict['name'],
-                    phone=data_dict['phone'],
-                    billing_address=data_dict['billing_address'],
-                    billing_state=data_dict['billing_state'],
-                    billing_country=data_dict['billing_country'],
-                    billing_pincode=data_dict['billing_pincode'],
-                    shipping_address=data_dict['shipping_address'],
-                    shipping_state=data_dict['shipping_state'],
-                    shipping_country=data_dict['shipping_country'],
-                    shipping_pincode=data_dict['shipping_pincode'],
-                    registration_date = str(date.today()),
-                )
-                db.session.add(entry)
-                db.session.commit()
-
-            # Add Receipt details to database..................................................................
-            item_dict = data_dict['item_dict']
-            items_name = ''
-            items_price = ''
-            items_quantity = ''
-
-            for i in item_dict:
-                if items_name == '':
-                    items_name = item_dict[i]['item_description']
-                else:
-                    items_name = f"{items_name}%{item_dict[i]['item_description']}"
-                if items_price == '':
-                    items_price = item_dict[i]['price']
-                else:
-                    items_price = f"{items_price}%{item_dict[i]['price']}"
-                if items_quantity == "":
-                    items_quantity = item_dict[i]['qty']
-                else:
-                    items_quantity = f"{items_quantity}%{item_dict[i]['qty']}"
-            date_time = datetime.now().replace(microsecond=0)
-            member_id = db.session.query(Member).filter_by(email=data_dict['email']).scalar().id
-            if payment_type == 'partial':
-                amount_paid = data_dict['partial_payment_amount_paid']
-            elif payment_type == 'full':
-                amount_paid = data_dict['grand_total']
-            entry = Receipt(
-                receipt_no=session.get('receipt_no'),
-                name=data_dict['name'],
-                billing_address=data_dict['billing_address'],
-                billing_state=data_dict['billing_state'],
-                billing_country=data_dict['billing_country'],
-                billing_pincode=data_dict['billing_pincode'],
-                shipping_address=data_dict['shipping_address'],
-                shipping_state=data_dict['shipping_state'],
-                shipping_country=data_dict['shipping_country'],
-                shipping_pincode=data_dict['shipping_pincode'],
-                phone=data_dict['phone'],
-                email=data_dict['email'],
-                items_name=items_name,
-                items_price=items_price,
-                items_quantity=items_quantity,
-                tax_percent=data_dict['tax_percentage'],
-                sub_total=session.get('sub_total'),
-                grand_total=session.get('grand_total'),
-                payment_type=data_dict['payment_type'],
-                amount_paid=amount_paid,
-                invoice_no=data_dict['receipt_invoice_no'],
-                date_time = date_time,
-                member_id=member_id
-            )
-            current_receipt_no = db.session.query(Tools).filter_by(keyword='last_receipt').scalar().data
-            db.session.query(Tools).filter_by(keyword='last_receipt').scalar().data = int(current_receipt_no)+1
-            db.session.add(entry)
-            db.session.commit()
-
-            # SEND EMAIL ..............................................................................
-            subject = f"Receipt-{session.get('receipt_no')}"
-            reply_back_email = 'shwetabhartist@gmail.com'
-            recipients_list = [data_dict['email']]
-            body = f"Dear {data_dict['name'].split(' ')[0]}\n\nPlease find the receipt attached!"
-            attachment_file_path = session.get('attachment_path')
-            send_email_with_pdf_attachment(subject, reply_back_email, recipients_list, body, attachment_file_path)
-            flash('Saved and Mailed successfully', 'success')
-
-            # DOWNLOAD ................................................................................
-            receipt_file_path = pdf_export_path + filename + '.pdf'
-            return send_file(
-                receipt_file_path,
-                as_attachment=True,         # True forces a browser download prompt
-                download_name=f"{filename}.pdf"  # Sets the default name for the downloaded file
-            )
-            
-        if request.form.get('submit') == 'create-coa':
-            file = request.files.get('artwork-img')
-            s_no = request.form.get('serial_no')
-            title = request.form.get('title')
-            size = request.form.get('size')
-            medium = request.form.get('medium')
-            year = request.form.get('year')
-            client_name = request.form.get('client_name')
-            client_email = request.form.get('client_email')
-            varnished = request.form.get('varnished')
-            signed = request.form.get('signed')
-            statement = request.form.get('statement')
-            copyright_type = request.form.get('copyright')
-
-            if file:
-                filename = secure_filename(file.filename)
-            
-            temp_artwork_img_folder = f"./static/files/users/{current_user.uuid}/temp/artwork/"
-            if not os.path.exists(temp_artwork_img_folder):
-                os.makedirs(temp_artwork_img_folder)
-            dir_path = Path(temp_artwork_img_folder)
-            files = [str(f) for f in dir_path.iterdir() if f.is_file()]
-            if len(files) > 0:
-                for f in files:
-                    os.remove(f)
-            artwork_path = f"{temp_artwork_img_folder}{filename}"
-            file.save(artwork_path)
-
-            prepare_coa_result = prepare_coa(title, current_user.name, size, medium, varnished, year, signed, s_no, statement, copyright_type, artwork_path, current_user.uuid)[0]
-            temp_coa_img_path = prepare_coa_result[0]
-            date_today = prepare_coa_result[1]
-
-            session['s_no'] = s_no
-            session['title'] = title
-            session['size'] = size
-            session['medium'] = medium
-            session['year'] = year
-            session['client_name'] = client_name
-            session['client_email'] = client_email
-            session['varnished'] = varnished
-            session['signed'] = signed
-            session['statement'] = statement
-            session['copyright_type'] = copyright_type
-            session['coa_img_path'] = str(Path(temp_coa_img_path).parent)
-            session['date_today'] = date_today
-            
-            return render_template('document_preview.html', preview_path='.'+temp_coa_img_path, current_year=current_year, admin=admin, logged_in=current_user.is_authenticated, document='COA')
-        
-        if request.form.get('submit') == 'coa-save-email':
-            # -------------------------------- ADD TO DATABASE----------------------------------------------------------------- #
-            s_no = session.get('s_no')
-            title = session.get('title')
-            size = session.get('size')
-            medium = session.get('medium')
-            year = session.get('year')
-            client_name = session.get('client_name')
-            client_email = session.get('client_email')
-            varnished = session.get('varnished')
-            signed = session.get('signed')
-            statement = session.get('statement')
-            copyright_type = session.get('copyright_type')
-            coa_img_path = session.get('coa_img_path')
-            date_today = session.get('date_today')
-            export_path = f"./static/files/users/{current_user.uuid}/documents/coa/"
-
-            coa_pdf_path = png_to_pdf(coa_img_path, export_path)[1]
-    
-            if client_email:
-                client = db.session.query(Member).filter_by(email=client_email).scalar()
-                client_id = client.id
-            else:
-                client_id = ''
-
-            entry = Coa(
-                serial_no=s_no,
-                title=title,
-                artist_name=current_user.name,
-                size=size,
-                medium=medium,
-                varnished=varnished,
-                year=year,
-                signed=signed,
-                statement=statement,
-                copyright=copyright_type,
-                client_name=client_name,
-                artist_id=current_user.id,
-                client_id=client_id
-            )
-            db.session.add(entry)
-            db.session.commit()
-
-            # ------------------------------- Email --------------------------------------------- #
-            if client_email:
-                subject = f"Certificate of Authenticity - Artwork_{s_no}"
-                body = f"Dear {client_name}\n\nPlease find the Certificate of Authenticity for the artwork attached in the attachment."
-                send_email_with_pdf_attachment(subject, 'shwetabhartist@gmail.com', [client_email], body, coa_pdf_path)
-
-        elif request.form.get('submit') == 'coa-save-download':
-            # -------------------------------- ADD TO DATABASE----------------------------------------------------------------- #
-            s_no = session.get('s_no')
-            title = session.get('title')
-            size = session.get('size')
-            medium = session.get('medium')
-            year = session.get('year')
-            client_name = session.get('client_name')
-            client_email = session.get('client_email')
-            varnished = session.get('varnished')
-            signed = session.get('signed')
-            statement = session.get('statement')
-            copyright_type = session.get('copyright_type')
-            coa_img_path = session.get('coa_img_path')
-            export_path = f"./static/files/users/{current_user.uuid}/documents/coa/"
-
-            coa_pdf_path = png_to_pdf(coa_img_path, export_path)[1]
-    
-            if client_email:
-                client = db.session.query(Member).filter_by(email=client_email).scalar()
-                client_id = client.id
-            else:
-                client_id = None
-
-            entry = Coa(
-                serial_no=s_no,
-                title=title,
-                artist_name=current_user.name,
-                size=size,
-                medium=medium,
-                varnished=varnished,
-                year=year,
-                signed=signed,
-                statement=statement,
-                copyright=copyright_type,
-                client_name=client_name,
-                artist_id=current_user.id,
-                client_id=client_id
-            )
-            db.session.add(entry)
-            db.session.commit()
-
-            # ------------------------------------- DOWNLOAD ------------------------------------------- #
-            filename = Path(coa_pdf_path).name
-            return send_file(
-                coa_pdf_path,
-                as_attachment=True,         # True forces a browser download prompt
-                download_name=f"{filename}"  # Sets the default name for the downloaded file
-            )
-
-        elif request.form.get('submit') == 'coa-save-email-download':
-            # -------------------------------- ADD TO DATABASE----------------------------------------------------------------- #
-            s_no = session.get('s_no')
-            title = session.get('title')
-            size = session.get('size')
-            medium = session.get('medium')
-            year = session.get('year')
-            client_name = session.get('client_name')
-            client_email = session.get('client_email')
-            varnished = session.get('varnished')
-            signed = session.get('signed')
-            statement = session.get('statement')
-            copyright_type = session.get('copyright_type')
-            coa_img_path = session.get('coa_img_path')
-            export_path = f"./static/files/users/{current_user.uuid}/documents/coa/"
-
-            coa_pdf_path = png_to_pdf(coa_img_path, export_path)[1]
-    
-            if client_email:
-                client = db.session.query(Member).filter_by(email=client_email).scalar()
-                client_id = client.id
-            else:
-                client_id = ''
-
-            entry = Coa(
-                serial_no=s_no,
-                title=title,
-                artist_name=current_user.name,
-                size=size,
-                medium=medium,
-                varnished=varnished,
-                year=year,
-                signed=signed,
-                statement=statement,
-                copyright=copyright_type,
-                client_name=client_name,
-                artist_id=current_user.id,
-                client_id=client_id
-            )
-            db.session.add(entry)
-            db.session.commit()
-
-            # ------------------------------- Email --------------------------------------------- #
-            if client_email:
-                subject = f"Certificate of Authenticity - Artwork_{s_no}"
-                body = f"Dear {client_name}\n\nPlease find the Certificate of Authenticity for the artwork attached in the attachment."
-                send_email_with_pdf_attachment(subject, 'shwetabhartist@gmail.com', [client_email], body, coa_pdf_path)
-
-             # ------------------------------------- DOWNLOAD ------------------------------------------- #
-            filename = Path(coa_pdf_path).name
-            return send_file(
-                coa_pdf_path,
-                as_attachment=True,         # True forces a browser download prompt
-                download_name=f"{filename}"  # Sets the default name for the downloaded file
-            )
-
-
-    if current_user.is_authenticated:
-        if artist in current_user.role:
-            return render_template('artist_dashboard.html', logged_in=current_user.is_authenticated, current_year=current_year, admin=admin,
-                                   pending_details_artworks_dict=pending_details_artworks_dict, pending_artwork_count=pending_artwork_count)
-        else:
-            return redirect(url_for('main.home'))
+    if not current_user.is_authenticated:
+        return redirect(url_for('account.login'))
     else:
-        return redirect(url_for('main.home'))
+        if artist in current_user.role:
+            pending_details_artworks_uuid_list = []
+            pending_details_artworks_dict = {}
+            all_artworks = current_user.artworks
+            for a in all_artworks:
+                details = [a.theme, a.product_title, a.short_description, a.medium, a.original_price, a.original_available, a.creation_year, a.main_photo_path,
+                            a.sale_status]
+                if any(item is None for item in details):
+                    pending_details_artworks_uuid_list.append(a.uuid)
+            for uuid in pending_details_artworks_uuid_list:
+                a = db.session.query(Artwork).filter_by(uuid=uuid).scalar()
+                artwork_title = a.title
+                main_photo_path = a.main_photo_path
+                uuid = a.uuid
+
+                pending_details_artworks_dict[artwork_title] = {'main_photo_path': main_photo_path, 'uuid': uuid}
+            pending_artwork_count = len(pending_details_artworks_dict)
+            pending_details_artworks_dict = dict(reversed(pending_details_artworks_dict.items()))
+
+            if request.method == 'POST':
+                if request.form.get('submit') == 'create_document':
+                    document = request.form.get('document')
+                    name = request.form.get('name')
+                    billing_address = request.form.get('billing_address')
+                    billing_state = request.form.get('billing_state')
+                    billing_country = request.form.get('billing_country')
+                    billing_pincode = request.form.get('billing_pincode')
+                    shipping_address = request.form.get('shipping_address')
+                    shipping_state = request.form.get('shipping_state')
+                    shipping_country = request.form.get('shipping_country')
+                    shipping_pincode = request.form.get('shipping_pincode')
+                    shipping_same_as_billing = request.form.get('same_billing_shipping')
+                    phone = request.form.get('phone')
+                    email = request.form.get('email')
+                    item_count = int(request.form.get('item_count'))
+                    tax_percentage = request.form.get('tax_percentage')
+                    date_ = request.form.get('date')
+                    payment_type = request.form.get('payment_type')
+                    partial_payment_amount_paid = request.form.get('partial_payment_amount')
+                    receipt_invoice_no = request.form.get('receipt_invoice_no')
+
+                    if shipping_same_as_billing:
+                        shipping_address = billing_address
+                        shipping_state = billing_state
+                        shipping_country = billing_country
+                        shipping_pincode = billing_pincode
+
+                    if not date_:
+                        date_ = str(date.today())
+                
+                    item_dict = {}
+
+                    for i in range(item_count):
+                        item_name = f'item{i+1}'
+                        item_price = f'{item_name}price'
+                        item_qty = f'{item_name}qty'
+                        item_n = request.form.get(item_name)
+                        item_p = request.form.get(item_price)
+                        item_q = request.form.get(item_qty)
+                        item_dict[i] = {
+                            'item_description': item_n,
+                            'price': item_p,
+                            'qty': item_q
+                        }
+
+                    inv_receipt_data_dict = {
+                        'document': document,
+                        'name': name,
+                        'billing_address': billing_address,
+                        'billing_state': billing_state,
+                        'billing_country': billing_country,
+                        'billing_pincode': billing_pincode,
+                        'shipping_address': shipping_address,
+                        'shipping_state': shipping_state,
+                        'shipping_country': shipping_country,
+                        'shipping_pincode': shipping_pincode,
+                        'phone': phone,
+                        'email': email,
+                        'item_count': item_count,
+                        'tax_percentage': tax_percentage,
+                        'date': date_,
+                        'payment_type': payment_type,
+                        'partial_payment_amount_paid': partial_payment_amount_paid,
+                        'receipt_invoice_no': receipt_invoice_no,
+                        'item_dict': item_dict
+                    }
+                    session['inv_receipt_data_dict'] = inv_receipt_data_dict
+                    if document == '':
+                        flash('Aborted! Please select the document type first', 'error')
+                        return redirect(request.url)
+                    if document == 'invoice':
+                        if email:
+                            customer_contact = email
+                        else:
+                            customer_contact = phone
+                        document_state_country = f"{billing_state}, {billing_country}"
+                        result = prepare_invoice(name, document_state_country, customer_contact, item_dict, tax_percentage, date_, current_user.uuid)
+                        inv_preview_path = result[0]
+                        inv_pdf_path = result[1]
+                        inv_no = result[2]
+                        sub_total = result[3]
+                        grand_total = result[4]
+                        attachment_file_path = result[5]
+                        file_directory = result[6]
+
+                        session['invoice_preview_path'] = inv_preview_path
+                        session['invoice_pdf_path'] = inv_pdf_path
+                        session['invoice_no'] = inv_no
+                        session['sub_total'] = sub_total
+                        session['grand_total'] = grand_total
+                        session['attachment_path'] = attachment_file_path
+                        session['file_directory'] = file_directory
+
+                        return render_template('document_preview.html', preview_path=inv_preview_path, current_year=current_year, admin=admin, logged_in=current_user.is_authenticated, document='Invoice')
+                    
+                    elif document == 'receipt':
+                        if email:
+                            customer_contact = email
+                        else:
+                            customer_contact = phone
+                        document_state_country = f"{billing_state}, {billing_country}"
+                        result = prepare_receipt(name, document_state_country, customer_contact, item_dict, tax_percentage, date_, current_user.uuid, payment_type, partial_payment_amount_paid)
+                        rec_preview_path = result[0]
+                        rec_pdf_path = result[1]
+                        rec_no = result[2]
+                        sub_total = result[3]
+                        grand_total = result[4]
+                        attachment_file_path = result[5]
+                        file_directory = result[6]
+
+                        session['receipt_preview_path'] = rec_preview_path
+                        session['receipt_pdf_path'] = rec_pdf_path
+                        session['receipt_no'] = rec_no
+                        session['sub_total'] = sub_total
+                        session['grand_total'] = grand_total
+                        session['attachment_path'] = attachment_file_path
+                        session['file_directory'] = file_directory
+
+                        return render_template('document_preview.html', preview_path=rec_preview_path, current_year=current_year, admin=admin, logged_in=current_user.is_authenticated, document='Receipt')
+
+                if request.form.get('submit') == 'save_email':
+                    # Save PDF of the Invoice ...........................................................................
+                    png_path = session.get('file_directory')
+                    pdf_export_path = session.get('invoice_pdf_path')
+                    png_to_pdf(png_path, pdf_export_path)
+
+                    # Add Customer to MEMBER table database............................................................
+                    existing_uuid_list = []
+                    all_members = db.session.query(Member).all()
+                    for m in all_members:
+                        existing_uuid_list.append(m.uuid)
+
+                    uuid = create_uuid(existing_uuid_list, 6)
+                    data_dict = session.get('inv_receipt_data_dict')
+                    if db.session.query(Member).filter_by(email=data_dict['email']).scalar():
+                        pass
+                    else:
+                        entry = Member(
+                            uuid = uuid,
+                            email=data_dict['email'],
+                            name=data_dict['name'],
+                            phone=data_dict['phone'],
+                            billing_address=data_dict['billing_address'],
+                            billing_state=data_dict['billing_state'],
+                            billing_country=data_dict['billing_country'],
+                            billing_pincode=data_dict['billing_pincode'],
+                            shipping_address=data_dict['shipping_address'],
+                            shipping_state=data_dict['shipping_state'],
+                            shipping_country=data_dict['shipping_country'],
+                            shipping_pincode=data_dict['shipping_pincode'],
+                            registration_date = str(date.today()),
+                        )
+                        db.session.add(entry)
+                        db.session.commit()
+
+                    # Add Invoice details to database..................................................................
+                    item_dict = data_dict['item_dict']
+                    items_name = ''
+                    items_price = ''
+                    items_quantity = ''
+
+                    for i in item_dict:
+                        if items_name == '':
+                            items_name = item_dict[i]['item_description']
+                        else:
+                            items_name = f"{items_name}%{item_dict[i]['item_description']}"
+                        if items_price == '':
+                            items_price = item_dict[i]['price']
+                        else:
+                            items_price = f"{items_price}%{item_dict[i]['price']}"
+                        if items_quantity == "":
+                            items_quantity = item_dict[i]['qty']
+                        else:
+                            items_quantity = f"{items_quantity}%{item_dict[i]['qty']}"
+                    date_time = datetime.now().replace(microsecond=0)
+                    member_id = db.session.query(Member).filter_by(email=data_dict['email']).scalar().id
+
+                    entry = Invoice(
+                        invoice_no = session.get('invoice_no'),
+                        name=data_dict['name'],
+                        billing_address=data_dict['billing_address'],
+                        billing_state=data_dict['billing_state'],
+                        billing_country=data_dict['billing_country'],
+                        billing_pincode=data_dict['billing_pincode'],
+                        shipping_address=data_dict['shipping_address'],
+                        shipping_state=data_dict['shipping_state'],
+                        shipping_country=data_dict['shipping_country'],
+                        shipping_pincode=data_dict['shipping_pincode'],
+                        phone=data_dict['phone'],
+                        email=data_dict['email'],
+                        items_name=items_name,
+                        items_price=items_price,
+                        items_quantity=items_quantity,
+                        tax_percent=data_dict['tax_percentage'],
+                        sub_total=session.get('sub_total'),
+                        grand_total=session.get('grand_total'),
+                        status='Unpaid',
+                        date_time = date_time,
+                        member_id=member_id
+                    )
+                    current_invoice_no = db.session.query(Tools).filter_by(keyword='last_invoice').scalar().data
+                    db.session.query(Tools).filter_by(keyword='last_invoice').scalar().data = int(current_invoice_no)+1
+
+                    db.session.add(entry)
+                    db.session.commit()
+
+                    # SEND EMAIL ..............................................................................
+                    subject = f"Invoice-{session.get('invoice_no')}"
+                    reply_back_email = 'shwetabhartist@gmail.com'
+                    recipients_list = [data_dict['email']]
+                    body = f"Dear {data_dict['name'].split(' ')[0]}\n\nPlease find the invoice attached!"
+                    attachment_file_path = session.get('attachment_path')
+                    send_email_with_pdf_attachment(subject, reply_back_email, recipients_list, body, attachment_file_path)
+                    flash('Saved and Mailed successfully', 'success')
+                    return redirect(request.url)
+                    
+
+                elif request.form.get('submit') == 'save_download':
+                    # Save PDF of the Invoice ...........................................................................
+                    png_path = session.get('file_directory')
+                    pdf_export_path = session.get('invoice_pdf_path')
+                    filename = png_to_pdf(png_path, pdf_export_path)[0]
+
+                    # Add Customer to MEMBER table database............................................................
+                    existing_uuid_list = []
+                    all_students = db.session.query(Member).all()
+                    for s in all_students:
+                        existing_uuid_list.append(s.uuid)
+
+                    uuid = create_uuid(existing_uuid_list, 6)
+                    data_dict = session.get('inv_receipt_data_dict')
+                    if db.session.query(Member).filter_by(email=data_dict['email']).scalar():
+                        pass
+                    else:
+                        entry = Member(
+                            uuid = uuid,
+                            email=data_dict['email'],
+                            name=data_dict['name'],
+                            phone=data_dict['phone'],
+                            billing_address=data_dict['billing_address'],
+                            billing_state=data_dict['billing_state'],
+                            billing_country=data_dict['billing_country'],
+                            billing_pincode=data_dict['billing_pincode'],
+                            shipping_address=data_dict['shipping_address'],
+                            shipping_state=data_dict['shipping_state'],
+                            shipping_country=data_dict['shipping_country'],
+                            shipping_pincode=data_dict['shipping_pincode'],
+                            registration_date = str(date.today()),
+                        )
+                        db.session.add(entry)
+                        db.session.commit()
+
+                    # Add Invoice details to database..................................................................
+                    item_dict = data_dict['item_dict']
+                    items_name = ''
+                    items_price = ''
+                    items_quantity = ''
+
+                    for i in item_dict:
+                        if items_name == '':
+                            items_name = item_dict[i]['item_description']
+                        else:
+                            items_name = f"{items_name}%{item_dict[i]['item_description']}"
+                        if items_price == '':
+                            items_price = item_dict[i]['price']
+                        else:
+                            items_price = f"{items_price}%{item_dict[i]['price']}"
+                        if items_quantity == "":
+                            items_quantity = item_dict[i]['qty']
+                        else:
+                            items_quantity = f"{items_quantity}%{item_dict[i]['qty']}"
+                    date_time = datetime.now().replace(microsecond=0)
+                    member_id = db.session.query(Member).filter_by(email=data_dict['email']).scalar().id
+
+                    entry = Invoice(
+                        invoice_no = session.get('invoice_no'),
+                        name=data_dict['name'],
+                        billing_address=data_dict['billing_address'],
+                        billing_state=data_dict['billing_state'],
+                        billing_country=data_dict['billing_country'],
+                        billing_pincode=data_dict['billing_pincode'],
+                        shipping_address=data_dict['shipping_address'],
+                        shipping_state=data_dict['shipping_state'],
+                        shipping_country=data_dict['shipping_country'],
+                        shipping_pincode=data_dict['shipping_pincode'],
+                        phone=data_dict['phone'],
+                        email=data_dict['email'],
+                        items_name=items_name,
+                        items_price=items_price,
+                        items_quantity=items_quantity,
+                        tax_percent=data_dict['tax_percentage'],
+                        sub_total=session.get('sub_total'),
+                        grand_total=session.get('grand_total'),
+                        status='Unpaid',
+                        date_time = date_time,
+                        member_id=member_id
+                    )
+                    current_invoice_no = db.session.query(Tools).filter_by(keyword='last_invoice').scalar().data
+                    db.session.query(Tools).filter_by(keyword='last_invoice').scalar().data = int(current_invoice_no)+1
+                    db.session.add(entry)
+                    db.session.commit()
+                    # DOWNLOAD ................................................................................
+                    invoice_file_path = pdf_export_path + filename + '.pdf'
+                    return send_file(
+                        invoice_file_path,
+                        as_attachment=True,         # True forces a browser download prompt
+                        download_name=f"{filename}.pdf"  # Sets the default name for the downloaded file
+                    )
+                elif request.form.get('submit') == 'save_email_download':
+                    # Save PDF of the Invoice ...........................................................................
+                    png_path = session.get('file_directory')
+                    pdf_export_path = session.get('invoice_pdf_path')
+                    filename = png_to_pdf(png_path, pdf_export_path)[0]
+
+                    # Add Customer to MEMBER table database............................................................
+                    existing_uuid_list = []
+                    all_students = db.session.query(Member).all()
+                    for s in all_students:
+                        existing_uuid_list.append(s.uuid)
+
+                    uuid = create_uuid(existing_uuid_list, 6)
+                    data_dict = session.get('inv_receipt_data_dict')
+                    if db.session.query(Member).filter_by(email=data_dict['email']).scalar():
+                        pass
+                    else:
+                        entry = Member(
+                            uuid = uuid,
+                            email=data_dict['email'],
+                            name=data_dict['name'],
+                            phone=data_dict['phone'],
+                            billing_address=data_dict['billing_address'],
+                            billing_state=data_dict['billing_state'],
+                            billing_country=data_dict['billing_country'],
+                            billing_pincode=data_dict['billing_pincode'],
+                            shipping_address=data_dict['shipping_address'],
+                            shipping_state=data_dict['shipping_state'],
+                            shipping_country=data_dict['shipping_country'],
+                            shipping_pincode=data_dict['shipping_pincode'],
+                            registration_date = str(date.today()),
+                        )
+                        db.session.add(entry)
+                        db.session.commit()
+
+                    # Add Invoice details to database..................................................................
+                    item_dict = data_dict['item_dict']
+                    items_name = ''
+                    items_price = ''
+                    items_quantity = ''
+
+                    for i in item_dict:
+                        if items_name == '':
+                            items_name = item_dict[i]['item_description']
+                        else:
+                            items_name = f"{items_name}%{item_dict[i]['item_description']}"
+                        if items_price == '':
+                            items_price = item_dict[i]['price']
+                        else:
+                            items_price = f"{items_price}%{item_dict[i]['price']}"
+                        if items_quantity == "":
+                            items_quantity = item_dict[i]['qty']
+                        else:
+                            items_quantity = f"{items_quantity}%{item_dict[i]['qty']}"
+                    date_time = datetime.now().replace(microsecond=0)
+                    member_id = db.session.query(Member).filter_by(email=data_dict['email']).scalar().id
+
+                    entry = Invoice(
+                        invoice_no = session.get('invoice_no'),
+                        name=data_dict['name'],
+                        billing_address=data_dict['billing_address'],
+                        billing_state=data_dict['billing_state'],
+                        billing_country=data_dict['billing_country'],
+                        billing_pincode=data_dict['billing_pincode'],
+                        shipping_address=data_dict['shipping_address'],
+                        shipping_state=data_dict['shipping_state'],
+                        shipping_country=data_dict['shipping_country'],
+                        shipping_pincode=data_dict['shipping_pincode'],
+                        phone=data_dict['phone'],
+                        email=data_dict['email'],
+                        items_name=items_name,
+                        items_price=items_price,
+                        items_quantity=items_quantity,
+                        tax_percent=data_dict['tax_percentage'],
+                        sub_total=session.get('sub_total'),
+                        grand_total=session.get('grand_total'),
+                        status='Unpaid',
+                        date_time = date_time,
+                        member_id=member_id
+                    )
+                    current_invoice_no = db.session.query(Tools).filter_by(keyword='last_invoice').scalar().data
+                    db.session.query(Tools).filter_by(keyword='last_invoice').scalar().data = int(current_invoice_no)+1
+                    db.session.add(entry)
+                    db.session.commit()
+
+                    # SEND EMAIL ..............................................................................
+                    subject = f"Invoice-{session.get('invoice_no')}"
+                    reply_back_email = 'shwetabhartist@gmail.com'
+                    recipients_list = [data_dict['email']]
+                    body = f"Dear {data_dict['name'].split(' ')[0]}\n\nPlease find the invoice attached!"
+                    attachment_file_path = session.get('attachment_path')
+                    send_email_with_pdf_attachment(subject, reply_back_email, recipients_list, body, attachment_file_path)
+
+                    # DOWNLOAD ................................................................................
+                    invoice_file_path = pdf_export_path + filename + '.pdf'
+                    return send_file(
+                        invoice_file_path,
+                        as_attachment=True,         # True forces a browser download prompt
+                        download_name=f"{filename}.pdf"  # Sets the default name for the downloaded file
+                    )
+                if request.form.get('submit') == 'receipt-save-email':
+                    # Save PDF of the Receipt ...........................................................................
+                    png_path = session.get('file_directory')
+                    pdf_export_path = session.get('receipt_pdf_path')
+                    png_to_pdf(png_path, pdf_export_path)
+
+                    # Add Customer to MEMBER table database............................................................
+                    existing_uuid_list = []
+                    all_members = db.session.query(Member).all()
+                    for m in all_members:
+                        existing_uuid_list.append(m.uuid)
+
+                    uuid = create_uuid(existing_uuid_list, 6)
+                    data_dict = session.get('inv_receipt_data_dict')
+                    if db.session.query(Member).filter_by(email=data_dict['email']).scalar():
+                        pass
+                    else:
+                        entry = Member(
+                            uuid = uuid,
+                            email=data_dict['email'],
+                            name=data_dict['name'],
+                            phone=data_dict['phone'],
+                            billing_address=data_dict['billing_address'],
+                            billing_state=data_dict['billing_state'],
+                            billing_country=data_dict['billing_country'],
+                            billing_pincode=data_dict['billing_pincode'],
+                            shipping_address=data_dict['shipping_address'],
+                            shipping_state=data_dict['shipping_state'],
+                            shipping_country=data_dict['shipping_country'],
+                            shipping_pincode=data_dict['shipping_pincode'],
+                            registration_date = str(date.today()),
+                        )
+                        db.session.add(entry)
+                        db.session.commit()
+
+                    # Add Receipt details to database..................................................................
+                    item_dict = data_dict['item_dict']
+                    items_name = ''
+                    items_price = ''
+                    items_quantity = ''
+
+                    for i in item_dict:
+                        if items_name == '':
+                            items_name = item_dict[i]['item_description']
+                        else:
+                            items_name = f"{items_name}%{item_dict[i]['item_description']}"
+                        if items_price == '':
+                            items_price = item_dict[i]['price']
+                        else:
+                            items_price = f"{items_price}%{item_dict[i]['price']}"
+                        if items_quantity == "":
+                            items_quantity = item_dict[i]['qty']
+                        else:
+                            items_quantity = f"{items_quantity}%{item_dict[i]['qty']}"
+                    date_time = datetime.now().replace(microsecond=0)
+                    member_id = db.session.query(Member).filter_by(email=data_dict['email']).scalar().id
+                    if payment_type == 'partial':
+                        amount_paid = data_dict['partial_payment_amount_paid']
+                    elif payment_type == 'full':
+                        amount_paid = data_dict['grand_total']
+                    entry = Receipt(
+                        receipt_no=session.get('receipt_no'),
+                        name=data_dict['name'],
+                        billing_address=data_dict['billing_address'],
+                        billing_state=data_dict['billing_state'],
+                        billing_country=data_dict['billing_country'],
+                        billing_pincode=data_dict['billing_pincode'],
+                        shipping_address=data_dict['shipping_address'],
+                        shipping_state=data_dict['shipping_state'],
+                        shipping_country=data_dict['shipping_country'],
+                        shipping_pincode=data_dict['shipping_pincode'],
+                        phone=data_dict['phone'],
+                        email=data_dict['email'],
+                        items_name=items_name,
+                        items_price=items_price,
+                        items_quantity=items_quantity,
+                        tax_percent=data_dict['tax_percentage'],
+                        sub_total=session.get('sub_total'),
+                        grand_total=session.get('grand_total'),
+                        payment_type=data_dict['payment_type'],
+                        amount_paid=amount_paid,
+                        invoice_no=data_dict['receipt_invoice_no'],
+                        date_time = date_time,
+                        member_id=member_id
+                    )
+                    current_receipt_no = db.session.query(Tools).filter_by(keyword='last_receipt').scalar().data
+                    db.session.query(Tools).filter_by(keyword='last_receipt').scalar().data = int(current_receipt_no)+1
+                    db.session.add(entry)
+                    db.session.commit()
+
+                    # SEND EMAIL ..............................................................................
+                    subject = f"Receipt-{session.get('receipt_no')}"
+                    reply_back_email = 'shwetabhartist@gmail.com'
+                    recipients_list = [data_dict['email']]
+                    body = f"Dear {data_dict['name'].split(' ')[0]}\n\nPlease find the receipt attached!"
+                    attachment_file_path = session.get('attachment_path')
+                    send_email_with_pdf_attachment(subject, reply_back_email, recipients_list, body, attachment_file_path)
+                    flash('Saved and Mailed successfully', 'success')
+                    return redirect(request.url)
+                    
+
+                elif request.form.get('submit') == 'receipt-save-download':
+                    # Save PDF of the Receipt ...........................................................................
+                    png_path = session.get('file_directory')
+                    pdf_export_path = session.get('receipt_pdf_path')
+                    filename = png_to_pdf(png_path, pdf_export_path)[0]
+
+                    # Add Customer to MEMBER table database............................................................
+                    existing_uuid_list = []
+                    all_members = db.session.query(Member).all()
+                    for m in all_members:
+                        existing_uuid_list.append(m.uuid)
+
+                    uuid = create_uuid(existing_uuid_list, 6)
+                    data_dict = session.get('inv_receipt_data_dict')
+                    if db.session.query(Member).filter_by(email=data_dict['email']).scalar():
+                        pass
+                    else:
+                        entry = Member(
+                            uuid = uuid,
+                            email=data_dict['email'],
+                            name=data_dict['name'],
+                            phone=data_dict['phone'],
+                            billing_address=data_dict['billing_address'],
+                            billing_state=data_dict['billing_state'],
+                            billing_country=data_dict['billing_country'],
+                            billing_pincode=data_dict['billing_pincode'],
+                            shipping_address=data_dict['shipping_address'],
+                            shipping_state=data_dict['shipping_state'],
+                            shipping_country=data_dict['shipping_country'],
+                            shipping_pincode=data_dict['shipping_pincode'],
+                            registration_date = str(date.today()),
+                        )
+                        db.session.add(entry)
+                        db.session.commit()
+
+                    # Add Receipt details to database..................................................................
+                    item_dict = data_dict['item_dict']
+                    items_name = ''
+                    items_price = ''
+                    items_quantity = ''
+
+                    for i in item_dict:
+                        if items_name == '':
+                            items_name = item_dict[i]['item_description']
+                        else:
+                            items_name = f"{items_name}%{item_dict[i]['item_description']}"
+                        if items_price == '':
+                            items_price = item_dict[i]['price']
+                        else:
+                            items_price = f"{items_price}%{item_dict[i]['price']}"
+                        if items_quantity == "":
+                            items_quantity = item_dict[i]['qty']
+                        else:
+                            items_quantity = f"{items_quantity}%{item_dict[i]['qty']}"
+                    date_time = datetime.now().replace(microsecond=0)
+                    member_id = db.session.query(Member).filter_by(email=data_dict['email']).scalar().id
+                    if payment_type == 'partial':
+                        amount_paid = data_dict['partial_payment_amount_paid']
+                    elif payment_type == 'full':
+                        amount_paid = data_dict['grand_total']
+                    entry = Receipt(
+                        receipt_no=session.get('receipt_no'),
+                        name=data_dict['name'],
+                        billing_address=data_dict['billing_address'],
+                        billing_state=data_dict['billing_state'],
+                        billing_country=data_dict['billing_country'],
+                        billing_pincode=data_dict['billing_pincode'],
+                        shipping_address=data_dict['shipping_address'],
+                        shipping_state=data_dict['shipping_state'],
+                        shipping_country=data_dict['shipping_country'],
+                        shipping_pincode=data_dict['shipping_pincode'],
+                        phone=data_dict['phone'],
+                        email=data_dict['email'],
+                        items_name=items_name,
+                        items_price=items_price,
+                        items_quantity=items_quantity,
+                        tax_percent=data_dict['tax_percentage'],
+                        sub_total=session.get('sub_total'),
+                        grand_total=session.get('grand_total'),
+                        payment_type=data_dict['payment_type'],
+                        amount_paid=amount_paid,
+                        invoice_no=data_dict['receipt_invoice_no'],
+                        date_time = date_time,
+                        member_id=member_id
+                    )
+                    current_receipt_no = db.session.query(Tools).filter_by(keyword='last_receipt').scalar().data
+                    db.session.query(Tools).filter_by(keyword='last_receipt').scalar().data = int(current_receipt_no)+1
+                    db.session.add(entry)
+                    db.session.commit()
+
+                    # DOWNLOAD ................................................................................
+                    receipt_file_path = pdf_export_path + filename + '.pdf'
+                    return send_file(
+                        receipt_file_path,
+                        as_attachment=True,         # True forces a browser download prompt
+                        download_name=f"{filename}.pdf"  # Sets the default name for the downloaded file
+                    )
+                elif request.form.get('submit') == 'receipt-save-email-download':
+                    # Save PDF of the Receipt ...........................................................................
+                    png_path = session.get('file_directory')
+                    pdf_export_path = session.get('receipt_pdf_path')
+                    filename = png_to_pdf(png_path, pdf_export_path)[0]
+
+                    # Add Customer to MEMBER table database............................................................
+                    existing_uuid_list = []
+                    all_members = db.session.query(Member).all()
+                    for m in all_members:
+                        existing_uuid_list.append(m.uuid)
+
+                    uuid = create_uuid(existing_uuid_list, 6)
+                    data_dict = session.get('inv_receipt_data_dict')
+                    if db.session.query(Member).filter_by(email=data_dict['email']).scalar():
+                        pass
+                    else:
+                        entry = Member(
+                            uuid = uuid,
+                            email=data_dict['email'],
+                            name=data_dict['name'],
+                            phone=data_dict['phone'],
+                            billing_address=data_dict['billing_address'],
+                            billing_state=data_dict['billing_state'],
+                            billing_country=data_dict['billing_country'],
+                            billing_pincode=data_dict['billing_pincode'],
+                            shipping_address=data_dict['shipping_address'],
+                            shipping_state=data_dict['shipping_state'],
+                            shipping_country=data_dict['shipping_country'],
+                            shipping_pincode=data_dict['shipping_pincode'],
+                            registration_date = str(date.today()),
+                        )
+                        db.session.add(entry)
+                        db.session.commit()
+
+                    # Add Receipt details to database..................................................................
+                    item_dict = data_dict['item_dict']
+                    items_name = ''
+                    items_price = ''
+                    items_quantity = ''
+
+                    for i in item_dict:
+                        if items_name == '':
+                            items_name = item_dict[i]['item_description']
+                        else:
+                            items_name = f"{items_name}%{item_dict[i]['item_description']}"
+                        if items_price == '':
+                            items_price = item_dict[i]['price']
+                        else:
+                            items_price = f"{items_price}%{item_dict[i]['price']}"
+                        if items_quantity == "":
+                            items_quantity = item_dict[i]['qty']
+                        else:
+                            items_quantity = f"{items_quantity}%{item_dict[i]['qty']}"
+                    date_time = datetime.now().replace(microsecond=0)
+                    member_id = db.session.query(Member).filter_by(email=data_dict['email']).scalar().id
+                    if payment_type == 'partial':
+                        amount_paid = data_dict['partial_payment_amount_paid']
+                    elif payment_type == 'full':
+                        amount_paid = data_dict['grand_total']
+                    entry = Receipt(
+                        receipt_no=session.get('receipt_no'),
+                        name=data_dict['name'],
+                        billing_address=data_dict['billing_address'],
+                        billing_state=data_dict['billing_state'],
+                        billing_country=data_dict['billing_country'],
+                        billing_pincode=data_dict['billing_pincode'],
+                        shipping_address=data_dict['shipping_address'],
+                        shipping_state=data_dict['shipping_state'],
+                        shipping_country=data_dict['shipping_country'],
+                        shipping_pincode=data_dict['shipping_pincode'],
+                        phone=data_dict['phone'],
+                        email=data_dict['email'],
+                        items_name=items_name,
+                        items_price=items_price,
+                        items_quantity=items_quantity,
+                        tax_percent=data_dict['tax_percentage'],
+                        sub_total=session.get('sub_total'),
+                        grand_total=session.get('grand_total'),
+                        payment_type=data_dict['payment_type'],
+                        amount_paid=amount_paid,
+                        invoice_no=data_dict['receipt_invoice_no'],
+                        date_time = date_time,
+                        member_id=member_id
+                    )
+                    current_receipt_no = db.session.query(Tools).filter_by(keyword='last_receipt').scalar().data
+                    db.session.query(Tools).filter_by(keyword='last_receipt').scalar().data = int(current_receipt_no)+1
+                    db.session.add(entry)
+                    db.session.commit()
+
+                    # SEND EMAIL ..............................................................................
+                    subject = f"Receipt-{session.get('receipt_no')}"
+                    reply_back_email = 'shwetabhartist@gmail.com'
+                    recipients_list = [data_dict['email']]
+                    body = f"Dear {data_dict['name'].split(' ')[0]}\n\nPlease find the receipt attached!"
+                    attachment_file_path = session.get('attachment_path')
+                    send_email_with_pdf_attachment(subject, reply_back_email, recipients_list, body, attachment_file_path)
+                    flash('Saved and Mailed successfully', 'success')
+
+                    # DOWNLOAD ................................................................................
+                    receipt_file_path = pdf_export_path + filename + '.pdf'
+                    return send_file(
+                        receipt_file_path,
+                        as_attachment=True,         # True forces a browser download prompt
+                        download_name=f"{filename}.pdf"  # Sets the default name for the downloaded file
+                    )
+                    
+                if request.form.get('submit') == 'create-coa':
+                    file = request.files.get('artwork-img')
+                    s_no = request.form.get('serial_no')
+                    title = request.form.get('title')
+                    size = request.form.get('size')
+                    medium = request.form.get('medium')
+                    year = request.form.get('year')
+                    client_name = request.form.get('client_name')
+                    client_email = request.form.get('client_email')
+                    varnished = request.form.get('varnished')
+                    signed = request.form.get('signed')
+                    statement = request.form.get('statement')
+                    copyright_type = request.form.get('copyright')
+
+                    if file:
+                        filename = secure_filename(file.filename)
+                    
+                    temp_artwork_img_folder = f"./static/files/users/{current_user.uuid}/temp/artwork/"
+                    if not os.path.exists(temp_artwork_img_folder):
+                        os.makedirs(temp_artwork_img_folder)
+                    dir_path = Path(temp_artwork_img_folder)
+                    files = [str(f) for f in dir_path.iterdir() if f.is_file()]
+                    if len(files) > 0:
+                        for f in files:
+                            os.remove(f)
+                    artwork_path = f"{temp_artwork_img_folder}{filename}"
+                    file.save(artwork_path)
+
+                    prepare_coa_result = prepare_coa(title, current_user.name, size, medium, varnished, year, signed, s_no, statement, copyright_type, artwork_path, current_user.uuid)[0]
+                    temp_coa_img_path = prepare_coa_result[0]
+                    date_today = prepare_coa_result[1]
+
+                    session['s_no'] = s_no
+                    session['title'] = title
+                    session['size'] = size
+                    session['medium'] = medium
+                    session['year'] = year
+                    session['client_name'] = client_name
+                    session['client_email'] = client_email
+                    session['varnished'] = varnished
+                    session['signed'] = signed
+                    session['statement'] = statement
+                    session['copyright_type'] = copyright_type
+                    session['coa_img_path'] = str(Path(temp_coa_img_path).parent)
+                    session['date_today'] = date_today
+                    
+                    return render_template('document_preview.html', preview_path='.'+temp_coa_img_path, current_year=current_year, admin=admin, logged_in=current_user.is_authenticated, document='COA')
+                
+                if request.form.get('submit') == 'coa-save-email':
+                    # -------------------------------- ADD TO DATABASE----------------------------------------------------------------- #
+                    s_no = session.get('s_no')
+                    title = session.get('title')
+                    size = session.get('size')
+                    medium = session.get('medium')
+                    year = session.get('year')
+                    client_name = session.get('client_name')
+                    client_email = session.get('client_email')
+                    varnished = session.get('varnished')
+                    signed = session.get('signed')
+                    statement = session.get('statement')
+                    copyright_type = session.get('copyright_type')
+                    coa_img_path = session.get('coa_img_path')
+                    date_today = session.get('date_today')
+                    export_path = f"./static/files/users/{current_user.uuid}/documents/coa/"
+
+                    coa_pdf_path = png_to_pdf(coa_img_path, export_path)[1]
+            
+                    if client_email:
+                        client = db.session.query(Member).filter_by(email=client_email).scalar()
+                        client_id = client.id
+                    else:
+                        client_id = ''
+
+                    entry = Coa(
+                        serial_no=s_no,
+                        title=title,
+                        artist_name=current_user.name,
+                        size=size,
+                        medium=medium,
+                        varnished=varnished,
+                        year=year,
+                        signed=signed,
+                        statement=statement,
+                        copyright=copyright_type,
+                        client_name=client_name,
+                        artist_id=current_user.id,
+                        client_id=client_id
+                    )
+                    db.session.add(entry)
+                    db.session.commit()
+
+                    # ------------------------------- Email --------------------------------------------- #
+                    if client_email:
+                        subject = f"Certificate of Authenticity - Artwork_{s_no}"
+                        body = f"Dear {client_name}\n\nPlease find the Certificate of Authenticity for the artwork attached in the attachment."
+                        send_email_with_pdf_attachment(subject, 'shwetabhartist@gmail.com', [client_email], body, coa_pdf_path)
+
+                elif request.form.get('submit') == 'coa-save-download':
+                    # -------------------------------- ADD TO DATABASE----------------------------------------------------------------- #
+                    s_no = session.get('s_no')
+                    title = session.get('title')
+                    size = session.get('size')
+                    medium = session.get('medium')
+                    year = session.get('year')
+                    client_name = session.get('client_name')
+                    client_email = session.get('client_email')
+                    varnished = session.get('varnished')
+                    signed = session.get('signed')
+                    statement = session.get('statement')
+                    copyright_type = session.get('copyright_type')
+                    coa_img_path = session.get('coa_img_path')
+                    export_path = f"./static/files/users/{current_user.uuid}/documents/coa/"
+
+                    coa_pdf_path = png_to_pdf(coa_img_path, export_path)[1]
+            
+                    if client_email:
+                        client = db.session.query(Member).filter_by(email=client_email).scalar()
+                        client_id = client.id
+                    else:
+                        client_id = None
+
+                    entry = Coa(
+                        serial_no=s_no,
+                        title=title,
+                        artist_name=current_user.name,
+                        size=size,
+                        medium=medium,
+                        varnished=varnished,
+                        year=year,
+                        signed=signed,
+                        statement=statement,
+                        copyright=copyright_type,
+                        client_name=client_name,
+                        artist_id=current_user.id,
+                        client_id=client_id
+                    )
+                    db.session.add(entry)
+                    db.session.commit()
+
+                    # ------------------------------------- DOWNLOAD ------------------------------------------- #
+                    filename = Path(coa_pdf_path).name
+                    return send_file(
+                        coa_pdf_path,
+                        as_attachment=True,         # True forces a browser download prompt
+                        download_name=f"{filename}"  # Sets the default name for the downloaded file
+                    )
+
+                elif request.form.get('submit') == 'coa-save-email-download':
+                    # -------------------------------- ADD TO DATABASE----------------------------------------------------------------- #
+                    s_no = session.get('s_no')
+                    title = session.get('title')
+                    size = session.get('size')
+                    medium = session.get('medium')
+                    year = session.get('year')
+                    client_name = session.get('client_name')
+                    client_email = session.get('client_email')
+                    varnished = session.get('varnished')
+                    signed = session.get('signed')
+                    statement = session.get('statement')
+                    copyright_type = session.get('copyright_type')
+                    coa_img_path = session.get('coa_img_path')
+                    export_path = f"./static/files/users/{current_user.uuid}/documents/coa/"
+
+                    coa_pdf_path = png_to_pdf(coa_img_path, export_path)[1]
+            
+                    if client_email:
+                        client = db.session.query(Member).filter_by(email=client_email).scalar()
+                        client_id = client.id
+                    else:
+                        client_id = ''
+
+                    entry = Coa(
+                        serial_no=s_no,
+                        title=title,
+                        artist_name=current_user.name,
+                        size=size,
+                        medium=medium,
+                        varnished=varnished,
+                        year=year,
+                        signed=signed,
+                        statement=statement,
+                        copyright=copyright_type,
+                        client_name=client_name,
+                        artist_id=current_user.id,
+                        client_id=client_id
+                    )
+                    db.session.add(entry)
+                    db.session.commit()
+
+                    # ------------------------------- Email --------------------------------------------- #
+                    if client_email:
+                        subject = f"Certificate of Authenticity - Artwork_{s_no}"
+                        body = f"Dear {client_name}\n\nPlease find the Certificate of Authenticity for the artwork attached in the attachment."
+                        send_email_with_pdf_attachment(subject, 'shwetabhartist@gmail.com', [client_email], body, coa_pdf_path)
+
+                    # ------------------------------------- DOWNLOAD ------------------------------------------- #
+                    filename = Path(coa_pdf_path).name
+                    return send_file(
+                        coa_pdf_path,
+                        as_attachment=True,         # True forces a browser download prompt
+                        download_name=f"{filename}"  # Sets the default name for the downloaded file
+                    )
+
+
+                return render_template('artist_dashboard.html', logged_in=current_user.is_authenticated, current_year=current_year, admin=admin,
+                                    pending_details_artworks_dict=pending_details_artworks_dict, pending_artwork_count=pending_artwork_count)
+        return render_template('artist_dashboard.html', logged_in=current_user.is_authenticated, current_year=current_year, admin=admin,
+                                            pending_details_artworks_dict=pending_details_artworks_dict, pending_artwork_count=pending_artwork_count)    
+    
 
 
 @account.route('/instructor-dashboard', methods=['GET', 'POST'])
@@ -2001,12 +1996,14 @@ def login():
                 artist = db.session.query(Role).filter_by(name='artist').scalar()
                 user_roles = current_user.role
                 session['logged_in'] = True
-                if session.get('url') == url_for('school.classroom'):
-                    return redirect(url_for('school.classroom'))
-                if session.get('url') == url_for('school.enroll'):
-                    return redirect(url_for('school.enroll'))
-                if len(user_roles) > 1:
-                    return redirect(url_for('account.main_dashboard'))
+                # if session.get('url') == url_for('school.classroom'):
+                #     return redirect(url_for('school.classroom'))
+                # if session.get('url') == url_for('school.enroll'):
+                #     return redirect(url_for('school.enroll'))
+                if session.get('url'):
+                    return redirect(session.get('url'))
+                # if len(user_roles) > 1:
+                    # return redirect(url_for('account.main_dashboard'))
                 else:
                     if student in user_roles:
                         return redirect(url_for('account.student_dashboard'))

@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+    #container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+        min-height: 85vh;
+    }
+    #inner-container {
+        width: 50%;
+    }
+    #drop-zone {
+        width: 400px;
+        height: 100px;
+        border: 2px dashed #ccc;
+        text-align: center;
+        line-height: 100px;
+        margin-bottom: 15px;
+    }
+    #canvas-container {
+        max-width: 600px;
+        max-height: 600px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: yellow;
+    }
+    #canvas-container canvas {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+    /* canvas {
+        max-width: 600px;
+        max-height: 600px;
+        border: 2px solid #333;
+        cursor: move;
+        display: block;
+        background: #f0f0f0;
+    } */
+</style>
+
+<div id="container">
+    <div id="inner-container">
+        <div id="drop-zone">Drag & Drop Image Here</div>
+        <input type="file" id="file-input" accept="image/*"><br><br>
+        
+        <!-- Fixed size crop box frame -->
+        <canvas id="crop-canvas" width="400" height="400"></canvas><br>
+        <button id="crop-btn">Export Cropped Image</button>
+    </div>
+</div>
+<script>
+const dropZone = document.getElementById('drop-zone');
+const fileInput = document.getElementById('file-input');
+const canvas = document.getElementById('crop-canvas');
+const ctx = canvas.getContext('2d');
+const cropBtn = document.getElementById('crop-btn');
+let canvasRatio = 4/6;
+
+
+
+// Image placement and movement states
+let img = new Image();
+let imgX = 0;
+let imgY = 0;
+let isDragging = false;
+let startX = 0;
+let startY = 0;
+
+// --- STEP 1: Handle File Drop and Input ---
+function handleFile(file) {
+  if (!file || !file.type.startsWith('image/')) return;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function setCanvasDimensions(img_width, img_height) {
+    const imgRatio = imgWidth/imgHeight;
+    let canvasWidth;
+    let canvasHeight;
+    if (imgRatio > 1) {
+        // means image is landscape
+        if (canvasRatio < 1) {
+            // means if canvas is portrait so convert it to landscape
+            canvasRatio = 1/canvasRatio;
+        }
+    } else {
+        // means image is portrait
+        if (canvasRatio > 1) {
+            canvasRatio = 1/canvasRatio;
+        }
+    }
+    if (canvasRatio < imgRatio) {
+        canvasHeight = imgHeight;
+        canvasWidth = canvasHeight*canvasRatio;
+
+    } else if (canvasRatio > imgRatio) {
+        canvasWidth = imgWidth;
+        canvasHeight = canvasWidth/canvasRatio;
+    }
+    let canvasWidthPixel = canvasWidth + ' px';
+    let canvasHeightPixel = canvasHeight + ' px';
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
+}
+
+img.onload = () => {
+    imgWidth = img.width;
+    imgHeight = img.height;
+    setCanvasDimensions(imgWidth, imgHeight);
+  // Center image inside the fixed canvas on initial load
+  imgX = (canvas.width - img.width) / 2;
+  imgY = (canvas.height - img.height) / 2;
+  drawImageOnCanvas();
+};
+
+// Drop zone event listeners
+dropZone.addEventListener('dragover', (e) => e.preventDefault());
+dropZone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  const file = e.dataTransfer.files[0];
+  handleFile(file);
+});
+fileInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
+
+
+// --- STEP 2: Render Loop ---
+function drawImageOnCanvas() {
+  // Clear the canvas area completely before updating positions
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  // Render image at its current offset coordinates
+  ctx.drawImage(img, imgX, imgY);
+}
+
+
+// --- STEP 3: Drag and Move Logic ---
+canvas.addEventListener('mousedown', (e) => {
+  if (!img.src) return; // Prevent interaction if no image is loaded
+  
+  isDragging = true;
+  // Capture the starting click position
+  startX = e.clientX - imgX;
+  startY = e.clientY - imgY;
+});
+
+window.addEventListener('mousemove', (e) => {
+  if (!isDragging) return;
+
+  // Calculate new coordinates based on mouse delta offsets
+  imgX = e.clientX - startX;
+  imgY = e.clientY - startY;
+
+  // Re-render canvas in real-time
+  drawImageOnCanvas();
+});
+
+window.addEventListener('mouseup', () => {
+  isDragging = false;
+});
+
+
+// --- STEP 4: Extract and Crop Output ---
+cropBtn.addEventListener('click', () => {
+  if (!img.src) return alert('Please upload an image first.');
+
+  // canvas.toDataURL extracts ONLY what is currently visible on the fixed canvas grid
+  const croppedDataUrl = canvas.toDataURL('image/jpeg', 1);
+  const endPointUrl = "{{url_for('main.temp')}}";
+  // Send img data url to backend
+  fetch(endPointUrl, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ image: croppedDataUrl })
+  })
+  .then(Response => Response.json())
+  .then(data => console.log(data));
+});
+</script>
+
+{% endblock %}

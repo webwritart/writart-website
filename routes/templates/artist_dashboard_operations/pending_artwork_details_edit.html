@@ -6,15 +6,459 @@
     display: flex;
     flex-direction: column;
     width: 100%;
+    background: rgb(144, 175, 144);
+    padding: .5% 3% 2% 3%;
+    align-items: center;
 }
+#page-title {
+    font-weight: 700;
+    font-size: 1.4rem;
+}
+#head-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+#pending-artwork-list {
+    width: 15%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2%;
+    border-right: solid 1px rgba(0, 0, 0, 0.372);
+    background: rgb(211, 216, 186);
+    max-height: 85vh;
+    overflow-y: auto;
+}
+#pending-heading {
+    font-size: 1rem;
+    font-weight: 700;
+    color: red;
+    margin: 0%;
+}
+#pending-text {
+    font-size: .9rem;
+    line-height: 1;
+}
+.pending-artwork-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 5%;
+    margin-bottom: 5%;
+    background: rgb(254, 255, 244);
+    text-align: center;
+}
+.pending-artwork-card:hover {
+    cursor: pointer;
+}
+.pending-artwork-card img {
+    width: 100%;
+    padding-bottom: 2%;
+}
+.pending-artwork-card p {
+    margin: 0%;
+    padding: 0%;
+    line-height: 1;
+}
+.pending-artwork-title {
+    font-weight: 500;
+    font-size: .9rem;
+}
+.pending-artwork-category-text {
+    opacity: .6;
+    font-size: .8rem;
+}
+#left-column-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgb(183, 216, 183);
+    width: 40%;
+    margin-left: 1%;
+    height: 85vh;
+}
+#left-column-container img {
+    padding: 5%;
+    padding-bottom: 0%;
+    max-height: 80%;
+    max-width: 100%;
+
+}
+#pending-artwork-main-details-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1% 0% 2% 0%;
+}
+#pending-artwork-main-details-container p {
+    margin: 0%;
+    font-size: 1rem;
+    color: rgb(67, 67, 67);
+}
+#right-column-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 40%;
+    padding: 2% 5%;
+    background: rgb(183, 216, 183);
+    margin-left: 2%;
+}
+#basic-details-edit-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+#print-btn {
+    background:rgb(72, 95, 33);
+}
+#basic-details-edit-container form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 5%;
+    background: rgb(228, 245, 228);
+    margin-bottom: 2%;
+}
+.form-header {
+    font-weight: 600;
+}
+label {
+    margin: 0%;
+    font-size: .9rem;
+}
+input {
+    width: 100%;
+    padding: 0%;
+    padding-left: 2%;
+    margin: 0%;
+    border-radius: 0%;
+    background: rgb(237, 237, 198);
+    color: rgb(0, 0, 0);
+}
+.inline-inputs {
+    display: flex;
+    width: 100%;
+}
+.inline-inputs p {
+    margin: 0%;
+    padding: 0%;
+}
+.inline-inputs label {
+    max-width: 100%;
+}
+.inline-inputs input {
+    max-width: 20%;
+}
+input::placeholder {
+    color: rgb(116, 123, 82);
+}
+textarea {
+    margin: 0%;
+    padding: 0%;
+    background: rgb(244, 244, 205);
+    font-size: .8rem;
+    line-height: 1.1;
+    padding: 1% 1% 1% 2%;
+}
+select {
+    font-size: .9rem;
+    padding: 0%;
+    padding-left: 1%;
+    background: rgb(227, 227, 179);
+}
+.form-btn {
+    background: rgb(77, 111, 19);
+    padding: .5% 0%;
+}
+.file-upload-input::file-selector-button {
+    background-color: rgb(172, 174, 139);
+    border: solid 1px rgb(136, 155, 94);
+}
+.alert-text {
+    margin: 0%;
+    line-height: 1;
+    font-size: .9rem;
+}
+#status-container {
+    display: flex;
+    flex-direction: column;
+    width: 15%;
+    background: rgb(198, 240, 211);
+    border: 2px solid rgb(124, 156, 69);
+}
+#status-header {
+    font-size: 1.2rem;
+    font-weight: 500;
+    background: rgb(133, 147, 100); 
+    margin: 0%;   
+}
+
+.status-steps {
+    padding: 5% 4%;
+    margin: 0%;
+    font-size: .9rem;
+    line-height: 1.1;
+}
+
+
+
 </style>
 
 <div id="root-container">
-    <p>{{artwork_details_dict['title']}}</p>
-    <p>{{artwork_details_dict['theme']}}</p>
-    <p>{{artwork_details_dict['category']}}</p>
-    <p>{{artwork_details_dict['date_time_uploaded']}}</p>
-    <img src="{{artwork_details_dict['main_photo_path']}}">
+    <p id="page-title">Edit pending artwork details</p>
+    <div id="head-container">
+        <div id="pending-artwork-list">
+            {% if pending_artwork_count > 0 %}
+                <p id="pending-heading">Pending Artworks</p>
+                <p id="pending-text">Please complete details to add artwork to shop. Click artwork cards below to edit.</p>
+            {% endif %}
+            {% for a in pending_details_artworks_dict %}
+            <div class="pending-artwork-card" id="pending-artwork-card" onclick="openPendingArtworkEdit({{pending_details_artworks_dict[a]['uuid']}})">
+                <img src="{{pending_details_artworks_dict[a]['main_photo_path']}}">
+                <p class="pending-artwork-title">{{a}}</p>
+            </div>
+            {% endfor %}
+        </div>
+        <div id="left-column-container">
+            <img src="{{artwork_details_dict['main_photo_path']}}">
+            <div id="pending-artwork-main-details-container">
+                <p>Title: <span style="color: #378109; font-weight: 500;">{{artwork_details_dict['title']}}</span></p>
+                <p>Theme: <span style="color: #378109; font-weight: 500;">{{artwork_details_dict['theme']}}</span></p>
+                <p>Category: <span style="color: #378109; font-weight: 500;">{{artwork_details_dict['category']}}</span></p>
+                <p>Date-time of Upload: <span style="color: #378109; font-weight: 500;">{{artwork_details_dict['date_time_uploaded']}}</span></p>
+            </div>
+        </div>
+        <div id="right-column-container">
+            <div id="basic-details-edit-container">
+                {% if form_name == 'variants' %}
+                <a class="btn btn-primary btn-block btn-large" id="print-btn" href="{{url_for('artist_dashboard_operations.edit_artwork_prints', uuid=artwork_details_dict['uuid'])}}">Set up print price</a>
+                {% else %}
+                <form action="{{url_for('artist_dashboard_operations.pending_artwork_details_edit')}}" method="post">
+                    <p class="form-header">STEP 1 : Edit artwork details</p>
+                    <p>{{form_name}}</p>
+                    <input type="hidden" name="uuid" value="{{artwork_details_dict['uuid']}}">
+                    <input type="text" name="product_title" placeholder="Product title *" required>
+                    <label>Short description</label>
+                    <textarea name="short-description" rows="3" maxlength="400"></textarea>
+                    <label>Long description</label>
+                    <textarea name="long-description" rows="3" maxlength="1000"></textarea>
+                    <input type="number" name="creation-year" step="1" placeholder="Year of creation *" required>
+                    <select id="medium" name="medium" required onchange="openMediumOptions()">
+                        <option value="">Select medium *</option>
+                        <option value="Oil">Oil</option>
+                        <option value="Acrylic">Acrylic</option>
+                        <option value="Watercolor">Watercolor</option>
+                        <option value="Charcoal">Charcoal</option>
+                        <option value="Graphite">Graphite</option>
+                        <option value="Oil pastel">Oil pastel</option>
+                        <option value="Colored pencil">Colored pencil</option>
+                        <option value="Gouche">Gouche</option>
+                        <option value="Pen and ink">Pen and ink</option>
+                        <option value="Chalk">Chalk</option>
+                        <option value="Tempera">Tempera</option>
+                        <option value="digital hand-drawn">Digital hand-drawn</option>
+                    </select>
+                    <select id="surface-input" name="surface">
+                        <option value="">Select surface *</option>
+                        <option value="canvas">Canvas</option>
+                        <option value="paper">Paper</option>
+                        <option value="board">Board</option>
+                    </select>
+                    <div class="inline-inputs" id="inline-inputs">
+                        <label>Size (inch):&nbsp;</label>
+                        <input id="width" type="number" name="width" placeholder="Width">
+                        <p>&nbsp;x&nbsp;</p>
+                        <input id="height" type="number" name="height" placeholder="Height">
+                    </div>
+                    <select id="original-available" name="original-available" onchange="openOriginalOptions()">
+                        <option value="">Is original available? *</option>
+                        <option value="available">Available</option>
+                        <option value="sold">Sold</option>
+                        <option value="not for sale">Not for Sale</option>
+                    </select>
+                    <input id="original-price" type="number" name="original-price" step="1" placeholder="Original Price (₹) *">
+                    <input id="original-discount-percent" type="number" name="original-discount-percent" min="1" max="100" step="1" placeholder="Discount percent on original artwork price">
+                    <select id="sell-prints" name="sell-prints" onchange="openPrintOptions()" required>
+                        <option value="">Sell prints?</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                        <option value="limited">Limited</option>
+                    </select>
+                    <input id="limited-print-count" type="number" min="1" step="1" name="limited-print-count" placeholder="Limited print count *">
+                    <select id="recreation" name="recreation" onchange="openRecreationOptions()" required>
+                        <option value="">Recreation on request?</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                        <option value="limited">Limited</option>
+                    </select>
+                    <input id="limited-recreation-count" type="number" min="1" step="1" name="limited-recreation-count" placeholder="Limited recreation count *">
+                    <button class="btn btn-primary btn-block btn-primary form-btn" name="submit" value="submit-artwork-details">Submit details</button>
+                </form>
+                
+                {% endif %}
+                <form action="{{url_for('artist_dashboard_operations.pending_artwork_details_edit')}}" method='post' enctype="multipart/form-data">
+                    <p class="accent-coral-color alert-text">Artworks with multiple images have more chances of getting sales.</p>
+                    <label>Upload additional images of the artwork</label>
+                    <input class="file-upload-input" type="file" name="artwork-additional-images" accept=".jpg, .jpeg, .png" multiple required>
+                    <button class="btn btn-primary btn-block btn-primary form-btn" name="submit-artwork-images">Submit images</button>
+                </form>
+            </div>
+        </div>
+        <div id="status-container">
+            <div>
+                <p id="status-header">Setup progress</p>
+                {% if step_1 == 'pending' %}
+                <p class="status-steps" style="color: red;">Step 1 : Edit artwork details: Pending</p>
+                {% elif step_1 == 'done' %}
+                <p class="status-steps" style="color: #fdfefd; background-color: green;">Step 1 : Edit artwork details: Complete</p>
+                {% endif %}
+                {% if step_2 == 'pending' %}
+                <p class="status-steps" style="color: red;">Step 2 : Add print prices: Pending</p>
+                {% elif step_2 == 'done' %}
+                <p class="status-steps" style="color: #ffffff; background-color: green;">Step 2 : Add print prices: Complete</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
 </div>
 
+<script>
+// ------------------------------------------ PENDING ARTWORK CLICK -------------------------------------------
+function openPendingArtworkEdit(artwork_uuid) {
+    const artworkUuid = artwork_uuid;
+    const endpointUrl = "{{url_for('artist_dashboard_operations.pending_artwork_details_edit')}}";
+
+    fetch(endpointUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(artworkUuid)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.redirect_url) {
+            window.location.href = data.redirect_url;
+        }
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
+// --------------------------------------------- PRINT PRICE FORM --------------------------------------------------
+const printPriceInputs = document.querySelectorAll('.print-price-input');
+
+function calculatePrintPrice(input_id) {
+    const printPriceInputValue = Number(document.getElementById(input_id).value);
+    const displayId = "inp-" + input_id
+    const displayCalculation = document.getElementById(displayId);
+    const artistCut = .6;
+    const paidToArtist = Math.round(printPriceInputValue * artistCut);
+        displayCalculation.innerHTML = "Paid to artist: ₹" + paidToArtist;
+        displayCalculation.style.display = 'block';
+    
+    if (Number(printPriceInputValue) == 0) {
+        displayCalculation.style.display = 'none';
+    }
+}
+const printBtn = document.getElementById('print-btn');
+const artworkDict = {{artwork_details_dict|tojson}};
+const printStatus = "{{artwork_details_dict['print']}}";
+
+printBtn.addEventListener('click', function(event) {
+    event.preventDefault();
+    if (printStatus === 'no') {
+        alert('You have not chosen to sell prints. Please set up print availability in artwork details first.');
+    } else {
+        window.location.href = "{{url_for('artist_dashboard_operations.edit_artwork_prints', uuid=artwork_details_dict['uuid'])}}";
+    }
+});
+// --------------------------------------------- DETAILS EDIT FORM ---------------------------------------------------
+const surfaceInput = document.getElementById('surface-input');
+const originalAvailableInput = document.getElementById('original-available');
+const originalPriceInput = document.getElementById('original-price');
+const originalDiscountPercentInput = document.getElementById('original-discount-percent');
+const limitedPrintCountInput = document.getElementById('limited-print-count');
+const limitedRecreationCountInput = document.getElementById('limited-recreation-count');
+const inlineInputsInput = document.getElementById('inline-inputs');
+const widthInput = document.getElementById('width');
+const heightInput = document.getElementById('height');
+
+surfaceInput.style.display = 'none';
+originalAvailableInput.style.display = 'none';
+limitedPrintCountInput.style.display = 'none';
+limitedRecreationCountInput.style.display = 'none';
+inlineInputsInput.style.display = 'none';
+
+function openMediumOptions() {
+    const mediumInputValue = document.getElementById('medium').value;
+    if (mediumInputValue == 'digital hand-drawn') {
+        surfaceInput.style.display = 'none';
+        surfaceInput.value = '';
+        surfaceInput.required = false;
+        originalAvailableInput.style.display = 'none';
+        originalAvailableInput.required = false;
+        originalPriceInput.style.display = 'none';
+        originalDiscountPercentInput.style.display = 'none';
+        inlineInputsInput.style.display = 'none';
+        widthInput.required = false;
+        heightInput.required = false;
+        widthInput.value = '';
+        heightInput.value = '';
+    } else {
+        surfaceInput.style.display = 'block';
+        surfaceInput.required = true;
+        originalAvailableInput.style.display = 'block';
+        originalAvailableInput.required = true;
+        inlineInputsInput.style.display = 'flex';
+        widthInput.required = true;
+        heightInput.required = true;
+    }
+}
+
+function openPrintOptions() {
+    const sellPrintsInputValue = document.getElementById('sell-prints').value;
+    if (sellPrintsInputValue == 'limited') {
+        limitedPrintCountInput.style.display = 'block';
+        limitedPrintCountInput.required = true;
+    } else {
+        limitedPrintCountInput.style.display = 'none';
+        limitedPrintCountInput.required = false;
+    }
+}
+
+function hideOriginalInputs() {
+    originalPriceInput.style.display = 'none';
+    originalDiscountPercentInput.style.display = 'none';
+}
+hideOriginalInputs();
+
+function openOriginalOptions() {
+    const originalAvailableValue = document.getElementById('original-available').value;
+
+    if (originalAvailableValue == 'available') {
+        originalPriceInput.style.display = 'block';
+        originalPriceInput.required = true;
+        originalDiscountPercentInput.style.display = 'block';
+    } else {
+        hideOriginalInputs();
+        originalPriceInput.required = false;
+    }
+}
+function openRecreationOptions() {
+    const recreationValue = document.getElementById('recreation').value;
+
+    if (recreationValue == 'limited') {
+        limitedRecreationCountInput.style.display = 'block';
+        limitedRecreationCountInput.required = true;
+    } else {
+        limitedRecreationCountInput.style.display = 'none';
+        limitedRecreationCountInput.required = false;
+    }
+}
+</script>
 {% endblock %}

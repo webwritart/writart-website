@@ -1,0 +1,488 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    #root-container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        background: rgb(144, 175, 144);
+        padding: .5% 3% 2% 3%;
+        align-items: center;
+    }
+    #page-title {
+        font-weight: 700;
+        font-size: 1.4rem;
+    }
+    #head-container{
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+    #pending-artwork-list {
+        width: 15%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2%;
+        border-right: solid 1px rgba(0, 0, 0, 0.372);
+        background: rgb(211, 216, 186);
+        max-height: 85vh;
+        overflow-y: auto;
+    }
+    #pending-heading {
+        font-size: 1rem;
+        font-weight: 700;
+        color: red;
+        margin: 0%;
+    }
+    #pending-text {
+        font-size: 0.9rem;
+        margin-bottom: 20px;
+    }
+    .pending-artwork-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        padding: 5%;
+        margin-bottom: 5%;
+        background: rgb(254, 255, 244);
+        text-align: center;
+    }
+    .pending-artwork-card:hover {
+        cursor: pointer;
+    }
+    .pending-artwork-card img {
+        width: 100%;
+        padding-bottom: 2%;
+    }
+    .pending-artwork-card p {
+        margin: 0%;
+        padding: 0%;
+        line-height: 1;
+    }
+    .pending-artwork-title {
+        font-weight: 500;
+        font-size: .9rem;
+    }
+    .pending-artwork-category-text {
+        opacity: .6;
+        font-size: .8rem;
+    }
+    #cropping-title {
+        font-weight: 700;
+        font-size: 1.4rem;
+        color:#14470c
+    }
+    
+    /* ---------------------------------------------- CROPPING PANEL ---------------------------------------- */
+    
+    #cropping-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: rgb(183, 216, 183);
+        width: 50%;
+        margin-left: 1%;
+        height: 85vh;
+    }
+    #container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+        min-height: 85vh;
+    }
+    #inner-container {
+        width: 60%;
+    }
+    #canvas-container {
+       display: flex;
+       flex-direction: column;
+       width: 100%;
+       align-items: center;
+    }
+    #crop-canvas {
+        max-height: 60vh;
+        cursor: move;
+        background: white;
+        object-fit: contain;
+        border: 2px solid #333333a2;
+    }
+    #size-price {
+        margin: 0%;
+        padding: 0% 0% 0% 2%;
+        background: #ffe5dc;
+        color: black;
+    }
+    #size-price::placeholder {
+        color: rgba(0, 0, 0, 0.592);
+    }
+    .main-btn {
+        background: rgb(68, 92, 40);
+    }
+    /* -------------------------------------------- RIGHT PANEL ---------------------------------- */
+    
+    #print-variants-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: rgb(183, 216, 183);
+        width: 30%;
+        margin-left: 1%;
+        height: 85vh;
+    }
+    #drop-zone {
+        width: 100%;
+        border: 2px dashed #ccc;
+        text-align: center;
+        margin-bottom: 15px;
+        background: white;
+        padding: 5% 0%;
+    }
+    #file-input {
+        padding: 0%;
+    }
+    #img-upload-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 80%;
+        padding: 5% 0%;
+    }
+    #img-upload-container #drop-zone {
+        margin: 0%;
+        width: 100%;
+    }
+    #img-upload-container input[type="file"] {
+        margin: 0%;
+        width: 100%;
+    }
+    #reset-btn:disabled {
+        background: rgb(53, 53, 53);
+    }
+    .print-sub-section-heading {
+        font-weight: 700;
+        font-size: 1rem;
+    }
+    #print-variants-outer-container {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        background: rgb(137, 190, 133);
+        border: 2px solid rgba(0, 0, 0, 0.372);
+        padding: 0%;
+    }
+    #print-variants-container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+    #print-size-main-heading {
+        font-weight: 500;
+        font-size: 1.2rem;
+        color: white;
+        background: rgb(100, 134, 60);
+        margin: 0%;
+        padding: 2% 0% 2% 3%;
+    }
+    #print-size-list {
+        display: flex;
+        width: 100%;
+        padding: 0% 10%;
+    }
+    .print-size-btn {
+        text-decoration: none;
+        color: black;
+        background: #ffffff;
+        margin: 2% 0%;
+        border-radius: 2rem;
+    }
+    .print-size-btn:hover {
+        cursor: pointer;
+        color: black;
+        text-decoration: none;
+        background: #ffc6b1;
+    }
+    .size-list-inner-section {
+        display: flex;
+        flex-direction: column;
+        width: 50%;
+        padding: 5% 2%;
+    }
+    
+</style>
+<div id="root-container">
+    <p id="page-title">Set up Artwork Prints</p>
+    <div id="head-container">
+        <div id="pending-artwork-list">
+            {% if pending_artwork_count > 0 %}
+                <p id="pending-heading">Pending Artworks</p>
+                <p id="pending-text">Please complete details to add artwork to shop. Click artwork cards below to edit.</p>
+            {% endif %}
+            {% for a in pending_details_artworks_dict %}
+            <div class="pending-artwork-card" id="pending-artwork-card" onclick="openPendingArtworkEdit({{pending_details_artworks_dict[a]['uuid']}})">
+                <img src="{{pending_details_artworks_dict[a]['main_photo_path']}}">
+                <p class="pending-artwork-title">{{a}}</p>
+            </div>
+            {% endfor %}
+        </div>
+        <div id="cropping-section">
+            <div id="container">
+                <p id="cropping-title">No size selected</p>
+                <div id="inner-container">
+                    <img id="original-image" src="{{artwork_dict['hd_photo_path']}}" style="display:none;">
+                    <!-- Fixed size crop box frame -->
+                     <div id="canvas-container">
+                        <canvas id="crop-canvas"></canvas>
+                     </div>
+                    <input id="size-price" type="number" name="price" placeholder="Set Price (Minimum ₹1500)">
+                    <button class="btn btn-primary btn-block btn-large main-btn" id="crop-btn">Export Cropped Image</button>
+                </div>
+            </div>
+        </div>
+        <div id="print-variants-section">
+            <div id="img-upload-container">
+                <p id="sub-section-heading">Choose your own file (optional)</p>
+                <div id="drop-zone">Drag & Drop Image Here</div>
+                <input type="file" id="file-input" accept="image/*" onchange="activateResetBtn()">
+                <button class="btn btn-primary btn-block btn-large main-btn" id="reset-btn" onclick="resetPhoto()">Reset uploaded photo</button>
+            </div>  
+            <div id="print-variants-outer-container">
+                <div id="print-variants-container">
+                    <p id="print-size-main-heading">Available print sizes for this artwork</p>
+                    <div id="print-size-list">
+                        <div class="size-list-inner-section">
+                            <p class="print-sub-section-heading">Select photo print Size</p>
+                            {% for size in photo_size_list %}
+                            <a class="print-size-btn" onclick="selectPrintSize('Photo','{{size}}')">{{size}}</a>
+                            {% endfor %}
+                        </div>
+                        <div class="size-list-inner-section">
+                            <p class="print-sub-section-heading">Select Canvas print size</p>
+                            {% for size in canvas_size_list %}
+                            <a class="print-size-btn" onclick="selectPrintSize('Canvas','{{size}}')">{{size}}</a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="Completed-size-container">
+
+        </div>
+    </div>
+    <div id="">
+
+    </div>
+</div>
+
+<script>
+const dropZone = document.getElementById('drop-zone');
+const fileInput = document.getElementById('file-input');
+const canvas = document.getElementById('crop-canvas');
+const resetBtn = document.getElementById('reset-btn');
+const ctx = canvas.getContext('2d');
+const cropBtn = document.getElementById('crop-btn');
+const sizePriceInput = document.getElementById('size-price');
+const artworkUuid = {{artwork_uuid | tojson}};
+let printSizeInch;
+
+let printCategory;
+let canvasRatio = 4/6; // Default ratio for initial canvas setup
+let imgWidth, imgHeight;
+canvas.style.width = '100%';
+
+resetBtn.disabled = true;
+cropBtn.disabled = true;
+
+function activateResetBtn() {
+    resetBtn.disabled = false;
+    cropBtn.disabled = true;
+}
+
+function resetPhoto() {
+    location.reload();
+}
+
+// Image placement and movement states
+let img = new Image();
+let imgX = 0;
+let imgY = 0;
+let isDragging = false;
+let startX = 0;
+let startY = 0;
+
+img.crossOrigin = "anonymous"; // To avoid CORS issues when exporting canvas data
+
+img.src = document.getElementById('original-image').src;
+
+// --- STEP 1: Handle File Drop and Input ---
+function handleFile(file) {
+  if (!file || !file.type.startsWith('image/')) return;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function setCanvasDimensions(imgWidth, imgHeight) {
+    const imgRatio = imgWidth/imgHeight;
+    let canvasWidth;
+    let canvasHeight;
+    if (imgRatio > 1) {
+        // means image is landscape
+        if (canvasRatio < 1) {
+            // means if canvas is portrait so convert it to landscape
+            canvasRatio = 1/canvasRatio;
+        }
+    } else {
+        // means image is portrait
+        if (canvasRatio > 1) {
+            canvasRatio = 1/canvasRatio;
+        }
+    }
+    if (canvasRatio < imgRatio) {
+        canvasHeight = imgHeight;
+        canvasWidth = canvasHeight*canvasRatio;
+
+    } else if (canvasRatio > imgRatio) {
+        canvasWidth = imgWidth;
+        canvasHeight = canvasWidth/canvasRatio;
+    } else {
+        canvasWidth = imgWidth;
+        canvasHeight = imgHeight;
+    }
+    let canvasWidthPixel = canvasWidth + ' px';
+    let canvasHeightPixel = canvasHeight + ' px';
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
+    canvas.style.removeProperty('width');
+    canvas.style.maxWidth = "100%";
+}
+
+img.onload = () => {
+    imgWidth = img.width;
+    imgHeight = img.height;
+    setCanvasDimensions(imgWidth, imgHeight);
+  // Center image inside the fixed canvas on initial load
+  imgX = (canvas.width - img.width) / 2;
+  imgY = (canvas.height - img.height) / 2;
+  drawImageOnCanvas();
+};
+
+// Drop zone event listeners
+dropZone.addEventListener('dragover', (e) => e.preventDefault());
+dropZone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  const file = e.dataTransfer.files[0];
+  handleFile(file);
+});
+fileInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
+
+
+// --- STEP 2: Render Loop ---
+function drawImageOnCanvas() {
+  // Clear the canvas area completely before updating positions
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  // Render image at its current offset coordinates
+  ctx.drawImage(img, imgX, imgY);
+}
+
+
+// --- STEP 3: Drag and Move Logic ---
+canvas.addEventListener('mousedown', (e) => {
+  if (!img.src) return; // Prevent interaction if no image is loaded
+  
+  isDragging = true;
+  // Capture the starting click position
+  startX = e.clientX - imgX;
+  startY = e.clientY - imgY;
+});
+
+window.addEventListener('mousemove', (e) => {
+  if (!isDragging) return;
+
+  // Calculate new coordinates based on mouse delta offsets
+  imgX = e.clientX - startX;
+  imgY = e.clientY - startY;
+
+  // Re-render canvas in real-time
+  drawImageOnCanvas();
+});
+
+window.addEventListener('mouseup', () => {
+  isDragging = false;
+});
+
+
+// --- STEP 4: Extract and Crop Output ---
+cropBtn.addEventListener('click', () => {
+  if (!img.src) return alert('Please upload an image first.');
+
+  // canvas.toDataURL extracts ONLY what is currently visible on the fixed canvas grid
+  const croppedDataUrl = canvas.toDataURL('image/jpeg', 1);
+  const endPointUrl = "{{url_for('artist_dashboard_operations.save_print_variants')}}";
+  const sizePriceValue = sizePriceInput.value;
+  if (!sizePriceValue || sizePriceValue < 1500) {
+    return alert('Please set a valid price (minimum ₹1500).');
+  } else {
+    // Send img data url to backend
+    fetch(endPointUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ image: croppedDataUrl, price: sizePriceValue, canvas_width: canvas.width, canvas_height: canvas.height, category: printCategory, print_size_inch: printSizeInch, artwork_uuid: artworkUuid})
+    })
+    .then(Response => Response.json())
+    .then(data => console.log(data))
+    .then(alert('Cropped image saved successfully!'))
+    .then(location.reload());
+  }
+});
+
+// ------------------------------------------ PENDING ARTWORK CLICK -------------------------------------------
+function openPendingArtworkEdit(artwork_uuid) {
+    const artworkUuid = artwork_uuid;
+    const endpointUrl = "{{url_for('artist_dashboard_operations.pending_artwork_details_edit')}}";
+
+    fetch(endpointUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(artworkUuid)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.redirect_url) {
+            window.location.href = data.redirect_url;
+        }
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
+
+// ------------------------------------------------------------------- PRINT SIZE SELECTION -------------------------------------------
+function selectPrintSize(print_category, size) {
+    printCategory = print_category;
+    printSizeInch = size;
+    const croppingTitle = document.getElementById('cropping-title');
+    const integers = size.match(/\d+(\.\d+)?/g)?.map(Number) ?? [];
+    canvasRatio = integers[0] / integers[1];
+    setCanvasDimensions(imgWidth, imgHeight);
+    croppingTitle.innerHTML = print_category + ' : ' + size;
+    cropBtn.disabled = false;
+    imgX = (canvas.width - img.width) / 2;
+    imgY = (canvas.height - img.height) / 2;
+    drawImageOnCanvas();
+}
+</script>
+
+{% endblock %}

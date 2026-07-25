@@ -27,6 +27,8 @@
         padding: 2%;
         border-right: solid 1px rgba(0, 0, 0, 0.372);
         background: rgb(211, 216, 186);
+        max-height: 80vh;
+        overflow-y: auto;
     }
     #pending-heading {
         font-size: 1rem;
@@ -64,10 +66,7 @@
         font-weight: 500;
         font-size: .9rem;
     }
-    .pending-artwork-category-text {
-        opacity: .6;
-        font-size: .8rem;
-    }
+
     #main-area {
         display: flex;
         width: 85%;
@@ -194,13 +193,12 @@
         <div id="left-side-bar">
             {% if pending_artwork_count > 0 %}
                 <p id="pending-heading">Pending Artworks</p>
-                <p id="pending-text">Please complete details to add artwork to shop.</p>
+                <p id="pending-text">Please complete details to add artwork to shop. Click artwork cards below to edit.</p>
             {% endif %}
             {% for a in pending_details_artworks_dict %}
             <div class="pending-artwork-card" id="pending-artwork-card" onclick="openPendingArtworkEdit({{pending_details_artworks_dict[a]['uuid']}})">
                 <img src="{{pending_details_artworks_dict[a]['main_photo_path']}}">
                 <p class="pending-artwork-title">{{a}}</p>
-                <p class="pending-artwork-category-text">Category: {{pending_details_artworks_dict[a]['category']}}</p>
             </div>
             {% endfor %}
         </div>
@@ -210,14 +208,8 @@
                     <p class="form-heading">Upload Artwork</p>
                     <label>Upload artwork image</label>
                     <input type="file" name="artwork-file" class="file-upload-input" accept=".jpg, .jpeg, .png, image/jpeg, image/png" required>
-                    <input type="text" name="title" placeholder="Title of the artwork" required>
+                    <input id="artwork-title" type="text" name="title" placeholder="Title of the artwork" required>
                     <input type="hidden" name="form-name" value="upload-artwork">
-                    <select name="category" required>
-                        <option value="">Choose category</option>
-                        <option value="print">Print</option>
-                        <option value="original">Original</option>
-                        <option value="recreation">Recreation</option>
-                    </select>
                     <button type="submit" id="add_artwork_submit-btn" name="submit_upload_artwork" value="upload_artwork" class="btn btn-primary btn-block btn-large form-button">Uplaod artwork</button>
                 </form>
                 
@@ -328,31 +320,39 @@ document.getElementById("upload-artwork-form").addEventListener('submit', async 
     event.preventDefault();
     
     const addArtworkSubmitBtn = document.getElementById("add_artwork_submit-btn");
+    const artworkTitleInputValue = document.getElementById('artwork-title').value;
 
-    addArtworkSubmitBtn.ariaDisabled = true;
-    addArtworkSubmitBtn.innerText = 'Sending...';
+    if (artworkTitleInputValue.includes('_')) {
+        alert("please don't use '_' in Artwork Title!");
+    } else {
+        addArtworkSubmitBtn.ariaDisabled = true;
+        addArtworkSubmitBtn.innerText = 'Sending...';
 
-    const addArtworkFormData = new FormData(this);
+        const addArtworkFormData = new FormData(this);
 
-    try {
-        const response = await fetch(addArtworkEndpointUrl, {
-            method: 'POST',
-            body: addArtworkFormData
-        });
-        if (response.ok) {
-            const result = await response.json();
-            alert('New artwork uploaded successfully!');
-            this.reset();
-        } else {
-            alert('Server error: ' + response.statusText);
+        try {
+            const response = await fetch(addArtworkEndpointUrl, {
+                method: 'POST',
+                body: addArtworkFormData
+            });
+            if (response.ok) {
+                const result = await response.json();
+                alert('New artwork uploaded successfully!');
+                this.reset();
+                window.location.reload(true);
+            } else {
+                alert('Server error: ' + response.statusText);
+            }
+        } catch (error) {
+            alert('Network error: Could not reach the server.');
+            console.error(error);
+        } finally {
+            addArtworkSubmitBtn.ariaDisabled = false;
+            addArtworkSubmitBtn.innerText = 'Upload artwork';
         }
-    } catch (error) {
-        alert('Network error: Could not reach the server.');
-        console.error(error);
-    } finally {
-        addArtworkSubmitBtn.ariaDisabled = false;
-        addArtworkSubmitBtn.innerText = 'Upload artwork';
     }
+
+    
 });
 
 // --------------------------------------------- Invoice/Receipt --------------------------------------------------

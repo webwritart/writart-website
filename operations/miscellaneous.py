@@ -14,6 +14,7 @@ from models.tool import Tools
 from pathlib import Path
 import qrcode
 import re
+import pprint
 
 
 
@@ -108,6 +109,8 @@ def image_resize_and_compress_single(filename, root_path,):
             image.convert('RGB')
             thumbnail_filename = thumbnail_filename.split('.')[0] + '.jpg'
         image.save(thumbnail_folder+thumbnail_filename, optimize=True, quality=100)
+        file_path = thumbnail_folder+thumbnail_filename
+        return [file_path]
 
     # ---------------------------------------- LARGE ---------------------------------------- #
     with Image.open(image_path) as image_2:
@@ -128,6 +131,38 @@ def image_resize_and_compress_single(filename, root_path,):
 
     os.remove(image_path)
     print('Image Resize Successful')
+
+
+def create_thumbnail_single(file_input_path, file_output_dir, larger_dimension_pixels):
+    if file_output_dir[-1] != '/':
+        file_output_dir = file_output_dir + '/'
+    os.makedirs(file_output_dir, exist_ok=True)
+
+    filename = Path(file_input_path).name
+
+    thumbnail_filename = filename.split('.')[0] + '_thumbnail.' + filename.split('.')[1]
+    width = 0
+    height = 0
+
+    image_path = file_input_path
+    with Image.open(image_path) as image:
+        width, height = image.size
+        aspect_ratio = width/height
+
+        # -------------------------------------- THUMBNAIL -------------------------------------- #
+        if width > height:
+            new_t_width = larger_dimension_pixels
+            new_t_height = round(larger_dimension_pixels/aspect_ratio)
+        else:
+            new_t_height = larger_dimension_pixels
+            new_t_width = round(larger_dimension_pixels*aspect_ratio)
+        image.thumbnail((new_t_width, new_t_height), Image.Resampling.LANCZOS)
+        if filename.split('.')[1] == 'PNG' or 'png':
+            image.convert('RGB')
+        image.save(file_output_dir+thumbnail_filename, optimize=True, quality=100)
+        file_path = file_output_dir+thumbnail_filename
+        p('Successfully saved')
+        return [file_path]
 
 
 def text_match(target, options_list):
@@ -694,6 +729,70 @@ def multiple_images_to_pdf(filestorage_list, image_directory, output_pdf_directo
     return output_pdf_filepath_with_name
 
 
+def single_png_jpg_to_webp(source_path, output_path, quality):
+    # Open the image file
+    if not os.path.exists(output_path):
+        os.makedirs(output_path)
+
+    if not output_path[-1] == '/':
+        output_path = output_path + '/'
+
+    with Image.open(source_path) as img:
+        # If the image has transparency (PNG), preserve the alpha channel
+        # If it's a JPG, convert it to RGB mode
+        if img.mode in ('RGBA', 'LA') or (img.mode == 'P' and 'transparency' in img.info):
+            # Keeps the transparent background intact
+            pass 
+        else:
+            img = img.convert('RGB')
+        
+        # Save the image as webp with the specified quality (1-100)
+        output_path = output_path+Path(source_path).stem +'.webp'
+
+        img.save(output_path, 'webp', quality=quality)
+    print(f"Successfully converted and saved to {output_path}")
+    return [output_path]
+
+
+def multiple_png_jpg_to_webp(either_directory, or_image_list, output_path, quality):
+    if not os.path.exists(output_path):
+        os.makedirs(output_path)
+
+    if not os.path.exists(either_directory):
+        os.makedirs(either_directory)
+    if not either_directory[-1] == '/':
+        either_directory = either_directory + '/'
+    if not output_path[-1] == '/':
+        output_path = output_path + '/'
+    # Open the image file
+    if either_directory:
+        if not os.path.exists(either_directory):
+            os.makedirs(either_directory)
+        dir_path = Path(either_directory)
+        image_extensions = {".png", ".jpg", ".jpeg"}
+        images = [
+        file for file in dir_path.iterdir() 
+        if file.is_file() and file.suffix.lower() in image_extensions
+        ]
+    elif or_image_list:
+        images = or_image_list
+
+    for image in images:
+        file_name = Path(image).stem + '.webp'
+        with Image.open(image) as img:
+            # If the image has transparency (PNG), preserve the alpha channel
+            # If it's a JPG, convert it to RGB mode
+            if img.mode in ('RGBA', 'LA') or (img.mode == 'P' and 'transparency' in img.info):
+                # Keeps the transparent background intact
+                pass 
+            else:
+                img = img.convert('RGB')
+            
+            # Save the image as webp with the specified quality (1-100)
+            img.save(output_path + file_name, 'webp', quality=quality)
+        print(f"Successfully converted and saved to {output_path}")
+
+
 def create_qr_code(data, box_size, border, background_color, user_uuid):
     qr = qrcode.QRCode(
         version=4,  # Controls the size of the QR Code (1 is 21x21 matrix)
@@ -760,3 +859,82 @@ def create_uuid(existing_uuid_list, uuid_length_in_digit):
             
     return uuid
 
+def calculate_print_size_list(original_image_path):
+    possible_size_dict = {}
+    a_list = []
+    photo_list = []
+    canvas_list = []
+
+    img = Image.open(original_image_path)
+    width, height = img.size
+    if width > height:
+        width, height = height, width
+
+    res1 = 300
+    res2 = 240
+    res3 = 200
+
+    a0 = (33.1*res3, 46.8*res3, 33.1/46.8)
+    a1 = (23.4*res2, 33.1*res2, 23.4/33.1)
+    a2 = (16.5*res2, 23.4*res2, 16.5/23.4)
+    a3 = (11.7*res1, 16.5*res1, 11.7/16.5)
+    a4 = (8.3*res1, 11.7*res1, 8.3/11.7)
+    a5 = (5.8*res1, 8.3*res1, 5.8/8.3)
+    a6 = (4.1*res1, 5.8*res1, 4.1/5.8)
+    photo1 = (3.5*res1, 5*res1, 3.5/5)
+    photo2 = (4*res1, 6*res1, 4/6)
+    photo3 = (5*res1, 7*res1, 5/7)
+    photo4 = (6*res1, 8*res1, 6/8)
+    photo5 = (6*res1, 9*res1, 6/9)
+    photo6 = (8*res1, 10*res1, 8/10)
+    photo7 = (8*res1, 11*res1, 8/11)
+    photo8 = (8*res1, 12*res1, 8/12)
+    photo9 = (10*res1, 12*res1, 10/12)
+    photo10 = (10*res1, 15*res1, 10/15)
+    canvas1 = (8*res1, 10*res1, 8/10)
+    canvas2 = (12*res1, 16*res1, 12/16)
+    canvas3 = (12*res1, 18*res1, 12/18)
+    canvas4 = (18*res2, 24*res2, 18/24)
+    canvas5 = (20*res2, 30*res2, 20/30)
+    canvas6 = (24*res2, 36*res2, 24/36)
+
+    size_dict = {
+        'a0': [a0, 'A0'],
+        'a1': [a1, 'A1'],
+        'a2': [a2, 'A2'],
+        'a3': [a3, 'A3'],
+        'a4': [a4, 'A4'],
+        'a5': [a5, 'A5'],
+        'a6': [a6, 'A6'],
+        'photo1': [photo1, '3.5 x 5 inch'],
+        'photo2': [photo2, '4 x 6 inch'],
+        'photo3': [photo3, '5 x 7 inch'],
+        'photo4': [photo4, '6 x 8 inch'],
+        'photo5': [photo5, '6 x 9 inch'],
+        'photo6': [photo6, '8 x 10 inch'],
+        'photo7': [photo7, '8 x 11 inch'],
+        'photo8': [photo8, '8 x 12 inch'],
+        'photo9': [photo9, '10 x 12 inch'],
+        'photo10': [photo10, '10 x 15 inch'],
+        'canvas1': [canvas1, '8 x 10 inch'],
+        'canvas2': [canvas2, '12 x 16 inch'],
+        'canvas3': [canvas3, '12 x 18 inch'],
+        'canvas4': [canvas4, '18 x 24 inch'],
+        'canvas5': [canvas5, '20 x 30 inch'],
+        'canvas6': [canvas6, '24 x 36 inch']
+    }
+
+    for size in size_dict:
+        if width>size_dict[size][0][0] and height>size_dict[size][0][1]:
+            if 'a' in size and len(size) == 2:
+                a_list.append(size_dict[size][1])
+            if 'photo' in size:
+                photo_list.append(size_dict[size][1])
+            if 'canvas' in size:
+                canvas_list.append(size_dict[size][1])
+    possible_size_dict = {
+        'a': a_list,
+        'photo': photo_list,
+        'canvas': canvas_list
+    }
+    return possible_size_dict

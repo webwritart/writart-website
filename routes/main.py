@@ -6,10 +6,11 @@ from models.member import Member, Workshop, Role, Certificate
 from models.query import Query
 from models.tool import Tools, ArtworkPriceTime
 from flask_login import current_user
-from operations.miscellaneous import log
+from operations.miscellaneous import *
 from models.artist_data import *
 from operations.artist_tools import delete_watermarked_images
 from operations.miscellaneous import image_resize_and_compress_single
+import io
 
 main = Blueprint('main', __name__, static_folder='static', template_folder='templates')
 
@@ -82,6 +83,47 @@ def verification():
 
 @main.route('/temp', methods=['GET', 'POST'])
 def temp():
+    print_width = 4
+    print_height = 6
+    print_ratio = print_width/print_height
+    res = 300
+    print_width_px = print_width*res
+    print_height_px = print_height*res
+    if request.method == 'POST' and request.is_json:
+        img_data = request.get_json()
+        img_data_url = img_data['image']
+        if "," in img_data_url:
+            header, base64_data = img_data_url.split(",", 1)
+        else:
+            base64_data = img_data_url
+
+        image_bytes = base64.b64decode(base64_data)
+
+        image_buffer = io.BytesIO(image_bytes)
+        img = Image.open(image_buffer)
+        img_width = img.width
+        img_height = img.height
+        img_ratio = img_width/img_height
+
+        if img_ratio > 1: # means img is landscape
+            if print_ratio < 1: # means print is portrait
+                new_width = print_height_px
+                new_height = print_width_px
+            else:
+                new_width = print_width_px
+                new_height = print_height_px
+        else: # means img is portrait
+            if print_ratio > 1: # means print is landscape
+                new_width = print_height_px
+                new_height = print_width_px
+            else:
+                new_width = print_width_px
+                new_height = print_height_px
+
+        resized_img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
+        img_save_path = "./static/files/users/477706/temp/artwork/"
+        img_name = 'test.jpg'
+        resized_img.save(img_save_path+img_name, compress_level=0)
     return render_template('temp.html')
 
 
