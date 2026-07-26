@@ -6,11 +6,13 @@ from flask_login import current_user
 from werkzeug.utils import secure_filename
 from extensions import db, current_year, list_files_in_directory, list_folders_in_directory, p
 from models.member import Member, Portrait, Role
+from models.artwork import *
 from operations.miscellaneous import allowed_file, text_match
 from operations.artist_tools import add_watermark, delete_single_watermarked_image, delete_all_from_user
 from models.artist_data import ArtistData
 from pathlib import Path, PureWindowsPath
 from models.tool import ArtworkPriceTime
+import json
 
 studio = Blueprint('studio', __name__, static_folder="static", template_folder='templates/studio/')
 
@@ -18,7 +20,21 @@ studio = Blueprint('studio', __name__, static_folder="static", template_folder='
 @studio.route('/', methods=['GET', 'POST'])
 def home():
     admin = db.session.query(Role).filter_by(name='admin').scalar()
-    return render_template('studio.html', current_year=current_year, logged_in=current_user.is_authenticated, admin=admin)
+    artwork_dict = {}
+
+    all_artworks = db.session.query(Artwork).all()
+    for a in all_artworks:
+        if a.product_title:
+            product_title = a.product_title
+            main_photo_path = a.main_photo_path
+            artist_name = a.artist.name
+            artwork_dict[a.uuid] = {
+                'product_title': product_title,
+                'main_photo_path': main_photo_path,
+                'artist_name': artist_name
+            }
+    return render_template('studio.html', current_year=current_year, logged_in=current_user.is_authenticated, admin=admin,
+                           artwork_dict=artwork_dict)
 
 
 @studio.route('/artists', methods=['GET', 'POST'])
@@ -233,6 +249,33 @@ def portrait_detail():
 @studio.route('/artwork_product', methods=['GET', 'POST'])
 def artwork_product():
     admin = db.session.query(Role).filter_by(name='admin').scalar()
+
+    artwork_uuid = request.args.get('artwork_uuid')
+    artwork = db.session.query(Artwork).filter_by(uuid=artwork_uuid).scalar()
+    main_img_path = artwork.main_photo_path
+    product_title = artwork.product_title
+    short_description = artwork.short_description
+    long_description = artwork.long_description
+    rating = artwork.net_rating
+    artist_name = artwork.artist.name
+    category_list = []
+    if artwork.original_available == 'available':
+        category_list.append(artwork.original_available)
+    if artwork.print == 'yes':
+        category_list.append('Prints')
+    if artwork.print == 'limited':
+        if int(artwork.limited_print_count) > 0:
+            category_list.append('Limited prints')
+    if artwork.recreation == 'yes':
+        category_list.append('Recreations')
+    if artwork.recreation == 'limited':
+        if int(artwork.limited_recreation_count) > 0:
+            category_list.append('Limited recreations')
+    size_dict = json.loads(artwork.print_size_list)
+    photo_sizes = size_dict['photo']
+    canvas_sizes = size_dict['canvas']
+    
+
     product_url = "http://127.0.0.1:5000/studio/artwork_product/"
     return render_template('artwork_product.html', logged_in=current_user.is_authenticated, admin=admin, product_url=product_url)
 

@@ -169,16 +169,18 @@ def pending_artwork_details_edit():
                 recreation = request.form.get('recreation')
                 limited_recreation_count = request.form.get('limited-recreation-count')
                 uuid = request.form.get('uuid')
-
-                size_values = [int(width), int(height)]
-                smaller_value = ''
-                larger_value = ''
-                for i in size_values:
-                    if i == int(min(size_values)):
-                        smaller_value = i
-                    else:
-                        larger_value = i
-                original_size = f"{smaller_value} x {larger_value} inch"
+                if width and height:
+                    size_values = [int(width), int(height)]
+                    smaller_value = ''
+                    larger_value = ''
+                    for i in size_values:
+                        if i == int(min(size_values)):
+                            smaller_value = i
+                        else:
+                            larger_value = i
+                    original_size = f"{smaller_value} x {larger_value} inch"
+                else:
+                    original_size = ''
 
                 artwork_entry = db.session.query(Artwork).filter_by(uuid=uuid).scalar()
                 artwork_entry.product_title = product_title
@@ -189,12 +191,12 @@ def pending_artwork_details_edit():
                 artwork_entry.surface = surface
                 artwork_entry.original_size = original_size
                 artwork_entry.original_available = original_available
-                artwork_entry.original_price = int(original_price)
-                artwork_entry.original_discount_percentage = int(original_discount_percent)
+                artwork_entry.original_price = original_price
+                artwork_entry.original_discount_percentage = original_discount_percent
                 artwork_entry.print = sell_prints
                 artwork_entry.limited_print_count = limited_print_count
                 artwork_entry.recreation = recreation
-                artwork_entry.limited_recreation_count = int(limited_recreation_count)
+                artwork_entry.limited_recreation_count = limited_recreation_count
                 db.session.commit()
                 form_name = 'variants'
                 step_1 = 'done'

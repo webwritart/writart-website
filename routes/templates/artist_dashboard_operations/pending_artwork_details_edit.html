@@ -227,7 +227,6 @@ select {
             <div id="pending-artwork-main-details-container">
                 <p>Title: <span style="color: #378109; font-weight: 500;">{{artwork_details_dict['title']}}</span></p>
                 <p>Theme: <span style="color: #378109; font-weight: 500;">{{artwork_details_dict['theme']}}</span></p>
-                <p>Category: <span style="color: #378109; font-weight: 500;">{{artwork_details_dict['category']}}</span></p>
                 <p>Date-time of Upload: <span style="color: #378109; font-weight: 500;">{{artwork_details_dict['date_time_uploaded']}}</span></p>
             </div>
         </div>
@@ -349,34 +348,7 @@ function openPendingArtworkEdit(artwork_uuid) {
         console.error('Error:', error);
     });
 }
-// --------------------------------------------- PRINT PRICE FORM --------------------------------------------------
-const printPriceInputs = document.querySelectorAll('.print-price-input');
 
-function calculatePrintPrice(input_id) {
-    const printPriceInputValue = Number(document.getElementById(input_id).value);
-    const displayId = "inp-" + input_id
-    const displayCalculation = document.getElementById(displayId);
-    const artistCut = .6;
-    const paidToArtist = Math.round(printPriceInputValue * artistCut);
-        displayCalculation.innerHTML = "Paid to artist: ₹" + paidToArtist;
-        displayCalculation.style.display = 'block';
-    
-    if (Number(printPriceInputValue) == 0) {
-        displayCalculation.style.display = 'none';
-    }
-}
-const printBtn = document.getElementById('print-btn');
-const artworkDict = {{artwork_details_dict|tojson}};
-const printStatus = "{{artwork_details_dict['print']}}";
-
-printBtn.addEventListener('click', function(event) {
-    event.preventDefault();
-    if (printStatus === 'no') {
-        alert('You have not chosen to sell prints. Please set up print availability in artwork details first.');
-    } else {
-        window.location.href = "{{url_for('artist_dashboard_operations.edit_artwork_prints', uuid=artwork_details_dict['uuid'])}}";
-    }
-});
 // --------------------------------------------- DETAILS EDIT FORM ---------------------------------------------------
 const surfaceInput = document.getElementById('surface-input');
 const originalAvailableInput = document.getElementById('original-available');

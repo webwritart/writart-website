@@ -2,16 +2,67 @@
 {% block content %}
 
 <style>
+#root-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 85vh;
+    background: rgb(178, 197, 162);
+}
+#artwork-card-container {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.artwork-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 300px;
+    height: 300px;
+    margin: 1%;
+    background: rgb(255, 255, 255);
+    text-align: center;
+    padding: .8%;
+    padding-bottom: 1.5%;
+    text-decoration: none;
 
+}
+.artwork-card:hover {
+    cursor: pointer;
+    text-decoration: none;
+}
+.artwork-card img {
+    width: 100%;
+    max-height: 85%;
+    padding: 0%;
+    margin: 0%;
+    object-fit: contain;
+}
+.product-title {
+    font-size: .9rem;
+    line-height: 1;
+    margin: 0%;
+    padding: 2% 5% 0% 5%;
+    color: rgb(83, 142, 11);
+    font-weight: 500;
+}
+.artist-name {
+    font-size: .9rem;
+    opacity: .7;
+}
 </style>
 
 <div id="root-container">
     <div id="artwork-card-container">
-        <div class="artwork-card">
-            <img src="">
-            <p class="product-title"></p>
-            <p class="artist-name"></p>
-        </div>
+        {% for a in artwork_dict %}
+        <a class="artwork-card" href="{{url_for('studio.artwork_product', artwork_uuid=a)}}">
+            <img src="{{artwork_dict[a]['main_photo_path']}}">
+            <p class="product-title">{{artwork_dict[a]['product_title']}}</p>
+            <p class="artist-name">Artist: {{artwork_dict[a]['artist_name']}}</p>
+        </a>
+        {% endfor %}
     </div>
 </div>
 
