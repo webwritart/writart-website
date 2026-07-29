@@ -720,15 +720,21 @@ def course():
                     assignments_dict[a.date_time] = material
             assignments_dict = dict(reversed(assignments_dict.items()))
             assignments_count = len(assignments_dict)
-            # ------------------------------ SUBMITTED ASSIGNMENTS GALLERY --------------------------------------- #
+# ------------------------------------------ SUBMITTED ASSIGNMENTS GALLERY --------------------------------------- #
             submitted_assignments_list = []
+            all_submitted_pending_assignments_dict = {}
             current_course_all_assignments_dir = f"static/files/courses/{ws_uuid}/assignment-submissions/"
             student_uuid = current_user.uuid
             dir_path = Path(current_course_all_assignments_dir)
             all_submitted_assignments = [str(f) for f in dir_path.iterdir() if f.is_file()]
             for a in all_submitted_assignments:
+                student_name = a.split('_')[2].split(' ')[0]
+                all_submitted_pending_assignments_dict["../"+a] = {'student_name': student_name}
                 if a.split('_')[1] == str(student_uuid):
                     submitted_assignments_list.append('../'+a)
+            my_submitted_assignment_list_count = len(submitted_assignments_list)
+            all_submitted_pending_assignments_dict_count = len(all_submitted_pending_assignments_dict)
+# --------------------------------------- ALL PENDING SUBMITTED ASSIGNMENTS GALLERY -------------------------------#
             
             # ------------------------------- ASSIGNMENTS SUBMISSION ------------------------------------------ #
             if request.method == 'POST':
@@ -807,7 +813,9 @@ def course():
                            ws_credit_dict=ws_credit_dict, total_ws_credits=total_ws_credits,
                            feedback_topic_list=feedback_topic_list, assessment_vid_dict=assessment_vid_dict, assessment_video_count=assessment_video_count,
                            demo_vid_dict=demo_vid_dict, demo_video_count=demo_video_count, non_enrolment_msg=non_enrolment_msg, pending_count=pending_count, enrolment_alert=enrolment_alert,
-                           non_enrolment_msg_submissions=non_enrolment_msg_submissions, current_year=current_year, submitted_assignments_list=submitted_assignments_list, admin=admin)
+                           non_enrolment_msg_submissions=non_enrolment_msg_submissions, current_year=current_year, submitted_assignments_list=submitted_assignments_list, admin=admin,
+                           all_submitted_pending_assignments_dict=all_submitted_pending_assignments_dict, my_submitted_assignment_list_count=my_submitted_assignment_list_count,
+                           all_submitted_pending_assignments_dict_count=all_submitted_pending_assignments_dict_count)
 
 
 @school.route('/submit-feedback-files', methods=['GET', 'POST'])

@@ -73,6 +73,7 @@
         justify-content: center;
         align-items: center;
         padding: 0% 10% 2% 10%;
+        background: beige;
     }
     #submitted-assignments-container {
         display: flex;
@@ -81,6 +82,43 @@
     .submitted-assignments-image-box img{
         max-height: 200px;
         border: solid 1px black;
+    }
+    .thumbnail-img-gallery {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        background: beige;
+        justify-content: center;
+        align-items: center;
+    }
+    .thumbnail-img-parent-container {
+        display: flex;
+        align-items: center;
+        overflow-x: auto;
+        width: 95%;
+    }
+    .thumbnail-img-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin: 0% .5%;
+    }
+    .thumbnail-img-container {
+        height: 200px;
+        width: 200px;
+        padding: 0%;
+        border: 1px solid black;
+        background: rgb(135, 135, 135);
+    }
+    .thumbnail-img-card img {
+        height: 100%;
+        width: 100%;
+        object-fit: contain;
+    }
+    #thumbnail-img-card  p {
+        font-size: .9rem;
+        margin: 0%;
     }
     .wrapper {
         background: rgb(39, 48, 31);
@@ -145,6 +183,10 @@
         padding: 0%;
         margin: 0%;
     }
+    hr {
+        margin: 3% 0% 0% 0%;
+        padding: 0%;
+    }
 
     @media (max-width: 1200px) {
         .figure {
@@ -186,6 +228,15 @@
         }
         .section-title {
             font-size: 1rem;
+            margin-bottom: .5%;
+        }
+       .thumbnail-img-container {
+            height: 100px;
+            width: 100px;
+       }
+       .thumbnail-img-card  p {
+            font-size: .8rem;
+            margin: 0%;
         }
     }
     @media (max-width: 600px) {
@@ -221,6 +272,7 @@
         }
         .section-title {
             font-size: .8rem;
+            margin-bottom: .5%;
         }
         .testimonial-card {
             padding: 2% 8%;
@@ -233,6 +285,14 @@
             font-size: .65rem;
         }
         
+        .thumbnail-img-container {
+            height: 75px;
+            width: 75px;
+       }
+       .thumbnail-img-card  p {
+            font-size: .7rem;
+            margin: 0%;
+        }
     }
 </style>
 <div class="light-canvas">
@@ -351,16 +411,7 @@
     </div>
 </div>
 {% endif %} -->
-<div id="submitted-assignments-gallery">
-    <p class="section-title">PENDING SUBMITTED ASSIGNMENTS</p>
-    <div id="submitted-assignments-container">
-        {% for a in submitted_assignments_list %}
-        <div class="submitted-assignments-image-box">
-            <img src="{{a}}" width: 100%;>
-        </div>
-        {% endfor %}
-    </div>
-</div>
+
 <div class="wrapper" id="submit-assignments" style="background: rgb(192, 192, 192);">
     <div class="width-80-container assignment-submission-form">
         <p class="section-title">SUBMIT ASSIGNMENTS</p>
@@ -381,6 +432,36 @@
         <!-- </div> -->
     </div>
 </div>
+{% if my_submitted_assignment_list_count > 0 %}
+<div class="thumbnail-img-gallery">
+    <p class="section-title">MY PENDING SUBMITTED ASSIGNMENTS</p>
+    <div class="thumbnail-img-parent-container">
+        {% for a in submitted_assignments_list %}
+        <div class="thumbnail-img-card">
+            <div class="thumbnail-img-container">
+                <img src="{{a}}">
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% if all_submitted_pending_assignments_dict_count > 0 %}
+<div class="thumbnail-img-gallery">
+    <hr>
+    <p class="section-title">ALL PENDING SUBMITTED ASSIGNMENTS</p>
+    <div class="thumbnail-img-parent-container">
+        {% for a in all_submitted_pending_assignments_dict %}
+        <div class="thumbnail-img-card">
+            <div class="thumbnail-img-container">
+                <img src="{{a}}">
+            </div>
+            <p>{{all_submitted_pending_assignments_dict[a]['student_name']}}</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
 <div class="video-wrapper" style="padding: 0% 0%; align-items:start; background: rgb(192, 192, 192);">
     <div class="video-wrapper-container" >
         <p class="section-title">ASSIGNMENT ASSESSMENT</p>
