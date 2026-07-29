@@ -188,6 +188,7 @@ select {
     width: 15%;
     background: rgb(198, 240, 211);
     border: 2px solid rgb(124, 156, 69);
+    justify-content: space-between;
 }
 #status-header {
     font-size: 1.2rem;
@@ -195,20 +196,39 @@ select {
     background: rgb(133, 147, 100); 
     margin: 0%;   
 }
-
 .status-steps {
     padding: 5% 4%;
     margin: 0%;
     font-size: .9rem;
     line-height: 1.1;
 }
-
+#artist-dashboard-btn-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    padding: 0% 5% 5% 5%;
+}
+#artist-dashboard-btn {
+    background: rgb(51, 78, 8);
+    color: white;
+    font-size: .9rem;
+    width: 100%;
+    margin: 2%;
+    padding: 2% 0%;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.553);
+    border: 1px solid rgb(161, 196, 108);
+}
+#artist-dashboard-btn:hover {
+    background: rgb(120, 114, 13);
+    text-decoration: none;
+}
 
 
 </style>
 
 <div id="root-container">
-    <p id="page-title">Edit pending artwork details</p>
+    <p id="page-title">STEP 2: Edit pending artwork details</p>
     <div id="head-container">
         <div id="pending-artwork-list">
             {% if pending_artwork_count > 0 %}
@@ -301,8 +321,9 @@ select {
                 <form action="{{url_for('artist_dashboard_operations.pending_artwork_details_edit')}}" method='post' enctype="multipart/form-data">
                     <p class="accent-coral-color alert-text">Artworks with multiple images have more chances of getting sales.</p>
                     <label>Upload additional images of the artwork</label>
+                    <input type="hidden" name="artwork_uuid" value="{{artwork_details_dict['uuid']}}">
                     <input class="file-upload-input" type="file" name="artwork-additional-images" accept=".jpg, .jpeg, .png" multiple required>
-                    <button class="btn btn-primary btn-block btn-primary form-btn" name="submit-artwork-images">Submit images</button>
+                    <button class="btn btn-primary btn-block btn-primary form-btn" name="submit" value="submit-artwork-images">Submit images</button>
                 </form>
             </div>
         </div>
@@ -319,6 +340,9 @@ select {
                 {% elif step_2 == 'done' %}
                 <p class="status-steps" style="color: #ffffff; background-color: green;">Step 2 : Add print prices: Complete</p>
                 {% endif %}
+            </div>
+            <div id="artist-dashboard-btn-container">
+                <a id="artist-dashboard-btn" href="{{url_for('account.artist_dashboard')}}">Artist dashboard</a>
             </div>
         </div>
     </div>

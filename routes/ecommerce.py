@@ -12,16 +12,20 @@ from datetime import date
 import razorpay
 import os
 from operations.messenger import send_email_support
-from models.payment import Payment
+from models.ecommerce import Payment
 from models.tool import Tools
 from models.member import *
+from models.ecommerce import *
 from datetime import datetime
+from operations.miscellaneous import *
+from models.artwork import *
+from models.marketing import *
 
 now = datetime.now()
 
 load_dotenv()
 
-payment = Blueprint('payment', __name__, static_folder='static', template_folder='templates/payment')
+ecommerce = Blueprint('ecommerce', __name__, static_folder='static', template_folder='templates/ecommerce')
 
 KEY_ID = os.environ.get('RAZORPAY_KEY_ID_TEST')
 KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET_TEST')
@@ -40,7 +44,7 @@ payment_ = {}
 
 
 @login_required
-@payment.route('/')
+@ecommerce.route('/')
 def home():
     session['url'] = url_for('payment.home')
     global current_ws, current_ws_name, current_ws_topic, student
@@ -58,12 +62,114 @@ def home():
         return render_template('account/login.html', prev_page='enroll', instruction=instruction)
 
 
-# @payment.route('/paytm_checkout', methods=['GET', 'POST'])
+@ecommerce.route('/cart', methods=['GET', 'POST'])
+def cart():
+    if current_user.is_authenticated:
+        admin = db.session.query(Role).filter_by(name='admin').scalar()
+        if request.method == 'POST' and request.is_json:
+            p('Delete request posted!')
+
+            return jsonify()
+        if request.method == 'POST' and request.is_json:
+            data = request.get_json()
+            product_type = data['product_type']
+            material = data['material']
+            variant_size = data['size']
+            price = data['unit_price']
+            qty = data['qty']
+            product_uuid = data['artwork_uuid']
+            pprint.pprint(data)
+
+            artwork = db.session.query(Artwork).filter_by(uuid=product_uuid).scalar()
+            product_id = artwork.id
+            all_variants = artwork.variants
+            variant_id = [v.id for v in all_variants if v.category == product_type and v.subcategory == material and v.size == variant_size][0]
+            timestamp = datetime.now().replace(microsecond=0)
+            existing_cart_item_uuid_list = [a.uuid for a in db.session.query(CartItem).all()]
+            uuid = create_uuid(existing_cart_item_uuid_list, 8)
+            all_cart_items = current_user.cart_items
+            existing_product_list = [p for p in current_user.cart_items if p.variant_id == variant_id]
+            if not existing_product_list:
+                p("cart item doesn't exit")
+                entry = CartItem(
+                    uuid=uuid,
+                    quantity=qty,
+                    added_at_price=price,
+                    created_at=timestamp,
+                    product_id=product_id,
+                    variant_id=variant_id,
+                    member_id=current_user.id
+                )
+                db.session.add(entry)
+                db.session.commit()
+            else:
+                existing_product_list[0].quantity = int(existing_product_list[0].quantity) + int(qty)
+                db.session.commit()
+
+
+            return jsonify({"redirect_url": url_for('ecommerce.cart')})
+
+        
+
+        cart_item_dict = {}
+        all_cart_items = current_user.cart_items
+        for i in all_cart_items:
+            artwork = db.session.query(Artwork).filter_by(id=i.product_id).scalar()
+            variant = db.session.query(ArtworkVariants).filter_by(id=i.variant_id).scalar()
+            artwork_uuid = artwork.uuid
+            category = variant.category
+            if category == 'original':
+                subcategory = variant.medium + ' on ' + variant.surface
+            else:
+                subcategory = variant.subcategory + ' ' + category
+
+            cart_item_dict[i.uuid] = {
+                'thumbnail_path': variant.thumbnail_path,
+                'product_title': artwork.product_title,
+                'category': category,
+                'subcategory': subcategory,
+                'size': variant.size,
+                'qty': i.quantity,
+                'marked_price': variant.price,
+                'cart_price': i.added_at_price,
+                'discount': variant.discount_percent,
+                'artwork_uuid': artwork_uuid,
+            }
+
+        return render_template('cart.html', logged_in=current_user.is_authenticated, current_year=current_year, admin=admin,
+                               cart_item_dict=cart_item_dict)
+    else:
+        session['url'] = url_for('account.login', instruction='Login to view Cart')
+        return redirect(url_for('account.login'))
+
+
+@ecommerce.route('/newsletter-subscription', methods=['GET', 'POST'])
+def newsletter_subscription():
+    if request.method == 'POST':
+        if request.form.get('submit') == 'add-newsletter-email':
+            email = request.form.get('newsletter_email')
+            segment = request.form.get('segment')
+            try:
+                entry = NewsLetterList(
+                    email=email,
+                    segment=segment,
+                    member_id=current_user.id
+                )
+                db.session.add(entry)
+                db.session.commit()
+                flash('Successfully added to Newsletter list!', 'success')
+                return redirect(request.url)
+            except Exception as e:
+                p(e)
+                flash('Sorry! Failed in adding to Newsletter list!', 'error')
+                return redirect(request.url)
+    return redirect(url_for('ecommerce.cart'))
+# @ecommerce.route('/paytm_checkout', methods=['GET', 'POST'])
 # def paytm_checkout():
 #     return render_template('paytm_checkout.html')
 
 
-# @payment.route('/initiate_paytm_payment', methods=['GET', 'POST'])
+# @ecommerce.route('/initiate_paytm_payment', methods=['GET', 'POST'])
 # def initiate_paytm_payment():
 #     if request.method == 'POST':
 #         data = request.json
@@ -108,7 +214,7 @@ def home():
 #         })
 
 
-# @payment.route('/callback', methods=['POST'])
+# @ecommerce.route('/callback', methods=['POST'])
 # def callback():
 #     # Paytm sends a form post back to this URL upon payment completion
 #     response_data = request.form.to_dict()
@@ -125,34 +231,34 @@ def home():
 
 # --------------------------------------------- RAZORPAY ----------------------------------------------------
 
-@login_required
-@payment.route('/checkout', methods=['POST'])
-def checkout():
-    global payment_, msg
-    current_ws_name = db.session.query(Tools).filter_by(keyword='current_workshop').first().data
-    current_workshop = db.session.query(Workshop).filter_by(name=current_ws_name).one_or_none()
-    name = current_user.name
-    email = current_user.email
-    phone = current_user.phone
-    state = request.form.get('state')
-    amt = request.form.get('amount')
-    amount = int(f"{amt}00")
-    msg = request.form.get('message')
-    session['msg'] = msg
-    if current_workshop not in current_user.participated:
-        data = {"amount": amount, "currency": "INR", "receipt": "#105", "notes": [state]}
-        session['payment_data'] = client.order.create(data=data)
-        order_id = session['payment_data']['id']
-        return render_template('checkout.html', order_id=order_id, name=name, email=email, phone=phone, key_id=KEY_ID,
-                               ws_name=current_ws_name, state=state, logged_in=current_user.is_authenticated,
-                               message=msg)
-    else:
-        flash("You have already enrolled to this program!", "error")
-        return redirect(url_for('payment.home'))
+# @login_required
+# @ecommerce.route('/checkout', methods=['POST'])
+# def checkout():
+#     global payment_, msg
+#     current_ws_name = db.session.query(Tools).filter_by(keyword='current_workshop').first().data
+#     current_workshop = db.session.query(Workshop).filter_by(name=current_ws_name).one_or_none()
+#     name = current_user.name
+#     email = current_user.email
+#     phone = current_user.phone
+#     state = request.form.get('state')
+#     amt = request.form.get('amount')
+#     amount = int(f"{amt}00")
+#     msg = request.form.get('message')
+#     session['msg'] = msg
+#     if current_workshop not in current_user.participated:
+#         data = {"amount": amount, "currency": "INR", "receipt": "#105", "notes": [state]}
+#         session['payment_data'] = client.order.create(data=data)
+#         order_id = session['payment_data']['id']
+#         return render_template('checkout.html', order_id=order_id, name=name, email=email, phone=phone, key_id=KEY_ID,
+#                                ws_name=current_ws_name, state=state, logged_in=current_user.is_authenticated,
+#                                message=msg)
+#     else:
+#         flash("You have already enrolled to this program!", "error")
+#         return redirect(url_for('payment.home'))
 
 
 @login_required
-@payment.route('/verify', methods=['POST'])
+@ecommerce.route('/verify', methods=['POST'])
 def verify():
     resp = request.get_data()
     response = resp.decode('utf-8').split('&')
@@ -293,6 +399,6 @@ def verify():
     # return render_template('order.html', logged_in=current_user.is_authenticated)
 
 
-@payment.route('/ws_registration_success')
+@ecommerce.route('/ws_registration_success')
 def ws_registration_success():
     return render_template('school/ws_registration_success.html', logged_in=current_user.is_authenticated)

@@ -3,6 +3,7 @@ from sqlalchemy.sql.operators import truediv
 
 from extensions import db
 from flask_login import UserMixin
+from models.marketing import *
 
 member_workshop = db.Table('member_workshop',
                            db.Column('member_id', db.Integer, db.ForeignKey('member.id')),
@@ -67,6 +68,8 @@ class Member(UserMixin, db.Model):
     invoices = db.relationship('Invoice', backref='member')
     given_coas = db.relationship('Coa', foreign_keys='Coa.artist_id', back_populates='artist')
     taken_coas = db.relationship('Coa', foreign_keys='Coa.client_id', back_populates='client')
+    cart_items = db.relationship('CartItem', backref='member')
+    newsletter_subscriptions = db.relationship('NewsLetterList', backref='member')
 
 
     def __repr__(self):

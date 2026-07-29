@@ -136,11 +136,12 @@ def image_resize_and_compress_single(filename, root_path,):
 def create_thumbnail_single(file_input_path, file_output_dir, larger_dimension_pixels):
     if file_output_dir[-1] != '/':
         file_output_dir = file_output_dir + '/'
-    os.makedirs(file_output_dir, exist_ok=True)
+    if not os.path.exists(file_output_dir):
+        os.makedirs(file_output_dir)
 
     filename = Path(file_input_path).name
 
-    thumbnail_filename = filename.split('.')[0] + '_thumbnail.' + filename.split('.')[1]
+    thumbnail_filename = Path(filename).stem + '_thumbnail' + Path(filename).suffix
     width = 0
     height = 0
 
@@ -750,7 +751,7 @@ def single_png_jpg_to_webp(source_path, output_path, quality):
         output_path = output_path+Path(source_path).stem +'.webp'
 
         img.save(output_path, 'webp', quality=quality)
-    print(f"Successfully converted and saved to {output_path}")
+    p(f"Successfully converted and saved to {output_path}")
     return [output_path]
 
 

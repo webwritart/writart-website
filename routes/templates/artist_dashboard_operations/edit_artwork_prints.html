@@ -205,6 +205,9 @@
         text-decoration: none;
         background: #ffc6b1;
     }
+    .print-size-btn:active {
+        background: #FF8559;
+    }
     .size-list-inner-section {
         display: flex;
         flex-direction: column;
@@ -214,7 +217,7 @@
     
 </style>
 <div id="root-container">
-    <p id="page-title">Set up Artwork Prints</p>
+    <p id="page-title">STEP 3: Set up Artwork Prints</p>
     <div id="head-container">
         <div id="pending-artwork-list">
             {% if pending_artwork_count > 0 %}
@@ -238,7 +241,7 @@
                         <canvas id="crop-canvas"></canvas>
                      </div>
                     <input id="size-price" type="number" name="price" placeholder="Set Price (Minimum ₹1500)">
-                    <button class="btn btn-primary btn-block btn-large main-btn" id="crop-btn">Export Cropped Image</button>
+                    <button class="btn btn-primary btn-block btn-large main-btn" id="crop-btn" onclick="reloadPageThroughBacknd()">Export Cropped Image</button>
                 </div>
             </div>
         </div>
@@ -256,13 +259,13 @@
                         <div class="size-list-inner-section">
                             <p class="print-sub-section-heading">Select photo print Size</p>
                             {% for size in photo_size_list %}
-                            <a class="print-size-btn" onclick="selectPrintSize('Photo','{{size}}')">{{size}}</a>
+                            <a class="print-size-btn" id="Photo-{{size}}" value="Photo-{{size}}" onclick="selectPrintSize('Photo','{{size}}')">{{size}}</a>
                             {% endfor %}
                         </div>
                         <div class="size-list-inner-section">
                             <p class="print-sub-section-heading">Select Canvas print size</p>
                             {% for size in canvas_size_list %}
-                            <a class="print-size-btn" onclick="selectPrintSize('Canvas','{{size}}')">{{size}}</a>
+                            <a class="print-size-btn" id="Canvas-{{size}}" value="Canvas-{{size}}" onclick="selectPrintSize('Canvas','{{size}}')">{{size}}</a>
                             {% endfor %}
                         </div>
                     </div>
@@ -287,6 +290,7 @@ const ctx = canvas.getContext('2d');
 const cropBtn = document.getElementById('crop-btn');
 const sizePriceInput = document.getElementById('size-price');
 const artworkUuid = {{artwork_uuid | tojson}};
+const existingVariantBtnValueList = {{ existing_variant_btn_value_list | tojson }};
 let printSizeInch;
 
 let printCategory;
@@ -471,6 +475,9 @@ function openPendingArtworkEdit(artwork_uuid) {
 
 // ------------------------------------------------------------------- PRINT SIZE SELECTION -------------------------------------------
 function selectPrintSize(print_category, size) {
+    changeExistingVariantBtn();
+    const currentBtn = document.getElementById(print_category+'-'+size);
+    currentBtn.style.backgroundColor = '#e1ff1c';
     printCategory = print_category;
     printSizeInch = size;
     const croppingTitle = document.getElementById('cropping-title');
@@ -483,6 +490,37 @@ function selectPrintSize(print_category, size) {
     imgY = (canvas.height - img.height) / 2;
     drawImageOnCanvas();
 }
+function changeExistingVariantBtn() {
+    const elements = document.querySelectorAll('.print-size-btn');
+    elements.forEach(element => {
+        element.style.backgroundColor = 'white';
+    })
+    existingVariantBtnValueList.forEach((btnValue, index) => {
+        const variantBtn = document.querySelector(`[value="${btnValue}"]`);
+        variantBtn.style.backgroundColor = '#488c5d';
+    });
+}
+function reloadPageThroughBacknd() {
+    const endpointUrl = "{{url_for('artist_dashboard_operations.edit_artwork_prints')}}";
+    
+    fetch(endpointUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(artworkUuid)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.redirect_url) {
+            window.location.href = data.redirect_url;
+        }
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
+changeExistingVariantBtn();
 </script>
 
 {% endblock %}

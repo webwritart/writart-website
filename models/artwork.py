@@ -35,6 +35,7 @@ class Artwork(db.Model):
     art_name = db.Column(db.String(200)) # pseudo name of the artist, Optional
     member_id = db.Column(db.Integer, db.ForeignKey('member.id'))
     variants = db.relationship('ArtworkVariants', backref='artwork')
+    cart_items = db.relationship('CartItem', backref='product')
 
     def __repr__(self):
         return f"{self.uuid}--{self.title}--{self.member_id}"
@@ -44,6 +45,7 @@ class ArtworkVariants(db.Model):
     __tablename__ = "artwork_variants"
 
     id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.Integer, unique=True) # 8 digit uuid
     category = db.Column(db.String(200)) # eg. print or recreation
     subcategory = db.Column(db.String(200)) # eg. photo or canvas for print category
     medium = db.Column(db.String(200))
@@ -51,11 +53,15 @@ class ArtworkVariants(db.Model):
     size = db.Column(db.String(200))
     price = db.Column(db.Integer)
     discount_percent = db.Column(db.Integer)
+    photo_for_print = db.Column(db.String(500))
+    thumbnail_path = db.Column(db.String(500))
     inventory = db.Column(db.Integer)
     delivery_charge = db.Column(db.Integer)
     urgent_charge_percentage = db.Column(db.Integer)
     delivered_as = db.Column(db.String(500)) # eg. Rolled or stretched
+    status = db.Column(db.String(200)) # eg active, inactive, unapproved, objection etc
     artwork_id = db.Column(db.Integer, db.ForeignKey('artwork.id'))
+    cart_items = db.relationship('CartItem', backref='variant')
 
     def __repr__(self):
         return f"{self.category}--{self.subcategory}--{self.size}--{self.price}"

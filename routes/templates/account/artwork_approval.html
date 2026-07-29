@@ -1,0 +1,87 @@
+{% extends "artist_manager.html" %}
+{% block pending_artwork %}
+<style>
+
+.details-section-parent {
+    width: 25%;
+    display: flex;
+    padding: 0% .5% 0% .5%;
+}
+.details-inner-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    background: rgb(226, 233, 203);
+    padding: 4%;
+    width: 100%;
+}
+#main-img-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 30vh;
+    border: 3px solid rgba(0, 0, 0, 0.283);
+    background: white;
+    padding: 2%;
+}
+#main-img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+.details-text-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background: rgb(233, 244, 210);
+    height: 100%;
+    padding: 2%;
+    margin-top: 3%;
+}
+.details-text-container p {
+    text-align: left;
+    font-size: .8rem;
+    margin: 0%;
+    font-weight: 500;
+}
+.text-data {
+    color: green;
+}
+</style>
+<div class="details-section-parent">
+    <div class="details-inner-container">
+        <div id="main-img-container">
+            <img src="{{artwork_dict['main_img_path']}}">
+        </div>
+        <div class="details-text-container">
+            <p>Title: <span class="text-data">{{artwork_dict['title']}}</span></p>
+            <p>Theme: <span class="text-data">{{artwork_dict['theme']}}</span></p>
+            <p>Artist: <span class="text-data">{{artwork_dict['artist_name']}}</span></p>
+            <p>Created: <span class="text-data">{{artwork_dict['creation_year']}}</span></p>
+            <p>Rating: <span class="text-data">{{artwork_dict['rating']}}</span></p>
+            <p>Uplaoded on: <span class="text-data">{{artwork_dict['date_time_uplaoded']}}</span></p>
+            <p>Product-title: <span class="text-data">{{artwork_dict['product_title']}}</span></p>
+            <p>Original available: <span class="text-data">{{artwork_dict['original_available']}}</span></p>
+            <p>Original-size: <span class="text-data">{{artwork_dict['original_size']}}</span></p>
+            <p>Original-price: <span class="text-data">{{artwork_dict['original_price']}}</span></p>
+            <p>Original-discount: <span class="text-data">{{artwork_dict['original_discount_percent']}}%</span></p>
+            <p>Original-medium-surface: <span class="text-data">{{artwork_dict['medium']}} on {{artwork_dict['surface']}}</span></p>
+            <p>Short-description: <br><span class="text-data">{{artwork_dict['short_description']}}</span></p>
+            <p>Long-description: <br><span class="text-data">{{artwork_dict['long_description']}}</span></p>
+        </div>
+    </div>
+</div>
+<div class="details-section-parent">
+    <div class="details-inner-container">
+        <div class="details-text-container">
+            <p>Print : <span class="text-data">{{artwork_dict['print']}}</span></p>
+            <p>Limited print remaining count: <span class="text-data">{{artwork_dict['limited_print_count']}}</span></p>
+            <p>Print-size list: <span class="text-data">{{artwork_dict['print_size_list']}}</span></p>
+            <p>Recreation : <span class="text-data">{{artwork_dict['recreation']}}</span></p>
+            <p>Limited recreation count : <span class="text-data">{{artwork_dict['limited_recreation_count']}}</span></p>
+            <p>Recreation media: <span class="text-data">{{artwork_dict['recreation_media_list']}}</span></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

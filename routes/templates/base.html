@@ -20,6 +20,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Writart Studio</title>
+    <link rel="stylesheet" href="https://cloudflare.com">
+
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
     <link
       rel="stylesheet"
@@ -69,6 +71,9 @@
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('school.classroom') }}"><b>Classroom</b></a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('studio.home') }}"><b>Art-shop</b></a>
+            </li>
       </ul>
       <form class="d-flex" >
       {% if not logged_in %}
@@ -81,7 +86,7 @@
         <ul class="navbar-nav">
           {% if admin in current_user.role %}
           <li class="nav-item">
-            <a class="nav-link" href="{{url_for('manager.home')}}">Manager</a>
+            <a class="nav-link" href="{{url_for('manager.home')}}"><b>Manager</b></a>
           </li>
           {% endif %}
           {% if animation_admin in current_user.role %}
@@ -91,11 +96,14 @@
           {% endif %}
           {% if client in current_user.role %}
           <li class="nav-item">
-            <a class="nav-link" href="{{url_for('client_section.client_dashboard')}}">DASHBOARD</a>
+            <a class="nav-link" href="{{url_for('client_section.client_dashboard')}}">Dashboard</a>
           </li>
           {% endif %}
           <li class="nav-item">
-            <a class="nav-link" href="{{url_for('account.main_dashboard')}}"><b>DASHBOARD</b></a>
+            <a class="nav-link" href="{{url_for('account.main_dashboard')}}"><b>Dashboard</b></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{url_for('ecommerce.cart')}}"><img id="nav-menu-shopping-cart-icon" src="/static/images/art_shop/cart.webp"><b> Cart</b></a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{{url_for('account.logout')}}"><b>Log Out</b></a>

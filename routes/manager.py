@@ -10,7 +10,7 @@ from extensions import db, current_year, p
 from models.videos import Demo
 from operations.messenger import send_email_school, send_email_studio, send_email_support
 from operations.quiz import add_quiz_data_to_db
-from models.payment import Payment
+from models.ecommerce import Payment
 from models.query import Query
 from models.tool import Tools, ArtworkPriceTime
 from models.member import Member, Workshop, Role, Portrait, WorkshopVideos, Certificate, WorkshopDemo

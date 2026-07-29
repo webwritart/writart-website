@@ -81,7 +81,6 @@ body {
     background-color: #FFFFFF;
 	
 }
-
 .box h1 {
     color: black;
 }
@@ -108,7 +107,12 @@ body {
     padding: 0%;
     margin: 0%;
 }
-
+#nav-menu-shopping-cart-icon {
+    max-height: .9rem;
+    position: relative;
+    object-fit: contain;
+    top: -2px;
+}
 a {
     text-decoration: none;
     text-align: center;

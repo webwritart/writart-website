@@ -13,6 +13,7 @@ from models.artist_data import ArtistData
 from pathlib import Path, PureWindowsPath
 from models.tool import ArtworkPriceTime
 import json
+from babel.numbers import format_currency
 
 studio = Blueprint('studio', __name__, static_folder="static", template_folder='templates/studio/')
 
@@ -24,7 +25,9 @@ def home():
 
     all_artworks = db.session.query(Artwork).all()
     for a in all_artworks:
-        if a.product_title:
+        variants = a.variants
+        active_variants = [a for a in variants if a.status == 'active']
+        if (a.original_available == 'available' and a.sale_status != 'sold') or len(active_variants) > 0:
             product_title = a.product_title
             main_photo_path = a.main_photo_path
             artist_name = a.artist.name
@@ -246,38 +249,135 @@ def portrait_detail():
                            portrait_price_time_dict=portrait_price_time_dict)
 
 
-@studio.route('/artwork_product', methods=['GET', 'POST'])
+@studio.route('/artwork-product', methods=['GET', 'POST'])
 def artwork_product():
     admin = db.session.query(Role).filter_by(name='admin').scalar()
 
+    additional_img_path_list = []
     artwork_uuid = request.args.get('artwork_uuid')
     artwork = db.session.query(Artwork).filter_by(uuid=artwork_uuid).scalar()
     main_img_path = artwork.main_photo_path
+    if artwork.additional_photo_paths:
+        additional_img_path_list = json.loads(artwork.additional_photo_paths)
+    additional_img_path_list.append(main_img_path)
+    additional_img_path_list.reverse()
     product_title = artwork.product_title
     short_description = artwork.short_description
     long_description = artwork.long_description
+    theme = artwork.theme
     rating = artwork.net_rating
+    if not rating:
+        rating = 0
     artist_name = artwork.artist.name
+    original_size = artwork.original_size
+    original_price = artwork.original_price
+    original_discount_percent = artwork.original_discount_percentage
+    if original_discount_percent:
+        original_discount_percent = int(original_discount_percent)
+    else:
+        original_discount_percent = 0
+    original_medium = artwork.medium
+    original_surface = artwork.surface
+    original_medium_surface = original_medium + ' on ' + original_surface
     category_list = []
-    if artwork.original_available == 'available':
-        category_list.append(artwork.original_available)
-    if artwork.print == 'yes':
-        category_list.append('Prints')
-    if artwork.print == 'limited':
-        if int(artwork.limited_print_count) > 0:
-            category_list.append('Limited prints')
-    if artwork.recreation == 'yes':
-        category_list.append('Recreations')
-    if artwork.recreation == 'limited':
-        if int(artwork.limited_recreation_count) > 0:
-            category_list.append('Limited recreations')
-    size_dict = json.loads(artwork.print_size_list)
-    photo_sizes = size_dict['photo']
-    canvas_sizes = size_dict['canvas']
-    
+    if len([v for v in artwork.variants if v.category == 'print' and v.status == 'active']) > 0 and artwork.print == 'yes':
+        category_list.append(('print', 'Prints'))
+        
+    if len([v for v in artwork.variants if v.category == 'print' and v.status == 'active']) > 0 and artwork.print == 'limited':
+            category_list.append(('print', 'Limited prints'))
+    if len([v for v in artwork.variants if v.category == 'recreation' and v.status == 'active']) > 0 and artwork.recreation == 'yes':
+        category_list.append(('recreation', 'Recreations'))
+    if len([v for v in artwork.variants if v.category == 'recreation' and v.status == 'active']) > 0 and artwork.recreation == 'limited':
+            category_list.append(('recreation', 'Limited recreations'))
+    if len([v for v in artwork.variants if v.category == 'original' and v.status == 'active']) > 0:
+            category_list.append(('original', 'Original'))
+    category_count = len(category_list)
+    count = 1
+    category_text = ''
+    for c in category_list:
+        if count == 1:
+            category_text = c[1]
+        elif count < category_count:
+            category_text = category_text + ", " + c[1]
+        else:
+            category_text = category_text + ' and ' + c[1]
+        count += 1
 
-    product_url = "http://127.0.0.1:5000/studio/artwork_product/"
-    return render_template('artwork_product.html', logged_in=current_user.is_authenticated, admin=admin, product_url=product_url)
+    # size_dict = json.loads(artwork.print_size_list)
+    # photo_sizes = size_dict['photo']
+    # canvas_sizes = size_dict['canvas']
+    print_variants = {}
+    recreation_variants = {}
+    artwork_variants = artwork.variants
+    for v in artwork_variants:
+        if v.category == 'print':
+            if v.discount_percent:
+                discount_percent = int(v.discount_percent)
+            else:
+                discount_percent = 0
+            print_variants[v.uuid] = {
+                'uuid': v.uuid,
+                'category': v.category,
+                'subcategory': v.subcategory,
+                'medium': v.medium,
+                'surface': v.surface,
+                'size': v.size,
+                'price': v.price,
+                'discount_percent': discount_percent,
+                'inventory': v.inventory,
+                'delivery_charge': v.delivery_charge,
+                'urgent_charge_percentage': v.urgent_charge_percentage,
+                'delivered_as': v.delivered_as,
+                'display_img_path': v.thumbnail_path
+            }
+        elif v.category == 'recreation':
+            if v.discount_percent:
+                discount_percent = int(v.discount_percent)
+            else:
+                discount_percent = 0
+            recreation_variants[v.uuid] = {
+                'uuid': v.uuid,
+                'category': v.category,
+                'subcategory': v.subcategory,
+                'medium': v.medium,
+                'surface': v.surface,
+                'size': v.size,
+                'price': v.price,
+                'discount_percent': discount_percent,
+                'inventory': v.inventory,
+                'delivery_charge': v.delivery_charge,
+                'urgent_charge_percentage': v.urgent_charge_percentage,
+                'delivered_as': v.delivered_as,
+                'display_img_path': v.thumbnail_path
+            }
+    artwork_dict = {
+        'artwork_uuid': artwork_uuid,
+        'main_img_path': main_img_path,
+        'additional_img_path_list': additional_img_path_list,
+        'product_title': product_title,
+        'short_description': short_description,
+        'long_description': long_description,
+        'theme': theme,
+        'rating': rating,
+        'artist_name': artist_name,
+        'category': category_text,
+        'category_count': category_count,
+        'product_type': category_list,
+        'original_size': original_size,
+        'original_medium_surface': original_medium_surface,
+        'original_price': original_price,
+        'original_discount_percentage': int(original_discount_percent)
+    }
+    photo_variant_count = len([a for a in artwork_variants if a.subcategory == 'Photo' and a.status == 'active'])
+    canvas_variant_count = len([a for a in artwork_variants if a.subcategory == 'Canvas' and a.status == 'active'])
+    all_variant_count = photo_variant_count+canvas_variant_count
+    if artwork.original_available == 'available' and artwork.sale_status != 'sold':
+        original = 'yes'
+    else:
+        original = 'no'
+    product_url = url_for('studio.artwork_product')
+    return render_template('artwork_product.html', logged_in=current_user.is_authenticated, admin=admin, product_url=product_url, artwork_dict=artwork_dict,
+                           print_variants=print_variants, recreation_variants=recreation_variants, photo_variant_count=photo_variant_count, canvas_variant_count=canvas_variant_count, all_variant_count=all_variant_count, original=original)
 
 
 @studio.route('/artwork-pricing', methods=['GET', 'POST'])

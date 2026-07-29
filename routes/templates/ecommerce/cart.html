@@ -1,0 +1,426 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+#root-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    min-height: 85vh;
+    background: beige;
+    padding: 2% 10%;
+
+}
+#cart-title {
+    width: 100%;
+    font-size: 2.5rem;
+    font-weight: 400;
+}
+#main-section {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+#items-container {
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+    border: 2px solid rgb(210, 215, 151);
+    border-radius: 2rem;
+    background: white;
+    align-items: center;
+    overflow-y: auto;
+    height: 60vh;
+}
+#items-container-header {
+    width: 100%;
+    font-size: 1.1rem;
+    font-weight: 500;
+    padding: 1% 0% 1% 5%;
+    background: rgb(208, 224, 172);
+    text-transform: uppercase;
+}
+
+.item-card {
+    display: flex;
+    align-items: center;
+    padding: 0% 5%;
+    width: 100%;
+    border-bottom: 2px solid rgb(199, 201, 146);
+    height: 12vh;
+}
+.item-card-img-container {
+    height: 10vh;
+    width: 8vw;
+    padding:0%;
+    margin: 0%;
+}
+.item-card img {
+    object-fit: contain;
+    height: 100%;
+    width: 100%;
+    padding: 0%;
+    margin: 0%;
+}
+.item-card-text-container {
+    display: flex;
+    flex-direction: column;
+    padding: 2%;
+    width: 100%;
+    justify-content: center;
+}
+.item-card-text-container p {
+    width: 100%;
+    padding: 0%;
+    margin:0%;
+    line-height: 1;
+}
+
+.item-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: rgb(79, 112, 19);
+    margin: 0%;
+    padding: 0%;
+    line-height: 1;
+    text-align: start;
+}
+.item-title:hover {
+    text-decoration: none;
+    color: black;
+}
+.item-detail-key {
+    font-size: .75rem;
+    font-weight: 700;
+    opacity: .8;
+    margin: 0%;
+    padding: 0%;
+    line-height: 1;
+}
+.item-detail {
+    opacity: .6;
+    font-weight: 500;
+    font-size: .75rem;
+    margin: 0%;
+    padding: 0%;
+    line-height: 1;
+}
+.price {
+    margin: 0%;
+    padding-top: 1% !important;
+    font-weight: 900;
+    font-size: 1rem;
+    line-height: 1;
+}
+.del-qty-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100%;
+    align-items: end;
+    justify-content: space-between;
+    padding: 2% 0%;
+}
+.trash-icon {
+    width: 15px;
+    height: auto;
+    filter: saturate(0%);
+    cursor: pointer;
+}
+.qty {
+    padding: 0%;
+    padding-left: 5%;
+    margin: 0%;
+    width: 40%;
+    color: rgb(0, 0, 0);
+    background: rgb(234, 240, 204);
+}
+/* ------------------------------------------------ SUMMARY SECTION ------------------------------------------ */
+
+#order-summary-container {
+    display: flex;
+    flex-direction: column;
+    width: 30%;
+    border: 2px solid rgb(210, 215, 151);
+    border-radius: 2rem;
+    background: white;
+    align-items: center;
+    overflow-y: auto;
+    margin-left: 1.5%;
+}
+#summary-container-header {
+    width: 100%;
+    font-size: 1.1rem;
+    font-weight: 500;
+    padding: 2.5% 0% 2.5% 5%;
+    background: rgb(208, 224, 172);
+}
+.summary-text-line {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0% 5%;
+}
+.key {
+    font-weight: 500;
+    opacity: .5;
+    font-size: 1rem;
+}
+.value {
+    font-weight:700;
+    font-size: 1.2rem;
+}
+#total-text-line {
+    border-top: 2px solid rgb(208, 224, 172);
+    padding-top: 3%;
+}
+#total-value {
+    font-weight: 700;
+    font-size: 1.4rem;
+}
+#promo-code-container {
+    display: flex;
+    width: 100%;
+    padding: 0% 5%;
+}
+#promo-code-input, #promo-code-btn {
+    background: rgb(237, 242, 221);
+    border: none;
+    border-radius: 3rem;
+}
+#promo-code-input {
+    width: 70%;
+    margin-right: 2%;
+    color: black;
+}
+#promo-code-input::placeholder {
+    opacity: .5;
+}
+#promo-code-btn {
+    width: 30%;
+    background: rgb(47, 52, 10);
+    color: white;
+}
+#checkout-btn-container {
+    display: flex;
+    width: 100%;
+    padding: 0% 5%;
+}
+#checkout-btn {
+    width: 100%;
+    border: none;
+    border-radius: 3rem;
+    background: rgb(47, 52, 10);
+    color: white;
+    padding: 2.5% 0%;
+}
+
+/* --------------------------------------------------- NEWSLETTER ------------------------------------------------- */
+#newsletter-card {
+    width: 100%;
+    background-image: linear-gradient(rgba(69, 95, 7, 0.881), rgba(56, 107, 11, 0.841)), url('/static/images/art_shop/newsletter_background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    height: 20vh;
+    border-radius: 2rem;
+    margin: 2% 0%;
+    align-items: center;
+    padding: 0% 10%;
+}
+#newsletter-text {
+    width: 70%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0%;
+    padding-top: 1%;
+}
+#newsletter-text p {
+    color: white;
+    font-weight: 400;
+    font-size: 2.4rem;
+    text-align: left;
+    width: 100%;
+}
+#newsletter-form {
+    width: 30%;
+}
+#newsletter-email {
+    background: rgb(237, 242, 221);
+    border: none;
+    border-radius: 3rem;
+    text-align: center;
+}
+#newsletter-email::placeholder {
+    opacity: .5;
+}
+#newsletter-btn {
+    width: 100%;
+    background: rgb(138, 225, 6);
+    color: rgb(0, 0, 0);
+    padding: 2.5% 0%;
+    border-radius: 3rem;
+    border: none;
+}
+</style>
+
+<div id="root-container">
+    <p id="cart-title">Your cart</p>
+    <div id="main-section">
+        <div id="items-container">
+            <p id="items-container-header">Items</p>
+            {% for i in cart_item_dict %}
+            <div class="item-card">
+                <div class="item-card-img-container">
+                    <a href="{{url_for('studio.artwork_product', artwork_uuid=cart_item_dict[i]['artwork_uuid'])}}"><img src="{{cart_item_dict[i]['thumbnail_path']}}"></a>
+                </div>
+                <div class="item-card-text-container">
+                    <a class="item-title" href="{{url_for('studio.artwork_product', artwork_uuid=cart_item_dict[i]['artwork_uuid'])}}"><p>{{cart_item_dict[i]['product_title']}}</p></a>
+                    <p><span class="item-detail-key">Type: </span><span class="item-detail">{{cart_item_dict[i]['category']}}</span></p>
+                    <p><span class="item-detail-key">Material: </span><span class="item-detail">{{cart_item_dict[i]['subcategory']}}</span></p>
+                    <p class="price" id="{{i}}"></p>
+                </div>
+                <div class="del-qty-container">
+                    <a class="trash-icon" onclick="deleteCartItem('{{i}}')"><img src="/static/images/art_shop/trash-10-24.ico"></a>
+                    <input id="{{i}}-qty" class="qty" type="number" min="1", value="{{cart_item_dict[i]['qty']}}" oninput="calculateOrderSummary()">
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div id="order-summary-container">
+            <p id="summary-container-header">Order summary</p>
+            <div class="summary-text-line">
+                <p class="key">Subtotal</p>
+                <p class="value" id="subtotal-amt">subtotal</p>
+            </div>
+            <div class="summary-text-line">
+                <p class="key" id="discount-key"></p>
+                <p class="value" id="discount-amt"></p>
+            </div>
+            <div class="summary-text-line">
+                <p class="key">Delivery fee:</p>
+                <p class="value" id="delivery-charge-value"></p>
+            </div>
+            <div class="summary-text-line" id="total-text-line">
+                <p id="total-key">Total</p>
+                <p id="total-value">Total price</p>
+            </div>
+            <div id="promo-code-container">
+                <input type="text" id="promo-code-input" placeholder="Add promo code">
+                <input type="button" id="promo-code-btn" value="Apply">
+            </div>
+            <div id="checkout-btn-container">
+                <button id="checkout-btn" type="button">Go to checkout</button>
+            </div>
+        </div>
+    </div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <p class="{{category}}">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <div id="newsletter-card">
+        <div id="newsletter-text">
+            <p>STAY CONNECTED ABOUT OUR<br>LATEST OFFERS</p>
+        </div>
+        <form id="newsletter-form" action="{{url_for('ecommerce.newsletter_subscription')}}" method="post">
+            <input id="newsletter-email" type="email" name="newsletter_email" placeholder="Your email address">
+            <input type="hidden" name="segment" value="art-shop">
+            <button id="newsletter-btn" type="submit" name="submit" value="add-newsletter-email">Subscribe to Newsletter</button>
+        </form>
+    </div>
+    
+</div>
+
+<script>
+const cartItemDict = {{ cart_item_dict | tojson }};
+let priceTag;
+let subtotal = 0;
+let markedPrice = 0;
+let price;
+let quantity;
+let aggregateMarkedPrice = 0;
+let deliveryChargeAmt = 0;
+
+function updatePrice() {
+    for (const [key, value] of Object.entries(cartItemDict)) {
+        priceTag = document.getElementById(key);
+        const markedPriceUnit =  Number(cartItemDict[key]['marked_price']);
+        const cartUnitPrice = Number(cartItemDict[key]['cart_price']);
+        const itemDiscount = Number(cartItemDict[key]['discount']);
+        const cartQty = Number(document.getElementById(`${key}-qty`).value);
+        const aggregateItemPrice = cartUnitPrice*cartQty;
+        const aggregateItemPriceFormatted = "₹" + Number(aggregateItemPrice).toLocaleString('en-IN');
+        const markedPrice = markedPriceUnit*cartQty
+        const markedPriceFormatted = "₹" + Number(markedPrice).toLocaleString('en-IN');
+
+        if (itemDiscount != 0) {
+            priceTag.innerHTML = `${aggregateItemPriceFormatted}&ensp;<s style="opacity:.5; font-size: .9rem;">${markedPriceFormatted}</s><span style="color:#77ab16; font-size:.8rem;">&ensp;${itemDiscount}% discount</span>`;
+        } else {
+            priceTag.innerHTML = `${aggregateItemPriceFormatted}&ensp;<s style="opacity:.5; font-size: .9rem;">${markedPriceFormatted}</s>`;
+        }
+    }
+}
+
+function calculateOrderSummary() {
+    subtotal = 0;
+    aggregateMarkedPrice = 0;
+    for (const [key, value] of Object.entries(cartItemDict)) {
+        price = Number(cartItemDict[key]['cart_price']);
+        markedPrice = Number(cartItemDict[key]['marked_price']);
+        quantity = document.getElementById(`${key}-qty`).value;
+        let total = price * Number(quantity)
+        const totalItemPriceFormattd = "₹"+total.toLocaleString('en-IN');
+        subtotal+=total
+        aggregateMarkedPrice+=markedPrice*quantity
+    }
+    const subtotalAmt = document.getElementById('subtotal-amt');
+    subtotalAmt.innerHTML = "₹"+Number(subtotal).toLocaleString('en-IN');
+
+    const discountKey = document.getElementById('discount-key');
+    const discountInput = document.getElementById('discount-amt');
+    const deliveryChargeTag = document.getElementById('delivery-charge-value');
+    const totalPriceTag = document.getElementById('total-value');
+
+    const discountAmount = Number(aggregateMarkedPrice - subtotal);
+    const discountAmountFormatted = "₹" + discountAmount.toLocaleString('en-IN');
+    const aggregateDiscountPercent = Math.round(Number((discountAmount/aggregateMarkedPrice)*100));
+    const aggregateDiscountPercentFormatted = "₹"+aggregateDiscountPercent.toLocaleString('en-IN');
+    const total = Math.round(Number(subtotal)+Number(deliveryChargeAmt));
+    const totalFormatted = "₹"+total.toLocaleString('en-IN');
+
+    discountKey.innerHTML = `Discount(-${aggregateDiscountPercentFormatted}%)`;
+    discountInput.innerHTML = `<span style="color: #77ab16;">${discountAmountFormatted}</span>`;
+    deliveryChargeTag.innerHTML = `<span style="color:#77ab16;">Free</span>`;
+    totalPriceTag.innerHTML = totalFormatted;
+}
+
+function deleteCartItem(item_uuid) {
+    const endpointUrl = "{{url_for('ecommerce.cart')}}";
+    const data = {
+        cartItemUuid: item_uuid,
+        job: 'delete cart item'
+    };
+    alert(item_uuid);
+    fetch(endPointUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(Response => Response.json())
+    .then(data => console.log(data))
+    .then(alert('Item deleted successfully!'))
+    .then(location.reload());
+  }
+updatePrice();
+calculateOrderSummary();
+</script>
+{% endblock %}

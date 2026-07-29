@@ -9,7 +9,7 @@ from models.b2b import VidEditProject
 from routes.account import account
 from routes.main import main
 from routes.manager import manager
-from routes.payment import payment
+from routes.ecommerce import ecommerce
 from routes.school import school
 from routes.gallery import gallery
 from routes.studio import studio
@@ -25,6 +25,7 @@ from models.artist_data import ArtistData
 from sqlalchemy import create_engine, text
 from models.tool import Tools, ArtworkPriceTime, SupportTicket
 from models.news import News
+from models.marketing import *
 from models.transactions import *
 
 
@@ -55,7 +56,7 @@ login_manager.init_app(app)
 app.register_blueprint(main, url_prefix='/')
 app.register_blueprint(account, url_prefix='/account')
 app.register_blueprint(school, url_prefix='/school')
-app.register_blueprint(payment, url_prefix='/payment')
+app.register_blueprint(ecommerce, url_prefix='/ecommerce')
 app.register_blueprint(manager, url_prefix='/manager')
 app.register_blueprint(gallery, url_prefix='/gallery')
 app.register_blueprint(studio, url_prefix='/studio')

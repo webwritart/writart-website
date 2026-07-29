@@ -1,5 +1,5 @@
 import os
-from flask import Blueprint, render_template, request, flash, send_file, redirect, url_for, session
+from flask import Blueprint, render_template, request, flash, send_file, redirect, url_for, session, jsonify
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from operations.artist_tools import add_watermark
@@ -22,6 +22,8 @@ from io import BytesIO
 from zipfile import ZipFile, ZIP_DEFLATED
 import shutil
 from pathlib import Path
+import json
+from babel.numbers import format_currency
 
 
 account = Blueprint('account', __name__, static_folder='static', template_folder='templates/account')
@@ -2174,3 +2176,84 @@ def change_password():
     else:
         instruction = 'Please first login to change password'
         return render_template('account/login.html', prev_page='change-password', instruction=instruction)
+
+
+
+# ---------------------------------------------- MANAGER ----------------------------------------------------------------#
+@account.route('/artist-manager', methods=['GET', 'POST'])
+def artist_manager():
+    admin = db.session.query(Role).filter_by(name='admin').scalar()
+    if current_user.is_authenticated:
+   
+        pending_artworks_dict = {}
+        artworks = db.session.query(Artwork).all()
+        for a in artworks:
+            if a.approval_status != 'approved':
+                pending_artworks_dict[a.uuid] = {
+                    'uuid': a.uuid,
+                    'main_photo_url': a.main_photo_path,
+                    'artist': a.artist.name
+                }
+
+        return render_template('artist_manager.html', logged_in=current_user.is_authenticated, current_year=current_year, admin=admin,
+                            pending_artworks_dict=pending_artworks_dict)
+    else:
+        session['url'] = url_for('account.artist_manager')
+        return redirect(url_for('account.login', instruction='Login to go to Artist-manager'))
+
+
+@account.route('/artwork-approval', methods=['GET', 'POST'])
+def artwork_approval():
+    admin = db.session.query(Role).filter_by(name='admin').scalar()
+    if current_user.is_authenticated:
+        if request.method == 'POST' and request.is_json:
+            data = request.get_json()
+            uuid = data
+            session['approval_artwork_uuid'] = uuid
+            
+            return jsonify({"redirect_url": url_for('account.artwork_approval')})
+# ----------------------------------------------------------------------------------------------------------------------------------
+        pending_artworks_dict = {}
+        artworks = db.session.query(Artwork).all()
+        for a in artworks:
+            if a.approval_status != 'approved':
+                pending_artworks_dict[a.uuid] = {
+                    'uuid': a.uuid,
+                    'main_photo_url': a.main_photo_path,
+                    'artist': a.artist.name
+                }
+        
+        uuid = session.get('approval_artwork_uuid')
+        artwork = db.session.query(Artwork).filter_by(uuid=uuid).scalar()
+        artwork_dict = {
+            'uuid': artwork.uuid,
+            'title': artwork.title,
+            'product_title': artwork.product_title,
+            'main_img_path': artwork.main_photo_path,
+            'additional_img_path_list': artwork.additional_photo_paths,
+            'short_description': artwork.short_description,
+            'long_description': artwork.long_description,
+            'theme': artwork.theme,
+            'rating': artwork.net_rating,
+            'artist_name': artwork.artist.name,
+            'medium': artwork.medium,
+            'surface': artwork.surface,
+            'original_size': artwork.original_size,
+            'original_price': format_currency(artwork.original_price, 'INR', locale='en_IN'),
+            'original_discount_percent': artwork.original_discount_percentage,
+            'print': artwork.print,
+            'limited_print_count': artwork.limited_print_count,
+            'print_size_list': json.loads(artwork.print_size_list),
+            'recreation': artwork.recreation,
+            'limited_recreation_count': artwork.limited_recreation_count,
+            'recreation_media_list': artwork.recreation_media_list,
+            'original_available': artwork.original_available,
+            'creation_year': artwork.creation_year,
+            'hd_photo_path': artwork.hd_photo_path,
+            'date_time_uplaoded': artwork.date_time_uploaded,
+        }
+        p(artwork_dict['uuid'])
+        return render_template('artwork_approval.html', logged_in=current_user.is_authenticated, current_year=current_year, admin=admin,
+                           pending_artworks_dict=pending_artworks_dict, artwork_dict=artwork_dict, uuid=uuid)
+    else:
+        return redirect(url_for('account.login', instruction='Login to Continue'))

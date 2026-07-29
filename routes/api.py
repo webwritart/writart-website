@@ -2,7 +2,7 @@ import pprint
 from flask import Blueprint, render_template, request, jsonify
 from models.member import Member, Workshop
 from models.query import Query
-from models.payment import Payment
+from models.ecommerce import Payment
 from extensions import db, p
 from models.tool import Tools
 

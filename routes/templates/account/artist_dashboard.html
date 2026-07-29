@@ -191,9 +191,10 @@
     <p id="title">Artist Dashboard</p>
     <div id="column-container">
         <div id="left-side-bar">
+            <p id="pending-heading">Pending Artworks</p>
+            <p id="pending-text">Please complete details to add artwork to shop. Click artwork cards below to edit.</p>
             {% if pending_artwork_count > 0 %}
-                <p id="pending-heading">Pending Artworks</p>
-                <p id="pending-text">Please complete details to add artwork to shop. Click artwork cards below to edit.</p>
+                
             {% endif %}
             {% for a in pending_details_artworks_dict %}
             <div class="pending-artwork-card" id="pending-artwork-card" onclick="openPendingArtworkEdit({{pending_details_artworks_dict[a]['uuid']}})">

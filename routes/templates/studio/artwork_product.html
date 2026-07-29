@@ -26,6 +26,9 @@
         align-items: end;
     }
     #main-img-container {
+        width: 100%;
+        height: 60vh;
+        border: solid 1px black;
     }
     #main-img-container img {
         width: 100%;
@@ -36,6 +39,8 @@
         display: flex;
         width: 100%;
         overflow-x: auto;
+        background: rgb(228, 238, 201);
+        padding: 2% 0%;
     }
     
     #images-thumbnails-container img {
@@ -43,6 +48,8 @@
         height: 150px;
         object-fit: contain;
         padding: 2%;
+        margin: 0% 2%;
+        background: white;
     }
     #purchase-container {
         width: 45%;
@@ -58,6 +65,10 @@
     #short-description {
         margin: 0%;
     }
+    #theme {
+        margin: 0%;
+        padding: 0%;
+    }
     #rating {
         font-weight: bold;
         color: green;
@@ -69,8 +80,23 @@
         margin: 1% 0%;
         background-color: rgb(223, 230, 210);
     }
-    #price {
-        font-size: 2rem;
+    #original_medium_surface, #original_size {
+        font-weight: 500;
+        font-size: 1.2rem;
+        margin: 0%;
+        color: rgb(83, 114, 40);
+        padding: 0%;
+    }
+    .price {
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+    #original-price {
+        padding-top: 1%;
+    }
+    #discount-percent-text {
+        color: green;
+        font-weight: 500;
     }
     #quantity-div {
         display: flex;
@@ -312,46 +338,45 @@
     <div id="head-container">
         <div id="image-container">
             <div id="main-img-container">
-                <img src="/static/files/users/477706/temp/artwork/Bhairav.jpg">
+                <img id="main-image" src="{{artwork_dict['main_img_path']}}">
             </div>
             <div id="images-thumbnails-container">
-                <img src="/static/files/users/477706/artworks/spiritual/thumbnail/tmb1.jpg">
-                <img src="/static/files/users/477706/artworks/spiritual/thumbnail/tmb2.jpg">
-                <img src="/static/files/users/477706/artworks/spiritual/thumbnail/tmb3.jpg">
-                <img src="/static/files/users/477706/artworks/spiritual/thumbnail/tmb4.jpg">
-                <img src="/static/files/users/477706/artworks/spiritual/thumbnail/tmb5.jpg">
-                <img src="/static/files/users/477706/artworks/spiritual/thumbnail/tmb5.jpg">
+                <!-- {% for image_url in artwork_dict['additional_img_path_list'] %}
+                <img src="{{image_url}}" onclick="selectMainImage('{{image_url}}')">
+                {% endfor %} -->
             </div>
         </div>
         <div id="purchase-container">
-            <p id="artwork-title">Artwork Title</p>
-            <p id="short-description">It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English.</p>
-            <div class="star-rating" style="--rating: 4.5;" aria-label="Rating of this product is 3.5 out of 5"><p>4.5 out of 5</p></div>
-            <p id="artist-name"><b>Artist:</b> Artist Name</p>
-            <p id="category">PRINT</p>
-            <select id="size">
-                <option value="">Choose size</option>
-                {% for s in size_list %}
-                <option value="{{s}}">{{s}}</option>
+            <p id="artwork-title">{{artwork_dict['product_title']}}</p>
+            <p id="short-description">{{artwork_dict['short_description']}}</p>
+            <p id="theme">Theme: <span style="color: green; font-weight:400">{{artwork_dict['theme']}}</span></p>
+            <div class="star-rating" style="--rating: {{artwork_dict['rating']}};" aria-label="Rating of this product is {{artwork_dict['rating']}} out of 5"><p>{{artwork_dict['rating']}} out of 5</p></div>
+            <p id="artist-name"><b>Artist:</b> {{artwork_dict['artist_name']}}</p>
+            <p id="category">{{artwork_dict['category']}}</p>
+            <select id="product-type" name="product_type" oninput="showProductTypeOptions()">
+                {% for type in artwork_dict['product_type'] %}
+                <option value="{{type[0]}}">{{type[1]}}</option>
                 {% endfor %}
             </select>
-            <select id="material">
+            <select id="material" name="material" oninput="showMaterialOptions()">
                 <option value="">Choose material</option>
-                {% for m in material_list %}
-                <option value="{{m}}">{{m}}</option>
-                {% endfor %}
             </select>
-            <p id="price">₹32,000</p>
+            <select id="size" name="size" oninput="calculateShowPrice()">
+                <option value="">Choose size</option>
+            </select>
+            <p id="original_medium_surface">{{artwork_dict['original_medium_surface']}}</p>
+            <p id="original_size">{{artwork_dict['original_size']}}</p>
             <div id="quantity-div">
                 <p>Quantity</p>
-                <input id="qty" name="qty" type="number" value="1">
+                <input id="qty" name="qty" type="number" min="1" value="1" oninput="calculateShowPrice()">
             </div>
+            <p id="price" class="price"></p>
+            <p id="discount-percent-text">{{artwork_dict['original_discount_percentage']}}% discount applied!</p>
             <div id="buy-btn-div">
                 <btn id="btn1" class="btn btn-primary btn-block btn-large">Buy Now</btn>
-                <btn id="btn2" class="btn btn-primary btn-block btn-large">Add to Cart</btn>
+                <btn id="btn2" class="btn btn-primary btn-block btn-large" onclick="addToCart()">Add to Cart</btn>
             </div>
             <btn class="btn btn-primary btn-block btn-large btn3">Propose your price</btn>
-            <btn class="btn btn-primary btn-block btn-large btn3">Request Original</btn>
             <div id="social">
                 <img src="/static/images/social-icons/whatsapp.jpg">
                 <a href="https://facebook.com/sharer/sharer.php?u={{ request.url }}"
@@ -483,6 +508,260 @@
     </div>
 </div>
 
-<script src="/static/js/studio.js"></script>
+<script>
+const productTypeInput = document.getElementById('product-type');
+const sizeInput = document.getElementById('size');
+const materialInput = document.getElementById('material');
+const priceInput = document.getElementById('price');
+const originalMediumSurface = document.getElementById('original_medium_surface');
+const originalSize = document.getElementById('original_size');
+const qtyDiv = document.getElementById('quantity-div');
+const qtyInput = document.getElementById('qty');
+const discountPercentText = document.getElementById('discount-percent-text');
+const imgThumbnailContainer = document.getElementById('images-thumbnails-container');
+const mainImage = document.getElementById('main-image');
+const printVariantDict = {{ print_variants | tojson }};
+const recreationVariantsDict = {{ recreation_variants | tojson }};
+const artworkDict = {{ artwork_dict | tojson }};
+const photoVariantCount = {{ photo_variant_count | tojson }};
+const canvasVariantCount = {{ canvas_variant_count | tojson }};
+const allVariantCount = {{ all_variant_count | tojson }};
+const originalOptionAvailable = {{ original | tojson }};
+let sellingPrice;
+
+function addToCart() {
+    const endpointUrl = "{{url_for('ecommerce.cart')}}";
+    const productTypeInputValue = productTypeInput.value;
+    const materialInputValue = materialInput.value;
+    const sizeInputValue = sizeInput.value;
+    const qtyInputValue = qtyInput.value;
+    const artworkUuid = artworkDict['artwork_uuid'];
+    let productSize;
+    let productMaterial;
+    if (productTypeInputValue == 'original') {
+        productSize = originalSize.textContent;
+        productMaterial = 'Original';
+    } else {
+        productSize = sizeInputValue;
+        productMaterial = materialInputValue;
+    }
+    const cartItemData = {
+        product_type: productTypeInputValue,
+        material: productMaterial,
+        size: productSize,
+        unit_price: sellingPrice,
+        qty: qtyInputValue,
+        artwork_uuid: artworkUuid
+    };
+    fetch(endpointUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(cartItemData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.redirect_url) {
+            window.location.href = data.redirect_url;
+        }
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
+
+function loadAdditionalImages() {
+    for (const imgUrl of artworkDict['additional_img_path_list']) {
+    const newImage = document.createElement('img');
+    newImage.src = imgUrl;
+    newImage.addEventListener('click', function() {
+        selectMainImage(imgUrl);
+    });
+    imgThumbnailContainer.appendChild(newImage);
+}}
+
+loadAdditionalImages();
+
+function selectMainImage(image_url) {
+    mainImage.src = image_url;
+}
+
+discountPercentText.style.display = 'none';
+showProductType();
+showProductTypeOptions();
+showMaterialOptions();
+
+function showProductType() {
+    productTypeInput.options.length = 0;
+
+    for (const type of artworkDict['product_type']) {
+        if (type[0] == 'print') {
+            let newOption = new Option(type[1], type[0]);
+            productTypeInput.add(newOption);
+        } else if ( type[0] == 'original') {
+            let newOption = new Option(type[1], type[0]);
+            productTypeInput.add(newOption);
+        } else if (type[0] == 'recreation') {
+            let newOption = new Option(type[1], type[0]);
+            productTypeInput.add(newOption);
+        }
+    }
+}
+
+function showProductTypeOptions() {
+    const productTypeInputValue = productTypeInput.value;
+    if (productTypeInputValue == 'print') {
+        sizeInput.style.display = 'block';
+        materialInput.style.display = 'block';
+        originalMediumSurface.style.display = 'none';
+        originalSize.style.display = 'none';
+        qtyDiv.style.display = 'flex';
+        materialInput.options.length = 0;
+        if (photoVariantCount > 0) {
+            let newPrintMaterialOption = new Option('Photo print', 'Photo');
+            materialInput.add(newPrintMaterialOption);
+        }
+        if (canvasVariantCount > 0) {
+            let newPrintMaterialOption2 = new Option('Canvas print', 'Canvas');
+            materialInput.add(newPrintMaterialOption2);
+        }
+
+
+    } else if (productTypeInputValue == 'recreation') {
+        sizeInput.style.display = 'block';
+        materialInput.style.display = 'block';
+        qtyDiv.style.display = 'flex';
+        originalMediumSurface.style.display = 'none';
+        originalSize.style.display = 'none';
+        
+    } else if (productTypeInputValue == 'original') {
+        sizeInput.style.display = 'none';
+        materialInput.style.display = 'none';
+        qtyDiv.style.display = 'none';
+        originalMediumSurface.style.display = 'block';
+        originalSize.style.display = 'block';
+        
+    }
+    calculateShowPrice();
+}
+
+function showMaterialOptions() {
+    const materialInputValue = materialInput.value;
+    const productTypeInputValue = productTypeInput.value;
+    if (productTypeInputValue == 'print') {
+        if (materialInputValue == 'Photo') {
+            sizeInput.options.length = 0;
+            
+            for (const [key, value] of Object.entries(printVariantDict)) {
+                if (printVariantDict[key]['subcategory'] == 'Photo') {
+                    let option = document.createElement("option");
+                    option.value = printVariantDict[key]['size'];
+                    option.textContent = printVariantDict[key]['size'];
+                    sizeInput.appendChild(option);
+                }
+            }
+        } else if (materialInputValue == 'Canvas') {
+            sizeInput.options.length = 0;
+            
+            for (const [key, value] of Object.entries(printVariantDict)) {
+                if (printVariantDict[key]['subcategory'] == 'Canvas') {
+                    let option = document.createElement("option");
+                    option.value = printVariantDict[key]['size'];
+                    option.textContent = printVariantDict[key]['size'];
+                    sizeInput.appendChild(option);
+                }
+            }
+        }
+    }
+    calculateShowPrice();
+}
+function calculateShowPrice() {
+    const productTypeInputValue = productTypeInput.value;
+    const materialInputValue = materialInput.value;
+    const sizeInputValue = sizeInput.value;
+    const qtyInputValue = qtyInput.value;
+    let totalPrice;
+    let discountPercent;
+    let variantDisplayImageUrl;
+    if (productTypeInputValue == 'print') {
+        if (materialInputValue == 'Photo') {
+            for (const [key, value] of Object.entries(printVariantDict)) {
+                if ( printVariantDict[key]['category']  == 'print' && printVariantDict[key]['subcategory'] == 'Photo' && printVariantDict[key]['size'] == sizeInputValue) {
+                    variantDisplayImageUrl = printVariantDict[key]['display_img_path'];
+                    mainImage.src = variantDisplayImageUrl;
+                    let unitPrice = printVariantDict[key]['price'];
+                    let sellingPriceWithoutDiscount = Number(unitPrice)*Number(qtyInputValue)
+                    discountPercent = Number(printVariantDict[key]['discount_percent']);
+                    sellingPrice = Math.round(((100 - Number(discountPercent))/100)*Number(unitPrice));
+                    totalPrice = Number(sellingPrice)*Number(qtyInputValue);
+                    const totalPriceFormatted = '₹'+totalPrice.toLocaleString('en-IN');
+                    const sellingPriceFormatted = '₹'+sellingPrice.toLocaleString('en-IN');
+                    const sellingPriceWithoutDiscountFormatted = '₹'+sellingPriceWithoutDiscount.toLocaleString('en-IN');
+                    if (Number(discountPercent) > 0) {
+                        priceInput.innerHTML = `${totalPriceFormatted}&ensp;<s style="opacity:.5;">${sellingPriceWithoutDiscountFormatted}</s>`;
+                        priceInput.value = sellingPrice;
+                        discountPercentText.innerHTML = discountPercent + '%' + ' discount applied!';
+                        discountPercentText.style.display = 'block';
+                    } else {
+                        priceInput.innerHTML = totalPriceFormatted;
+                        priceInput.value = sellingPrice;
+                        discountPercentText.style.display = 'none';
+                    }
+                }
+
+            }
+        } else if (materialInputValue == 'Canvas') {
+            for (const [key, value] of Object.entries(printVariantDict)) {
+                if ( printVariantDict[key]['category']  == 'print' && printVariantDict[key]['subcategory'] == 'Canvas' && printVariantDict[key]['size'] == sizeInputValue) {
+                    variantDisplayImageUrl = printVariantDict[key]['display_img_path'];
+                    mainImage.src = variantDisplayImageUrl;
+                    let unitPrice = printVariantDict[key]['price'];
+                    discountPercent = Number(printVariantDict[key]['discount_percent']);
+                    sellingPrice = Math.round(((100 - Number(discountPercent))/100)*Number(unitPrice));
+                    totalPrice = Number(sellingPrice)*Number(qtyInputValue);
+                    const totalPriceFormatted = '₹'+totalPrice.toLocaleString('en-IN');
+                    const sellingPriceFormatted = '₹'+sellingPrice.toLocaleString('en-IN');
+                    if (Number(discountPercent) > 0) {
+                        priceInput.innerHTML = `${sellingPriceFormatted}&ensp;<s style="opacity:.5;">${totalPriceFormatted}</s>`;
+                        priceInput.value = sellingPrice;
+                        discountPercentText.innerHTML = discountPercent + '%' + ' discount applied!';
+                        discountPercentText.style.display = 'block';
+                    } else {
+                        priceInput.innerHTML = sellingPriceFormatted;
+                        priceInput.value = sellingPrice;
+                        discountPercentText.style.display = 'none';
+                    }
+                }
+
+            }
+        }
+        
+            
+    } else if (productTypeInputValue == 'recreation') {
+        console.log('');
+    } else if (productTypeInputValue == 'original') {
+        variantDisplayImageUrl = artworkDict['main_img_path'];
+        unitPrice = artworkDict['original_price'];
+        totalPrice = artworkDict['original_price'];
+        discountPercent = artworkDict['original_discount_percentage'];
+        sellingPrice = Math.round(((100 - Number(discountPercent))/100)*Number(totalPrice));
+        const totalPriceFormatted = '₹'+totalPrice.toLocaleString('en-IN');
+        const sellingPriceFormatted = '₹'+sellingPrice.toLocaleString('en-IN');
+        if (Number(discountPercent) > 0) {
+            priceInput.innerHTML = `${sellingPriceFormatted}&ensp;<s style="opacity:.5;">${totalPriceFormatted}</s>`;
+            priceInput.value = sellingPrice;
+            discountPercentText.innerHTML = discountPercent + '%' + ' discount applied!';
+            discountPercentText.style.display = 'block';
+        } else {
+            priceInput.innerHTML = sellingPriceFormatted;
+            priceInput.value = sellingPrice;
+            discountPercentText.style.display = 'none';
+        }
+    }
+}
+calculateShowPrice();
+
+</script>
 
 {% endblock %}

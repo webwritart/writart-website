@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+#root-container {
+    display: flex;
+    width: 100%;
+    min-height: 85vh;
+    background: rgb(168, 180, 144);
+    padding: .5%;
+}
+#pending-artworks-sidebar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 10%;
+    background: rgb(224, 235, 195);
+    padding: .5%;
+}
+#pending-approval-header {
+    font-weight: 700;
+    color: rgb(181, 60, 0);
+    margin: 0%;
+}
+.pending-artwork-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    background: white;
+    padding: 5% 5% 0% 5%;
+    margin: 2% 0%;
+    cursor: pointer;
+}
+.pending-artwork-card img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+.pending-artwork-card p {
+    margin: 0%;
+    padding: 2% 0%;
+    font-size: .8rem;
+    font-weight: 700;
+    color: rgb(84, 148, 6);
+    text-align: center;
+    line-height: 1.1;
+}
+
+</style>
+
+<div id="root-container">
+    <div id="pending-artworks-sidebar">
+        <p id="pending-approval-header">Pending for approval</p>
+        {% for a in pending_artworks_dict %}
+        <div class="pending-artwork-card" onclick="openApprovalPage('{{a}}')">
+            <img id="pending-artwork-img" src="{{pending_artworks_dict[a]['main_photo_url']}}">
+            <p>Artist:<br>{{pending_artworks_dict[a]['artist']}}</p>        </div>
+        {% endfor %}
+    </div>
+{% block pending_artwork %}
+<h1>Test</h1>
+{% endblock %}
+</div>
+
+<script>
+// -------------------------------------------- PENDING ARTWORK CLICK ------------------------------------------------
+function openApprovalPage(artwork_uuid) {
+    const artworkUuid = artwork_uuid;
+    const dataToSend = {
+        'artwork_uuid': artworkUuid,
+        'job': 'approval_page'
+    }
+    const endpointUrl = "{{url_for('account.artwork_approval')}}";
+
+    fetch(endpointUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(artworkUuid)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.redirect_url) {
+            window.location.href = data.redirect_url;
+        }
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
+</script>
+{% endblock %}

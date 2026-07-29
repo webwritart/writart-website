@@ -54,9 +54,9 @@ def upload_artwork():
                 uuid = create_uuid(existing_uuid_list=existing_uuid_list, uuid_length_in_digit=8)
                 date_time_uploaded = datetime.now().replace(microsecond=0)
                 # ----------------------------------- Save artwork file -----------------------------------
-                artwork_save_path = f"./static/files/users/{current_user.uuid}/artworks/spiritual/original/"
+                artwork_save_path = f"./static/files/users/{current_user.uuid}/artworks/spiritual/{uuid}/original/"
                 temp_thumbnail_path = f"./static/files/users/{current_user.uuid}/temp/temp_thumbnails/"
-                artwork_thumbnail_save_path = f"./static/files/users/{current_user.uuid}/artworks/spiritual/thumbnail/"
+                artwork_thumbnail_save_path = f"./static/files/users/{current_user.uuid}/artworks/spiritual/{uuid}/thumbnail/"
 
                 if not os.path.exists(artwork_save_path):
                     os.makedirs(artwork_save_path)
@@ -183,6 +183,7 @@ def pending_artwork_details_edit():
                     original_size = ''
 
                 artwork_entry = db.session.query(Artwork).filter_by(uuid=uuid).scalar()
+                artwork_entry_id = artwork_entry.id
                 artwork_entry.product_title = product_title
                 artwork_entry.short_description = short_description
                 artwork_entry.long_description = long_description
@@ -198,11 +199,70 @@ def pending_artwork_details_edit():
                 artwork_entry.recreation = recreation
                 artwork_entry.limited_recreation_count = limited_recreation_count
                 db.session.commit()
+
+                if original_available == 'available':
+                    if len([e for e in artwork_entry.variants if e.artwork_id == artwork_entry.id]) == 0:
+                        existing_variant_uuid_list = []
+                        variants = db.session.query(ArtworkVariants).all()
+                        for v in variants:
+                            existing_variant_uuid_list.append(v.uuid)
+                        variant_uuid = create_uuid(existing_variant_uuid_list, 8)
+                        entry = ArtworkVariants(
+                            category='original',
+                            subcategory='Original',
+                            medium=medium,
+                            surface=surface,
+                            size=original_size,
+                            price=original_price,
+                            discount_percent=original_discount_percent,
+                            artwork_id=artwork_entry_id,
+                            uuid=variant_uuid,
+                            thumbnail_path=artwork_entry.main_photo_path
+                        )
+                        db.session.add(entry)
+                        db.session.commit()
                 form_name = 'variants'
                 step_1 = 'done'
                 p(f"Form name :{form_name}")
+                return redirect(url_for('artist_dashboard_operations.edit_artwork_prints', uuid=uuid))
                 return render_template('pending_artwork_details_edit.html',artwork_details_dict=artwork_details_dict, pending_details_artworks_dict=pending_details_artworks_dict, 
                                     pending_artwork_count=pending_artwork_count, form_name=form_name, step_1=step_1, step_2=step_2, logged_in=current_user.is_authenticated, current_year=current_year, admin=admin)
+            if request.form.get('submit') == 'submit-artwork-images':
+                additional_image_path_list = []
+                artwork_uuid = request.form.get('artwork_uuid')
+                additional_thumbnail_path = f"static/files/users/{current_user.uuid}/artworks/spiritual/{artwork_uuid}/additional_images/"
+                temp_thumbnail_path = f"./static/files/users/{current_user.uuid}/temp/temp_thumbnails/"
+                temp_original_file_path_base = f"./static/files/users/{current_user.uuid}/temp/artwork/"
+                if not os.path.exists(additional_thumbnail_path):
+                    os.makedirs(additional_thumbnail_path)
+                    
+                # 1. Check if the file part is present in the request
+                if 'artwork-additional-images' not in request.files:
+                    return jsonify({'error': 'No file part in the request'}), 400
+                    
+                files = request.files.getlist('artwork-additional-images')
+                # 2. Check if the user submitted an empty form without selecting a file
+                for f in files:
+                    if f.filename == '':
+                         jsonify({'error': 'No file selected'}), 400
+                    filename = secure_filename(f.filename)
+                    temp_original_file_path = temp_original_file_path_base+filename
+                    f.save(temp_original_file_path)
+                    file_path = create_thumbnail_single(temp_original_file_path, temp_thumbnail_path, 900)[0]
+                    webp_thumbnail_filepath = '/' + single_png_jpg_to_webp(file_path, additional_thumbnail_path, quality=100)[0]
+                    additional_image_path_list.append(webp_thumbnail_filepath)
+
+                    os.remove(temp_original_file_path)
+                    os.remove(file_path)
+
+                artwork = db.session.query(Artwork).filter_by(uuid=artwork_uuid).scalar()
+                existing_additional_img_path_list = json.loads(artwork.additional_photo_paths)
+                for path in existing_additional_img_path_list:
+                    additional_image_path_list.append(path)
+                artwork.additional_photo_paths = json.dumps(additional_image_path_list)
+                db.session.commit()
+                p('Additional file paths successfully added to database')
+                    
         return render_template('pending_artwork_details_edit.html', logged_in=current_user.is_authenticated, current_year=current_year, admin=admin,
                             artwork_details_dict=artwork_details_dict, form_name=form_name, step_1=step_1, step_2=step_2, pending_details_artworks_dict=pending_details_artworks_dict, pending_artwork_count=pending_artwork_count,
                             photo_size_list=photo_size_list, canvas_size_list=canvas_size_list)
@@ -214,10 +274,25 @@ def pending_artwork_details_edit():
 def edit_artwork_prints():
     pending_details_artworks_uuid_list = []
     pending_details_artworks_dict = {}
+    existing_variant_btn_value_list = []
+    if request.method == 'POST' and request.is_json:
+        data = request.get_json()
+        uuid = data
+        session['uuid'] = uuid
+        return jsonify({"redirect_url": url_for('artist_dashboard_operations.edit_artwork_prints')})
+
+    artwork_uuid = request.args.get('uuid')
+    if not artwork_uuid:
+        artwork_uuid = session.get('uuid')
+    artwork = db.session.query(Artwork).filter_by(uuid=artwork_uuid).scalar()
+    artwork_variants = artwork.variants
+    for v in artwork_variants:
+        if v.subcategory == 'Photo':
+            existing_variant_btn_value_list.append('Photo-'+v.size)
+        elif v.subcategory == 'Canvas':
+            existing_variant_btn_value_list.append('Canvas-'+v.size)
 
     admin = db.session.query(Role).filter_by(name='admin').scalar()
-    artwork_uuid = request.args.get('uuid')
-    artwork = db.session.query(Artwork).filter_by(uuid=artwork_uuid).scalar()
     artwork_title = artwork.title
     artwork_list = json.loads(artwork.print_size_list)
     a_size_list = artwork_list['a']
@@ -243,7 +318,7 @@ def edit_artwork_prints():
     pending_details_artworks_dict = dict(reversed(pending_details_artworks_dict.items()))
 
     return render_template('edit_artwork_prints.html', logged_in=current_user.is_authenticated, current_year=current_year, admin=admin, photo_size_list=photo_size_list, canvas_size_list=canvas_size_list, artwork_dict=artwork_dict,
-                           pending_details_artworks_dict=pending_details_artworks_dict, pending_artwork_count=pending_artwork_count, artwork_uuid=artwork_uuid)
+                           pending_details_artworks_dict=pending_details_artworks_dict, pending_artwork_count=pending_artwork_count, artwork_uuid=artwork_uuid, existing_variant_btn_value_list=existing_variant_btn_value_list)
 
 
 @artist_dashboard_operations.route('/save-print-variants', methods=['GET', 'POST'])
@@ -253,8 +328,6 @@ def save_print_variants():
         img_data_url = data['image']
         artwork_uuid = data['artwork_uuid']
         price = data['price']
-        canvas_width = data['canvas_width']
-        canvas_height = data['canvas_height']
         print_category = data['category']
         print_size_inch = data['print_size_inch']
         print_width = float(print_size_inch.split(' ')[0])
@@ -293,22 +366,70 @@ def save_print_variants():
                 new_height = print_height_px
 
         resized_img = img.resize((round(new_width), round(new_height)), Image.Resampling.LANCZOS)
-        img_save_path = f"./static/files/users/{current_user.uuid}/artwork/spiritual/variants/"
+        img_save_path = f"./static/files/users/{current_user.uuid}/artworks/spiritual/{artwork_uuid}/variants/print/original/"
         if not os.path.exists(img_save_path):
             os.makedirs(img_save_path)
         artwork_title = db.session.query(Artwork).filter_by(uuid=artwork_uuid).scalar().title
-        img_name = f"{current_user.uuid}_$_print_$_{print_category}_$_{print_size_inch}_$_{artwork_title}.jpg"
+        img_name = f"{current_user.uuid}_$_print_$_{print_category}_$_{print_size_inch}_$_{artwork_title}.png"
         resized_img.save(img_save_path+img_name, compress_level=6, optimize=True)
+        original_file_path = img_save_path+img_name
+        temp_thumbnail_path = f"./static/files/users/{current_user.uuid}/temp/temp_thumbnails/"
+        variant_thumbnail_save_path = f"./static/files/users/{current_user.uuid}/artworks/spiritual/{artwork_uuid}/variants/print/thumbnail/"
+        if not os.path.exists(temp_thumbnail_path):
+            os.makedirs(temp_thumbnail_path)
+        if not os.path.exists(variant_thumbnail_save_path):
+            os.makedirs(variant_thumbnail_save_path)
 
-        artwork_id = db.session.query(Artwork).filter_by(uuid=artwork_uuid).scalar().id
-        entry = ArtworkVariants(
-            category='print',
-            subcategory=print_category,
-            size=print_size_inch,
-            price=price,
-            artwork_id=artwork_id
-        )
-        db.session.add(entry)
-        db.session.commit()
+# CREATE THUMBNAIL AND THEN CONVERTS IT INTO WEBP ----------------------------------------------------------
+        file_path = create_thumbnail_single(original_file_path, temp_thumbnail_path, 900)[0]
+        webp_thumbnail_filepath = single_png_jpg_to_webp(file_path, variant_thumbnail_save_path, quality=100)[0][1:]
+
+        os.remove(file_path)
+
+# Checks whether the variant already exists, if yes, it updates just the price and photo, if not then created variant anew.#
+        artwork = db.session.query(Artwork).filter_by(uuid=artwork_uuid).scalar()
+        existing_print_variants = [p for p in artwork.variants if p.category == 'print']
+        variants = db.session.query(ArtworkVariants).all()
+        existing_uuid_list = [p.uuid for p in variants]
+        variant_uuid = create_uuid(existing_uuid_list, 8)
+        if len(existing_print_variants) == 0:
+            artwork_id = artwork.id
+            entry = ArtworkVariants(
+                uuid=variant_uuid,
+                category='print',
+                subcategory=print_category,
+                size=print_size_inch,
+                price=price,
+                artwork_id=artwork_id,
+                photo_for_print=original_file_path[1:],
+                thumbnail_path=webp_thumbnail_filepath
+            )
+            db.session.add(entry)
+            db.session.commit()
+        else:
+            match_found = ''
+            matching_variant_uuid = ''
+            for v in existing_print_variants:
+                if v.subcategory == print_category and v.size == print_size_inch:
+                    matching_variant_uuid = v.uuid
+                    match_found = 'positive'
+
+            if match_found == 'positive':
+                db.session.query(ArtworkVariants).filter_by(uuid=matching_variant_uuid).scalar().price = price
+                db.session.commit()
+            else:
+                artwork_id = artwork.id
+                entry = ArtworkVariants(
+                    uuid=variant_uuid,
+                    category='print',
+                    subcategory=print_category,
+                    size=print_size_inch,
+                    price=price,
+                    artwork_id=artwork_id,
+                    photo_for_print=original_file_path[1:],
+                    thumbnail_path=webp_thumbnail_filepath
+                )
+                db.session.add(entry)
+                db.session.commit()
 
     return '', 204
