@@ -20,6 +20,7 @@ studio = Blueprint('studio', __name__, static_folder="static", template_folder='
 
 @studio.route('/', methods=['GET', 'POST'])
 def home():
+    session['url'] = url_for('studio.home')
     admin = db.session.query(Role).filter_by(name='admin').scalar()
     artwork_dict = {}
 
@@ -251,10 +252,16 @@ def portrait_detail():
 
 @studio.route('/artwork-product', methods=['GET', 'POST'])
 def artwork_product():
+    session['url'] = url_for('studio.artwork_product')
     admin = db.session.query(Role).filter_by(name='admin').scalar()
 
     additional_img_path_list = []
-    artwork_uuid = request.args.get('artwork_uuid')
+    if request.args:
+        artwork_uuid = request.args.get('artwork_uuid')
+        session['artwork_uuid'] = artwork_uuid
+    else:
+        artwork_uuid = session.get('artwork_uuid')
+
     artwork = db.session.query(Artwork).filter_by(uuid=artwork_uuid).scalar()
     main_img_path = artwork.main_photo_path
     if artwork.additional_photo_paths:

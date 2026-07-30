@@ -131,6 +131,10 @@
         width: 49%;
         margin: 0%;
     }
+    #btn1:hover, #btn2:hover {
+        background: lab(60.64% 60.01 63.1);
+        color: rgb(255, 255, 255);
+    }
     #btn2 {
         width: 49%;
         margin: 0%;
@@ -141,6 +145,9 @@
         color: black;
         text-shadow: none;
         border: none;
+    }
+    .btn3:hover {
+        background: rgb(136, 157, 97);
     }
     #social {
         padding: 2% 0%;
@@ -562,6 +569,10 @@ function addToCart() {
     })
     .then(response => response.json())
     .then(data => {
+        if (data.alert) {
+            alert(data.alert);
+            window.location.href = data.redirect_url;
+        }
         if (data.redirect_url) {
             window.location.href = data.redirect_url;
         }

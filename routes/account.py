@@ -16,6 +16,7 @@ from models.artist_data import *
 from models.news import News
 from models.tool import SupportTicket, Tools
 from models.transactions import *
+from models.ecommerce import *
 from routes import main
 import random
 from io import BytesIO
@@ -1992,6 +1993,59 @@ def login():
                 flash('Password incorrect, please try again.', category='error')
             else:
                 login_user(user)
+# ----------------------------------------- ADD SESSION CART ITEMS TO DATABASE ---------------------------------------
+                if 'cart_item_dict' in session:
+                    cart_item_dict = session.get('cart_item_dict')
+                    for item in cart_item_dict:
+                        product_uuid = cart_item_dict[item]['artwork_uuid']
+                        product = db.session.query(Artwork).filter_by(uuid=product_uuid).scalar()
+                        product_type = cart_item_dict[item]['category']
+                        if product_type == 'original':
+                            material = 'Original'
+                        else:
+                            material = cart_item_dict[item]['subcategory'].split(' ')[0]
+                        variant_size = cart_item_dict[item]['size']
+                        product_variants = product.variants
+                        # for v in product_variants:
+                        #     p(f"v category = {v.category}, product type = {product_type}\nV subcategory = {v.subcategory}, Material = {material}\nV size: {v.size}, variant size: {variant_size}")
+                        variant = [v for v in product_variants if v.category == product_type and v.subcategory == material and v.size == variant_size][0]
+                        variant_id = variant.id
+                        existing_cart_items = current_user.cart_items
+                        # check if the variant in the session cart already exists in cart items
+                        item_already_exists = False
+                        for i in existing_cart_items:
+                            if i.variant_id == variant_id:
+                                item_already_exists = True
+                        if item_already_exists:
+                            if variant.category == 'original':
+                                continue
+                            else:
+                                new_qty = int(i.quantity) + int(cart_item_dict[item]['qty'])
+                                i.quantity = new_qty
+                                db.session.commit()
+                        else:
+                            if 'timestamp' in cart_item_dict[item]:
+                                timestamp = cart_item_dict[item]['timestamp']
+                            else:
+                                timestamp = datetime.now().replace(microsecond=0)
+                            existing_cart_item_uuid_list = [a.uuid for a in db.session.query(CartItem).all()]
+                            uuid = create_uuid(existing_cart_item_uuid_list, 8)
+                            qty = cart_item_dict[item]['qty']
+                            cart_price = cart_item_dict[item]['cart_price']
+
+                            entry = CartItem(
+                                uuid=uuid,
+                                quantity=qty,
+                                added_at_price=cart_price,
+                                created_at=timestamp,
+                                product_id=product.id,
+                                variant_id=variant_id,
+                                member_id=current_user.id
+                            )
+                            db.session.add(entry)
+                            db.session.commit()
+                    session['cart_item_dict'] = {}
+# -------------------------------------------------------------------------------------------------------------------
                 student = db.session.query(Role).filter_by(name='student').scalar()
                 admin = db.session.query(Role).filter_by(name='admin').scalar()
                 instructor = db.session.query(Role).filter_by(name='instructor').scalar()
@@ -2126,8 +2180,7 @@ def set_new_password():
         return redirect(url_for("account.login"))
 
 
-@account.route('/logout')
-@login_required
+@account.route('/logout', methods=['GET', 'POST'])
 def logout():
     logout_user()
     session['logged_in'] = False

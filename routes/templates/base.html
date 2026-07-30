@@ -76,13 +76,8 @@
             </li>
       </ul>
       <form class="d-flex" >
-      {% if not logged_in %}
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link" href="{{url_for('account.login')}}"><span style="color:rgb(86, 140, 0); font-weight: bold;">Login/Register</span></a>
-          </li>
-        </ul>
-      {% else %}
+      
+      {% if logged_in %}
         <ul class="navbar-nav">
           {% if admin in current_user.role %}
           <li class="nav-item">
@@ -102,9 +97,20 @@
           <li class="nav-item">
             <a class="nav-link" href="{{url_for('account.main_dashboard')}}"><b>Dashboard</b></a>
           </li>
+      {% endif %}
+        <ul class="navbar-nav">
           <li class="nav-item">
             <a class="nav-link" href="{{url_for('ecommerce.cart')}}"><img id="nav-menu-shopping-cart-icon" src="/static/images/art_shop/cart.webp"><b> Cart</b></a>
           </li>
+        </ul>
+      {% if not logged_in %}
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="{{url_for('account.login')}}"><span style="color:rgb(86, 140, 0); font-weight: bold;">Login/Register</span></a>
+          </li>
+        </ul>
+      {% else %}
+        <ul class="navbar-nav">
           <li class="nav-item">
             <a class="nav-link" href="{{url_for('account.logout')}}"><b>Log Out</b></a>
           </li>

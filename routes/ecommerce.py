@@ -32,13 +32,6 @@ KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET_TEST')
 
 client = razorpay.Client(auth=(KEY_ID, KEY_SECRET))
 
-# ---------------------------------- PAYTM PAYMENT GATEWAY ---------------------------------------------------------------- #
-PAYTM_MERCHANT_ID = os.environ.get("PAYTM_MERCHANT_ID", "TEST_MERCHANT_ID")
-PAYTM_MERCHANT_KEY = os.environ.get("PAYTM_MERCHANT_KEY", "TEST_MERCHANT_KEY")
-PAYTM_WEBSITE = "WEBSTAGING"  # or "DEFAULT" for production
-PAYTM_INDUSTRY_TYPE = "Retail"
-PAYTM_CALLBACK_URL = "http://127.0.0.1:5000/payment/callback"
-
 today_date = date.today()
 payment_ = {}
 
@@ -64,53 +57,120 @@ def home():
 
 @ecommerce.route('/cart', methods=['GET', 'POST'])
 def cart():
-    if current_user.is_authenticated:
-        admin = db.session.query(Role).filter_by(name='admin').scalar()
-        if request.method == 'POST' and request.is_json:
-            p('Delete request posted!')
+    session['url'] = url_for('ecommerce.cart')
+    admin = db.session.query(Role).filter_by(name='admin').scalar()
+    if request.method == 'POST' and request.is_json:
+        data = request.get_json()
 
-            return jsonify()
-        if request.method == 'POST' and request.is_json:
-            data = request.get_json()
-            product_type = data['product_type']
-            material = data['material']
-            variant_size = data['size']
-            price = data['unit_price']
-            qty = data['qty']
-            product_uuid = data['artwork_uuid']
-            pprint.pprint(data)
+        product_type = data['product_type']
+        material = data['material']
+        variant_size = data['size']
+        price = data['unit_price']
+        qty = data['qty']
+        product_uuid = data['artwork_uuid']
 
+        if current_user.is_authenticated:
             artwork = db.session.query(Artwork).filter_by(uuid=product_uuid).scalar()
             product_id = artwork.id
             all_variants = artwork.variants
-            variant_id = [v.id for v in all_variants if v.category == product_type and v.subcategory == material and v.size == variant_size][0]
-            timestamp = datetime.now().replace(microsecond=0)
-            existing_cart_item_uuid_list = [a.uuid for a in db.session.query(CartItem).all()]
-            uuid = create_uuid(existing_cart_item_uuid_list, 8)
-            all_cart_items = current_user.cart_items
-            existing_product_list = [p for p in current_user.cart_items if p.variant_id == variant_id]
-            if not existing_product_list:
-                p("cart item doesn't exit")
-                entry = CartItem(
-                    uuid=uuid,
-                    quantity=qty,
-                    added_at_price=price,
-                    created_at=timestamp,
-                    product_id=product_id,
-                    variant_id=variant_id,
-                    member_id=current_user.id
-                )
-                db.session.add(entry)
-                db.session.commit()
+            variant = [v for v in all_variants if v.category == product_type and v.subcategory == material and v.size == variant_size][0]
+            variant_id = variant.id
+            
+# ---------------------------------------------------- Checking if original already exists in cart to stop adding more than 1 original -----------------------------------
+            variant_category = variant.category
+            original_already_added = False
+            if variant_category == 'original':
+                all_cart_items = current_user.cart_items
+                for item in all_cart_items:
+                    if item.variant_id == variant_id:
+                        original_already_added = True
+            if original_already_added:
+                return jsonify({
+                    "alert": "Item already added to cart!",
+                    "redirect_url": url_for('studio.artwork_product')
+                })
             else:
-                existing_product_list[0].quantity = int(existing_product_list[0].quantity) + int(qty)
-                db.session.commit()
+                timestamp = datetime.now().replace(microsecond=0)
+                existing_cart_item_uuid_list = [a.uuid for a in db.session.query(CartItem).all()]
+                uuid = create_uuid(existing_cart_item_uuid_list, 8)
+                all_cart_items = current_user.cart_items
+                existing_product_list = [p for p in current_user.cart_items if p.variant_id == variant_id]
+                if not existing_product_list:
+                    entry = CartItem(
+                        uuid=uuid,
+                        quantity=qty,
+                        added_at_price=price,
+                        created_at=timestamp,
+                        product_id=product_id,
+                        variant_id=variant_id,
+                        member_id=current_user.id
+                    )
+                    db.session.add(entry)
+                    db.session.commit()
+                else:
+                    existing_product_list[0].quantity = int(existing_product_list[0].quantity) + int(qty)
+                    db.session.commit()
+                return jsonify({"redirect_url": url_for('studio.artwork_product')})
 
-
-            return jsonify({"redirect_url": url_for('ecommerce.cart')})
-
-        
-
+        else:
+            if 'cart_item_dict' not in session:
+                cart_item_dict = {}
+            else: 
+                cart_item_dict = session.get('cart_item_dict')
+            dict_length = len(cart_item_dict)
+            artwork = db.session.query(Artwork).filter_by(uuid=product_uuid).scalar()
+            all_variants = artwork.variants
+            variant = [v for v in all_variants if v.category == product_type and v.subcategory == material and v.size == variant_size][0]
+# ---------------------------------------------------- Checking if original already exists in cart to stop adding more than 1 original -----------------------------------
+            original_already_added = False
+            variant_category = variant.category
+            if variant_category == 'original':
+                all_cart_items = cart_item_dict
+                for item in all_cart_items:
+                    if all_cart_items[item]['variant_id'] == variant.id:
+                        original_already_added = True
+            if original_already_added:
+                return jsonify({
+                    "alert": "Item already added to cart!",
+                    "redirect_url": url_for('studio.artwork_product')
+                })
+            else:
+                cart_item_exists = False
+                existing_item_key = ''
+                for item in cart_item_dict:
+                    if cart_item_dict[item]['variant_id'] == variant.id:
+                        cart_item_exists = True
+                        existing_item_key = item
+                if cart_item_exists:
+                    updated_quantity = int(cart_item_dict[existing_item_key]['qty']) + int(qty)
+                    cart_item_dict[existing_item_key]['qty'] = updated_quantity
+                else:
+                    cart_key = dict_length+1
+                    artwork_uuid = artwork.uuid
+                    category = variant.category
+                    if category == 'original':
+                        subcategory = variant.medium + ' on ' + variant.surface
+                    else:
+                        subcategory = variant.subcategory + ' ' + category
+                    timestamp = datetime.now().replace(microsecond=0)
+                    cart_item_dict[cart_key] = {
+                        'thumbnail_path': variant.thumbnail_path,
+                        'product_title': artwork.product_title,
+                        'category':product_type,
+                        'subcategory': subcategory,
+                        'size': variant_size,
+                        'qty': qty,
+                        'marked_price': variant.price,
+                        'cart_price': price,
+                        'discount': variant.discount_percent,
+                        'artwork_uuid': artwork_uuid,
+                        'variant_id': variant.id,
+                        'timestamp': timestamp
+                    }
+                    session['cart_item_dict'] = cart_item_dict
+                return jsonify({"redirect_url": url_for('studio.artwork_product')})
+                
+    if current_user.is_authenticated:
         cart_item_dict = {}
         all_cart_items = current_user.cart_items
         for i in all_cart_items:
@@ -139,8 +199,36 @@ def cart():
         return render_template('cart.html', logged_in=current_user.is_authenticated, current_year=current_year, admin=admin,
                                cart_item_dict=cart_item_dict)
     else:
-        session['url'] = url_for('account.login', instruction='Login to view Cart')
-        return redirect(url_for('account.login'))
+        if 'cart_item_dict' in session:
+            cart_item_dict = {}
+            all_cart_items = session.get('cart_item_dict')
+            if len(all_cart_items) > 0:
+                for i in all_cart_items:
+                    artwork = db.session.query(Artwork).filter_by(uuid=all_cart_items[i]['artwork_uuid']).scalar()
+                    variant = db.session.query(ArtworkVariants).filter_by(id=all_cart_items[i]['variant_id']).scalar()
+                    artwork_uuid = artwork.uuid
+                    category = variant.category
+                    if category == 'original':
+                        subcategory = variant.medium + ' on ' + variant.surface
+                    else:
+                        subcategory = variant.subcategory + ' ' + category
+
+                    cart_item_dict[i] = {
+                        'thumbnail_path': variant.thumbnail_path,
+                        'product_title': artwork.product_title,
+                        'category': category,
+                        'subcategory': subcategory,
+                        'size': variant.size,
+                        'qty': all_cart_items[i]['qty'],
+                        'marked_price': variant.price,
+                        'cart_price': all_cart_items[i]['cart_price'],
+                        'discount': variant.discount_percent,
+                        'artwork_uuid': artwork_uuid,
+                    }
+        else:
+            cart_item_dict = {}
+        
+        return render_template('cart.html', logged_in=current_user.is_authenticated, current_year=current_year, cart_item_dict=cart_item_dict)
 
 
 @ecommerce.route('/newsletter-subscription', methods=['GET', 'POST'])
@@ -149,20 +237,21 @@ def newsletter_subscription():
         if request.form.get('submit') == 'add-newsletter-email':
             email = request.form.get('newsletter_email')
             segment = request.form.get('segment')
-            try:
-                entry = NewsLetterList(
-                    email=email,
-                    segment=segment,
-                    member_id=current_user.id
-                )
-                db.session.add(entry)
-                db.session.commit()
-                flash('Successfully added to Newsletter list!', 'success')
-                return redirect(request.url)
-            except Exception as e:
-                p(e)
-                flash('Sorry! Failed in adding to Newsletter list!', 'error')
-                return redirect(request.url)
+            if email:
+                try:
+                    entry = NewsLetterList(
+                        email=email,
+                        segment=segment,
+                        member_id=current_user.id
+                    )
+                    db.session.add(entry)
+                    db.session.commit()
+                    flash('Successfully added to Newsletter list!', 'success')
+                    return redirect(request.url)
+                except Exception as e:
+                    p(e)
+                    flash('Sorry! Failed in adding to Newsletter list!', 'error')
+                    return redirect(request.url)
     return redirect(url_for('ecommerce.cart'))
 # @ecommerce.route('/paytm_checkout', methods=['GET', 'POST'])
 # def paytm_checkout():
@@ -399,6 +488,21 @@ def verify():
     # return render_template('order.html', logged_in=current_user.is_authenticated)
 
 
-@ecommerce.route('/ws_registration_success')
-def ws_registration_success():
-    return render_template('school/ws_registration_success.html', logged_in=current_user.is_authenticated)
+@ecommerce.route('/delete-cart-items', methods=['GET', 'POST'])
+def delete_cart_items():
+    if request.method == 'POST' and request.is_json:
+        data = request.get_json()
+        if data.get('type') == 'delete cart item':
+            item_uuid = data.get('cartItemUuid')
+            if current_user.is_authenticated:
+                cart_item = db.session.query(CartItem).filter_by(uuid=item_uuid).scalar()
+                db.session.delete(cart_item)
+                db.session.commit()
+            else:
+                cart_item_dict = session.get('cart_item_dict')
+                if int(item_uuid) in cart_item_dict:
+                    del cart_item_dict[int(item_uuid)]
+                session['cart_item_dict'] = cart_item_dict
+            return jsonify({"redirect_url": url_for('ecommerce.cart')})
+            
+    return '', 204

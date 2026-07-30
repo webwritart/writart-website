@@ -194,6 +194,7 @@
     width: 70%;
     margin-right: 2%;
     color: black;
+    text-align: center;
 }
 #promo-code-input::placeholder {
     opacity: .5;
@@ -250,7 +251,7 @@
     width: 30%;
 }
 #newsletter-email {
-    background: rgb(237, 242, 221);
+    background: rgb(254, 254, 254);
     border: none;
     border-radius: 3rem;
     text-align: center;
@@ -266,10 +267,17 @@
     border-radius: 3rem;
     border: none;
 }
+#newsletter-btn:hover {
+    background: rgb(156, 252, 13);
+}
 </style>
 
 <div id="root-container">
+    {% if logged_in %}
     <p id="cart-title">Your cart</p>
+    {% else %}
+    <p id="cart-title">Guest cart</p>
+    {% endif %}
     <div id="main-section">
         <div id="items-container">
             <p id="items-container-header">Items</p>
@@ -282,6 +290,7 @@
                     <a class="item-title" href="{{url_for('studio.artwork_product', artwork_uuid=cart_item_dict[i]['artwork_uuid'])}}"><p>{{cart_item_dict[i]['product_title']}}</p></a>
                     <p><span class="item-detail-key">Type: </span><span class="item-detail">{{cart_item_dict[i]['category']}}</span></p>
                     <p><span class="item-detail-key">Material: </span><span class="item-detail">{{cart_item_dict[i]['subcategory']}}</span></p>
+                    <p><span class="item-detail-key">Size: </span><span class="item-detail">{{cart_item_dict[i]['size']}}</span></p>
                     <p class="price" id="{{i}}"></p>
                 </div>
                 <div class="del-qty-container">
@@ -330,7 +339,7 @@
             <p>STAY CONNECTED ABOUT OUR<br>LATEST OFFERS</p>
         </div>
         <form id="newsletter-form" action="{{url_for('ecommerce.newsletter_subscription')}}" method="post">
-            <input id="newsletter-email" type="email" name="newsletter_email" placeholder="Your email address">
+            <input id="newsletter-email" type="email" name="newsletter_email" placeholder="Your email address" required>
             <input type="hidden" name="segment" value="art-shop">
             <button id="newsletter-btn" type="submit" name="submit" value="add-newsletter-email">Subscribe to Newsletter</button>
         </form>
@@ -347,6 +356,8 @@ let price;
 let quantity;
 let aggregateMarkedPrice = 0;
 let deliveryChargeAmt = 0;
+let aggregateDiscountPercent = 0;
+
 
 function updatePrice() {
     for (const [key, value] of Object.entries(cartItemDict)) {
@@ -390,35 +401,44 @@ function calculateOrderSummary() {
 
     const discountAmount = Number(aggregateMarkedPrice - subtotal);
     const discountAmountFormatted = "₹" + discountAmount.toLocaleString('en-IN');
-    const aggregateDiscountPercent = Math.round(Number((discountAmount/aggregateMarkedPrice)*100));
-    const aggregateDiscountPercentFormatted = "₹"+aggregateDiscountPercent.toLocaleString('en-IN');
+    if (aggregateMarkedPrice == 0) {
+        aggregateDiscountPercent = 0;
+    } else {
+        aggregateDiscountPercent = Math.round(Number((discountAmount/aggregateMarkedPrice)*100));
+    }
     const total = Math.round(Number(subtotal)+Number(deliveryChargeAmt));
     const totalFormatted = "₹"+total.toLocaleString('en-IN');
 
-    discountKey.innerHTML = `Discount(-${aggregateDiscountPercentFormatted}%)`;
+    discountKey.innerHTML = `Discount(-${aggregateDiscountPercent}%)`;
     discountInput.innerHTML = `<span style="color: #77ab16;">${discountAmountFormatted}</span>`;
     deliveryChargeTag.innerHTML = `<span style="color:#77ab16;">Free</span>`;
     totalPriceTag.innerHTML = totalFormatted;
 }
 
 function deleteCartItem(item_uuid) {
-    const endpointUrl = "{{url_for('ecommerce.cart')}}";
+    const endpointUrl = "{{url_for('ecommerce.delete_cart_items')}}";
     const data = {
         cartItemUuid: item_uuid,
-        job: 'delete cart item'
+        type: "delete cart item"
     };
-    alert(item_uuid);
-    fetch(endPointUrl, {
+
+  fetch(endpointUrl, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
     })
-    .then(Response => Response.json())
-    .then(data => console.log(data))
-    .then(alert('Item deleted successfully!'))
-    .then(location.reload());
+    .then(response => response.json())
+    .then(data => {
+        console.log('Success:', data);
+        if (data.redirect_url) {
+            window.location.href = data.redirect_url;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
   }
 updatePrice();
 calculateOrderSummary();
