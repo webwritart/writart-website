@@ -48,7 +48,82 @@
 .text-data {
     color: green;
 }
+.additional-img-section-parent {
+    width: 15%;
+    display: flex;
+    flex-direction: column;
+    padding: 0% .5% 0% .5%;
+}
+.additional-img-inner-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgb(226, 233, 203);
+    width: 100%;
+    height: 90vh;
+    overflow-y: auto;
+}
+#additional-img-header {
+    margin: 5% 0% 0% 0%;
+    font-weight: 500;
+    background: rgb(127, 137, 73);
+    padding: 2% 0%;
+    width: 100%;
+    text-align: center;
+}
+.details-img-thumbnail-container {
+    display: flex;
+    height: 180px;
+    width: 180px;
+    margin: 2% 0%;
+    padding: 4%;
+    background: white;
+}
+.additional-img {
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+}
+#status-section-parent {
+    width: 20%;
+    display: flex;
+    flex-direction: column;
+    padding: 0% .5% 0% .5%;
+
+}
+#status-header {
+    margin: 5% 0% 0% 0%;
+    font-weight: 700;
+    background: rgb(127, 137, 73);
+    padding: 2% 0%;
+    width: 100%;
+    text-align: center;
+}
+#status-inner-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgb(226, 233, 203);
+    width: 100%;
+    height: 85vh;
+    overflow-y: auto;
+    padding: 5% 0% 0% 5%;
+}
+.status-line {
+    display: flex;
+    justify-content: left;
+    max-height: 20px;
+    width: 100%;
+    margin: 2% 0%;
+
+}
+.status-line img {
+    margin-right: 3%;
+}
+/* ----------------------------------------------- POPUP ----------------------------------------------------- */
+
 </style>
+
 <div class="details-section-parent">
     <div class="details-inner-container">
         <div id="main-img-container">
@@ -82,6 +157,53 @@
             <p>Limited recreation count : <span class="text-data">{{artwork_dict['limited_recreation_count']}}</span></p>
             <p>Recreation media: <span class="text-data">{{artwork_dict['recreation_media_list']}}</span></p>
         </div>
+    </div>
+</div>
+<div class="additional-img-section-parent">
+    <p id="additional-img-header">Additional Images</p>
+    <div class="additional-img-inner-container">
+        {% for i in artwork_dict['additional_img_path_list'] %}
+        <div class="details-img-thumbnail-container">
+            <img class="additional-img" src="{{i}}">
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<div id="status-section-parent">
+    <p id="status-header">Status</p>
+    <div id="status-inner-container">
+        {% for i in primary_details_dict %}
+        <div class="status-line">
+            {% if primary_details_dict[i] %}
+            <img src="/static/images/art_shop/tick_mark.png">
+            {% else %}
+            <img src="/static/images//art_shop/empty-checkbox.png">
+            {% endif %}
+            <p>{{i}}</p>
+        </div>
+        {% endfor %}
+        <hr>
+        {% for i in print_details_dict %}
+        <div class="status-line">
+            {% if print_details_dict[i] %}
+            <img src="/static/images/art_shop/tick_mark.png">
+            {% else %}
+            <img src="/static/images//art_shop/empty-checkbox.png">
+            {% endif %}
+            <p>{{i}}</p>
+        </div>
+        {% endfor %}
+        <hr>
+        {% for i in recreation_details_dict %}
+        <div class="status-line">
+            {% if recreation_details_dict[i] %}
+            <img src="/static/images/art_shop/tick_mark.png">
+            {% else %}
+            <img src="/static/images//art_shop/empty-checkbox.png">
+            {% endif %}
+            <p>{{i}}</p>
+        </div>
+        {% endfor %}
     </div>
 </div>
 {% endblock %}

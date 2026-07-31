@@ -38,6 +38,11 @@ app.secret_key = os.environ.get('APP_SECRET')
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///writart.db"
 # app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URI')
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+    "connect_args": {
+        "timeout": 30
+    }
+}
 
 app.config["SESSION_TYPE"] = "sqlalchemy"
 app.config["SESSION_PERMANENT"] = True
