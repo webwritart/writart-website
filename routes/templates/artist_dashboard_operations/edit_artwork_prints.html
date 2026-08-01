@@ -444,8 +444,11 @@ cropBtn.addEventListener('click', () => {
         body: JSON.stringify({ image: croppedDataUrl, price: sizePriceValue, canvas_width: canvas.width, canvas_height: canvas.height, category: printCategory, print_size_inch: printSizeInch, artwork_uuid: artworkUuid})
     })
     .then(Response => Response.json())
-    .then(data => console.log(data))
-    .then(alert('Cropped image saved successfully!'))
+    .then(data => {
+        if (data.alert) {
+            alert(data.alert);
+        }
+    })
     .then(location.reload());
   }
 });

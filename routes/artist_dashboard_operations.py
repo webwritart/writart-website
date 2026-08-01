@@ -402,7 +402,8 @@ def save_print_variants():
                 price=price,
                 artwork_id=artwork_id,
                 photo_for_print=original_file_path[1:],
-                thumbnail_path=webp_thumbnail_filepath
+                thumbnail_path=webp_thumbnail_filepath,
+                status='pending'
             )
             db.session.add(entry)
             db.session.commit()
@@ -427,9 +428,11 @@ def save_print_variants():
                     price=price,
                     artwork_id=artwork_id,
                     photo_for_print=original_file_path[1:],
-                    thumbnail_path=webp_thumbnail_filepath
+                    thumbnail_path=webp_thumbnail_filepath,
+                    status='pending'
                 )
                 db.session.add(entry)
                 db.session.commit()
+        return jsonify({"alert": "Image cropped and variant saved successfully!"})
 
     return '', 204

@@ -1,0 +1,495 @@
+{% extends "art-shop-manager.html" %}
+{% block pending_artwork %}
+<style>
+#artwork-details-head-section {
+    display: flex;
+    justify-content: center;
+    width: 85%;
+}
+.details-section-parent {
+    width: 30%;
+    display: flex;
+    padding: 0% .5% 0% .5%;
+    height: 93.5vh;
+}
+.details-inner-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    background: rgb(226, 233, 203);
+    padding: 4%;
+    width: 100%;
+}
+#main-img-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 30vh;
+    border: 3px solid rgba(0, 0, 0, 0.283);
+    background: white;
+    padding: 2%;
+}
+#main-img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+.details-text-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background: rgb(233, 244, 210);
+    height: 100%;
+    padding: 2%;
+    margin-top: 3%;
+}
+.details-text-container p {
+    text-align: left;
+    font-size: .8rem;
+    margin: 0%;
+    font-weight: 500;
+}
+.text-data {
+    color: green;
+}
+.additional-img-section-parent {
+    width: 15%;
+    display: flex;
+    flex-direction: column;
+    padding: 0% .5% 0% .5%;
+    height: 100%;
+    align-items: start;
+}
+.additional-img-inner-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgb(226, 233, 203);
+    width: 100%;
+    height: 90vh;
+    overflow-y: auto;
+    padding-top: 2%;
+}
+#additional-img-header {
+    font-weight: 500;
+    background: rgb(127, 137, 73);
+    padding: 2% 0%;
+    width: 100%;
+    text-align: center;
+    margin: 0%;
+}
+.details-img-thumbnail-container {
+    display: flex;
+    height: 180px;
+    width: 180px;
+    margin: 2% 0%;
+    padding: 4%;
+    background: white;
+}
+.additional-img {
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+    cursor: pointer;
+}
+#status-section-parent {
+    width: 20%;
+    display: flex;
+    flex-direction: column;
+    padding: 0% .5% 0% .5%;
+    height: 100%;
+    margin: 0%;
+    align-items: start;
+}   
+#status-header {
+    font-weight: 500;
+    background: rgb(127, 137, 73);
+    padding: 2% 0%;
+    width: 100%;
+    text-align: center;
+    margin: 0%;
+}
+#status-inner-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgb(226, 233, 203);
+    width: 100%;
+    height: 85vh;
+    overflow-y: auto;
+    padding: 5% 0% 0% 5%;
+    align-items: start;
+}
+.status-line {
+    display: flex;
+    justify-content: left;
+    max-height: 20px;
+    width: 100%;
+    margin: 2% 0%;
+
+}
+.status-line img {
+    margin-right: 3%;
+}
+/* ----------------------------------------------- POPUP ----------------------------------------------------- */
+#myPopup {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 5vh;
+    left: 5vw;
+    width: 90vw;
+    height: 90vh;
+    padding: 5%;
+    background: rgb(133, 133, 133);
+    font-weight: 500;
+    font-size: 1.2rem;
+}
+#popup-img {
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+}
+#closeBtn {
+    width: 300px;
+    background: rgb(40, 62, 20);
+    border: none;
+    box-shadow: 5px 5px 5px rgb(137, 137, 137);
+    margin: 2%;
+    padding: .7% 0%;
+    color: white;
+    border-radius: .3em;
+}
+/* -------------------------------------------- VARIANTS -------------------------------------------- */
+#variants-root-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 40vh;
+    width: 100%;
+    background: rgb(197, 203, 161);
+    align-items: center;
+    padding: 0% 0% 2% 0%;
+}
+.variant-table {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+}
+.variant-table tr {
+    display: flex;
+    justify-content: space-between;
+}
+.variant-table th, td {
+    width: 100%;
+    text-align: center;
+    border: solid 1px black;
+}
+.variant-table th {
+    background: rgb(108, 133, 94);
+    color: rgb(204, 217, 174);
+}
+.variant-table td {
+    background: rgb(240, 245, 217);
+}
+#variants-header {
+    font-weight: 500;
+    font-size: 1.4rem;
+    padding: .5% 0%;
+    width: 100%;
+    background: rgb(101, 108, 74);
+    text-align: center;
+    color: white;
+}
+.table-header {
+    font-size: 1.3rem;
+    font-weight: 500;
+    margin: 2% 0% 0% 0%;
+}
+.status-toggle-btn {
+    background: rgb(80, 133, 45) !important;
+    border: 3px solid white;
+    color: white;
+    cursor: pointer;
+}
+.status-toggle-btn:hover {
+    background: rgb(57, 101, 16) !important;
+}
+#pending-size-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    background: rgb(157, 188, 157);
+    height: 30vh;
+}
+#pending-photo-size-container, #pending-canvas-size-container {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    height: 100%;
+    background: rgb(201, 208, 173);
+}
+.pending-size-header {
+    background: rgb(82, 116, 82);
+    color: rgb(224, 233, 203);
+    padding-left: 4%;
+}
+#pending-photo-size-container p, #pending-canvas-size-container p {
+    padding-left: 4%;
+}
+#pending-photo-size-container {
+    border-right: 1px solid black;
+}
+</style>
+<div id="artwork-details-head-section">
+    <div class="details-section-parent">
+        <div class="details-inner-container">
+            <div id="main-img-container">
+                <img src="{{artwork_dict['main_img_path']}}">
+            </div>
+            <div class="details-text-container">
+                <p>Title: <span class="text-data">{{artwork_dict['title']}}</span></p>
+                <p>Theme: <span class="text-data">{{artwork_dict['theme']}}</span></p>
+                <p>Artist: <span class="text-data">{{artwork_dict['artist_name']}}</span></p>
+                <p>Created: <span class="text-data">{{artwork_dict['creation_year']}}</span></p>
+                <p>Rating: <span class="text-data">{{artwork_dict['rating']}}</span></p>
+                <p>Uplaoded on: <span class="text-data">{{artwork_dict['date_time_uplaoded']}}</span></p>
+                <p>Product-title: <span class="text-data">{{artwork_dict['product_title']}}</span></p>
+                <p>Original available: <span class="text-data">{{artwork_dict['original_available']}}</span></p>
+                <p>Original-size: <span class="text-data">{{artwork_dict['original_size']}}</span></p>
+                <p>Original-price: <span class="text-data">{{artwork_dict['original_price']}}</span></p>
+                <p>Original-discount: <span class="text-data">{{artwork_dict['original_discount_percent']}}%</span></p>
+                <p>Original-medium-surface: <span class="text-data">{{artwork_dict['medium']}} on {{artwork_dict['surface']}}</span></p>
+                <p>Short-description: <br><span class="text-data">{{artwork_dict['short_description']}}</span></p>
+                <p>Long-description: <br><span class="text-data">{{artwork_dict['long_description']}}</span></p>
+            </div>
+        </div>
+    </div>
+    <div class="details-section-parent">
+        <div class="details-inner-container">
+            <div class="details-text-container">
+                <p>Print : <span class="text-data">{{artwork_dict['print']}}</span></p>
+                <p>Limited print remaining count: <span class="text-data">{{artwork_dict['limited_print_count']}}</span></p>
+                <p>Print-size list: <span class="text-data">{{artwork_dict['print_size_list']}}</span></p>
+                <p>Recreation : <span class="text-data">{{artwork_dict['recreation']}}</span></p>
+                <p>Limited recreation count : <span class="text-data">{{artwork_dict['limited_recreation_count']}}</span></p>
+                <p>Recreation media: <span class="text-data">{{artwork_dict['recreation_media_list']}}</span></p>
+            </div>
+        </div>
+    </div>
+    <div class="additional-img-section-parent">
+        <p id="additional-img-header">Additional Images</p>
+        <div class="additional-img-inner-container">
+            {% for i in artwork_dict['additional_img_path_list'] %}
+            <div class="details-img-thumbnail-container">
+                <img id="openImg" class="additional-img" src="{{i[1]}}" onclick="openImg('{{i[0]}}', '{{i[1]}}')">
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div id="status-section-parent">
+        <p id="status-header">Status</p>
+        <div id="status-inner-container">
+            {% for i in primary_details_dict %}
+            <div class="status-line">
+                {% if primary_details_dict[i] %}
+                <img src="/static/images/art_shop/tick_mark.png">
+                {% else %}
+                <img src="/static/images//art_shop/empty-checkbox.png">
+                {% endif %}
+                <p>{{i}}</p>
+            </div>
+            {% endfor %}
+            <hr>
+            {% for i in print_details_dict %}
+            <div class="status-line">
+                {% if print_details_dict[i] %}
+                <img src="/static/images/art_shop/tick_mark.png">
+                {% else %}
+                <img src="/static/images//art_shop/empty-checkbox.png">
+                {% endif %}
+                <p>{{i}}</p>
+            </div>
+            {% endfor %}
+            <hr>
+            {% for i in recreation_details_dict %}
+            <div class="status-line">
+                {% if recreation_details_dict[i] %}
+                <img src="/static/images/art_shop/tick_mark.png">
+                {% else %}
+                <img src="/static/images//art_shop/empty-checkbox.png">
+                {% endif %}
+                <p>{{i}}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<dialog id="myPopup">
+  <p id="popup-img-title">This is a custom popup modal.</p>
+  <img id="popup-img" src="">
+  <button id="closeBtn" onclick="closePopup()">Close</button>
+</dialog>
+</div>
+<div id="variants-root-container">
+    <p id="variants-header">Variants</p>
+    <table class="variant-table">
+        <tr>
+            <p class="table-header">Original</p>
+            <th>Medium</th>
+            <th>Surface</th>
+            <th>Size</th>
+            <th>Price</th>
+            <th>Discount percent</th>
+            <th>Delivered as</th>
+            <th>UUID</th>
+            <th>Status</th>
+        </tr>
+        <tr>
+            <td>{{original_dict['medium']}}</td>
+            <td>{{original_dict['surface']}}</td>
+            <td>{{original_dict['size']}}</td>
+            <td>{{original_dict['price']}}</td>
+            <td>{{original_dict['discount_percent']}}</td>
+            <td>{{original_dict['delivered_as']}}</td>
+            <td>{{original_dict['uuid']}}</td>
+            <td class="status-toggle-btn" onclick="toggleApprove({{original_dict['uuid']}})">{{original_dict['status']}}</td>
+        </tr>
+    </table>
+    <table class="variant-table">
+        <tr>
+            <p class="table-header">Print</p>
+            <th>Subcategory</th>
+            <th>Size</th>
+            <th>Price</th>
+            <th>Discount percent</th>
+            <th>Inventory</th>
+            <th>Delivered as</th>
+            <th>UUID</th>
+            <th>Status</th>
+        </tr>
+        {% for i in print_dict %}
+        <tr>
+            <td>{{print_dict[i]['subcategory']}}</td>
+            <td>{{print_dict[i]['size']}}</td>
+            <td>{{print_dict[i]['price']}}</td>
+            <td>{{print_dict[i]['discount_percent']}}</td>
+            <td>{{print_dict[i]['inventory']}}</td>
+            <td>{{print_dict[i]['delivered_as']}}</td>
+            <td>{{print_dict[i]['uuid']}}</td>
+            <td class="status-toggle-btn" onclick="toggleApprove({{print_dict[i]['uuid']}})">{{print_dict[i]['status']}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <table class="variant-table">
+        <tr>
+            <p class="table-header">Recreation</p>
+            <th>Subcategory</th>
+            <th>Medium</th>
+            <th>Surface</th>
+            <th>Size</th>
+            <th>Price</th>
+            <th>Discount percent</th>
+            <th>Inventory</th>
+            <th>Delivered as</th>
+            <th>UUID</th>
+            <th>Status</th>
+        </tr>
+        {% for i in recreation_dict %}
+        <tr>
+            <td>{{recreation_dict[i]['subcategory']}}</td>
+            <td>{{recreation_dict[i]['medium']}}</td>
+            <td>{{recreation_dict[i]['surface']}}</td>
+            <td>{{recreation_dict[i]['size']}}</td>
+            <td>{{recreation_dict[i]['price']}}</td>
+            <td>{{recreation_dict[i]['discount_percent']}}</td>
+            <td>{{recreation_dict[i]['inventory']}}</td>
+            <td>{{recreation_dict[i]['delivered_as']}}</td>
+            <td>{{recreation_dict[i]['uuid']}}</td>
+            <td class="status-toggle-btn" onclick="toggleApprove({{recreation_dict[i]['uuid']}})">{{recreation_dict[i]['status']}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+<div id="pending-size-container">
+    <div id="pending-photo-size-container">
+        <p class="pending-size-header">Pending photo print sizes</p>
+        {% for i in pending_photo_size_list %}
+        <p>{{i}}</p>
+        {% endfor %}
+    </div>
+    <div id="pending-canvas-size-container">
+        <p class="pending-size-header">Pending canvas print sizes</p>
+        {% for i in pending_canvas_size_list %}
+        <p>{{i}}</p>
+        {% endfor %}
+    </div>
+</div>
+<script>
+const elements = document.querySelectorAll('.status-toggle-btn');
+
+elements.forEach(element => {
+    if (element.innerHTML == 'active') {
+        element.style.setProperty('background-color', 'rgb(57, 101, 16)', 'important');
+    } else if (element.innerHTML == 'inactive' || element.innerHTML == 'pending') {
+        element.style.setProperty('background-color', '#b34425', 'important');
+    }
+});
+const dialog = document.getElementById('myPopup');
+
+
+function openImg(name, url) {
+    const popupImg = document.getElementById('popup-img');
+    const popupImgTitle = document.getElementById('popup-img-title');
+    popupImg.src = url;
+    popupImgTitle.innerHTML = name;
+    dialog.showModal();
+    dialog.style.display = 'flex';
+}
+function closePopup() {
+    dialog.close();
+    dialog.style.display = 'none';
+}
+    // Open as a modal overlay
+    document.getElementById('openImg').addEventListener('click', () => dialog.showModal());
+    
+    // Close the popup
+    document.getElementById('closeBtn').addEventListener('click', () => dialog.close());
+
+function toggleApprove(variant_uuid) {
+    const variantUuid = variant_uuid;
+    const endpointUrl = "{{url_for('manager.artwork_approval_operations')}}";
+    const delData = {
+        variant_uuid: variantUuid,
+        type: 'toggle_active_inactive'
+    };
+    fetch(endpointUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(delData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.alert) {
+            alert(data.alert);
+            window.location.href = data.redirect_url + data.anchor;
+            window.location.reload();
+        }
+        if (data.redirect_url) {
+            window.location.href = data.redirect_url + data.anchor;
+            window.location.reload();
+        }
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
+
+
+</script>
+{% endblock %}

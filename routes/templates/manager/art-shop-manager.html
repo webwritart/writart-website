@@ -13,9 +13,11 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 10%;
+    width: 15%;
     background: rgb(224, 235, 195);
     padding: .5%;
+    overflow-y: auto;
+    height: 90vh;
 }
 #pending-approval-header {
     font-weight: 700;
@@ -56,7 +58,8 @@
         {% for a in pending_artworks_dict %}
         <div class="pending-artwork-card" onclick="openApprovalPage('{{a}}')">
             <img id="pending-artwork-img" src="{{pending_artworks_dict[a]['main_photo_url']}}">
-            <p>Artist:<br>{{pending_artworks_dict[a]['artist']}}</p>        </div>
+            <p>Artist:<br>{{pending_artworks_dict[a]['artist']}}</p>
+        </div>
         {% endfor %}
     </div>
 {% block pending_artwork %}
@@ -65,6 +68,8 @@
 </div>
 
 <script>
+
+
 // -------------------------------------------- PENDING ARTWORK CLICK ------------------------------------------------
 function openApprovalPage(artwork_uuid) {
     const artworkUuid = artwork_uuid;
@@ -72,7 +77,7 @@ function openApprovalPage(artwork_uuid) {
         'artwork_uuid': artworkUuid,
         'job': 'approval_page'
     }
-    const endpointUrl = "{{url_for('account.artwork_approval')}}";
+    const endpointUrl = "{{url_for('manager.artwork_approval')}}";
 
     fetch(endpointUrl, {
         method: 'POST',

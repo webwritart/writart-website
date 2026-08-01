@@ -2,7 +2,7 @@ import os
 import pprint
 import random
 import pandas as pd
-from flask import Blueprint, render_template, request, flash, redirect, url_for, send_file, jsonify
+from flask import Blueprint, render_template, request, flash, redirect, url_for, send_file, jsonify, session
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash
 from werkzeug.utils import secure_filename
@@ -11,6 +11,7 @@ from models.videos import Demo
 from operations.messenger import send_email_school, send_email_studio, send_email_support
 from operations.quiz import add_quiz_data_to_db
 from models.ecommerce import Payment
+from models.artwork import *
 from models.query import Query
 from models.tool import Tools, ArtworkPriceTime
 from models.member import Member, Workshop, Role, Portrait, WorkshopVideos, Certificate, WorkshopDemo
@@ -20,6 +21,10 @@ from operations.miscellaneous import allowed_file, image_resize_and_compress_sin
 from routes.account import today_date
 import datetime
 import difflib
+import json
+from pathlib import Path
+from babel.numbers import format_currency
+
 manager = Blueprint('manager', __name__, static_folder='static', template_folder='templates/manager')
 
 
@@ -1342,3 +1347,201 @@ def certificate_of_authenticity():
     if request.method == 'POST':
         if request.form.get('submit') == 'create_coa':
             pass
+
+
+@manager.route('/art-shop-manager', methods=['GET', 'POST'])
+def art_shop_manager():
+    admin = db.session.query(Role).filter_by(name='admin').scalar()
+    if current_user.is_authenticated:
+        if admin in current_user.role:
+            pending_artworks_dict = {}
+            artworks = db.session.query(Artwork).all()
+            for a in artworks:
+                if a.approval_status != 'approved':
+                    pending_artworks_dict[a.uuid] = {
+                        'uuid': a.uuid,
+                        'main_photo_url': a.main_photo_path,
+                        'artist': a.artist.name
+                    }
+            return render_template('art-shop-manager.html', logged_in=current_user.is_authenticated, current_year=current_year, admin=admin,
+                                pending_artworks_dict=pending_artworks_dict)
+        else:
+            return redirect(url_for('main.home'))
+    else:
+        session['url'] = url_for('account.art_shop_manager')
+        return redirect(url_for('account.login', instruction='Login to go to Artist-manager'))
+
+
+@manager.route('/artwork-approval', methods=['GET', 'POST'])
+def artwork_approval():
+    admin = db.session.query(Role).filter_by(name='admin').scalar()
+    if current_user.is_authenticated and admin in current_user.role:
+        if request.method == 'POST' and request.is_json:
+            data = request.get_json()
+            uuid = data
+            session['approval_artwork_uuid'] = uuid
+            
+            return jsonify({"redirect_url": url_for('manager.artwork_approval')})
+# ----------------------------------------------------------------------------------------------------------------------------------
+        pending_artworks_dict = {}
+        artworks = db.session.query(Artwork).all()
+        for a in artworks:
+            if a.approval_status != 'approved':
+                pending_artworks_dict[a.uuid] = {
+                    'uuid': a.uuid,
+                    'main_photo_url': a.main_photo_path,
+                    'artist': a.artist.name
+                }
+        additional_photos = []
+        uuid = session.get('approval_artwork_uuid')
+        artwork = db.session.query(Artwork).filter_by(uuid=uuid).scalar()
+        if artwork.additional_photo_paths:
+            additional_photo_path_list = json.loads(artwork.additional_photo_paths)
+            for path in additional_photo_path_list:
+                name = Path(path).name
+                additional_photos.append((name,path))
+        else:
+            additional_photo_path_list = []
+        if artwork.original_price:
+            price = format_currency(artwork.original_price, 'INR', locale='en_IN')
+        else:
+            price = ''
+        if artwork.print_size_list:
+            print_size_list = json.loads(artwork.print_size_list)
+        else:
+            print_size_list = []
+        artwork_dict = {
+            'uuid': artwork.uuid,
+            'title': artwork.title,
+            'product_title': artwork.product_title,
+            'main_img_path': artwork.main_photo_path,
+            'additional_img_path_list': additional_photos,
+            'short_description': artwork.short_description,
+            'long_description': artwork.long_description,
+            'theme': artwork.theme,
+            'rating': artwork.net_rating,
+            'artist_name': artwork.artist.name,
+            'medium': artwork.medium,
+            'surface': artwork.surface,
+            'original_size': artwork.original_size,
+            'original_price': price,
+            'original_discount_percent': artwork.original_discount_percentage,
+            'print': artwork.print,
+            'limited_print_count': artwork.limited_print_count,
+            'print_size_list': print_size_list,
+            'recreation': artwork.recreation,
+            'limited_recreation_count': artwork.limited_recreation_count,
+            'recreation_media_list': artwork.recreation_media_list,
+            'original_available': artwork.original_available,
+            'creation_year': artwork.creation_year,
+            'hd_photo_path': artwork.hd_photo_path,
+            'date_time_uplaoded': artwork.date_time_uploaded,
+        }
+        primary_details_dict = {
+            'title': artwork.title,
+            'product_title': artwork.product_title,
+            'main_img_path': artwork.main_photo_path,
+            'additional_img_path_list': additional_photo_path_list,
+            'short_description': artwork.short_description,
+            'long_description': artwork.long_description,
+            'rating': artwork.net_rating,
+            'artist_name': artwork.artist.name,
+            'medium': artwork.medium,
+            'surface': artwork.surface,
+            'original_size': artwork.original_size,
+            'original_price': price,
+            'original_discount_percent': artwork.original_discount_percentage,
+            'original_available': artwork.original_available,
+            'creation_year': artwork.creation_year,
+        }
+        print_details_dict = {
+            'print': artwork.print,
+            'limited_print_count': artwork.limited_print_count,
+            'print_size_list': json.loads(artwork.print_size_list),
+        }
+        recreation_details_dict = {
+            'recreation': artwork.recreation,
+            'limited_recreation_count': artwork.limited_recreation_count,
+            'recreation_media_list': artwork.recreation_media_list,
+        }
+# --------------------------------------------------------- VARIANTS -------------------------------------------------------------------- #
+        original_dict = {}
+        print_dict = {}
+        recreation_dict = {}
+        all_variants = db.session.query(Artwork).filter_by(uuid=uuid).scalar().variants
+        for v in all_variants:
+            if v.category == 'original':
+                original_dict = {
+                    'medium': v.medium,
+                    'surface': v.surface,
+                    'size': v.size,
+                    'price': v.price,
+                    'discount_percent': v.discount_percent,
+                    'delivered_as': v.delivered_as,
+                    'uuid': v.uuid,
+                    'status': v.status
+                }
+            elif v.category == 'print':
+                print_dict[v.uuid] = {
+                    'subcategory': v.subcategory,
+                    'size': v.size,
+                    'price': v.price,
+                    'discount_percent': v.discount_percent,
+                    'inventory': v.inventory,
+                    'delivered_as': v.delivered_as,
+                    'uuid': v.uuid,
+                    'status': v.status
+                }
+            elif v.category == 'recreation':
+                recreation_dict[v.uuid] = {
+                    'subcategory': v.subcategory,
+                    'medium': v.medium,
+                    'surface': v.surface,
+                    'size': v.size,
+                    'price': v.price,
+                    'discount_percent': v.discount_percent,
+                    'inventory': v.inventory,
+                    'uuid': v.uuid,
+                    'status': v.status
+                }
+        if db.session.query(Artwork).filter_by(uuid=uuid).scalar().print_size_list:
+            all_available_print_sizes = json.loads(db.session.query(Artwork).filter_by(uuid=uuid).scalar().print_size_list)
+        pending_photo_size_list = []
+        pending_canvas_size_list = []
+        if all_available_print_sizes:
+            for i in all_available_print_sizes["photo"]:
+                if [a for a in all_variants if a.subcategory == "Photo" and a.size == i]:
+                    continue
+                else:
+                    pending_photo_size_list.append(i)
+            for i in all_available_print_sizes["canvas"]:
+                if [a for a in all_variants if a.subcategory == "Canvas" and a.size == i]:
+                    continue
+                else:
+                    pending_canvas_size_list.append(i)
+            
+
+        return render_template('artwork_approval.html', logged_in=current_user.is_authenticated, current_year=current_year, admin=admin,
+                           pending_artworks_dict=pending_artworks_dict, artwork_dict=artwork_dict, uuid=uuid, primary_details_dict=primary_details_dict,
+                           print_details_dict=print_details_dict, recreation_details_dict=recreation_details_dict, original_dict=original_dict, print_dict=print_dict, recreation_dict=recreation_dict,
+                           pending_photo_size_list=pending_photo_size_list, pending_canvas_size_list=pending_canvas_size_list)
+    else:
+        return redirect(url_for('main.home'))
+
+
+@manager.route('/artwork-approval-operations', methods=['GET', 'POST'])
+def artwork_approval_operations():
+    if request.method == 'POST' and request.is_json:
+        data = request.get_json()
+
+    if data['type'] == 'toggle_active_inactive':
+        variant_uuid = data['variant_uuid']
+        current_status = db.session.query(ArtworkVariants).filter_by(uuid=variant_uuid).scalar().status
+        if current_status == 'active':
+            db.session.query(ArtworkVariants).filter_by(uuid=variant_uuid).scalar().status = 'inactive'
+        elif current_status == 'inactive' or current_status == 'pending':
+            db.session.query(ArtworkVariants).filter_by(uuid=variant_uuid).scalar().status = 'active'
+        db.session.commit()
+        p('Status changed successfully!')
+
+        return jsonify({"redirect_url": url_for('manager.artwork_approval'), "anchor": "#variants-header"})

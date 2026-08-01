@@ -291,6 +291,14 @@ def artist_dashboard():
             pending_artwork_count = len(pending_details_artworks_dict)
             pending_details_artworks_dict = dict(reversed(pending_details_artworks_dict.items()))
 
+# ---------------------------------------------- ALL ARTWORKS --------------------------------------------------#
+            all_artworks_uuid_list = []
+            all_artworks = current_user.artworks
+            for a in all_artworks:
+                uuid = a.uuid
+                main_img_url = a.main_photo_path
+                all_artworks_uuid_list.append((uuid, main_img_url))
+# ---------------------------------------------------------------------------------------------------------------#
             if request.method == 'POST':
                 if request.form.get('submit') == 'create_document':
                     document = request.form.get('document')
@@ -1210,9 +1218,9 @@ def artist_dashboard():
 
 
                 return render_template('artist_dashboard.html', logged_in=current_user.is_authenticated, current_year=current_year, admin=admin,
-                                    pending_details_artworks_dict=pending_details_artworks_dict, pending_artwork_count=pending_artwork_count)
+                                    pending_details_artworks_dict=pending_details_artworks_dict, pending_artwork_count=pending_artwork_count, all_artworks_uuid_list=all_artworks_uuid_list)
         return render_template('artist_dashboard.html', logged_in=current_user.is_authenticated, current_year=current_year, admin=admin,
-                                            pending_details_artworks_dict=pending_details_artworks_dict, pending_artwork_count=pending_artwork_count)    
+                                            pending_details_artworks_dict=pending_details_artworks_dict, pending_artwork_count=pending_artwork_count, all_artworks_uuid_list=all_artworks_uuid_list)    
     
 
 
@@ -2233,115 +2241,3 @@ def change_password():
 
 
 # ---------------------------------------------- MANAGER ----------------------------------------------------------------#
-@account.route('/artist-manager', methods=['GET', 'POST'])
-def artist_manager():
-    admin = db.session.query(Role).filter_by(name='admin').scalar()
-    if current_user.is_authenticated:
-   
-        pending_artworks_dict = {}
-        artworks = db.session.query(Artwork).all()
-        for a in artworks:
-            if a.approval_status != 'approved':
-                pending_artworks_dict[a.uuid] = {
-                    'uuid': a.uuid,
-                    'main_photo_url': a.main_photo_path,
-                    'artist': a.artist.name
-                }
-
-        return render_template('artist_manager.html', logged_in=current_user.is_authenticated, current_year=current_year, admin=admin,
-                            pending_artworks_dict=pending_artworks_dict)
-    else:
-        session['url'] = url_for('account.artist_manager')
-        return redirect(url_for('account.login', instruction='Login to go to Artist-manager'))
-
-
-@account.route('/artwork-approval', methods=['GET', 'POST'])
-def artwork_approval():
-    admin = db.session.query(Role).filter_by(name='admin').scalar()
-    if current_user.is_authenticated:
-        if request.method == 'POST' and request.is_json:
-            data = request.get_json()
-            uuid = data
-            session['approval_artwork_uuid'] = uuid
-            
-            return jsonify({"redirect_url": url_for('account.artwork_approval')})
-# ----------------------------------------------------------------------------------------------------------------------------------
-        pending_artworks_dict = {}
-        artworks = db.session.query(Artwork).all()
-        for a in artworks:
-            if a.approval_status != 'approved':
-                pending_artworks_dict[a.uuid] = {
-                    'uuid': a.uuid,
-                    'main_photo_url': a.main_photo_path,
-                    'artist': a.artist.name
-                }
-        
-        uuid = session.get('approval_artwork_uuid')
-        artwork = db.session.query(Artwork).filter_by(uuid=uuid).scalar()
-        if artwork.additional_photo_paths:
-            additional_photo_path_list = json.loads(artwork.additional_photo_paths)
-        else:
-            additional_photo_path_list = []
-        if artwork.original_price:
-            price = format_currency(artwork.original_price, 'INR', locale='en_IN')
-        else:
-            price = ''
-        artwork_dict = {
-            'uuid': artwork.uuid,
-            'title': artwork.title,
-            'product_title': artwork.product_title,
-            'main_img_path': artwork.main_photo_path,
-            'additional_img_path_list': additional_photo_path_list,
-            'short_description': artwork.short_description,
-            'long_description': artwork.long_description,
-            'theme': artwork.theme,
-            'rating': artwork.net_rating,
-            'artist_name': artwork.artist.name,
-            'medium': artwork.medium,
-            'surface': artwork.surface,
-            'original_size': artwork.original_size,
-            'original_price': price,
-            'original_discount_percent': artwork.original_discount_percentage,
-            'print': artwork.print,
-            'limited_print_count': artwork.limited_print_count,
-            'print_size_list': json.loads(artwork.print_size_list),
-            'recreation': artwork.recreation,
-            'limited_recreation_count': artwork.limited_recreation_count,
-            'recreation_media_list': artwork.recreation_media_list,
-            'original_available': artwork.original_available,
-            'creation_year': artwork.creation_year,
-            'hd_photo_path': artwork.hd_photo_path,
-            'date_time_uplaoded': artwork.date_time_uploaded,
-        }
-        primary_details_dict = {
-            'title': artwork.title,
-            'product_title': artwork.product_title,
-            'main_img_path': artwork.main_photo_path,
-            'additional_img_path_list': additional_photo_path_list,
-            'short_description': artwork.short_description,
-            'long_description': artwork.long_description,
-            'rating': artwork.net_rating,
-            'artist_name': artwork.artist.name,
-            'medium': artwork.medium,
-            'surface': artwork.surface,
-            'original_size': artwork.original_size,
-            'original_price': price,
-            'original_discount_percent': artwork.original_discount_percentage,
-            'original_available': artwork.original_available,
-            'creation_year': artwork.creation_year,
-        }
-        print_details_dict = {
-            'print': artwork.print,
-            'limited_print_count': artwork.limited_print_count,
-            'print_size_list': json.loads(artwork.print_size_list),
-        }
-        recreation_details_dict = {
-            'recreation': artwork.recreation,
-            'limited_recreation_count': artwork.limited_recreation_count,
-            'recreation_media_list': artwork.recreation_media_list,
-        }
-        return render_template('artwork_approval.html', logged_in=current_user.is_authenticated, current_year=current_year, admin=admin,
-                           pending_artworks_dict=pending_artworks_dict, artwork_dict=artwork_dict, uuid=uuid, primary_details_dict=primary_details_dict,
-                           print_details_dict=print_details_dict, recreation_details_dict=recreation_details_dict)
-    else:
-        return redirect(url_for('account.login', instruction='Login to Continue'))
