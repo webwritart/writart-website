@@ -436,3 +436,85 @@ def save_print_variants():
         return jsonify({"alert": "Image cropped and variant saved successfully!"})
 
     return '', 204
+
+
+@artist_dashboard_operations.route('/get-artwork-details', methods=['GET', 'POST'])
+def get_artwork_details():
+    if request.method == 'POST' and request.is_json:
+        data = request.get_json()
+        if data['job'] == 'get_artwork_details':
+            uuid = data['artwork_uuid']
+            artwork = db.session.query(Artwork).filter_by(uuid=uuid).scalar()
+            all_variants = artwork.variants
+            variants_count = len(all_variants)
+            print_count = 0
+            recreation_count = 0
+            original_available = artwork.original_available
+            for v in all_variants:
+                if v.category == 'print':
+                    print_count += 1
+                elif v.category == 'recreation':
+                    recreation_count += 1
+                elif v.category == 'original':
+                    pass
+
+            artwork_dict = {'uuid': artwork.uuid,
+                            'title': artwork.title,
+                            'theme': artwork.theme,
+                            'main_photo_path': artwork.main_photo_path,
+                            'variants_count': variants_count,
+                            'print_count': print_count,
+                            'recreation_count': recreation_count,
+                            'original_available': original_available
+                        }
+            
+            return jsonify({"artwork_dict": artwork_dict})
+
+        if data['job'] == 'change_artwork_details':
+            uuid = data['artwork_uuid']
+            artwork = db.session.query(Artwork).filter_by(uuid=uuid).scalar()
+            change_details_dict = {'uuid': artwork.uuid,
+                                    'header': 'Change details',
+                                    'title': artwork.title,
+                                    'product_title': artwork.product_title,
+                                    'print': artwork.print,
+                                    'recreation': artwork.recreation,
+                                    'original': artwork.original_available,
+                                    'short_description': artwork.short_description,
+                                    'long_description': artwork.long_description
+                                }
+            return jsonify({"change_details_dict": change_details_dict})
+
+        if data['job'] == 'update_artwork_details':
+            uuid = data['artwork_uuid']
+            title = data['title']
+            product_title = data['product_title']
+            print = data['print']
+            recreation = data['recreation']
+            original = data['original']
+            short_description = data['short_description']
+            long_description = data['long_description']
+
+            artwork_entry = db.session.query(Artwork).filter_by(uuid=uuid).scalar()
+            artwork_entry.title = title
+            artwork_entry.product_title = product_title
+            artwork_entry.print = print
+            artwork_entry.recreation = recreation
+            artwork_entry.original_available = original
+            artwork_entry.short_description = short_description
+            artwork_entry.long_description = long_description
+            db.session.commit()
+
+            changed_details_dict = {'uuid': artwork_entry.uuid,
+                                    'header': 'Changed details',
+                                    'title': artwork_entry.title,
+                                    'product_title': artwork_entry.product_title,
+                                    'print': artwork_entry.print,
+                                    'recreation': artwork_entry.recreation,
+                                    'original': artwork_entry.original_available,
+                                    'short_description': artwork_entry.short_description,
+                                    'long_description': artwork_entry.long_description
+                                }
+            return jsonify({"changed_details_dict": changed_details_dict})
+
+    return '', 204

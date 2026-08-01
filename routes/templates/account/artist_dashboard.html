@@ -135,7 +135,7 @@
         margin: 0% .2%;
     }
     #operation-menu-container {
-        display: flex;
+        display: none;
         justify-content: space-evenly;
         width: 100%;
         padding: .5% 5%;
@@ -155,11 +155,67 @@
     #operation-menu-container button:hover {
         background: linear-gradient(to bottom, #b85a42, #50240e);
     }
+    #default-artwork-details-container {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        justify-content: center;
+    }
     #operation-artwork-title {
         width: 100%;
         text-align: center;
         margin-top: 1%;
         font-weight: 500;
+    }
+    
+    #operation-artwork-img-container {
+        height: 200px;
+        display: flex;
+        justify-content: center;
+    }
+    #operation-artwork-img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+    #operation-artwork-details-container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        padding: 1%;
+        align-items: center;
+    }
+    #operation-artwork-details-container p {
+        margin: 0%;
+        padding: 0%;
+        font-size: .9rem;
+    }
+    #change-details-container {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        align-items: center;
+        padding: 5% 10%;
+    }
+    .inline-inputs {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+    }
+    label {
+        width: 30%;
+    }
+    select {
+        width: 100%;
+    }
+    .operation-btn {
+        background: rgb(83, 93, 62);
+        color: rgb(213, 213, 213);
+        width: 100%;
+        padding: .5% 2%;
+        font-size: .9rem;
+        margin-top: 2%;
     }
     #price-and-discount-container {
         display: flex;
@@ -302,7 +358,7 @@
                 <p id="operation-bar-header">All artworks</p>
                 <div id="all-artworks-slide">
                     {% for a in all_artworks_uuid_list %}
-                    <img src="{{a[1]}}" onclick="openImgOptions('{{a[0]}}')">
+                    <img src="{{a[1]}}" onclick="openImgOptions({{a[0]}})">
                     {% endfor %}
                 </div>
                 <div id="operation-menu-container">
@@ -310,9 +366,63 @@
                     <button onclick="editPriceAndDiscount()">Edit price & discount</button>
                     <button onclick="additionalImages()">Additional images</button>
                     <button onclick="addVariants()">Add variants</button>
-                    <button onclick="originalAvailability()">Original availability</button>
                 </div>
-                <p id="operation-artwork-title">Artwork TItle</p>
+                <div id="default-artwork-details-container">
+                    <p id="operation-title"></p>
+                    <div id="operation-artwork-img-container">
+                        <img id="operation-artwork-img" src="">
+                    </div>
+                    <div id="operation-artwork-details-container">
+                        <p id="artwork-theme"></p>
+                        <p id="variants-count"></p>
+                        <p id="print-count"></p>
+                        <p id="recreation-count"></p>
+                        <p id="original-available"></p>
+                    </div>
+                </div>
+                <div id="change-details-container">
+                    <p id="operation-title"></p>
+                    <div class="inline-inputs">
+                        <label>Title</label>
+                        <input type="text" id="change-details-title" placeholder="Title of the artwork">
+                    </div>
+                    <div class="inline-inputs">
+                        <label>Product title</label>
+                        <input type="text" id="change-details-product-title" placeholder="Product title of the artwork">
+                    </div>
+                    <div class="inline-inputs">
+                        <label>Prints available for sale?</label>
+                        <select id="print">
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                    <div class="inline-inputs">
+                        <label>Provide recreation service?</label>
+                        <select id="recreation">
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                    <div class="inline-inputs">
+                        <label>Is Original available for sale?</label>
+                        <select id="original">
+                            <option value="available">Available</option>
+                            <option value="sold">Sold</option>
+                            <option value="not for sale">Not for sale</option>
+                        </select>
+                    </div>
+                    <div class="inline-inputs">
+                        <label>Short description</label>
+                        <input type="text" id="short-description" placeholder="Short description of the artwork">
+                    </div>
+                    <div class="inline-inputs">
+                        <label>Long description</label>
+                        <input type="text" id="long-description" placeholder="Long description of the artwork">
+                    </div>
+                    <button id="change-details-btn" class="operation-btn" onclick="updateDetails()">Update details</button>
+                </div>
+                
                 <div id="price-and-discount-container">
 
                 </div>
@@ -398,12 +508,19 @@
 // ----------------------------------------- ARTWORK OPERATIONS -----------------------------------------------
 let currentArtworkUuid;
 
+function hideSections() {
+    document.getElementById('operation-menu-container').style.display = 'none';
+    document.getElementById('default-artwork-details-container').style.display = 'none';
+    document.getElementById('change-details-container').style.display = 'none';
+    document.getElementById('price-and-discount-container').style.display = 'none';
+}
+
 function openImgOptions(artworkUuid) {
     currentArtworkUuid = artworkUuid;
     const endpointUrl = "{{url_for('artist_dashboard_operations.get_artwork_details')}}";
     const dataToSend = {
-        'artwork_uuid': artworkUuid,
-        'job': 'get_artwork_details'
+        artwork_uuid: artworkUuid,
+        job: 'get_artwork_details'
     };
 
     fetch(endpointUrl, {
@@ -415,16 +532,94 @@ function openImgOptions(artworkUuid) {
     })
     .then(response => response.json())
     .then(data => {
-        if (data.artwork_title) {
-            document.getElementById('operation-artwork-title').innerText = data.artwork_title;
+        if (data.artwork_dict) {
+            hideSections();
+            document.getElementById('operation-menu-container').style.display = 'flex';
+            document.getElementById('default-artwork-details-container').style.display = 'flex';
+            document.getElementById('operation-title').innerText = data.artwork_dict.title;
+            document.getElementById('operation-artwork-img').src = data.artwork_dict.main_photo_path;
+            document.getElementById('artwork-theme').innerText = `Theme: ${data.artwork_dict.theme}`;
+            document.getElementById('variants-count').innerText = `Variants: ${data.artwork_dict.variants_count}`;
+            document.getElementById('print-count').innerText = `Prints: ${data.artwork_dict.print_count}`;
+            document.getElementById('original-available').innerText = `Original: ${data.artwork_dict.original_available}`;
+        } 
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
+
+function changeDetails() {
+    const endpointUrl = "{{url_for('artist_dashboard_operations.get_artwork_details')}}";
+    const dataToSend = {
+        artwork_uuid: currentArtworkUuid,
+        job: 'change_artwork_details'
+    };
+
+    fetch(endpointUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dataToSend)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.change_details_dict) {
+            hideSections();
+            document.getElementById('operation-menu-container').style.display = 'flex';
+            document.getElementById('change-details-container').style.display = 'flex';
+            document.getElementById('operation-title').innerText = `Change details for: ${data.change_details_dict.title}`;
+            document.getElementById('change-details-title').value = data.change_details_dict.title;
+            document.getElementById('change-details-product-title').value = data.change_details_dict.product_title;
+            document.getElementById('print').value = data.change_details_dict.print;
+            document.getElementById('recreation').value = data.change_details_dict.recreation;
+            document.getElementById('original').value = data.change_details_dict.original;
+            document.getElementById('short-description').value = data.change_details_dict.short_description;
+            document.getElementById('long-description').value = data.change_details_dict.long_description;
         }
-        if (data.price) {
-            document.getElementById('price-and-discount-container').innerHTML = `
-                <p>Price: ${data.price}</p>
-                <p>Discount: ${data.discount}</p>
-            `;
-        } else {
-            document.getElementById('price-and-discount-container').innerHTML = '';
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
+
+function updateDetails() {
+    const endpointUrl = "{{url_for('artist_dashboard_operations.get_artwork_details')}}";
+    const updatedDetails = {
+        artwork_uuid: currentArtworkUuid,
+        title: document.getElementById('change-details-title').value,
+        product_title: document.getElementById('change-details-product-title').value,
+        print: document.getElementById('print').value,
+        recreation: document.getElementById('recreation').value,
+        original: document.getElementById('original').value,
+        short_description: document.getElementById('short-description').value,
+        long_description: document.getElementById('long-description').value,
+        job: 'update_artwork_details'
+    };
+
+    fetch(endpointUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(updatedDetails)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.changed_details_dict) {
+            alert('Artwork details updated successfully!');
+            hideSections();
+            document.getElementById('operation-menu-container').style.display = 'flex';
+            document.getElementById('change-details-container').style.display = 'flex';
+            document.getElementById('operation-title').innerText = data.changed_details_dict.title;
+            document.getElementById('change-details-title').value = data.changed_details_dict.title;
+            document.getElementById('change-details-product-title').value = data.changed_details_dict.product_title;
+            document.getElementById('print').value = data.changed_details_dict.print;
+            document.getElementById('recreation').value = data.changed_details_dict.recreation;
+            document.getElementById('original').value = data.changed_details_dict.original;
+            document.getElementById('short-description').value = data.changed_details_dict.short_description;
+            document.getElementById('long-description').value = data.changed_details_dict.long_description;
         }
     })
     .catch((error) => {

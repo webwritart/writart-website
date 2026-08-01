@@ -1435,6 +1435,7 @@ def artwork_approval():
             'original_available': artwork.original_available,
             'creation_year': artwork.creation_year,
             'hd_photo_path': artwork.hd_photo_path,
+            'approval_status': artwork.approval_status,
             'date_time_uplaoded': artwork.date_time_uploaded,
         }
         primary_details_dict = {
@@ -1542,6 +1543,21 @@ def artwork_approval_operations():
         elif current_status == 'inactive' or current_status == 'pending':
             db.session.query(ArtworkVariants).filter_by(uuid=variant_uuid).scalar().status = 'active'
         db.session.commit()
-        p('Status changed successfully!')
-
+    
         return jsonify({"redirect_url": url_for('manager.artwork_approval'), "anchor": "#variants-header"})
+    if data['type'] == 'toggle_artwork_approval':
+        artwork_uuid = data['artwork_uuid']
+        current_status = db.session.query(Artwork).filter_by(uuid=artwork_uuid).scalar().approval_status
+        if current_status == 'approved':
+            db.session.query(Artwork).filter_by(uuid=artwork_uuid).scalar().approval_status = 'pending'
+            all_variants = db.session.query(Artwork).filter_by(uuid=artwork_uuid).scalar().variants
+            for v in all_variants:
+                db.session.query(ArtworkVariants).filter_by(uuid=v.uuid).scalar().status = 'inactive'
+        elif current_status == 'pending' or current_status == 'rejected':
+            db.session.query(Artwork).filter_by(uuid=artwork_uuid).scalar().approval_status = 'approved'
+            all_variants = db.session.query(Artwork).filter_by(uuid=artwork_uuid).scalar().variants
+            for v in all_variants:
+                db.session.query(ArtworkVariants).filter_by(uuid=v.uuid).scalar().status = 'active'
+        db.session.commit()
+        current_status = db.session.query(Artwork).filter_by(uuid=artwork_uuid).scalar().approval_status
+        return jsonify({"current_status": current_status})

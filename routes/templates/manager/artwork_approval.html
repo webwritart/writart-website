@@ -173,6 +173,23 @@
     align-items: center;
     padding: 0% 0% 2% 0%;
 }
+#artwork-approval-text {
+    font-size: 1.3rem;
+    font-weight: 500;
+    margin: 2% 0% 0% 0%;
+}
+#artwork-approval-btn {
+    font-size: 1.3rem;
+    font-weight: 500;
+    background: rgb(80, 133, 45);
+    color: white;
+    padding: .5% 3%;
+    border-radius: .3rem;
+    cursor: pointer;
+}
+#artwork-approval-btn:hover {
+    background: rgb(57, 101, 16);
+}
 .variant-table {
     display: flex;
     flex-direction: column;
@@ -336,6 +353,8 @@
 </div>
 <div id="variants-root-container">
     <p id="variants-header">Variants</p>
+    <p id="artwork-approval-text">Artwork Approval</p>
+    <p id="artwork-approval-btn" onclick="artworkApprovalToggleBtn({{artwork_dict['uuid']}})">{{artwork_dict['approval_status']}}</p>
     <table class="variant-table">
         <tr>
             <p class="table-header">Original</p>
@@ -438,6 +457,12 @@ elements.forEach(element => {
         element.style.setProperty('background-color', '#b34425', 'important');
     }
 });
+
+if (document.getElementById('artwork-approval-btn').innerHTML == 'approved') {
+    document.getElementById('artwork-approval-btn').style.setProperty('background-color', 'rgb(57, 101, 16)', 'important');
+} else if (document.getElementById('artwork-approval-btn').innerHTML == 'rejected' || document.getElementById('artwork-approval-btn').innerHTML == 'pending') {
+    document.getElementById('artwork-approval-btn').style.setProperty('background-color', '#b34425', 'important');
+}
 const dialog = document.getElementById('myPopup');
 
 
@@ -490,6 +515,35 @@ function toggleApprove(variant_uuid) {
     });
 }
 
-
+function artworkApprovalToggleBtn(artwork_uuid) {
+    const artworkUuid = artwork_uuid;
+    const endpointUrl = "{{url_for('manager.artwork_approval_operations')}}";
+    const toggleData = {
+        artwork_uuid: artworkUuid,
+        type: 'toggle_artwork_approval'
+    };
+    fetch(endpointUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(toggleData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.alert) {
+            alert(data.alert);
+        }
+        if (data.current_status) {
+            // Update the UI with the new approval status\
+            const approvalBtn = document.getElementById('artwork-approval-btn');
+            approvalBtn.innerHTML = data.current_status;
+            window.location.reload();
+        }
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
 </script>
 {% endblock %}

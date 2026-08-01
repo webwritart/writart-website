@@ -277,9 +277,7 @@ def artist_dashboard():
             pending_details_artworks_dict = {}
             all_artworks = current_user.artworks
             for a in all_artworks:
-                details = [a.theme, a.product_title, a.short_description, a.medium, a.original_price, a.original_available, a.creation_year, a.main_photo_path,
-                            a.sale_status]
-                if any(item is None for item in details):
+                if a.approval_status == 'pending':
                     pending_details_artworks_uuid_list.append(a.uuid)
             for uuid in pending_details_artworks_uuid_list:
                 a = db.session.query(Artwork).filter_by(uuid=uuid).scalar()
