@@ -67,4 +67,20 @@ class ArtworkVariants(db.Model):
         return f"{self.category}--{self.subcategory}--{self.size}--{self.price}"
 
 
+class ArtworkVariantsData(db.Model):
+    __tablename__ = "artwork_variants_data"
+
+    id = db.Column(db.Integer, primary_key=True)
+    category = db.Column(db.String(200)) # eg. print or recreation
+    subcategory = db.Column(db.String(200)) # eg. photo or canvas for print category
+    medium = db.Column(db.String(200))
+    surface = db.Column(db.String(200))
+    size = db.Column(db.String(200))
+    delivered_as = db.Column(db.String(500)) # eg. Rolled or stretched
+    urgent_delivery_charge = db.Column(db.Integer)
+    minimum_selling_price = db.Column(db.Integer)
+    paid_to_artist_percentage = db.Column(db.Integer)
+
+    def __repr__(self):
+        return f"{self.category}--{self.subcategory}--{self.size}"
 

@@ -203,6 +203,26 @@
         width: 100%;
         justify-content: center;
     }
+    #change-details-operation-title {
+        font-size: 1rem;
+        font-weight: 700;
+        text-align: center;
+        color: rgba(0, 0, 0, 0.6)
+    }
+    #price-and-discount-operation-title {
+        font-size: 1rem;
+        font-weight: 700;
+        text-align: center;
+        color: rgba(0, 0, 0, 0.6)
+    }
+    #price-and-discount-table {
+        width: 100%;
+        border: 1px solid black;
+    }
+    #price-and-discount-table td {
+        border-top: 1px solid black;
+        text-align: center;
+    }
     label {
         width: 30%;
     }
@@ -218,10 +238,58 @@
         margin-top: 2%;
     }
     #price-and-discount-container {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        align-items: center;
+    }
+    #additional-images-container {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        align-items: center;
+    }
+    #additional-images-operation-title {
+        font-size: 1rem;
+        font-weight: 700;
+        text-align: center;
+        color: rgba(0, 0, 0, 0.6)
+    }
+    #additional-images-row-container {
         display: flex;
         flex-direction: column;
         width: 100%;
         align-items: center;
+    }
+    .additional-image-row {
+        display: flex;
+        width: 100%;
+        height: 150px;
+        justify-content: center;
+        align-items: center;
+        background: rgb(177, 184, 177);
+        margin: 1% 0%;
+        border: 2px solid rgb(83, 93, 62);
+        border-left: none;
+        border-right: none;
+        padding: 1% 0%;
+    }
+    .additional-image {
+        height: 100%;
+        width: auto;
+        object-fit: contain;
+    }
+    .delete-additional-image-btn {
+        background: rgb(209, 40, 40);
+        color: rgb(255, 254, 254);
+        padding: .5% 2%;
+        font-size: .9rem;
+        margin-left: 2%;
+        border: none;
+        border-radius: 1rem;
+    }
+    .delete-additional-image-btn:hover {
+        background: rgb(147, 25, 25);
     }
     #form-container {
         display: flex;
@@ -367,6 +435,7 @@
                     <button onclick="additionalImages()">Additional images</button>
                     <button onclick="addVariants()">Add variants</button>
                 </div>
+<!-- ---------------------------------------------- ARTWORK DEFAULT DETAILS DISPLAY -------------------------------------------------- -->
                 <div id="default-artwork-details-container">
                     <p id="operation-title"></p>
                     <div id="operation-artwork-img-container">
@@ -380,8 +449,9 @@
                         <p id="original-available"></p>
                     </div>
                 </div>
+<!-- -------------------------------------------------- CHANGE DETAILS--------------------------------------------------------------  -->
                 <div id="change-details-container">
-                    <p id="operation-title"></p>
+                    <p id="change-details-operation-title"></p>
                     <div class="inline-inputs">
                         <label>Title</label>
                         <input type="text" id="change-details-title" placeholder="Title of the artwork">
@@ -422,12 +492,32 @@
                     </div>
                     <button id="change-details-btn" class="operation-btn" onclick="updateDetails()">Update details</button>
                 </div>
-                
+<!-- -------------------------------------------------- EDIT PRICE & DISCOUNT-------------------------------------------------------------- -->
                 <div id="price-and-discount-container">
-
+                    <p id="price-and-discount-operation-title"></p>
+                    <table id="price-and-discount-table">
+                        <tr>
+                            <th>Category</th>
+                            <th>Subcategory</th>
+                            <th>Size</th>
+                            <th>Marked price (MRP)</th>
+                            <th>Discount</th>
+                            <th>Selling price</th>
+                        </tr>
+                    </table>
+                    <button id="price-and-discount-btn" class="operation-btn" onclick="updatePriceAndDiscount()">Update price & discount</button>
+                </div>
+<!-- ------------------------------------------------------- ADDITIONAL IMAGES-------------------------------------------------------- -->
+                <div id="additional-images-container">
+                    <p id="additional-images-operation-title"></p>
+                    <div id="additional-images-row-container">
+                        
+                    </div>
+                    <button id="additional-images-btn" class="operation-btn" onclick="updateAdditionalImages()">Update additional images</button>
                 </div>
             </div>
         </div>
+<!--  ------------------------------------------------------- INVOICE / RECEIPT AND COA-------------------------------------------------------- -->
         <div id="right-side-bar">
             <div id="right-side-bar-container">
                 <form id="my_form" action="{{url_for('account.artist_dashboard')}}" method="post">
@@ -507,13 +597,17 @@
 <script>
 // ----------------------------------------- ARTWORK OPERATIONS -----------------------------------------------
 let currentArtworkUuid;
+let maxDiscount;
+let discountPercent;
 
 function hideSections() {
     document.getElementById('operation-menu-container').style.display = 'none';
     document.getElementById('default-artwork-details-container').style.display = 'none';
     document.getElementById('change-details-container').style.display = 'none';
     document.getElementById('price-and-discount-container').style.display = 'none';
+    document.getElementById('additional-images-container').style.display = 'none';
 }
+
 
 function openImgOptions(artworkUuid) {
     currentArtworkUuid = artworkUuid;
@@ -536,7 +630,7 @@ function openImgOptions(artworkUuid) {
             hideSections();
             document.getElementById('operation-menu-container').style.display = 'flex';
             document.getElementById('default-artwork-details-container').style.display = 'flex';
-            document.getElementById('operation-title').innerText = data.artwork_dict.title;
+            document.getElementById('change-details-operation-title').innerText = data.artwork_dict.title;
             document.getElementById('operation-artwork-img').src = data.artwork_dict.main_photo_path;
             document.getElementById('artwork-theme').innerText = `Theme: ${data.artwork_dict.theme}`;
             document.getElementById('variants-count').innerText = `Variants: ${data.artwork_dict.variants_count}`;
@@ -625,6 +719,121 @@ function updateDetails() {
     .catch((error) => {
         console.error('Error:', error);
     });
+}
+
+function editPriceAndDiscount() {
+    const endpointUrl = "{{url_for('artist_dashboard_operations.get_artwork_details')}}";
+    const dataToSend = {
+        artwork_uuid: currentArtworkUuid,
+        job: 'edit_price_and_discount'
+    };
+
+    fetch(endpointUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dataToSend)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.price_and_discount_dict) {
+            hideSections();
+            document.getElementById('operation-menu-container').style.display = 'flex';
+            document.getElementById('price-and-discount-container').style.display = 'flex';
+            document.getElementById('price-and-discount-operation-title').innerText = `Edit price & discount for: ${data.title}`;
+            const tableBody = document.getElementById('price-and-discount-table');
+            
+            tableBody.innerHTML = `
+                <tr>
+                    <th>Category</th>
+                    <th>Subcategory</th>
+                    <th>Size</th>
+                    <th>Marked price (MRP)</th>
+                    <th>Discount</th>
+                    <th>Selling price</th>
+                </tr>`;
+            for (const [key, value] of Object.entries(data.price_and_discount_dict)) {
+                const row = document.createElement('tr');
+                maxDiscount = Math.round(100 - (150000 / Number(value.marked_price)));
+                discountPercent = value.discount_percent;
+                if (discountPercent == null || discountPercent == undefined) {
+                    discountPercent = 0;
+                } else if (discountPercent > maxDiscount) {
+                    discountPercent = maxDiscount;
+                }
+                const sellingPrice = value.marked_price - (value.marked_price * (discountPercent / 100));
+                const sellingPriceFormatted = sellingPrice.toLocaleString('en-IN', { style: 'currency', currency: 'INR' });
+                row.innerHTML = `
+                    <td>${value.category}</td>
+                    <td>${value.subcategory}</td>
+                    <td>${value.size}</td>
+                    <td><input type="number" value="${value.marked_price}" class="marked-price-input" id="marked-price-${key}" oninput="calculateSellingPrice(${key})"></td>
+                    <td><input type="number" value="${discountPercent}" max="${maxDiscount}" min="0" class="discount-input" id="discount-${key}" oninput="calculateSellingPrice(${key})"></td>
+                    <td id="selling-price-${key}">${sellingPriceFormatted}</td>`;
+                tableBody.appendChild(row);
+            };
+        }
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
+
+function additionalImages() {
+    const endpointUrl = "{{url_for('artist_dashboard_operations.get_artwork_details')}}";
+    const dataToSend = {
+        artwork_uuid: currentArtworkUuid,
+        job: 'additional_images'
+    };
+
+    fetch(endpointUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dataToSend)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.additional_photo_paths) {
+            hideSections();
+            document.getElementById('operation-menu-container').style.display = 'flex';
+            document.getElementById('additional-images-container').style.display = 'flex';
+            document.getElementById('additional-images-operation-title').innerText = `Additional images for: ${data.title}`;
+            const additionalImagesRowContainer = document.getElementById('additional-images-row-container');
+            
+            for (const [key, value] of Object.entries(data.additional_photo_paths)) {
+                const imageRow = document.createElement('div');
+                imageRow.classList.add('additional-image-row');
+                imageRow.innerHTML = `
+                    <img src="${value}" class="additional-image" id="additional-image-${key}">
+                    <button class="delete-additional-image-btn" onclick="deleteAdditionalImage(${value})">Delete</button>`;
+                additionalImagesRowContainer.appendChild(imageRow);
+            }
+        }
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
+// ----------------- CALRULATE SELLING PRICE ------
+function calculateSellingPrice(uuid) {
+    const markedPriceInput = document.getElementById(`marked-price-${uuid}`);
+    const discountInput = document.getElementById(`discount-${uuid}`);
+    const sellingPriceCell = document.getElementById(`selling-price-${uuid}`);
+
+    const markedPrice = parseFloat(markedPriceInput.value);
+    const discountPercent = parseFloat(discountInput.value);
+
+    if (!isNaN(markedPrice) && !isNaN(discountPercent)) {
+        const sellingPrice = markedPrice - (markedPrice * (discountPercent / 100));
+        const sellingPriceFormatted = sellingPrice.toLocaleString('en-IN', { style: 'currency', currency: 'INR' });
+        sellingPriceCell.textContent = sellingPriceFormatted;
+    } else {
+        sellingPriceCell.textContent = '';
+    }
+    
 }
 // ------------------------------------------ PENDING ARTWORK CLICK -------------------------------------------
 function openPendingArtworkEdit(artwork_uuid) {

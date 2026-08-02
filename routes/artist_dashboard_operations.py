@@ -517,4 +517,24 @@ def get_artwork_details():
                                 }
             return jsonify({"changed_details_dict": changed_details_dict})
 
+        if data['job'] == 'edit_price_and_discount':
+            price_and_discount_dict = {}
+            uuid = data['artwork_uuid']
+            artwork = db.session.query(Artwork).filter_by(uuid=uuid).scalar()
+            variants = artwork.variants
+            for v in variants:
+                price_and_discount_dict[v.uuid] = {
+                    'category': v.category,
+                    'subcategory': v.subcategory,
+                    'size': v.size,
+                    'marked_price': v.price,
+                    'discount_percent': v.discount_percent
+                    }
+            return jsonify({"price_and_discount_dict": price_and_discount_dict, "title": artwork.title})
+
+        if data['job'] == 'additional_images':
+            uuid = data['artwork_uuid']
+            artwork = db.session.query(Artwork).filter_by(uuid=uuid).scalar()
+            additional_photo_paths = json.loads(artwork.additional_photo_paths)
+            return jsonify({"additional_photo_paths": additional_photo_paths, "title": artwork.title})
     return '', 204
