@@ -291,14 +291,14 @@
     .delete-additional-image-btn:hover {
         background: rgb(147, 25, 25);
     }
-    #form-container {
+    .form-container {
         display: flex;
         align-items: center;
         justify-content: center;
         width: 100%;
         flex-wrap: wrap;
     }
-    #form-container form {
+    .form-container form {
         width: 22%;
         display: flex;
         flex-direction: column;
@@ -308,6 +308,9 @@
     }
     .form-container form button {
         background: rgb(149, 160, 134);
+    }
+    .form-container form label {
+        width: 100%;
     }
     select {
         padding: 0% !important;
@@ -319,7 +322,8 @@
         font-weight: 600;
         text-align: center;
         margin: 0%;
-        color: rgba(0, 0, 0, 0.6)
+        width: 100%;
+        color: rgba(0, 0, 0, 0.6);
     }
     .form-button {
         background: rgb(83, 93, 62) !important;
@@ -409,7 +413,7 @@
         </div>
         <div id="main-area">
             <div id="top-bar">
-                <div id="form-container">
+                <div class="form-container">
                     <form id="upload-artwork-form" action="{{url_for('artist_dashboard_operations.upload_artwork')}}" method="post" enctype="multipart/form-data">
                         <p class="form-heading">Upload Artwork</p>
                         <label>Upload artwork image</label>

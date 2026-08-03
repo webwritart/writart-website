@@ -122,6 +122,18 @@
     .main-btn {
         background: rgb(68, 92, 40);
     }
+    #wait-message {
+        display: none;
+        font-weight: 700;
+        font-size: 1.2rem;
+        color: #14470c;
+    }
+    #status-bar-container {
+        display: none;
+        width:100%;
+        border:1px solid black; 
+        background: rgb(102, 102, 102);
+    }
     /* -------------------------------------------- RIGHT PANEL ---------------------------------- */
     
     #print-variants-section {
@@ -241,7 +253,15 @@
                         <canvas id="crop-canvas"></canvas>
                      </div>
                     <input id="size-price" type="number" name="price" placeholder="Set Price (Minimum ₹1500)">
-                    <button class="btn btn-primary btn-block btn-large main-btn" id="crop-btn" onclick="reloadPageThroughBacknd()">Export Cropped Image</button>
+                    <button class="btn btn-primary btn-block btn-large main-btn" id="crop-btn" onclick="startProcessing()">Export Cropped Image</button>
+                    <p id="wait-message">Please wait! Your artwork is being processed.</p>
+                    <div id="status-bar-container">
+                        <div id="bar"
+                            style="height:30px;width:0%;
+                            background:green;color:white;text-align:center;">
+                            0%
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -425,8 +445,14 @@ window.addEventListener('mouseup', () => {
 
 
 // --- STEP 4: Extract and Crop Output ---
-cropBtn.addEventListener('click', () => {
+async function startProcessing() {
   if (!img.src) return alert('Please upload an image first.');
+  sizePriceInput.style.display = 'none';
+  cropBtn.style.display = 'none';
+  const statusBarContainer = document.getElementById('status-bar-container');
+  const waitMessage = document.getElementById('wait-message');
+  statusBarContainer.style.display = 'block';
+  waitMessage.style.display = 'block';
 
   // canvas.toDataURL extracts ONLY what is currently visible on the fixed canvas grid
   const croppedDataUrl = canvas.toDataURL('image/jpeg', 1);
@@ -436,22 +462,36 @@ cropBtn.addEventListener('click', () => {
     return alert('Please set a valid price (minimum ₹1500).');
   } else {
     // Send img data url to backend
-    fetch(endPointUrl, {
+    const res = await fetch(endPointUrl, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({ image: croppedDataUrl, price: sizePriceValue, canvas_width: canvas.width, canvas_height: canvas.height, category: printCategory, print_size_inch: printSizeInch, artwork_uuid: artworkUuid})
     })
-    .then(Response => Response.json())
-    .then(data => {
-        if (data.alert) {
-            alert(data.alert);
+
+    const data = await res.json();
+
+    const timer = setInterval(async () => {
+        
+        const r = await fetch(`${"{{url_for('artist_dashboard_operations.get_progress')}}"}?task_id=${data.task_id}`);
+        const p = await r.json();
+
+        document.getElementById("bar").style.width = p.progress + "%";
+        document.getElementById("bar").innerHTML = p.progress + "%";
+
+        if (p.progress >= 100) {
+            clearInterval(timer);
+            location.reload();
+            cropBtn.style.display = 'block';
+            sizePriceInput.style.display = 'block';
+            statusBarContainer.style.display = 'none';
+            waitMessage.style.display = 'none';
+            alert('Image cropped and saved successfully!');
         }
-    })
-    .then(location.reload());
+    }, 500);
   }
-});
+}
 
 // ------------------------------------------ PENDING ARTWORK CLICK -------------------------------------------
 function openPendingArtworkEdit(artwork_uuid) {

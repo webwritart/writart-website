@@ -283,9 +283,15 @@ def artwork_product():
         original_discount_percent = int(original_discount_percent)
     else:
         original_discount_percent = 0
-    original_medium = artwork.medium
-    original_surface = artwork.surface
-    original_medium_surface = original_medium + ' on ' + original_surface
+    if artwork.original_available == 'yes':
+        original_medium = artwork.medium
+        original_surface = artwork.surface
+        original_medium_surface = original_medium + ' on ' + original_surface
+    else:
+        original_medium = ''
+        original_surface = ''
+        original_medium_surface = ''
+    
     category_list = []
     if len([v for v in artwork.variants if v.category == 'print' and v.status == 'active']) > 0 and artwork.print == 'yes':
         category_list.append(('print', 'Prints'))

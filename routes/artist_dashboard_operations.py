@@ -1,5 +1,5 @@
 import os
-from flask import Blueprint, render_template, request, flash, send_file, redirect, url_for, session, jsonify
+from flask import Blueprint, render_template, request, flash, send_file, redirect, url_for, session, jsonify, current_app
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from operations.artist_tools import add_watermark
@@ -23,6 +23,8 @@ from zipfile import ZipFile, ZIP_DEFLATED
 import shutil
 from pathlib import Path
 import json
+import uuid
+import threading
 
 
 artist_dashboard_operations = Blueprint('artist_dashboard_operations', __name__, static_folder='static', template_folder='templates/artist_dashboard_operations')
@@ -68,7 +70,7 @@ def upload_artwork():
 
                 original_file_path = artwork_save_path+filename
 
-                file_path = create_thumbnail_single(original_file_path, temp_thumbnail_path, 900)[0]
+                file_path = create_thumbnail_single(original_file_path, temp_thumbnail_path, 600)[0]
                 webp_thumbnail_filepath = single_png_jpg_to_webp(file_path, artwork_thumbnail_save_path, quality=100)[0][1:]
                 print_size_list = calculate_print_size_list(original_file_path)
                 json_print_size_list = json.dumps(print_size_list)
@@ -86,7 +88,8 @@ def upload_artwork():
                         date_time_uploaded=date_time_uploaded,
                         main_photo_path=webp_thumbnail_filepath,
                         hd_photo_path=artwork_save_path,
-                        print_size_list=json_print_size_list
+                        print_size_list=json_print_size_list,
+                        approval_status='pending'
                     )
                     db.session.add(entry)
                     db.session.commit()
@@ -248,7 +251,7 @@ def pending_artwork_details_edit():
                     filename = secure_filename(f.filename)
                     temp_original_file_path = temp_original_file_path_base+filename
                     f.save(temp_original_file_path)
-                    file_path = create_thumbnail_single(temp_original_file_path, temp_thumbnail_path, 900)[0]
+                    file_path = create_thumbnail_single(temp_original_file_path, temp_thumbnail_path, 600)[0]
                     webp_thumbnail_filepath = '/' + single_png_jpg_to_webp(file_path, additional_thumbnail_path, quality=100)[0]
                     additional_image_path_list.append(webp_thumbnail_filepath)
 
@@ -321,30 +324,22 @@ def edit_artwork_prints():
                            pending_details_artworks_dict=pending_details_artworks_dict, pending_artwork_count=pending_artwork_count, artwork_uuid=artwork_uuid, existing_variant_btn_value_list=existing_variant_btn_value_list)
 
 
-@artist_dashboard_operations.route('/save-print-variants', methods=['GET', 'POST'])
-def save_print_variants():
-    if request.method == 'POST' and request.is_json:
-        data = request.get_json()
-        img_data_url = data['image']
-        artwork_uuid = data['artwork_uuid']
-        price = data['price']
-        print_category = data['category']
-        print_size_inch = data['print_size_inch']
-        print_width = float(print_size_inch.split(' ')[0])
-        print_height = float(print_size_inch.split(' ')[2])
-        print_ratio = print_width/print_height
-        res = int(db.session.query(Tools).filter_by(keyword=print_size_inch).scalar().data.split('_')[1])
-        print_width_px = print_width*res
-        print_height_px = print_height*res
+progress = {}
+
+def process_image(task_id, img_data_url, print_ratio, print_height_px, print_width_px, artwork_uuid, print_category, print_size_inch, price, user_uuid, app):
+    with app.app_context():
+        progress[task_id] = 0
 
         if "," in img_data_url:
             header, base64_data = img_data_url.split(",", 1)
         else:
             base64_data = img_data_url
 
+        progress[task_id] = 10
+
         image_bytes = base64.b64decode(base64_data)
         image_buffer = BytesIO(image_bytes)
-
+        p('Image buffer created from base64 data')
         img = Image.open(image_buffer)
         img_width = img.width
         img_height = img.height
@@ -365,28 +360,44 @@ def save_print_variants():
                 new_width = print_width_px
                 new_height = print_height_px
 
+        progress[task_id] = 30
+
+        p(f"Resizing image to {new_width} x {new_height}")
+
         resized_img = img.resize((round(new_width), round(new_height)), Image.Resampling.LANCZOS)
-        img_save_path = f"./static/files/users/{current_user.uuid}/artworks/spiritual/{artwork_uuid}/variants/print/original/"
+        progress[task_id] = 40
+        p('Image resized successfully')
+        img_save_path = f"./static/files/users/{user_uuid}/artworks/spiritual/{artwork_uuid}/variants/print/original/"
         if not os.path.exists(img_save_path):
             os.makedirs(img_save_path)
         artwork_title = db.session.query(Artwork).filter_by(uuid=artwork_uuid).scalar().title
-        img_name = f"{current_user.uuid}_$_print_$_{print_category}_$_{print_size_inch}_$_{artwork_title}.png"
+        img_name = f"{user_uuid}_$_print_$_{print_category}_$_{print_size_inch}_$_{artwork_title}.png"
         resized_img.save(img_save_path+img_name, compress_level=6, optimize=True)
+
+        progress[task_id] = 80
+
         original_file_path = img_save_path+img_name
-        temp_thumbnail_path = f"./static/files/users/{current_user.uuid}/temp/temp_thumbnails/"
-        variant_thumbnail_save_path = f"./static/files/users/{current_user.uuid}/artworks/spiritual/{artwork_uuid}/variants/print/thumbnail/"
+        temp_thumbnail_path = f"./static/files/users/{user_uuid}/temp/temp_thumbnails/"
+        variant_thumbnail_save_path = f"./static/files/users/{user_uuid}/artworks/spiritual/{artwork_uuid}/variants/print/thumbnail/"
         if not os.path.exists(temp_thumbnail_path):
             os.makedirs(temp_thumbnail_path)
         if not os.path.exists(variant_thumbnail_save_path):
             os.makedirs(variant_thumbnail_save_path)
 
-# CREATE THUMBNAIL AND THEN CONVERTS IT INTO WEBP ----------------------------------------------------------
-        file_path = create_thumbnail_single(original_file_path, temp_thumbnail_path, 900)[0]
+    # CREATE THUMBNAIL AND THEN CONVERTS IT INTO WEBP ----------------------------------------------------------
+        p('Creating thumbnail...')
+        file_path = create_thumbnail_single(original_file_path, temp_thumbnail_path, 600)[0]
+
+        progress[task_id] = 85
+
         webp_thumbnail_filepath = single_png_jpg_to_webp(file_path, variant_thumbnail_save_path, quality=100)[0][1:]
 
         os.remove(file_path)
+        p('Thumbnail created and converted to webp successfully')
 
-# Checks whether the variant already exists, if yes, it updates just the price and photo, if not then created variant anew.#
+        progress[task_id] = 90
+
+    # Checks whether the variant already exists, if yes, it updates just the price and photo, if not then created variant anew.#
         artwork = db.session.query(Artwork).filter_by(uuid=artwork_uuid).scalar()
         existing_print_variants = [p for p in artwork.variants if p.category == 'print']
         variants = db.session.query(ArtworkVariants).all()
@@ -433,9 +444,41 @@ def save_print_variants():
                 )
                 db.session.add(entry)
                 db.session.commit()
-        return jsonify({"alert": "Image cropped and variant saved successfully!"})
+        progress[task_id] = 100
+
+@artist_dashboard_operations.route('/save-print-variants', methods=['GET', 'POST'])
+def save_print_variants():
+    if request.method == 'POST' and request.is_json:
+        data = request.get_json()
+        img_data_url = data['image']
+        artwork_uuid = data['artwork_uuid']
+        price = data['price']
+        print_category = data['category']
+        print_size_inch = data['print_size_inch']
+        print_width = float(print_size_inch.split(' ')[0])
+        print_height = float(print_size_inch.split(' ')[2])
+        print_ratio = print_width/print_height
+        res = int(db.session.query(Tools).filter_by(keyword=print_size_inch).scalar().data.split('_')[1])
+        print_width_px = print_width*res
+        print_height_px = print_height*res
+        task_id = str(uuid.uuid4())
+        user_uuid = current_user.uuid
+        app = current_app._get_current_object()
+
+        threading.Thread(
+            target=process_image,
+            args=(task_id, img_data_url, print_ratio, print_height_px, print_width_px, artwork_uuid, print_category, print_size_inch, price, user_uuid, app),
+        ).start()
+        
+        return jsonify(task_id=task_id)
 
     return '', 204
+
+
+@artist_dashboard_operations.route('/progress', methods=['GET', 'POST'])
+def get_progress():
+    task_id = request.args.get('task_id')
+    return jsonify(progress=progress.get(task_id, 0))
 
 
 @artist_dashboard_operations.route('/get-artwork-details', methods=['GET', 'POST'])

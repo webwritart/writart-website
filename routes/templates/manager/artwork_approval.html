@@ -236,17 +236,15 @@
 }
 #pending-size-container {
     display: flex;
-    align-items: center;
     justify-content: center;
     width: 100%;
     background: rgb(157, 188, 157);
-    height: 30vh;
+    min-height: 30vh;
 }
 #pending-photo-size-container, #pending-canvas-size-container {
     display: flex;
     flex-direction: column;
     width: 300px;
-    height: 100%;
     background: rgb(201, 208, 173);
 }
 .pending-size-header {
@@ -268,6 +266,7 @@
                 <img src="{{artwork_dict['main_img_path']}}">
             </div>
             <div class="details-text-container">
+                <p>UUID: <span class="text-data">{{artwork_dict['uuid']}}</span></p>
                 <p>Title: <span class="text-data">{{artwork_dict['title']}}</span></p>
                 <p>Theme: <span class="text-data">{{artwork_dict['theme']}}</span></p>
                 <p>Artist: <span class="text-data">{{artwork_dict['artist_name']}}</span></p>
