@@ -813,6 +813,7 @@ def vis_user_all_users():
 @manager.route('/vis-user-by-workshop', methods=['GET', 'POST'])
 @login_required
 def vis_user_by_workshop():
+    global students_enrolled, total_enrolled
     admin = db.session.query(Role).filter_by(name='admin').one_or_none()
     if admin in current_user.role:
         ws_dict = {}
@@ -850,7 +851,6 @@ def vis_user_by_workshop():
                             }
                             
                             
-                        total_enrolled = len(students_enrolled)
                     except Exception as e:
                         print('No students enrolled')
                 elif option == 'current':
@@ -868,7 +868,6 @@ def vis_user_by_workshop():
                             }
                             
                             
-                        total_enrolled = len(students_enrolled)
                     except Exception as e:
                         print('No students enrolled')
                 elif option == 'next':
@@ -886,9 +885,10 @@ def vis_user_by_workshop():
                             }
                             
                             
-                        total_enrolled = len(students_enrolled)
                     except Exception as e:
                         print('No students enrolled')
+
+                total_enrolled = len(students_enrolled)
                 return render_template('vis_user_by_workshop.html', logged_in=current_user.is_authenticated, admin=admin,
                                     current_year=current_year, ws_dict=ws_dict, students_dict=students_dict, enrolled_count=total_enrolled)
 
