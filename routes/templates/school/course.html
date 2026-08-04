@@ -303,7 +303,7 @@
             <p>The last month is complete.<br>Please get enrolled in the new month of the course to view new contents without any disturbance. <a href="{{url_for('school.enroll')}}" style="color: white; font-weight: bold; text-decoration: underline;">Click here to enroll</a></p>
         </div>
         {% endif %}
-        {% if pending_count > 0 or if %}
+        {% if pending_count > 0 %}
         <div class="non_enrolment_msg">
             <p>{{non_enrolment_msg}}<a href="{{url_for('school.enroll')}}" style="color: white; font-weight: bold; text-decoration: underline;">Click here to enroll</a></p>
         </div>

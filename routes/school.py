@@ -603,16 +603,18 @@ def course():
                 else:
                     course_enrolled_months.append(m)
             pending_count = len(pending)
-            if pending_count > 0:
-                enrolment_alert = ''
             current_course_month_no = db.session.query(Tools).filter_by(keyword='current_course_month').scalar().data
         
             next_course_month_no = int(current_course_month_no) + 1
-            for m in course_month_list:
-                if m.month == int(current_course_month_no):
-                    current_course_month = m
-            if current_course_month in all_enrolled_months:
-                enrolment_alert = ''
+            # for m in course_month_list:
+            #     if m.month == int(current_course_month_no):
+            #         current_course_month = m
+
+            for m in course_enrolled_months:
+                month_no = m.month
+                if month_no == next_course_month_no:
+                    enrolment_alert = 'off'
+
 
             non_enrolment_msg_months = ''
             for i in range(pending_count):

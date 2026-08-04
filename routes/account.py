@@ -1259,15 +1259,29 @@ def instructor_dashboard():
                 )
                 try:
                     db.session.add(entry)
+                    next_month_no = int(db.session.query(Tools).filter_by(keyword='current_course_month').scalar().data) + 1
+                    current_course_uuid = db.session.query(Tools).filter_by(keyword='current_course_uuid').scalar().data
+                    current_course = db.session.query(Workshop).filter_by(uuid=current_course_uuid).scalar()
+                    course_months = current_course.months
+                    for c in course_months:
+                        if int(c.month) == next_month_no:
+                            next_course_month = c
+                    next_course_month_videos = next_course_month.videos
+                    if len(next_course_month_videos) > 0:
+                        db.session.query(Tools).filter_by(keyword='current_course_month').scalar().data = next_month_no
+                        db.session.query(Tools).filter_by(keyword='show_next_month_enrolment_alert').scalar().data = 'off'   
                     db.session.commit()
                     print('committed')
                     flash('Data added successfully, Chief!', 'success')
                 except Exception as e:
+                    p(e)
                     flash('Failed to add, chief!', 'error')
                 return redirect(url_for('account.instructor_dashboard'))
             else:
                 flash('Aborted! Please select the Course/Workshop first!', 'error')
             
+            
+
         if request.form.get('submit') == 'add-course-notes':
             course_uuid = request.form.get('course-uuid')
             if course_uuid != 'default':
