@@ -1,0 +1,508 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+#root-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 80vh;
+    background: rgb(144, 165, 144);
+}
+.header {
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin: 0%;
+}
+#grid-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 30%;
+    background: rgb(215, 225, 205);
+    padding: 3%;
+    margin-left: 4%;
+    border-radius: 2rem;
+    border: 2px solid rgb(84, 118, 84);
+}
+input {
+    width: 100%;
+    padding: .5% .5%;
+    margin: 1% 0%;
+}
+.inline-inputs {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+.inline-inputs input {
+    padding: .2% 2%;
+    margin: 0% 2%;
+}
+.inline-inputs label {
+    width: auto;
+}
+label {
+    flex-shrink: 0;
+    line-height: 1;
+    margin: 0%;
+    padding-top: .5%;
+    text-align: left;
+    width: 100%;
+    font-weight: 500;
+}
+select {
+    width: 100%;
+    padding: .5% 0%;
+}
+/* ---------------------------------------------- CROPPING PANEL ---------------------------------------- */
+#gridded-image-root-container {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    width: 50%;
+}
+#gridded-image-title {
+    margin-top: 5%;
+}
+#gridded-image-container {
+    height: 600px;
+    width: 600px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgb(28, 32, 17);
+}
+#gridded-image {
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+}
+#grid-next-img {
+    display: block;
+    cursor: pointer;
+}
+#grid-next-img:hover {
+    background: rgb(45, 58, 10);
+}
+#download-btn {
+    display: block;
+    width: 40%;
+    padding: 1% 5%;
+    background: green;
+    border: none;
+    border-radius: 2rem;
+    color: white;
+    font-weight: 500;
+    font-size: 1rem;
+    cursor: pointer;
+    margin: 1% 0%;
+}
+#download-btn:hover {
+    background: rgb(48, 89, 3);
+}
+#cropping-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgb(183, 216, 183);
+    width: 50%;
+    margin-left: 1%;
+    padding: 2%;
+}
+#container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+#inner-container {
+    width: 60%;
+}
+#canvas-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    height: 60vh;
+}
+#crop-canvas {
+    max-height: 60vh;
+    cursor: move;
+    background: white;
+    object-fit: contain;
+    border: 2px solid #333333a2;
+}
+#cropping-title {
+    font-weight: 700;
+    font-size: 1.4rem;
+    color:#14470c
+}
+.main-btn {
+    background: rgb(68, 92, 40);
+}
+
+
+#wait-message {
+    display: none;
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: #14470c;
+}
+#status-bar-container {
+    display: none;
+    width:100%;
+    border:1px solid black; 
+    background: rgb(102, 102, 102);
+}
+</style>
+
+<div id="root-container">
+    <div id="cropping-section">
+        <div id="container">
+            <p id="cropping-title">Drag image to crop the way you want.</p>
+            <div id="inner-container">
+                <img id="original-image" src="" style="display:none;">
+                <!-- Fixed size crop box frame -->
+                    <div id="canvas-container">
+                    <canvas id="crop-canvas"></canvas>
+                    </div>
+                <p id="wait-message">Please wait! Your artwork is being processed.</p>
+                
+            </div>
+        </div>
+    </div>
+    <div id="gridded-image-root-container">
+        <p id="gridded-image-title" class="header">Gridded Image Preview</p>
+        <div id="gridded-image-container">
+            <img id="gridded-image" src="">
+        </div>
+        <button id="download-btn" onclick="downloadGriddedImg()">Download gridded image</button>
+        <button class="btn btn-primary btn-block btn-large main-btn" id="grid-next-img" onclick="reloadPage()">Back to Create Grid</button>
+    </div>
+    <form id="grid-form" action="{{url_for('artist_dashboard_operations.apply_grid')}}" method="POST" enctype="multipart/form-data">
+        <p class="header" id="form-header">Apply Grid or only crop</p>
+        <select id="operation-type" oninput="selectOperation()">
+            <option value="grid">Apply Grid</option>
+            <option value="crop">Only Crop</option>
+        </select>
+        <input type="file" id="file-input" name="file-input" accept="image/*" required>
+        <div class="inline-inputs">
+            <label>Width :</label><input id="width" type="number" min="1" max="100" name="width" placeholder="In inch" required oninput="setCanvasRatio()">
+            <label>Height:</label><input id="height" type="number" name="height" min="1" max="100" placeholder="In inch" required oninput="setCanvasRatio()"><label></label>
+        </div>
+        <input type="number" id="grid-distance" name="grid-distance" placeholder="Grid lines distance in inch" min="1" max="5" required oninput="enableCropBtn()">
+        <label id="line-thickness-label">Line thickness</label>
+        <select id="line-thickness">
+            <option value="thin">Thin</option>
+            <option value="medium">Medium</option>
+            <option value="thick">Thick</option>
+        </select>
+        <!-- <label>Size:</label>
+        <select name="size" id="size">
+            <option value="optimized">Optimized (small size)</option>
+            <option value="original">Original size</option>
+        </select> -->
+        <label>Quality:</label>
+        <select name="quality" id="quality">
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+            <option value="high">High</option>
+        </select>
+        <button class="btn btn-primary btn-block btn-large main-btn" id="crop-btn">Crop and Draw Grid</button>
+        
+        <p id="wait-message">Please wait! Your artwork is being processed.</p>
+        <div id="status-bar-container">
+            <div id="bar"
+                style="height:30px;width:0%;
+                background:green;color:white;text-align:center;">
+                0%
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+
+const fileInput = document.getElementById('file-input');
+const canvas = document.getElementById('crop-canvas');
+const ctx = canvas.getContext('2d');
+const cropBtn = document.getElementById('crop-btn');
+const croppingSection = document.getElementById('cropping-section');
+const imagePreviewRootContainer = document.getElementById('gridded-image-root-container');
+const previewImg = document.getElementById('gridded-image');
+const downloadBtn = document.getElementById('download-btn');
+const gridNextImg = document.getElementById('grid-next-img');
+const previewImgPath = "/static/files/users/" + {{ current_user.uuid | tojson }} + "/temp/grid/";
+
+
+let canvasRatio = 4/6; // Default ratio for initial canvas setup
+let imgWidth, imgHeight;
+let img_file_name;
+let pureFileName;
+canvas.style.width = '100%';
+
+cropBtn.disabled = true;
+
+
+
+function enableCropBtn() {
+    const operationType = document.getElementById('operation-type').value;
+    if (operationType == 'grid') {
+        if (document.getElementById('grid-distance').value && document.getElementById('width').value && document.getElementById('height').value) {
+            cropBtn.disabled = false;
+        } else {
+            cropBtn.disabled = true;}
+} else if (operationType == 'crop') {
+        if (document.getElementById('width').value && document.getElementById('height').value) {
+            cropBtn.disabled = false;
+        } else {
+            cropBtn.disabled = true;}
+}
+}
+
+// Image placement and movement states
+let img = new Image();
+let imgX = 0;
+let imgY = 0;
+let isDragging = false;
+let startX = 0;
+let startY = 0;
+
+img.crossOrigin = "anonymous"; // To avoid CORS issues when exporting canvas data
+
+// --- STEP 1: Handle File Drop and Input ---
+function handleFile(file) {
+  if (!file || !file.type.startsWith('image/')) return;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    img.src = e.target.result;
+    img_file_name = file.name;
+    pureFileName = img_file_name.replace(/\.[^/.]+$ /, '');
+  };
+  reader.readAsDataURL(file);
+}
+
+function setCanvasDimensions(imgWidth, imgHeight) {
+    const imgRatio = imgWidth/imgHeight;
+    let canvasWidth;
+    let canvasHeight;
+    if (imgRatio > 1) {
+        // means image is landscape
+        if (canvasRatio < 1) {
+            // means if canvas is portrait so convert it to landscape
+            canvasRatio = 1/canvasRatio;
+        }
+    } else {
+        // means image is portrait
+        if (canvasRatio > 1) {
+            canvasRatio = 1/canvasRatio;
+        }
+    }
+    if (canvasRatio < imgRatio) {
+        canvasHeight = imgHeight;
+        canvasWidth = canvasHeight*canvasRatio;
+
+    } else if (canvasRatio > imgRatio) {
+        canvasWidth = imgWidth;
+        canvasHeight = canvasWidth/canvasRatio;
+    } else {
+        canvasWidth = imgWidth;
+        canvasHeight = imgHeight;
+    }
+    let canvasWidthPixel = canvasWidth + ' px';
+    let canvasHeightPixel = canvasHeight + ' px';
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
+    canvas.style.removeProperty('width');
+    canvas.style.maxWidth = "100%";
+}
+
+img.onload = () => {
+    imgWidth = img.width;
+    imgHeight = img.height;
+    setCanvasDimensions(imgWidth, imgHeight);
+    croppingSection.style.display = 'flex';
+  // Center image inside the fixed canvas on initial load
+  imgX = (canvas.width - img.width) / 2;
+  imgY = (canvas.height - img.height) / 2;
+  drawImageOnCanvas();
+
+};
+
+// File event listeners
+fileInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
+
+
+// --- STEP 2: Render Loop ---
+function drawImageOnCanvas() {
+  // Clear the canvas area completely before updating positions
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  // Render image at its current offset coordinates
+  ctx.drawImage(img, imgX, imgY);
+}
+
+
+// --- STEP 3: Drag and Move Logic ---
+canvas.addEventListener('mousedown', (e) => {
+  if (!img.src) return; // Prevent interaction if no image is loaded
+  
+  isDragging = true;
+  // Capture the starting click position
+  startX = e.clientX - imgX;
+  startY = e.clientY - imgY;
+});
+
+window.addEventListener('mousemove', (e) => {
+  if (!isDragging) return;
+    const canvasHeight = canvas.getBoundingClientRect().height;
+    const canvasTop = canvas.getBoundingClientRect().top;
+    const canvasLeft = canvas.getBoundingClientRect().left
+    const canvasWidth = canvas.getBoundingClientRect().width;
+  // Calculate new coordinates based on mouse delta offsets
+  imgX = e.clientX - startX;
+  imgY = e.clientY - startY;
+
+  let minX = canvas.width - img.width;
+  let minY = canvas.height - img.height;
+  let maxX = 0;
+  let maxY = 0;
+
+  imgX = Math.min(Math.max(imgX, minX), maxX);
+  imgY = Math.min(Math.max(imgY, minY), maxY);
+
+    
+    drawImageOnCanvas();
+
+  // Re-render canvas in real-time
+});
+
+window.addEventListener('mouseup', () => {
+  isDragging = false;
+    // alert(`canvas width: ${canvas.width}, img width: ${img.width}, canvas left: ${canvas.getBoundingClientRect().left}, img x: ${imgX}, image x = ${img.getBoundingClientRect().left}`);
+
+});
+canvas.addEventListener("mouseleave", () => dragging = false);
+
+// --- STEP 4: Extract and Crop Output ---
+cropBtn.addEventListener('click', function(e) {
+    if (!img.src) return alert('Please upload an image first.');
+    cropBtn.style.display = 'none';
+    const statusBarContainer = document.getElementById('status-bar-container');
+    const gridDistance = document.getElementById('grid-distance').value;
+    const quality = document.getElementById('quality').value;
+    const width = document.getElementById('width').value;
+    const height = document.getElementById('height').value;
+    const lineThickness = document.getElementById('line-thickness').value;
+    const operationType = document.getElementById('operation-type').value;
+
+    e.preventDefault();
+
+     // canvas.toDataURL extracts ONLY what is currently visible on the fixed canvas grid
+    const croppedDataUrl = canvas.toDataURL('image/jpeg', 1);
+    const endPointUrl = "{{url_for('artist_dashboard_operations.apply_grid')}}";
+    // Send img data url to backend
+    const imgData = {
+        image: croppedDataUrl,
+        grid_distance: gridDistance,
+        quality: quality,
+        width_inch: width,
+        height_inch: height,
+        img_file_name: img_file_name,
+        line_thickness: lineThickness,
+        operation_type: operationType
+    };
+    
+    fetch(endPointUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(imgData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.save_path) {
+            const gridForm = document.getElementById('grid-form');
+            const formHeader = document.getElementById('form-header');
+            croppingSection.style.display = 'none';
+            gridForm.style.display = 'none';
+            formHeader.style.display = 'none';
+            cropBtn.style.display = 'none';
+            previewImg.src = data.save_path;
+            imagePreviewRootContainer.style.display = 'flex';
+            downloadBtn.value = data.save_path;
+
+        }
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+
+});
+
+function setCanvasRatio() {
+    canvasWidth = document.getElementById("width").value;
+    canvasHeight = document.getElementById("height").value;
+    canvasRatio = canvasHeight/canvasWidth;
+    setCanvasDimensions(imgWidth, imgHeight);
+    imgX = (canvas.width - img.width) / 2;
+    imgY = (canvas.height - img.height) / 2;
+    drawImageOnCanvas();
+
+    enableCropBtn();
+}
+
+async function downloadGriddedImg() {
+    const imgpath = downloadBtn.value;
+    try {
+        const response = await fetch(imgpath);
+        const blob = await response.blob();
+        
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = img_file_name;
+        document.body.appendChild(a);
+        a.click();
+
+        document.body.removeChild(a);
+
+        URL.revokeObjectURL(url);
+    } catch (error) {
+        console.error('Error downloading image:', error);
+    }
+}
+
+function reloadPage() {
+    window.location.reload();
+}
+
+function selectOperation() {
+    const operationType = document.getElementById('operation-type').value;
+    if (operationType == 'grid') {
+        cropBtn.style.display = 'flex';
+        document.getElementById('grid-distance').style.display = 'flex';
+        document.getElementById('line-thickness-label').style.display = 'flex';
+        document.getElementById('line-thickness').style.display = 'flex';
+        cropBtn.textContent = 'Crop and Draw Grid';
+    } else if (operationType == 'crop') {
+        document.getElementById('grid-distance').style.display = 'flex';
+        document.getElementById('line-thickness-label').style.display = 'flex';
+        document.getElementById('line-thickness').style.display = 'flex';
+        document.getElementById('grid-distance').style.display = 'none';
+        document.getElementById('line-thickness-label').style.display = 'none';
+        document.getElementById('line-thickness').style.display = 'none';
+        cropBtn.textContent = 'Crop Only';
+    }
+    cropBtn.style.textAlign = 'center';
+    cropBtn.style.justifyContent = 'center';
+    cropBtn.style.alignItems = 'center';
+    enableCropBtn();
+}
+</script>
+{% endblock %}

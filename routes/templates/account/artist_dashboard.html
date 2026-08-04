@@ -105,6 +105,7 @@
         background: rgb(147, 158, 124);
         width:95%;
         border: 1px solid rgb(42, 61, 30);
+        padding: .5%;
     }
     #operation-bar {
         width: 95%;
@@ -295,16 +296,28 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 100%;
-        flex-wrap: wrap;
+        width: 200px;
     }
     .form-container form {
-        width: 22%;
+        width: 200px;
         display: flex;
         flex-direction: column;
         padding: 1% 2%;
         background: rgb(188, 192, 174);
-        margin: .5%;
+        margin: 2%;
+        height: 100%;
+        object-fit: contain;
+    }
+    .btn-bundle {
+        width: 200px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 1% 2%;
+        background: rgb(188, 192, 174);
+        margin: 2%;
+        height: 100%;
+        object-fit: contain;
     }
     .form-container form button {
         background: rgb(149, 160, 134);
@@ -422,6 +435,12 @@
                         <input type="hidden" name="form-name" value="upload-artwork">
                         <button type="submit" id="add_artwork_submit-btn" name="submit_upload_artwork" value="upload_artwork" class="btn btn-primary btn-block btn-large form-button">Uplaod artwork</button>
                     </form>
+                </div>
+                <div class="form-container">
+                    <div class="btn-bundle">
+                        <a class="btn btn-primary btn-block btn-large form-button" href="{{url_for('artist_dashboard_operations.apply_grid')}}">Apply grid</a>
+                        <a class="btn btn-primary btn-block btn-large form-button">Edit Hue/Saturation</a>
+                    </div>
                 </div>
                 <div id="top-bar-operation-panel">
                 </div>

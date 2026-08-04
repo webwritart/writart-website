@@ -475,10 +475,7 @@ def save_print_variants():
     return '', 204
 
 
-@artist_dashboard_operations.route('/progress', methods=['GET', 'POST'])
-def get_progress():
-    task_id = request.args.get('task_id')
-    return jsonify(progress=progress.get(task_id, 0))
+
 
 
 @artist_dashboard_operations.route('/get-artwork-details', methods=['GET', 'POST'])
@@ -581,3 +578,148 @@ def get_artwork_details():
             additional_photo_paths = json.loads(artwork.additional_photo_paths)
             return jsonify({"additional_photo_paths": additional_photo_paths, "title": artwork.title})
     return '', 204
+
+
+@artist_dashboard_operations.route('/apply_grid', methods=['GET', 'POST'])
+def apply_grid():
+    admin = db.session.query(Role).filter_by(name='admin').one_or_none()
+    artist = db.session.query(Role).filter_by(name='artist').one_or_none()
+    if request.method == 'POST' and request.is_json:
+        data = request.get_json()
+        img_data_url = data['image']
+        grid_distance = data['grid_distance']
+        quality_percent = data['quality']
+        width_inch = data['width_inch']
+        height_inch = data['height_inch']
+        img_file_name = data['img_file_name']
+        line_thickness = data['line_thickness']
+        operation_type = data['operation_type']
+        size = 'optimized'
+
+        optimized_size_max_side = 1500
+        line_width_divisor = 0
+
+        
+        
+        if "," in img_data_url:
+            header, base64_data = img_data_url.split(",", 1)
+        else:
+            base64_data = img_data_url
+    
+        image_bytes = base64.b64decode(base64_data)
+        image_buffer = BytesIO(image_bytes)
+        img = Image.open(image_buffer)
+        img_width = img.width
+        img_height = img.height
+        img_ratio = img_width/img_height
+        new_height = 0
+        new_width = 0
+        quality = 75
+    
+        if quality_percent == 'medium':
+            quality = 75
+        elif quality_percent == 'low':
+            quality = 50
+        elif quality_percent == 'high':
+            quality = 100
+    
+    
+        if size == 'optimized':
+            if img_ratio > 1:
+                # means image is landscape
+                new_width = optimized_size_max_side
+                new_height = new_width/img_ratio
+            elif img_ratio < 1:
+                # means image is portrait
+                new_height = optimized_size_max_side
+                new_width = new_height*img_ratio
+            elif img_ratio == 1:
+                # means image is square
+                new_height = optimized_size_max_side
+                new_width = optimized_size_max_side
+        else:
+            new_width = img.width
+            new_height = img.height
+    
+    
+        img = img.resize((int(new_width), int(new_height)), Image.Resampling.LANCZOS)
+
+        if operation_type == 'grid':
+            box_width_length = (new_width/int(width_inch))*int(grid_distance)
+            p(box_width_length)
+
+            if line_thickness == 'thin':
+                if box_width_length > 38:
+                    line_width_divisor = 70
+                elif box_width_length < 26:
+                    line_width_divisor = 40
+                elif box_width_length < 30:
+                    line_width_divisor = 50
+                elif box_width_length < 38:
+                    line_width_divisor = 60
+                
+            elif line_thickness == 'medium':
+                if box_width_length > 38:
+                    line_width_divisor = 50
+                elif box_width_length < 26:
+                    line_width_divisor = 30
+                elif box_width_length < 30:
+                    line_width_divisor = 40
+                elif box_width_length < 38:
+                    line_width_divisor = 50
+            elif line_thickness == 'thick':
+                line_width_divisor = 30
+
+            line_width = round(round(box_width_length)/line_width_divisor)
+            
+        
+            draw = ImageDraw.Draw(img)
+        
+        # Draw horizontal lines ---------------------------------------------------------------
+            for i in range(1, int(width_inch)):
+                y1 = 0
+                y2 = img.height
+                x1 = x2 = (i*box_width_length)
+                x3 = x4 = (i*box_width_length) + line_width
+                if line_thickness == 'thin':
+                    x3 = x4 = (i*box_width_length) + line_width
+
+                draw.line((x3, y1, x4, y2), fill=(255,255,255), width=line_width)
+                draw.line((x1, y1, x2, y2), fill=(0, 0, 0), width=line_width)
+
+            for i in range(1, int(height_inch)):
+                x1 = 0
+                x2 = img.width
+                y1 = y2 = (i*box_width_length)
+                y3 = y4 = (i*box_width_length) + line_width
+                if line_thickness == 'thin':
+                    y3 = y4 = (i*box_width_length) + line_width
+
+                draw.line((x1, y3, x2, y4), fill=(255,255,255), width=line_width)
+                draw.line((x1, y1, x2, y2), fill=(0, 0, 0), width=line_width)
+    
+    
+        save_base_path = f'./static/files/users/{current_user.uuid}/temp/grid/'
+        if not os.path.exists(save_base_path):
+            os.makedirs(save_base_path)
+        files = [str(f) for f in Path(save_base_path).iterdir() if f.is_file()]
+        for f in files:
+            os.remove(f)
+        file_name = Path(img_file_name).stem
+        save_path = save_base_path + file_name + '.jpg'
+    
+        img.save(save_path, quality=quality)
+        save_path = save_path[1:]
+
+        return jsonify({"save_path": save_path})
+                
+    return render_template('apply-grid.html', current_year=current_year, logged_in=current_user.is_authenticated, admin=admin)
+
+
+@artist_dashboard_operations.route('/progress', methods=['GET', 'POST'])
+def get_progress():
+    task_id = request.args.get('task_id')
+    p(f"task_id: {task_id}")
+    return jsonify(progress=progress.get(task_id, 0))
+
+
