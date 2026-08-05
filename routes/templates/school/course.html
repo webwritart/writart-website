@@ -146,46 +146,143 @@
         font-size: 1rem;
         background: rgb(50, 60, 26);
     }
+   
+    
+/* ----------------------------------------------------- TESTIMONIALS ------------------------------------------------------ */
     #testimonial-root-container {
-        padding: 0% 10% 2% 10%;
-    }
-    #testimonial-container {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        align-items: center;
-    }
-    .testimonial-card {
-        background-image: url('../static/images/miscellaneous/testimonial.png');
-        background-size: contain;
-        background-position: center;
-        background-repeat: no-repeat;
-        height: 240px;
-        width: 360px;
+        width: 100%;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        padding: 2% 2%;
-        filter: drop-shadow(5px 5px 5px rgba(0, 0, 0, 0.5));
-        margin: 1%;
+        background: rgb(255, 201, 167);
+        padding-bottom: 2%;
     }
-    .testimonial {
+    #testimonial-outer-container {
         width: 100%;
-        font-size: .75rem;
-        padding: 0%;
-        margin: 0%;
-    }     
-    .testimonial-person {
-        width: 100%;
-        text-align: right;
-        font-size: .8rem;
-        padding: 0%;
-        margin: 0%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
-    hr {
-        margin: 3% 0% 0% 0%;
-        padding: 0%;
+    /* Slideshow Container */
+    .testimonial-container {
+        background-color: #ffefe8;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 50%;
+        padding: 40px 40px 0px 40px;
+        position: relative;
+        text-align: center;
+    }
+
+    /* Testimonial Wrapper & Individual Slides */
+    .testimonial-wrapper {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height: 250px; /* Ensures consistent layout height */
+        padding: 0 40px;
+    }
+
+    #slide {
+        display: flex;
+        width: 100%;
+        align-items: center;
+    }
+
+    /* #slide.active {
+        opacity: 1;
+        transform: scale(1);
+        pointer-events: auto;
+    } */
+    #testimonial-detail-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        padding: 0% 5%;
+    }
+    #testimonial-img-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100px;
+    }
+
+    #quote {
+        font-size: 1.15rem;
+        color: #333333;
+        font-style: italic;
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+
+    #author {
+        font-size: 1rem;
+        color: #16af2d;
+        font-weight: 600;
+        margin-bottom: 0%;
+    }
+
+    #role {
+        font-size: 0.85rem;
+        color: #16af2d;
+        margin-top: 2px;
+    }
+
+    /* Navigation Arrows */
+    .nav-btn {
+        background-color: #16af2d;
+        border: none;
+        color: white;
+        font-size: 1.25rem;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        transition: background-color 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .nav-btn:hover {
+        background-color: #1ad536;
+    }
+
+    .prev-btn { left: 15px; }
+    .next-btn { right: 15px; }
+
+    /* Indicators / Dots */
+    .dots-container {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 25px;
+    }
+
+    .dot {
+        width: 10px;
+        height: 10px;
+        background-color: #b9cabc;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .dot.active {
+        background-color: #16af2d;
+    }
+
+    /* Hide buttons on very small screens to save space */
+    @media (max-width: 480px) {
+        .testimonial-container { padding: 30px 20px; }
+        .nav-btn { display: none; }
     }
 
     @media (max-width: 1200px) {
@@ -515,22 +612,32 @@
         </div>
     </div>
 </div>
-<div class="light-canvas">
-    <div id="testimonial-root-container">
-        <p class="section-title">WHAT STUDENTS SAY</p>
-        <div id="testimonial-container">
-            <div class="testimonial-card">
-                <p class="testimonial">"He makes you understand the basics, which is most important pillar of art career."</p>
-                <p class="testimonial-person"><b>- Razz<br>&nbsp;&nbsp;(Graphic Designer, Pune)</b></p>
+
+<!-- -------------------------------------------------- TESTIMONIALS ------------------------------------------------------ -->
+<div id="testimonial-root-container">
+    <p class="section-title">What Our Students Say</p>
+    <div id="testimonial-outer-container">
+        <div class="testimonial-container">
+            <!-- Testimonial Slides -->
+            <div class="testimonial-wrapper">
+                <div id="slide">
+                    <div id="testimonial-detail-container">
+                        <p id="quote">"{{ testimonial_dict[0]['quote']}}"</p>
+                        <p id="author">"{{ testimonial_dict[0]['author_name']}}"</p>
+                        <p id="role">"{{ testimonial_dict[0]['role']}}"</p>
+                    </div>
+                    <div id="testimonial-img-container">
+                        <img id="testimonial-img" src="{{ testimonial_dict[0]['avatar_path']}}">
+                    </div>
+                </div>
             </div>
-            <div class="testimonial-card">
-                <p class="testimonial">"Shwetabh sir is very well versed with the field, enthusiastic and a great teacher. The sessions are friendly and fun, but the concepts about softwares are made easy to understand. He takes efforts to cover the important aspects of the software and shows how to apply them. Really great classes so far!"</p>
-                <p class="testimonial-person"><b>- Koshin<br>&nbsp;&nbsp;(Game artist, Spain)</b></p>
-            </div>
-            <div class="testimonial-card">
-                <p class="testimonial">"I feel so lucky that you are my teacher .you have always encouraged me and boosted my confidence level.The quality and variety of techniques that i have learned from you have raised my artwork and my skill to greater heights."</p>
-                <p class="testimonial-person"><b>- Minakshi<br>&nbsp;&nbsp;(Artist, Pune)</b></p>
-            </div>
+
+            <!-- Navigation Controls -->
+            <button class="nav-btn prev-btn" id="prevBtn">&#10094;</button>
+            <button class="nav-btn next-btn" id="nextBtn">&#10095;</button>
+
+            <!-- Dot Indicators -->
+            <!-- <div class="dots-container" id="dotsContainer"></div> -->
         </div>
     </div>
 </div>
@@ -725,6 +832,45 @@ async function downloadAssignment() {
 
 let text = "";
 
+// ---------------------------------------------- TESTIMONIALS -----------------------------------------------------
+const testimonialDict = {{ testimonial_dict | tojson }};
+const keys = Object.keys(testimonialDict);
+const quote = document.getElementById('quote');
+const author = document.getElementById('author');
+const role = document.getElementById('role');
+const avatar = document.getElementById('testimonial-img');
+let myIntervalId;
+let index = 1;
+
+function startTestimonialSlider() {
+    myIntervalId = setInterval(() => {
+    quote.innerHTML = `"${testimonialDict[index]['quote']}"`;
+    author.innerHTML = testimonialDict[index]['author_name'];
+    role.innerHTML = testimonialDict[index]['role'];
+    avatar.src = testimonialDict[index]['avatar_path'];
+    index = (index + 1) % keys.length;
+}, 10000);
+}
+startTestimonialSlider();
+
+const navArrowLeft = document.querySelector("#prevBtn");
+const navArrowRight = document.querySelector("#nextBtn");
+navArrowLeft.addEventListener("click", () => {
+    clearInterval(myIntervalId);
+    index = (index - 1 + keys.length) % keys.length;
+    quote.innerHTML = `"${testimonialDict[index]['quote']}"`;
+    author.innerHTML = testimonialDict[index]['author_name'];
+    role.innerHTML = testimonialDict[index]['role'];
+    avatar.src = testimonialDict[index]['avatar_path'];
+});
+navArrowRight.addEventListener("click", () => {
+    clearInterval(myIntervalId);
+    index = (index + 1) % keys.length;
+    quote.innerHTML = `"${testimonialDict[index]['quote']}"`;
+    author.innerHTML = testimonialDict[index]['author_name'];
+    role.innerHTML = testimonialDict[index]['role'];
+    avatar.src = testimonialDict[index]['avatar_path'];
+});
 
 // --------------------------------------------- TEACHER'S FEEDBACK SCRIPT -------------------------------------------------
 

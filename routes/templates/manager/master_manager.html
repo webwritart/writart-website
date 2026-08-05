@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+#root-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    min-height: 80vh;
+}
+#btn-container {
+    display: flex;
+    flex-direction: column;
+    width: 30%;
+    align-items: center;
+    justify-content: center;
+}
+.manager-btn {
+    background: rgb(50, 78, 13);
+}
+.manager-btn:hover {
+    background: rgb(75, 111, 28);
+}
+</style>
+
+<div id="root-container">
+    <div id="btn-container">
+        <!-- <a class="btn btn-primary btn-block btn-large manager-btn" href="">Artist manager</a> -->
+        <a class="btn btn-primary btn-block btn-large manager-btn" href="{{ url_for('manager.school_manager') }}">School manager</a>
+        <a class="btn btn-primary btn-block btn-large manager-btn" href="{{ url_for('manager.home') }}">Old manager</a>
+    </div>
+</div>
+
+{% endblock %}

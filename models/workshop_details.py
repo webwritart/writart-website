@@ -45,3 +45,19 @@ class WorkshopDetails(db.Model):
 
     def __repr__(self):
         return f'Details of: {self.category}, id: {self.ws_id}'
+
+
+class Testimonial(db.Model):
+    __tablename__ = 'testimonial'
+
+    id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.Integer, unique=True)
+    author_name = db.Column(db.String(100))
+    quote = db.Column(db.String(500))
+    avatar_path = db.Column(db.String(200))
+    role = db.Column(db.String(100))
+    place = db.Column(db.String(100))
+    member_id = db.Column(db.Integer, db.ForeignKey('member.id'))
+
+    def __repr__(self):
+        return f'Testimonial by: {self.author_name}'

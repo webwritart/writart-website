@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+#root-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    min-height: 90vh;
+    background: rgb(126, 144, 106);
+}
+.operation-column {
+    display: flex;
+    flex-direction: column;
+    width: 20%;
+    align-items: center;
+    height: auto;
+    background: rgb(112, 118, 88);
+    min-height: 90vh;
+    padding: 1%;
+}
+.form-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    background: rgb(213, 228, 187);
+    padding: 5%;
+    border-radius: 2rem;
+}
+.form-container form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    height: auto;
+    background: rgb(197, 228, 187);
+}
+input {
+    width: 100%;
+    padding: 0% 1%;
+    margin: .5% 0%;
+    background: rgb(255, 255, 255);
+    color: black;
+}
+input::placeholder {
+    color: rgb(81, 85, 59);
+}
+.form-header {
+    width: 100%;
+    text-align: center;
+    font-weight: 500;
+    font-size: 1rem;
+    margin: 0%;
+}
+.submit-btn {
+    width: 100%;
+    background: rgb(55, 81, 31);
+    padding: 1%;
+    font-size: .9rem;
+}
+.submit-btn:hover {
+
+}
+#flash-msg-container {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+}
+</style>
+
+<div id="root-container">
+    <div class="operation-column">
+        <div class="form-container">
+            <p class="form-header">Add Testimonial</p>
+            <form action="{{url_for('manager.school_manager')}}" method="POST" enctype="multipart/form-data">
+                <input type="text" name="author-name" placeholder="Author Name" required>
+                <input type="text" name="quote" placeholder="Quote" required>
+                <input type="text" name="role" placeholder="Role" required>
+                <input type="text" name="place" placeholder="Place" required>
+                <input type="number" name="member-id" placeholder="Member id">
+                <input type="file" name="avatar" required>
+                <button type="submit" name="submit" value="add-testimonial" class="btn btn-primary btn-block btn-large submit-btn">Add testimonial</button>
+            </form>
+        </div>
+    </div>
+    <div id="flash-msg-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <p class="{{category}}">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
+</div>
+
+{% endblock %}

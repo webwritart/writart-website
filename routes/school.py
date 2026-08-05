@@ -11,7 +11,7 @@ from models.tool import Tools
 from models.member import *
 from models.videos import Demo
 from models.quiz import Quiz
-from models.workshop_details import WorkshopDetails
+from models.workshop_details import *
 from operations.messenger import *
 import webbrowser
 from datetime import datetime, date, timedelta
@@ -767,7 +767,22 @@ def course():
                     flash("Images uploaded successfully!", "success")
                     return redirect(url_for('school.course') + '#submit-assignments')
             # -------------------------------------------------------------------------------------------------- #
-            
+# ------------------------------------------- TESTIMONIALS ------------------------------------------------------ #
+
+            testimonial_dict = {}
+            all_testimonials = db.session.query(Testimonial).all()
+            index = 0
+            for t in all_testimonials:
+                testimonial_dict[index] = {
+                    'author_name': t.author_name,
+                    'quote': t.quote,
+                    'avatar_path': t.avatar_path,
+                    'role': t.role,
+                    'place': t.place
+                }
+                index += 1
+
+            # ----------------------------------- WORKSHOP FEEDBACK ---------------------------------------------- #
             ws_credit_dict = {}
             total_ws_credits = 0
             all_workshop_with_credit = []
@@ -817,7 +832,7 @@ def course():
                            demo_vid_dict=demo_vid_dict, demo_video_count=demo_video_count, non_enrolment_msg=non_enrolment_msg, pending_count=pending_count, enrolment_alert=enrolment_alert,
                            non_enrolment_msg_submissions=non_enrolment_msg_submissions, current_year=current_year, submitted_assignments_list=submitted_assignments_list, admin=admin,
                            all_submitted_pending_assignments_dict=all_submitted_pending_assignments_dict, my_submitted_assignment_list_count=my_submitted_assignment_list_count,
-                           all_submitted_pending_assignments_dict_count=all_submitted_pending_assignments_dict_count)
+                           all_submitted_pending_assignments_dict_count=all_submitted_pending_assignments_dict_count, testimonial_dict=testimonial_dict)
 
 
 @school.route('/submit-feedback-files', methods=['GET', 'POST'])

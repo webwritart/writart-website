@@ -14,12 +14,15 @@ from models.payment import Payment
 from models.query import Query
 from models.tool import Tools, ArtworkPriceTime
 from models.member import Member, Workshop, Role, Portrait, WorkshopVideos, Certificate, WorkshopDemo
-from models.workshop_details import WorkshopDetails
+from models.workshop_details import *
 from models.news import News
-from operations.miscellaneous import allowed_file, image_resize_and_compress_single, prepare_certificate
+from operations.miscellaneous import *
 from routes.account import today_date
 import datetime
 import difflib
+from PIL import Image
+
+
 manager = Blueprint('manager', __name__, static_folder='static', template_folder='templates/manager')
 
 
@@ -1342,3 +1345,60 @@ def certificate_of_authenticity():
     if request.method == 'POST':
         if request.form.get('submit') == 'create_coa':
             pass
+
+
+@manager.route('/master-manager', methods=['GET', 'POST'])
+def master_manager():
+    admin = db.session.query(Role).filter_by(name='admin').one_or_none()
+    if current_user.is_authenticated and admin in current_user.role:
+        return render_template('master_manager.html', current_year=current_year, admin=admin, logged_in=current_user.is_authenticated)
+    else:
+        return render_template('admin_area.html')
+
+
+@manager.route('/school-manager', methods=['GET', 'POST'])
+def school_manager():
+    admin = db.session.query(Role).filter_by(name='admin').one_or_none()
+    if current_user.is_authenticated and admin in current_user.role:
+        if request.method == 'POST':
+            if request.form.get('submit') == 'add-testimonial':
+                author_name = request.form.get('author-name')
+                quote = request.form.get('quote')
+                role = request.form.get('role')
+                place = request.form.get('place')
+                member_id = request.form.get('member-id')
+                file = request.files.get('avatar')
+                filename = secure_filename(file.filename)
+                existing_uuid_list = [a.uuid for a in db.session.query(Testimonial).all()]
+                uuid = create_uuid(existing_uuid_list=existing_uuid_list, uuid_length_in_digit=8)
+                base_path = f"./static/images/courses/testimonials/avatar/"
+
+                if not os.path.exists(base_path):
+                    os.makedirs(base_path)
+
+                if filename == '':
+                    flash('No selected file', 'error')
+                    return redirect(request.url)
+                else:
+                    img = Image.open(file)
+
+                    if img.mode != "RGBA":
+                        img = img.convert("RGBA")
+
+                    img.save(f"{base_path}{str(uuid)}_{author_name}.webp", "webp", lossy=False)
+                    avatar_path = f"{base_path[1:]}{str(uuid)}_{author_name}.webp"
+                    testimonial = Testimonial(
+                        uuid=uuid,
+                        author_name=author_name, 
+                        quote=quote, 
+                        role=role, 
+                        place=place,
+                        member_id=member_id, 
+                        avatar_path=avatar_path)
+                    db.session.add(testimonial)
+                    db.session.commit()
+                    flash("Chief! Testimonial added successfully!", "success")
+                    return redirect(url_for('manager.school_manager'))
+        return render_template('school_manager.html', current_year=current_year, admin=admin, logged_in=current_user.is_authenticated)
+    else:
+        return render_template('admin_area.html')
