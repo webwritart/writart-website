@@ -781,7 +781,7 @@ def course():
                     'place': t.place
                 }
                 index += 1
-
+            testimonial_count = len(testimonial_dict)
             # ----------------------------------- WORKSHOP FEEDBACK ---------------------------------------------- #
             ws_credit_dict = {}
             total_ws_credits = 0
@@ -832,7 +832,7 @@ def course():
                            demo_vid_dict=demo_vid_dict, demo_video_count=demo_video_count, non_enrolment_msg=non_enrolment_msg, pending_count=pending_count, enrolment_alert=enrolment_alert,
                            non_enrolment_msg_submissions=non_enrolment_msg_submissions, current_year=current_year, submitted_assignments_list=submitted_assignments_list, admin=admin,
                            all_submitted_pending_assignments_dict=all_submitted_pending_assignments_dict, my_submitted_assignment_list_count=my_submitted_assignment_list_count,
-                           all_submitted_pending_assignments_dict_count=all_submitted_pending_assignments_dict_count, testimonial_dict=testimonial_dict)
+                           all_submitted_pending_assignments_dict_count=all_submitted_pending_assignments_dict_count, testimonial_dict=testimonial_dict, testimonial_count=testimonial_count)
 
 
 @school.route('/submit-feedback-files', methods=['GET', 'POST'])
