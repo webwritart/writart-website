@@ -1367,6 +1367,8 @@ def school_manager():
                 role = request.form.get('role')
                 place = request.form.get('place')
                 member_id = request.form.get('member-id')
+                if member_id == "":
+                    member_id = None
                 file = request.files.get('avatar')
                 filename = secure_filename(file.filename)
                 existing_uuid_list = [a.uuid for a in db.session.query(Testimonial).all()]
