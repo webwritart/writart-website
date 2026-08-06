@@ -53,7 +53,7 @@ class Testimonial(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     uuid = db.Column(db.Integer, unique=True)
     author_name = db.Column(db.String(100))
-    quote = db.Column(db.String(500))
+    quote = db.Column(db.String(600))
     avatar_path = db.Column(db.String(200))
     role = db.Column(db.String(100))
     place = db.Column(db.String(100))
