@@ -174,6 +174,7 @@
         padding: 40px 40px 0px 40px;
         position: relative;
         text-align: center;
+        overflow: visible;
     }
 
     /* Testimonial Wrapper & Individual Slides */
@@ -206,11 +207,16 @@
     }
     #testimonial-img-container {
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
         width: 100px;
     }
-
+    #testimonial-img {
+        border-radius: 100%;
+        max-width: 100px;
+        object-fit: contain;
+    }
     #quote {
         font-size: 1.15rem;
         color: #333333;
@@ -335,6 +341,12 @@
             font-size: .8rem;
             margin: 0%;
         }
+        .testimonial-container {
+            max-width: 90%;
+        }
+        #quote {
+            font-size: .9rem;
+        }
     }
     @media (max-width: 600px) {
         .figure {
@@ -389,6 +401,15 @@
        .thumbnail-img-card  p {
             font-size: .7rem;
             margin: 0%;
+        }
+        #slide {
+            flex-direction: column-reverse;
+        }
+        .prev-btn {
+            left: 15px;
+        }
+        .next-btn {
+            right: 15px;
         }
     }
 </style>
@@ -623,12 +644,13 @@
             <div class="testimonial-wrapper">
                 <div id="slide">
                     <div id="testimonial-detail-container">
-                        <p id="quote">"{{ testimonial_dict[0]['quote']}}"</p>
-                        <p id="author">"{{ testimonial_dict[0]['author_name']}}"</p>
-                        <p id="role">"{{ testimonial_dict[0]['role']}}"</p>
+                        <p id="quote">"{{testimonial_dict[0]['quote']}}"</p>
+                        
                     </div>
                     <div id="testimonial-img-container">
-                        <img id="testimonial-img" src="{{ testimonial_dict[0]['avatar_path']}}">
+                        <img id="testimonial-img" src="{{testimonial_dict[0]['avatar_path']}}">
+                        <p id="author">{{testimonial_dict[0]['author_name']}}</p>
+                        <p id="role">{{testimonial_dict[0]['role']}}</p>
                     </div>
                 </div>
             </div>

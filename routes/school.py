@@ -782,6 +782,10 @@ def course():
                 }
                 index += 1
             testimonial_count = len(testimonial_dict)
+            testimonial_dict_items = list(testimonial_dict.items())
+            random.shuffle(testimonial_dict_items)
+            testimonial_dict = dict(testimonial_dict_items)
+            p(testimonial_dict)
             # ----------------------------------- WORKSHOP FEEDBACK ---------------------------------------------- #
             ws_credit_dict = {}
             total_ws_credits = 0
