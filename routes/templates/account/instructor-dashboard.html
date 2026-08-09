@@ -109,7 +109,7 @@ input::placeholder {
             </select>
             <button class="btn btn-primary btn-block btn-large form-button" type="submit" name="submit" value="assignment_details">Get Details</button>
         </form>
-        <form action="{{url_for('account.instructor_dashboard')}}" method="post">
+        <form id="download-assignments-form" action="{{url_for('account.instructor_dashboard')}}" method="post">
             <p class="form-heading">Download Assignment Submission</p>
             <select name="course_uuid" required>
                 <option value="default">Choose Course/Workshop</option>
@@ -117,9 +117,9 @@ input::placeholder {
                 <option value="{{c}}">{{course_dict[c]['course_topic']}}</option>
                 {% endfor %}
             </select>
-            <button class="btn btn-primary btn-block btn-large form-button" type="submit" name="submit" value="download-assignments">Downlaod</button>
+            <button class="btn btn-primary btn-block btn-large form-button" type="submit" id="download-assignments" name="submit" value="download-assignments">Downlaod</button>
         </form>
-        <form action="{{ url_for('account.instructor_dashboard') }}" method="post" enctype="multipart/form-data">
+        <form id="course-operations" action="{{ url_for('account.instructor_dashboard') }}" method="post" enctype="multipart/form-data">
             <p class="form-heading">Course Operations</p>
             <!-- <p id="js-test">Test text</p> -->
             <select id="operation" name="operation">
@@ -159,16 +159,16 @@ input::placeholder {
             <!-- --------------------------------------------------------------------------------------------- -->
             <button type="submit" id="submit-btn" name="submit" class="btn btn-primary btn-block btn-large form-button" value="">NONE</button>
         </form>
-        <form action="{{ url_for('account.instructor_dashboard')}}" method="post">
+        <form id="enrolment-alert-form" action="{{ url_for('account.instructor_dashboard')}}" method="post">
             <p class="form-heading">Show Next Month enrolment Alert</p>
             <input type="hidden" name="current-status" value="{{next_month_enrolment_alert_status}}">
             {% if next_month_enrolment_alert_status == 'on' %}
             <button type="submit" name="submit" value="enrolment-alert" class="btn btn-primary btn-block btn-large form-button">Turn Alert off</button>
             {% else %}
-            <button type="submit" name="submit" value="enrolment-alert" class="btn btn-primary btn-block btn-large form-button">Turn Alert On</button>
+            <button type="submit" name="submit" value="enrolment-alert" id="enrolment-alert" class="btn btn-primary btn-block btn-large form-button">Turn Alert On</button>
             {% endif %}
         </form>
-        <form action="{{ url_for('account.instructor_dashboard')}}" method="post">
+        <form id="workshop-month-form" action="{{ url_for('account.instructor_dashboard')}}" method="post">
             <p class="form-heading">Add Course Months/Parts</p>
             <select name="course-uuid">
                 <option value="default">Select Course</option>
@@ -177,9 +177,9 @@ input::placeholder {
                 {% endfor %}
             </select>
             <input type="number" name="month-count" placeholder="Total months" required>
-            <button type="submit" name="submit" value="workshop-month" class="btn btn-primary btn-block btn-large form-button">Add Months</button>
+            <button type="submit" name="submit" id="workshop-month" value="workshop-month" class="btn btn-primary btn-block btn-large form-button">Add Months</button>
         </form>
-        <form action="{{ url_for('account.instructor_dashboard')}}" method="post">
+        <form id="new-course-form" action="{{ url_for('account.instructor_dashboard')}}" method="post">
             <p class="form-heading">Add New Course</p>
             <input name="topic" placeholder="Topic" type="text" required>
             <select name="category">
@@ -187,13 +187,13 @@ input::placeholder {
                 <option value="course">Course</option>
                 <option value="qa">Question-Answer</option>
             </select>
-            <button type="submit" name="submit" value="new-course" class="btn btn-primary btn-block btn-large form-button">Add New Course</button>
+            <button type="submit" name="submit" id="new-course" value="new-course" class="btn btn-primary btn-block btn-large form-button">Add New Course</button>
         </form>
-        <form action="{{url_for('tools.image_to_pdf')}}" method="post" enctype="multipart/form-data">
+        <form id="images-to-pdf-form" action="{{url_for('tools.image_to_pdf')}}" method="post" enctype="multipart/form-data">
             <p class="form-heading">Multiple/Single Image to PDF</p>
             <input type="text" name="file_name" placeholder="Output PDF file name" required>
             <input class="file-upload-input" type="file" name="files" accept=".jpg, .jpeg, .png" multiple required>
-            <button type="submit" name="submit" value="images_to_pdf" class="btn btn-primary btn-block btn-large form-button">Create PDF</button>
+            <button type="submit" name="submit" value="images_to_pdf" id="images-to-pdf" class="btn btn-primary btn-block btn-large form-button">Create PDF</button>
         </form>
     </div>
     
@@ -313,5 +313,97 @@ input::placeholder {
             month.appendChild(option);
         });
     });
+
+// ------------------------------------- AVOID MULTIPLE CLICK SUBMITS ---------------------------------------
+document.getElementById('course-operations').addEventListener('submit', function(e) {
+    let submitBtn = document.getElementById('submit-btn');
+    
+    // Check if form is already submitting
+    if (this.classList.contains('is-submitting')) {
+        e.preventDefault(); // Stop the double submission
+        return false;
+    }
+    
+    // Mark form as submitting and provide visual feedback
+    this.classList.add('is-submitting');
+    submitBtn.disabled = true; 
+    submitBtn.innerText = 'Processing...';
+});
+
+document.getElementById('download-assignments-form').addEventListener('submit', function(e) {
+    let submitBtn = document.getElementById('download-assignments');
+    
+    // Check if form is already submitting
+    if (this.classList.contains('is-submitting')) {
+        e.preventDefault(); // Stop the double submission
+        return false;
+    }
+    
+    // Mark form as submitting and provide visual feedback
+    this.classList.add('is-submitting');
+    submitBtn.disabled = true; 
+    submitBtn.innerText = 'Processing...';
+});
+
+document.getElementById('enrolment-alert-form').addEventListener('submit', function(e) {
+    let submitBtn = document.getElementById('enrolment-alert');
+    
+    // Check if form is already submitting
+    if (this.classList.contains('is-submitting')) {
+        e.preventDefault(); // Stop the double submission
+        return false;
+    }
+    
+    // Mark form as submitting and provide visual feedback
+    this.classList.add('is-submitting');
+    submitBtn.disabled = true; 
+    submitBtn.innerText = 'Processing...';
+});
+
+document.getElementById('workshop-month-form').addEventListener('submit', function(e) {
+    let submitBtn = document.getElementById('workshop-month');
+    
+    // Check if form is already submitting
+    if (this.classList.contains('is-submitting')) {
+        e.preventDefault(); // Stop the double submission
+        return false;
+    }
+    
+    // Mark form as submitting and provide visual feedback
+    this.classList.add('is-submitting');
+    submitBtn.disabled = true; 
+    submitBtn.innerText = 'Processing...';
+});
+
+document.getElementById('new-course-form').addEventListener('submit', function(e) {
+    let submitBtn = document.getElementById('new-course');
+    
+    // Check if form is already submitting
+    if (this.classList.contains('is-submitting')) {
+        e.preventDefault(); // Stop the double submission
+        return false;
+    }
+    
+    // Mark form as submitting and provide visual feedback
+    this.classList.add('is-submitting');
+    submitBtn.disabled = true; 
+    submitBtn.innerText = 'Processing...';
+});
+
+document.getElementById('images-to-pdf-form').addEventListener('submit', function(e) {
+    let submitBtn = document.getElementById('images-to-pdf');
+    
+    // Check if form is already submitting
+    if (this.classList.contains('is-submitting')) {
+        e.preventDefault(); // Stop the double submission
+        return false;
+    }
+    
+    // Mark form as submitting and provide visual feedback
+    this.classList.add('is-submitting');
+    submitBtn.disabled = true; 
+    submitBtn.innerText = 'Processing...';
+});
+
 </script>
 {% endblock %}
