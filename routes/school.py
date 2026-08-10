@@ -573,6 +573,10 @@ def course():
                     assignment_path = data['assignment_path']
                     return send_file(assignment_path, as_attachment=True)
 
+                elif data['category'] == 'book':
+                    book_path = data['book_path']
+                    return send_file(book_path, as_attachment=True)
+
             vid_id_list = []
             vid_caption_list = []
             
@@ -722,7 +726,7 @@ def course():
                     assignments_dict[a.date_time] = material
             assignments_dict = dict(reversed(assignments_dict.items()))
             assignments_count = len(assignments_dict)
-# -------------------------------------------- DOWNLOAD BOOKS ------------------------------------------------------ #
+# -------------------------------------------- BOOKS ------------------------------------------------------ #
             books_dict = {}
 
             for m in course_enrolled_months:

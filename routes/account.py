@@ -1378,36 +1378,35 @@ def instructor_dashboard():
                 if 'file' not in request.files:
                     flash('No file part', 'error')
                     return redirect(request.url)
-                files = request.files.getlist('file')
+                files = request.files['books']
                 folder = f"./static/files/courses/{course_uuid}/{month}/books/"
-                for f in files:
-                    book_pdf_output_name = request.form.get('book-file-name')
-                    if '.pdf' not in book_pdf_output_name:
-                        book_pdf_output_name = str(book_pdf_output_name) + '.pdf'
-                    
-                    if not os.path.exists(folder):
-                        os.makedirs(folder)
-                    existing_books_uuid = []
-                    existing_books = db.session.query(MonthBook).all()
-                    for b in existing_books:
-                        existing_books_uuid.append(b.uuid)
-                    book_uuid = create_uuid(existing_books_uuid, 8)
-                    filename = str(book_uuid) + str('$') + str(book_pdf_output_name)
+                book_pdf_output_name = request.form.get('book-file-name')
+                if '.pdf' not in book_pdf_output_name:
+                    book_pdf_output_name = str(book_pdf_output_name) + '.pdf'
+                
+                if not os.path.exists(folder):
+                    os.makedirs(folder)
+                existing_books_uuid = []
+                existing_books = db.session.query(MonthBook).all()
+                for b in existing_books:
+                    existing_books_uuid.append(b.uuid)
+                book_uuid = create_uuid(existing_books_uuid, 8)
+                filename = str(book_uuid) + str('$') + str(book_pdf_output_name)
 
-                    save_path = folder + filename
-                    f.save(save_path)
-                    
-                    date_time = datetime.now().replace(microsecond=0)
-                    
-                    entry = MonthBook(
-                        uuid=book_uuid,
-                        file_name=filename,
-                        month_id=course_month.id,
-                        date_time=date_time
-                    )
-                    db.session.add(entry)
-                    db.session.commit()
-                    flash('Chief! Files uploaded successfully!', 'success')
+                save_path = folder + filename
+                files.save(save_path)
+
+                date_time = datetime.now().replace(microsecond=0)
+                
+                entry = MonthBook(
+                    uuid=book_uuid,
+                    file_name=filename,
+                    month_id=course_month.id,
+                    date_time=date_time
+                )
+                db.session.add(entry)
+                db.session.commit()
+                flash('Chief! Files uploaded successfully!', 'success')
 
         if request.form.get('submit') == 'add-course-demo':
             course_uuid = request.form.get('course-uuid')
