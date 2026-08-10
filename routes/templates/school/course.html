@@ -415,7 +415,7 @@
 </style>
 <div class="light-canvas">
     <div class="root-container">
-        <p class="section-title">RECORDED LESSONS</p>
+        <p class="section-title">Recorded lessons</p>
         {% if enrolment_alert == 'on' %}
         <div class="non_enrolment_msg" style="padding: 2% 0%;">
             <p>The last month is complete.<br>Please get enrolled in the new month of the course to view new contents without any disturbance. <a href="{{url_for('school.enroll')}}" style="color: white; font-weight: bold; text-decoration: underline;">Click here to enroll</a></p>
@@ -462,7 +462,7 @@
 </div>
 <div class="dark-canvas">
     <div class="root-container">
-        <p class="section-title">NOTES</p>
+        <p class="section-title">Notes</p>
         <p class="section-desc">Please wait after clicking file name. The file download can take upto 1 minute to start.</p>
         <div id="lesson-container">
             <select class="option-list" id="notes-list" onchange="downloadNotes()">
@@ -476,7 +476,7 @@
 </div>
 <div class="dark-canvas">
     <div class="root-container">
-        <p class="section-title">ASSIGNMENTS</p>
+        <p class="section-title">Assignments</p>
         <p class="section-desc">Please wait after clicking file name. The file download can take upto 1 minute to start.</p>
         <div id="lesson-container">
             <select class="option-list" id="assignment-list" onchange="downloadAssignment()">
@@ -488,47 +488,20 @@
         </div>
     </div>
 </div>
-<!-- --------------------------------------------------------------------------------------------------------------- -->
-<!-- {% if study_material_count > 0 %}
-<div class="wrapper">
-    <div class="width-80-container">
-        <h3 style="width:100%;color:rgb(255, 255, 255);opacity:1;">NOTES</h3>
-        <p>{{non_enrolment_msg_submissions}}</p>
-        <div class="category-content">
-            {% for m in study_material_dict %}
-                <div class="file-item-inner">
-                    <form method="post" action="{{ url_for('school.classroom') }}">
-                        <input type="hidden" name="file-name" value="{{m}}">
-                        <button type="submit" name="download-file" value="{{ study_material_dict[m]['file_path'] }}">
-                            <img src="../static/images/pdf_icon.png"></button>
-                        <p>{{ study_material_dict[m]['file_name'] }}</p>
-                    </form>
-                </div>
-            {% endfor %}
+<div class="dark-canvas">
+    <div class="root-container">
+        <p class="section-title">Books</p>
+        <p class="section-desc">Please wait after clicking file name. The file download can take upto 1 minute to start.</p>
+        <div id="lesson-container">
+            <select class="option-list" id="book-list" onchange="downloadBook()">
+                <option value="">Select Book to download</option>
+                {% for b in books_dict %}
+                <option value="{{books_dict[b]['file_path']}}">{{books_dict[b]['file_name']}}</option>
+                {% endfor %}
+            </select>
         </div>
     </div>
 </div>
-{% endif %}
-
-{% if assignments_count > 0 %}
-<div class="wrapper">
-    <div class="width-80-container">
-        <h3 style="width:100%;color:rgb(255, 255, 255);opacity:1;">ASSIGNMENTS</h3>
-        <div class="category-content">
-            {% for m in assignments_dict %}
-                <div class="file-item-inner">
-                    <form method="post" action="{{ url_for('school.classroom') }}">
-                        <input type="hidden" name="file-name" value="{{m}}">
-                        <button type="submit" name="download-assignment" value="{{ assignments_dict[m]['file_path'] }}">
-                            <img src="../static/images/pdf_icon.png"></button>
-                        <p class="file-name">{{ assignments_dict[m]['file_name'] }}</p>
-                    </form>
-                </div>
-            {% endfor %}
-        </div>
-    </div>
-</div>
-{% endif %} -->
 
 <div class="wrapper" id="submit-assignments" style="background: rgb(192, 192, 192);">
     <div class="width-80-container assignment-submission-form">
@@ -840,6 +813,47 @@ async function downloadAssignment() {
         const link = document.createElement('a');
         link.href = downloadUrl;
         link.download = courseTopic+"_assignment_"+fileName; // Set target file name here
+        document.body.appendChild(link);
+
+        link.click(); // Triggers real browser download popup
+
+        // 4. Clean up memory
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(downloadUrl);
+
+    };
+}
+
+// ------------------------------------------ DOWNLOAD BOOKS --------------------------------------------------------
+async function downloadBook() {
+    const bookList = document.getElementById('book-list');
+    const bookListValue = bookList.value;
+    const fileName = bookList.options[bookList.selectedIndex].text;
+    if (bookListValue != '') {
+        const bookData = {
+            category: "book",
+            book_path: bookListValue
+        };
+
+        const response = await fetch(endpointUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(bookData)
+        });
+        if (!response.ok) throw new Error('Download Failed');
+        
+        // 1. Convert response to a blob stream instead of .json()
+        const blob = await response.blob();
+
+        // 2. Create a temporary local URL for the blob data
+        const downloadUrl = window.URL.createObjectURL(blob);
+
+        // 3. Inject a hidden <a> tag to click programmatically
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = fileName; // Set target file name here
         document.body.appendChild(link);
 
         link.click(); // Triggers real browser download popup

@@ -127,6 +127,7 @@ input::placeholder {
                 <option value="add-course-video">Add Course video</option>
                 <option value="add-course-notes">Add Course Note</option>
                 <option value="add-course-assignments">Add Course Assignment</option>
+                <option value="add-course-books">Add Course Book</option>
                 <option value="add-course-demo">Add Course Demo</option>
                 <option value="upload-assessed-video">Upload Assessed Assignment video</option>
                 <option value="set-current-course-month">Set Currnet Course and Month</option>
@@ -148,6 +149,9 @@ input::placeholder {
             <!-- ------------------------------------------ ADD COURSE ASSIGNMENTS ----------------------------------- -->
             <input id="assignment-file-name" type="text" name="assignment_file_name" placeholder="Output PDF file name">
             <input id="assignment-files" class="file-upload-input" type="file" name="assignments" accept=".jpg, .jpeg, .png" multiple>
+            <!-- ------------------------------------------ ADD COURSE BOOKS ------------------------------------------------ -->
+            <input id="book-file-name" type="text" name="book-file-name" placeholder="Output Book name">
+            <input id="book-files" class="file-upload-input" type="file" name="books" accept=".pdf" multiple>
             <!-- ------------------------------------------- ADD COURSE DEMO ------------------------------------------ -->
             <input id="demo-title" name="demo-title" placeholder="Demo video Title" type="text">
             <input id="demo-url" name="demo-url" placeholder="Demo video Youtube URL" type="text">
@@ -227,6 +231,8 @@ input::placeholder {
     const notesFiles = document.getElementById('notes-files');
     const assignmentFileName = document.getElementById('assignment-file-name');
     const assignmentFiles = document.getElementById('assignment-files');
+    const bookFileName = document.getElementById('book-file-name');
+    const bookFiles = document.getElementById('book-files');
     const demoTitle = document.getElementById('demo-title');
     const demoUrl = document.getElementById('demo-url');
     const assessedVidId = document.getElementById('assessed-vid-id');
@@ -240,6 +246,7 @@ input::placeholder {
         lessonDetail.style.display = "none";
         notesFiles.style.display = "none";
         assignmentFiles.style.display = "none";
+        bookFiles.style.display = "none";
         demoTitle.style.display = "none";
         demoUrl.style.display = "none";
         assessedVidId.style.display = "none";
@@ -247,6 +254,7 @@ input::placeholder {
         fee.style.display = "none";
         notesFileName.style.display = "none";
         assignmentFileName.style.display = "none";
+        bookFileName.style.display = "none";
     }
     hideInputs();
 
@@ -271,6 +279,12 @@ input::placeholder {
             assignmentFiles.style.display = "block";
             submitBtn.textContent = "Add Course assignments";
             submitBtn.value = "add-course-assignments";
+        } else if (operationValue == "add-course-books") {
+            hideInputs();
+            bookFileName.style.display = "block";
+            bookFiles.style.display = "block";
+            submitBtn.textContent = "Add Book";
+            submitBtn.value = "add-course-books";
         } else if (operationValue == "add-course-demo") {
             hideInputs();
             demoTitle.style.display = "block";
@@ -316,8 +330,6 @@ input::placeholder {
 
 // ------------------------------------- AVOID MULTIPLE CLICK SUBMITS ---------------------------------------
 document.getElementById('course-operations').addEventListener('submit', function(e) {
-    let submitBtn = document.getElementById('submit-btn');
-    
     // Check if form is already submitting
     if (this.classList.contains('is-submitting')) {
         e.preventDefault(); // Stop the double submission
@@ -326,12 +338,12 @@ document.getElementById('course-operations').addEventListener('submit', function
     
     // Mark form as submitting and provide visual feedback
     this.classList.add('is-submitting');
-    submitBtn.disabled = true; 
+    // submitBtn.disabled = true; 
     submitBtn.innerText = 'Processing...';
 });
 
 document.getElementById('download-assignments-form').addEventListener('submit', function(e) {
-    let submitBtn = document.getElementById('download-assignments');
+    const submitBtn = document.getElementById('download-assignments');
     
     // Check if form is already submitting
     if (this.classList.contains('is-submitting')) {
@@ -341,12 +353,12 @@ document.getElementById('download-assignments-form').addEventListener('submit', 
     
     // Mark form as submitting and provide visual feedback
     this.classList.add('is-submitting');
-    submitBtn.disabled = true; 
+    // submitBtn.disabled = true; 
     submitBtn.innerText = 'Processing...';
 });
 
 document.getElementById('enrolment-alert-form').addEventListener('submit', function(e) {
-    let submitBtn = document.getElementById('enrolment-alert');
+    const submitBtn = document.getElementById('enrolment-alert');
     
     // Check if form is already submitting
     if (this.classList.contains('is-submitting')) {
@@ -356,12 +368,12 @@ document.getElementById('enrolment-alert-form').addEventListener('submit', funct
     
     // Mark form as submitting and provide visual feedback
     this.classList.add('is-submitting');
-    submitBtn.disabled = true; 
+    // submitBtn.disabled = true; 
     submitBtn.innerText = 'Processing...';
 });
 
 document.getElementById('workshop-month-form').addEventListener('submit', function(e) {
-    let submitBtn = document.getElementById('workshop-month');
+    const submitBtn = document.getElementById('workshop-month');
     
     // Check if form is already submitting
     if (this.classList.contains('is-submitting')) {
@@ -371,12 +383,12 @@ document.getElementById('workshop-month-form').addEventListener('submit', functi
     
     // Mark form as submitting and provide visual feedback
     this.classList.add('is-submitting');
-    submitBtn.disabled = true; 
+    // submitBtn.disabled = true; 
     submitBtn.innerText = 'Processing...';
 });
 
 document.getElementById('new-course-form').addEventListener('submit', function(e) {
-    let submitBtn = document.getElementById('new-course');
+    const submitBtn = document.getElementById('new-course');
     
     // Check if form is already submitting
     if (this.classList.contains('is-submitting')) {
@@ -386,12 +398,12 @@ document.getElementById('new-course-form').addEventListener('submit', function(e
     
     // Mark form as submitting and provide visual feedback
     this.classList.add('is-submitting');
-    submitBtn.disabled = true; 
+    // submitBtn.disabled = true; 
     submitBtn.innerText = 'Processing...';
 });
 
 document.getElementById('images-to-pdf-form').addEventListener('submit', function(e) {
-    let submitBtn = document.getElementById('images-to-pdf');
+    const submitBtn = document.getElementById('images-to-pdf');
     
     // Check if form is already submitting
     if (this.classList.contains('is-submitting')) {
@@ -401,7 +413,7 @@ document.getElementById('images-to-pdf-form').addEventListener('submit', functio
     
     // Mark form as submitting and provide visual feedback
     this.classList.add('is-submitting');
-    submitBtn.disabled = true; 
+    // submitBtn.disabled = true; 
     submitBtn.innerText = 'Processing...';
 });
 

@@ -722,6 +722,22 @@ def course():
                     assignments_dict[a.date_time] = material
             assignments_dict = dict(reversed(assignments_dict.items()))
             assignments_count = len(assignments_dict)
+# -------------------------------------------- DOWNLOAD BOOKS ------------------------------------------------------ #
+            books_dict = {}
+
+            for m in course_enrolled_months:
+                base_dir = f"static/files/courses/{ws_uuid}/{m.month}/books"
+                all_books = db.session.query(MonthBook).filter_by(month_id=m.month).all()
+                for a in all_books:
+                    full_file_name = a.file_name
+                    file_name = a.file_name.split('$')[1]
+                    material = {
+                        'file_name': file_name,
+                        'file_path': base_dir+'/'+full_file_name
+                    }
+                    books_dict[a.date_time] = material
+            books_dict = dict(reversed(books_dict.items()))
+            books_count = len(books_dict)
 # ------------------------------------------ SUBMITTED ASSIGNMENTS GALLERY --------------------------------------- #
             submitted_assignments_list = []
             all_submitted_pending_assignments_dict = {}
@@ -785,7 +801,6 @@ def course():
             testimonial_dict_items = list(testimonial_dict.items())
             random.shuffle(testimonial_dict_items)
             testimonial_dict = dict(testimonial_dict_items)
-            p(testimonial_dict)
             # ----------------------------------- WORKSHOP FEEDBACK ---------------------------------------------- #
             ws_credit_dict = {}
             total_ws_credits = 0
@@ -830,7 +845,7 @@ def course():
                            video_count=video_count, vid_id_list=vid_id_list, vid_caption_list=vid_caption_list,
                            ws_topic=course_topic, study_material_dict=study_material_dict, study_material_count=study_material_count,
                            assignments_dict=assignments_dict, assignments_count=assignments_count, no_ws_credit_dict=no_ws_credit_dict,
-                           total_topic_credits=total_topic_credits, ws_uuid=ws_uuid,
+                           total_topic_credits=total_topic_credits, ws_uuid=ws_uuid, books_dict=books_dict, books_count=books_count,
                            ws_credit_dict=ws_credit_dict, total_ws_credits=total_ws_credits,
                            feedback_topic_list=feedback_topic_list, assessment_vid_dict=assessment_vid_dict, assessment_video_count=assessment_video_count,
                            demo_vid_dict=demo_vid_dict, demo_video_count=demo_video_count, non_enrolment_msg=non_enrolment_msg, pending_count=pending_count, enrolment_alert=enrolment_alert,

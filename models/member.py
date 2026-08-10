@@ -245,7 +245,17 @@ class MonthAssignments(db.Model):
 
     def __repr__(self):
         return f'{self.file_name}'
-    
+
+class MonthBook(db.Model):
+    __tablename__ = 'month_book'
+    id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.Integer, unique=True)
+    file_name = db.Column(db.String(100))
+    date_time = db.Column(db.String(50))
+    month_id = db.Column(db.Integer, db.ForeignKey('workshop_month.id'))
+
+    def __repr__(self):
+        return f'{self.file_name}'
 
 class MonthAssignmentAssessmentVideos(db.Model):
     __tablename__ = 'month_assignment_assessment_videos'
