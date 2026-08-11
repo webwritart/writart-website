@@ -560,6 +560,7 @@ def classroom():
 @school.route('/course', methods=['GET','POST'])
 def course():
     admin = db.session.query(Role).filter_by(name='admin').scalar()
+    session['url'] = url_for('school.course')
     if current_user.is_authenticated:               
         if 'ws_uuid' in session or request.args.get('ws_uuid'):
             if request.method == 'POST' and request.is_json:
@@ -844,7 +845,7 @@ def course():
         else:
             return redirect(url_for('school.classroom'))
     else:
-        return redirect(url_for('school.classroom'))
+        return redirect(url_for('account.login', instruction='Log in to continue'))
     return render_template('course.html', logged_in=current_user.is_authenticated,
                            video_count=video_count, vid_id_list=vid_id_list, vid_caption_list=vid_caption_list,
                            ws_topic=course_topic, study_material_dict=study_material_dict, study_material_count=study_material_count,

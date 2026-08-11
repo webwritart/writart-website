@@ -2054,6 +2054,8 @@ def login():
                 artist = db.session.query(Role).filter_by(name='artist').scalar()
                 user_roles = current_user.role
                 session['logged_in'] = True
+                if session.get('url') == url_for('school.course'):
+                    return redirect(url_for('school.course'))
                 if session.get('url') == url_for('school.classroom'):
                     return redirect(url_for('school.classroom'))
                 if session.get('url') == url_for('school.enroll'):
