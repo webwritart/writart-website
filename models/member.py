@@ -260,14 +260,16 @@ class MonthBook(db.Model):
 class MonthAssignmentAssessmentVideos(db.Model):
     __tablename__ = 'month_assignment_assessment_videos'
     id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.Integer, unique=True)
     yt_vid_id = db.Column(db.String(100))
     vid_caption = db.Column(db.String(100))
     instructor = db.Column(db.String(100))
     date_time = db.Column(db.String(50))
     month_id = db.Column(db.Integer, db.ForeignKey('workshop_month.id'))
+    member_uuid_list = db.Column(db.String(500))
 
     def __repr__(self):
-        return f'{self.vid_caption}'
+        return f'UUID: {self.uuid}--Caption: {self.vid_caption}'
     
 
 class MonthDemo(db.Model):

@@ -25,6 +25,9 @@
     #lesson-iframe-box {
         display: none;
     }
+    #assessed-iframe-box {
+        display: none;
+    }
     .figure-container {
         display:flex;
         flex-wrap:wrap;
@@ -146,7 +149,18 @@
         font-size: 1rem;
         background: rgb(50, 60, 26);
     }
-   
+   #assessed-assignment-video-container {
+       display: flex;
+       justify-content: space-evenly;
+       align-items: center;
+   }
+   .assessed-assignemnt-form-box {
+        background: rgb(219, 221, 213);
+        padding: 2%;
+        width: 100%;
+        margin: 1%;
+        border-radius: .5rem;
+   }
     
 /* ----------------------------------------------------- TESTIMONIALS ------------------------------------------------------ */
     #testimonial-root-container {
@@ -557,22 +571,40 @@
     <div class="video-wrapper-container" >
         <p class="section-title">ASSIGNMENT ASSESSMENT</p>
         <hr>
-        <div class="figure-container">
-        {% if assessment_video_count > 0 %}
-            {% for v in assessment_vid_dict %}
-            <figure class="figure2">
-                <iframe class="responsive-iframe" src="https://www.youtube.com/embed/{{ assessment_vid_dict[v]['vid_id'] }}?si=2BVYS-0QHsxcX4f5&;"
-                title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write;
-                encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
-                allowfullscreen></iframe>
-                <figcaption style="color: rgb(0, 0, 0);">{{ v }}</figcaption>
-            </figure>
-            {% endfor %}
-        {% endif %}
+            <div id="assessed-assignment-video-container">
+                <div class="assessed-assignemnt-form-box">
+                    <p class="section-title">All assessed videos</p>
+                    <div id="lesson-container">
+                        <select class="option-list" id="all-assessed" oninput="showAssessedVideo('all-assessed')">
+                            <option value="">Select video to watch</option>
+                            {% for v in assessment_vid_dict %}
+                            <option value="{{assessment_vid_dict[v]['vid_id']}}">{{assessment_vid_dict[v]['vid_caption']}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="assessed-assignemnt-form-box">
+                    <p class="section-title">My assessed videos</p>
+                    <div id="lesson-container">
+                        <select class="option-list" id="my-assessed" oninput="showAssessedVideo('my-assessed')">
+                            <option value="">Select video to watch</option>
+                            {% for v in my_assessed_vid_dict %}
+                            <option value="{{my_assessed_vid_dict[v]['vid_id']}}">{{my_assessed_vid_dict[v]['vid_caption']}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="figure-container">
+                <figure class="figure" id="assessed-iframe-box">
+                    <iframe class="responsive-iframe" id="assessed-iframe" src=""
+                    title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write;
+                    encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
+                    <figcaption id="assessed-caption">{{vid_caption_list[n]}}</figcaption>
+                </figure>
+            </div>
         </div>
-        {% if assessment_video_count == 0 %}
-            <p style="color: white;">Sorry, No Assignment assessment recordings yet!</p>
-        {% endif %}
     </div>
 </div>
 <div class="video-wrapper" style="padding: 0% 0%; align-items:start; background: rgb(192, 192, 192);">
@@ -742,6 +774,30 @@ function showVideo() {
     lessonIframe.src = "https://www.youtube.com/embed/"+lessonVidIdList[lessonListValue]+"?si=2BVYS-0QHsxcX4f5&;";
     lessonCaption.innerHTML = lessonCaptionList[lessonListValue];
     lessonIframeBox.style.display = "block";
+}
+function showAssessedVideo(category) {
+    let selectElement, vidId, vidCaption;
+    const assessedIframeBox = document.getElementById('assessed-iframe-box');
+
+    if (category == "all-assessed") {
+        selectElement = document.getElementById('all-assessed');
+        vidId = selectElement.value;
+        vidCaption = selectElement.options[selectElement.selectedIndex].text;
+    } else if (category == 'my-assessed') {
+        selectElement = document.getElementById('my-assessed');
+        vidId = selectElement.value;
+        vidCaption = selectElement.options[selectElement.selectedIndex].text;
+    }
+    if (vidId) {
+        const assessedIframe = document.getElementById('assessed-iframe');
+        const assessedCaption = document.getElementById('assessed-caption');
+        assessedIframe.src = "https://www.youtube.com/embed/"+vidId+"?si=2BVYS-0QHsxcX4f5&;";
+        assessedCaption.innerHTML = vidCaption;
+        assessedIframeBox.style.display = "block";
+    } else {
+        assessedIframeBox.style.display = "none";
+    }
+    
 }
 // ---------------------------------------- DOWNLOAD NOTES --------------------------------------------------------
 async function downloadNotes() {

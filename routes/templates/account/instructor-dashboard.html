@@ -111,11 +111,14 @@ input::placeholder {
         </form>
         <form id="download-assignments-form" action="{{url_for('account.instructor_dashboard')}}" method="post">
             <p class="form-heading">Download Assignment Submission</p>
-            <select name="course_uuid" required>
+            <select name="course_uuid" id="download-assignments-course-uuid" required oninput="loadDownloadAssignmentsMonths()">
                 <option value="default">Choose Course/Workshop</option>
                 {% for c in course_dict %}
                 <option value="{{c}}">{{course_dict[c]['course_topic']}}</option>
                 {% endfor %}
+            </select>
+            <select name="month" id="download-assignment-month" required>
+                <option value="default">Choose Month</option>
             </select>
             <button class="btn btn-primary btn-block btn-large form-button" type="submit" id="download-assignments" name="submit" value="download-assignments">Downlaod</button>
         </form>
@@ -327,7 +330,19 @@ input::placeholder {
             month.appendChild(option);
         });
     });
+function loadDownloadAssignmentsMonths() {
+    const downloadAssignmentsCourseUUID = document.getElementById('download-assignments-course-uuid').value;
+    const monthSelect = document.getElementById('download-assignment-month');
+    const selectedCourseMonths = courseDict[downloadAssignmentsCourseUUID]['months'];
 
+    monthSelect.replaceChildren();
+    for (const item of selectedCourseMonths) {
+        const option = document.createElement('option');
+        option.value = item;
+        option.textContent = item;
+        monthSelect.appendChild(option);
+    }
+}
 // ------------------------------------- AVOID MULTIPLE CLICK SUBMITS ---------------------------------------
 document.getElementById('course-operations').addEventListener('submit', function(e) {
     // Check if form is already submitting

@@ -15,6 +15,7 @@ from models.workshop_details import *
 from operations.messenger import *
 import webbrowser
 from datetime import datetime, date, timedelta
+import json
 
 time_now = datetime.now()
 
@@ -663,19 +664,30 @@ def course():
 
     # ----------------------------------- ASSESSMENT VIDEOS ---------------------------------------------------#
             assessment_vid_dict = {}
+            my_assessed_vid_dict = {}
+
             all_assessed_videos = []
 
             for m in course_enrolled_months:
                 videos = m.assignment_assessment_videos
                 for v in videos:
                     all_assessed_videos.append(v)
+                    
             for v in all_assessed_videos:
                 assessment_vid_dict[v.vid_caption] = {
                     'vid_id': v.yt_vid_id,
                     'vid_caption': v.vid_caption
                 }
             assessment_video_count = len(assessment_vid_dict)
-            
+            for v in all_assessed_videos:
+                member_uuid_list = json.loads(v.member_uuid_list)
+                if str(current_user.uuid) in member_uuid_list:
+                    my_assessed_vid_dict[v.vid_caption] = {
+                        'vid_id': v.yt_vid_id,
+                        'vid_caption': v.vid_caption
+                    }
+            my_assessed_video_count = len(my_assessed_vid_dict)
+
 
     # -------------------------------------- DEMO VIDEOS ------------------------------------------------------ #
             demo_vid_dict = {}
@@ -856,7 +868,8 @@ def course():
                            demo_vid_dict=demo_vid_dict, demo_video_count=demo_video_count, non_enrolment_msg=non_enrolment_msg, pending_count=pending_count, enrolment_alert=enrolment_alert,
                            non_enrolment_msg_submissions=non_enrolment_msg_submissions, current_year=current_year, submitted_assignments_list=submitted_assignments_list, admin=admin,
                            all_submitted_pending_assignments_dict=all_submitted_pending_assignments_dict, my_submitted_assignment_list_count=my_submitted_assignment_list_count,
-                           all_submitted_pending_assignments_dict_count=all_submitted_pending_assignments_dict_count, testimonial_dict=testimonial_dict, testimonial_count=testimonial_count)
+                           all_submitted_pending_assignments_dict_count=all_submitted_pending_assignments_dict_count, testimonial_dict=testimonial_dict, testimonial_count=testimonial_count,
+                           my_assessed_vid_dict=my_assessed_vid_dict, my_assessed_video_count=my_assessed_video_count)
 
 
 @school.route('/submit-feedback-files', methods=['GET', 'POST'])

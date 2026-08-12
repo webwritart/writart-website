@@ -22,12 +22,14 @@ from io import BytesIO
 from zipfile import ZipFile, ZIP_DEFLATED
 import shutil
 from pathlib import Path
+import json
 
 
 account = Blueprint('account', __name__, static_folder='static', template_folder='templates/account')
 
 otp = []
 today_date = date.today()
+today_date_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
 @login_required
@@ -1421,11 +1423,9 @@ def instructor_dashboard():
                 date_time = datetime.now().replace(microsecond=0)
                 try:
                     entry = MonthDemo(
-                        month_id=course_month.id,
                         yt_vid_id=demo_yt_url,
                         vid_caption=demo_title,
                         instructor='Shwetabh Suman',
-                        date_time=date_time
                     )
                     db.session.add(entry)
                     db.session.commit()
@@ -1446,15 +1446,21 @@ def instructor_dashboard():
                 for m in course_month_list:
                     if m.month == int(month):
                         course_month = m
-                entry = MonthAssignmentAssessmentVideos(
-                    month_id= course_month.id,
-                    yt_vid_id=yt_vid_id,
-                    vid_caption=vid_caption,
-                    instructor=teacher,
-                    date_time=date_time
-                )
+                month_assessment_videos = course_month.assignment_assessment_videos
+                current_assessment_entry = [v for v in month_assessment_videos if not v.yt_vid_id][0]
+                assignment_folder = f'./static/files/courses/{course_uuid}/assignment-submissions/assessed/{current_assessment_entry.uuid}'
 
-                db.session.add(entry)
+                student_uuid_list = []
+                for root, dirs, files in os.walk(assignment_folder):
+                    for f in files:
+                        student_uuid = f.split('_')[1]
+                        if student_uuid not in student_uuid_list:
+                            student_uuid_list.append(student_uuid)
+                current_assessment_entry.yt_vid_id = yt_vid_id
+                current_assessment_entry.vid_caption = vid_caption
+                current_assessment_entry.instructor = teacher
+                current_assessment_entry.member_uuid_list = json.dumps(student_uuid_list)
+                
                 db.session.commit()
                 flash('Assessment video ID successfully uploaded!', 'success')
             else:
@@ -1538,11 +1544,30 @@ def instructor_dashboard():
                 
         if request.form.get('submit') == 'download-assignments':
             course_uuid = request.form.get('course_uuid')
+            course_topic_name = db.session.query(Workshop).filter_by(uuid=course_uuid).scalar().topic
+            month = request.form.get('month')
+            course_month_list = db.session.query(Workshop).filter_by(uuid=course_uuid).scalar().months
+            for m in course_month_list:
+                if m.month == int(month):
+                    course_month = m
+            
             if course_uuid != 'default':
+                existing_month_assignment_assessment_uuid_list = [a.uuid for a in db.session.query(MonthAssignmentAssessmentVideos).all()]
+                assessed_video_uuid = create_uuid(existing_month_assignment_assessment_uuid_list, 8)
                 folder = f"./static/files/courses/{course_uuid}/assignment-submissions"
-                dest_folder = f"./static/files/courses/{course_uuid}/assignment-submissions/assessed/"
+                dest_folder = f"./static/files/courses/{course_uuid}/assignment-submissions/assessed/{assessed_video_uuid}"
+                if not os.path.exists(dest_folder):
+                    os.makedirs(dest_folder)
                 file_lists = []
 
+    # 1. Create a database entry ------------------------------------------------------------------
+                entry = MonthAssignmentAssessmentVideos(
+                    uuid=assessed_video_uuid,
+                    date_time = today_date_time,
+                    month_id = course_month.id
+                )
+                db.session.add(entry)
+                db.session.commit()
     # 2. Create an in-memory byte stream --------------------------------------------
                 memory_file = BytesIO()
 
@@ -1566,7 +1591,7 @@ def instructor_dashboard():
                     memory_file,
                     mimetype='application/zip',
                     as_attachment=True,
-                    download_name=f"{course_uuid}_{course_topic}_assignments.zip"
+                    download_name=f"{course_uuid}_{course_topic_name}_assignments.zip"
                 )
             else:
                 flash('Please select the Course first!', 'error')
