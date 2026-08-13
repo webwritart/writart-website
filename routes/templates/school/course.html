@@ -666,6 +666,7 @@
                         <img id="testimonial-img" src="{{testimonial_dict[0]['avatar_path']}}">
                         <p id="author">{{testimonial_dict[0]['author_name']}}</p>
                         <p id="role">{{testimonial_dict[0]['role']}}</p>
+                        <p id="testimonial-place">{{testimonial_dict[0]['place']}}</p>
                     </div>
                 </div>
             </div>
@@ -942,6 +943,7 @@ const keys = Object.keys(testimonialDict);
 const quote = document.getElementById('quote');
 const author = document.getElementById('author');
 const role = document.getElementById('role');
+const testimonialPlace = document.getElementById('testimonial-place');
 const avatar = document.getElementById('testimonial-img');
 let myIntervalId;
 let index = 1;
@@ -951,6 +953,7 @@ function startTestimonialSlider() {
     quote.innerHTML = `"${testimonialDict[index]['quote']}"`;
     author.innerHTML = testimonialDict[index]['author_name'];
     role.innerHTML = testimonialDict[index]['role'];
+    testimonialPlace.innerHTML = testimonialDict[index]['place'];
     avatar.src = testimonialDict[index]['avatar_path'];
     index = (index + 1) % keys.length;
 }, 10000);
@@ -965,6 +968,7 @@ navArrowLeft.addEventListener("click", () => {
     quote.innerHTML = `"${testimonialDict[index]['quote']}"`;
     author.innerHTML = testimonialDict[index]['author_name'];
     role.innerHTML = testimonialDict[index]['role'];
+    testimonialPlace.innerHTML = testimonialDict[index]['place'];
     avatar.src = testimonialDict[index]['avatar_path'];
 });
 navArrowRight.addEventListener("click", () => {
@@ -973,6 +977,7 @@ navArrowRight.addEventListener("click", () => {
     quote.innerHTML = `"${testimonialDict[index]['quote']}"`;
     author.innerHTML = testimonialDict[index]['author_name'];
     role.innerHTML = testimonialDict[index]['role'];
+    testimonialPlace.innerHTML = testimonialDict[index]['place'];
     avatar.src = testimonialDict[index]['avatar_path'];
 });
 
