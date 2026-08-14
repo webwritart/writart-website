@@ -28,12 +28,6 @@ KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET_TEST')
 
 client = razorpay.Client(auth=(KEY_ID, KEY_SECRET))
 
-# ---------------------------------- PAYTM PAYMENT GATEWAY ---------------------------------------------------------------- #
-PAYTM_MERCHANT_ID = os.environ.get("PAYTM_MERCHANT_ID", "TEST_MERCHANT_ID")
-PAYTM_MERCHANT_KEY = os.environ.get("PAYTM_MERCHANT_KEY", "TEST_MERCHANT_KEY")
-PAYTM_WEBSITE = "WEBSTAGING"  # or "DEFAULT" for production
-PAYTM_INDUSTRY_TYPE = "Retail"
-PAYTM_CALLBACK_URL = "http://127.0.0.1:5000/payment/callback"
 
 today_date = date.today()
 payment_ = {}
@@ -55,7 +49,7 @@ def home():
             return render_template('order.html', logged_in=current_user.is_authenticated)
     except Exception as e:
         instruction = 'Please first login to enroll'
-        return render_template('account/login.html', prev_page='enroll', instruction=instruction)
+        return render_template('account/login.html', prev_page='enroll', instruction=instruction, logged_in=current_user.is_authenticated   )
 
 
 # @payment.route('/paytm_checkout', methods=['GET', 'POST'])
