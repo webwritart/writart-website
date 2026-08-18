@@ -1564,7 +1564,8 @@ def instructor_dashboard():
                 entry = MonthAssignmentAssessmentVideos(
                     uuid=assessed_video_uuid,
                     date_time = today_date_time,
-                    month_id = course_month.id
+                    month_id = course_month.id,
+                    member_uuid_list = []
                 )
                 db.session.add(entry)
                 db.session.commit()
