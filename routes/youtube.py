@@ -42,7 +42,6 @@ def home():
                     first_dialogue_narration = [a.text for a in first_video.components if a.component_type == 'dialogue_&_narration'][0]
                 except:
                     first_dialogue_narration = ''
-                    first_voice_recording = [a.file_path for a in first_video.components if a.component_type == 'voice_recording'][0]
                 try:
                     first_img_vid_instruction = [a.text for a in first_video.components if a.component_type == 'img_vid_instruction'][0]
                 except:
@@ -62,6 +61,10 @@ def home():
                     default_video_dict['dialogue_narration'] = markdown.markdown(first_dialogue_narration).replace('\n', '<br>')
                 except:
                     default_video_dict['dialogue_narration'] = first_dialogue_narration
+                try:
+                    first_voice_recording = [a.file_path for a in first_video.components if a.component_type == 'voice_recording'][0]
+                except:
+                    first_voice_recording = ''
                 default_video_dict['voice_recording'] = first_voice_recording
                 try:
                     default_video_dict['img_vid_instruction'] = markdown.markdown(first_img_vid_instruction).replace('\n', '<br>')
