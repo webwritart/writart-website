@@ -40,16 +40,20 @@ def home():
                             default_vid_uuid_name_list.append((v.uuid, v.temp_title))
                 try:
                     first_dialogue_narration = [a.text for a in first_video.components if a.component_type == 'dialogue_&_narration'][0]
-                    first_voice_recording = [a.file_path for a in first_video.components if a.component_type == 'voice_recording'][0]
-                    first_img_vid_instruction = [a.text for a in first_video.components if a.component_type == 'img_vid_instruction'][0]
-                    first_thumbnail_instruction = [a.text for a in first_video.components if a.component_type == 'thumbnail_instruction'][0]
-                    first_youtube_card_instruction = [a.text for a in first_video.components if a.component_type == 'youtube_card_instruction'][0]
-                except Exception as e:
-                    p(e)
+                except:
                     first_dialogue_narration = ''
-                    first_voice_recording = ''
+                    first_voice_recording = [a.file_path for a in first_video.components if a.component_type == 'voice_recording'][0]
+                try:
+                    first_img_vid_instruction = [a.text for a in first_video.components if a.component_type == 'img_vid_instruction'][0]
+                except:
                     first_img_vid_instruction = ''
+                try:
+                    first_thumbnail_instruction = [a.text for a in first_video.components if a.component_type == 'thumbnail_instruction'][0]
+                except:
                     first_thumbnail_instruction = ''
+                try:
+                    first_youtube_card_instruction = [a.text for a in first_video.components if a.component_type == 'youtube_card_instruction'][0]
+                except:
                     first_youtube_card_instruction = ''
                     
                 default_video_dict['vid_uuid_name_list'] = default_vid_uuid_name_list
