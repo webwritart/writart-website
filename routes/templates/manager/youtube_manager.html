@@ -1,0 +1,387 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    #root-container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        min-height: 90vh;
+        align-items: center;
+        justify-content: center;
+        background: rgb(137, 165, 120);
+        padding: 0% 5%;
+    }
+    #main-section {
+        display: flex;
+        width: 100%;
+        align-items:stretch;
+        justify-content: center;
+    }
+    #button-section {
+        display: flex;
+        flex-direction: column;
+        width: 20%;
+        height: 80vh;
+        background: rgb(201, 217, 188);
+        border-radius: 1.5rem;
+        padding: 2% 1%;
+        margin: 1%;
+    }
+    #form-section {
+        display: flex;
+        flex-direction: column;
+        width: 80%;
+        align-items: center;
+        background: rgb(201, 217, 188);
+        border-radius: 1.5rem;
+        padding: 2% 1%;
+        margin: 1%;
+    }
+    .form-container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        align-items: center;
+        background: rgb(201, 217, 188);
+        border-radius: 1.5rem;
+        padding: 2% 1%;
+        margin: 1%;
+    }
+    .form-container form {
+        width: 80%;
+    }
+    #add-channel-form {
+        display: none;
+    }
+    #add-video-form {
+        display: none;
+    }
+    #add-video-component-form {
+        display: none;
+    }
+    .section-title {
+        font-weight: bold;
+        font-size: 1.2rem;
+        width: 100%;
+        text-align: center;
+        margin: 0%;
+        margin-bottom: 2%;
+        padding: 2% 0%;
+    }
+    .form-btn {
+        background: green;
+        color: white;
+        padding: 1% 2%;
+        border: none;
+        border-radius: 1.5rem;
+        margin: 1%;
+        cursor: pointer;
+        font-size: .9rem;
+    }
+    .form-btn:hover {
+        background: rgb(4, 92, 4);
+    }
+    .inline-inputs {
+        display: flex;
+        width: 100%;
+        align-items: center;
+    }
+    .inline-inputs label {
+        white-space: nowrap;
+    }
+    input {
+        background: rgb(248, 255, 224);
+        color: black;
+        padding: 1% 2%;
+        border: none;
+        border-radius: 1.5rem;
+        font-size: .9rem;
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+    }
+    input::placeholder {
+        color: rgb(136, 150, 136);
+    }
+    input:focus {
+        background-color: #ffffff;
+        box-shadow: none;
+    }
+    select {
+        width: 100%;
+        background: rgb(248, 255, 224);
+        color: black;
+        padding: 1% 2%;
+        border: none;
+        border-radius: 1.5rem;
+        margin-bottom: 1%;
+        font-size: .9rem;
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+    }
+    .form-submit-btn {
+        background: rgb(50, 97, 50);
+        color: white;
+        width: 100%;
+        padding: 1% 2%;
+        border: none;
+        border-radius: 1.5rem;
+        cursor: pointer;
+        font-size: .9rem;
+    }
+    .form-submit-btn:hover {
+        background: rgb(4, 92, 4);
+    }
+    #dialogue-narration, #voice-recording, #video-img-instruction, #thumbnail-instruction, #youtube-card-instruction {
+        display: none;
+    }
+</style>
+<div id="root-container">
+    <div id="main-section">
+        <div id="button-section">
+            <p class="section-title">Operations</p>
+            <button id="add-channel-btn" class="form-btn" onclick="addChannel()">Add channel</button>
+            <button id="add-video-btn" class="form-btn" onclick="addVideo()">Add video</button>
+            <button id="add-video-component-btn" class="form-btn" onclick="addVideoComponent()">Add video component</button>
+        </div>
+        <div id="form-section">
+            <div class="form-container">
+                <form id="add-channel-form">
+                    <p class="section-title">Add Channel</p>
+                    <input type="text" name="channel_name" placeholder="Channel Name" required>
+                    <input type="text" name="email" placeholder="Created with Email" required>
+                    <input type="text" name="channel_id" placeholder="Channel ID">
+                    <input type="text" name="description" placeholder="Channel Description">
+                    <input type="text" name="handle" placeholder="Handle">
+                    <input type="text" name="custom_url" placeholder="Custom url">
+                    <button type="submit" name="submit" value="add-channel" class="form-submit-btn">Add Channel</button>
+                </form>
+                <form id="add-video-form">
+                    <p class="section-title">Add Video</p>
+                    <select name="channel_uuid" required>
+                        <option value="">Select Channel</option>
+                        {% for channel in channel_list %}
+                        <option value="{{channel[0]}}">{{channel[1]}}</option>
+                        {% endfor %}
+                    </select>
+                    <select name="category" required>
+                        <option value="">Select Category</option>
+                        <option value="tantra-short">Tantra short</option>
+                        <option value="tantra-long">Tantra long</option>
+                        <option value="tantra-story">Tantra story</option>
+                        <option value="occult-short">Occult short</option>
+                        <option value="occult-long">Occult long</option>
+                        <option value="occult-story">Occult story</option>
+                        <option value="paranormal-short">Paranormal short</option>
+                        <option value="paranormal-long">Paranormal long</option>
+                        <option value="paranormal-story">Paranormal story</option>
+                    </select>
+                    <input type="text" name="temp_title" placeholder="Temporary title" required>
+                    <input id="scheduled-date-time" type="datetime-local" name="scheduled_date_time" placeholder="Upload scheduled date-time">
+                    <button type="submit" name="submit" value="add-video" class="form-submit-btn">Add video</button>
+                </form>
+                <form id="add-video-component-form">
+                    <p class="section-title">Add Video Component</p>
+                    <select name="video_uuid" required>
+                        <option value="">Select Video</option>
+                        {% for video in video_list %}
+                        <option value="{{video[0]}}">{{video[1]}}</option>
+                        {% endfor %}
+                    </select>
+                    <select id="operation" name="operation">
+                        <option value="">Select Operation</option>
+                        <option value="all">All operations</option>
+                        <option value="dialogue-and-narration">Dialogue and Narration</option>
+                        <option value="voice-recording">Voice Recording</option>
+                        <option value="video-img-instruction">video/image instruction</option>
+                        <option value="thumbnail-instruction">Thumbnail instruction</option>
+                        <option value="youtube-card-instruction">Youtube card instruction</option>
+                    </select>
+                    <!-- --------------------------------Dialogue and Narration------------------------------------------------ -->
+                    <input id="dialogue-narration" type="text" name="dialogue_narration" placeholder="Dialogue and Narration">
+                    <!-- --------------------------------Voice Recording------------------------------------------------ -->
+                    <div id="voice-recording" class="inline-inputs">
+                        <label for="voice-recording">Voice Recording&ensp;</label>
+                        <input type="file" name="voice_recording" accept="audio/*">
+                    </div>
+                    <!-- --------------------------------video/image instruction------------------------------------------------ -->
+                    <input id="video-img-instruction" type="text" name="video_img_instruction" placeholder="video/image instruction">
+                    <!-- --------------------------------Thumbnail instruction------------------------------------------------ -->
+                    <input id="thumbnail-instruction" type="text" name="thumbnail_instruction" placeholder="Thumbnail instruction">
+                    <!-- --------------------------------Youtube card instruction------------------------------------------------ -->
+                    <input id="youtube-card-instruction" type="text" name="youtube_card_instruction" placeholder="Youtube card instruction">
+                    <button type="submit" name="submit" value="add-video-component" class="form-submit-btn">Add video component</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const addChannelForm = document.getElementById("add-channel-form");
+    const addVideoForm = document.getElementById("add-video-form");
+    const addVideoComponentForm = document.getElementById("add-video-component-form");
+    const operation = document.getElementById("operation");
+    function hideAllForms() {
+        addChannelForm.style.display = "none";
+        addVideoForm.style.display = "none";
+        addVideoComponentForm.style.display = "none";
+    }
+    function addChannel() {
+        hideAllForms();
+        addChannelForm.style.display = "block";
+    }
+    function addVideo() {
+        hideAllForms();
+        addVideoForm.style.display = "block";
+    }
+    function addVideoComponent() {
+        hideAllForms();
+        addVideoComponentForm.style.display = "block";
+    }
+
+    function hideAllOperations() {
+        document.getElementById('dialogue-narration').style.display = 'none';
+        document.getElementById('voice-recording').style.display = 'none';
+        document.getElementById('video-img-instruction').style.display = 'none';
+        document.getElementById('thumbnail-instruction').style.display = 'none';
+        document.getElementById('youtube-card-instruction').style.display = 'none';
+    }
+    function showAllOperations() {
+        document.getElementById('dialogue-narration').style.display = 'block';
+        document.getElementById('voice-recording').style.display = 'block';
+        document.getElementById('video-img-instruction').style.display = 'block';
+        document.getElementById('thumbnail-instruction').style.display = 'block';
+        document.getElementById('youtube-card-instruction').style.display = 'block';
+    }
+
+    operation.addEventListener('change', function() {
+        hideAllOperations();
+        if (operation.value === 'all') {
+            showAllOperations();
+        } else if (operation.value === 'dialogue-and-narration') {
+            document.getElementById('dialogue-narration').style.display = 'block';
+        } else if (operation.value === 'voice-recording') {
+            document.getElementById('voice-recording').style.display = 'block';
+        } else if (operation.value === 'video-img-instruction') {
+            document.getElementById('video-img-instruction').style.display = 'block';
+        } else if (operation.value === 'thumbnail-instruction') {
+            document.getElementById('thumbnail-instruction').style.display = 'block';
+        } else if (operation.value === 'youtube-card-instruction') {
+            document.getElementById('youtube-card-instruction').style.display = 'block';
+        } 
+    });
+
+    addChannelForm.addEventListener('submit', function(e) {
+       
+        const endpointUrl = "{{ url_for('manager.youtube_manager') }}";
+        const channelName = addChannelForm.channel_name.value;
+        const email = addChannelForm.email.value;
+        const channelId = addChannelForm.channel_id.value;
+        const description = addChannelForm.description.value;
+        const handle = addChannelForm.handle.value;
+        const customUrl = addChannelForm.custom_url.value;
+        data = {
+            type: 'add-channel',
+            channel_name: channelName,
+            email: email,
+            channel_id: channelId,
+            description: description,
+            handle: handle,
+            custom_url: customUrl
+        }
+        e.preventDefault();
+        fetch(endpointUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status == 'success') { 
+                alert(data.message);
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    });
+
+
+    addVideoForm.addEventListener('submit', function(e) {
+      
+
+        const endpointUrl = "{{ url_for('manager.youtube_manager') }}";
+        const channelUuid = addVideoForm.channel_uuid.value;
+        const category = addVideoForm.category.value;
+        const tempTitle = addVideoForm.temp_title.value;
+        const scheduledDateTime = addVideoForm.scheduled_date_time.value;
+
+        data = {
+            type: 'add-video',
+            channel_uuid: channelUuid,
+            category: category,
+            temp_title: tempTitle,
+            scheduled_date_time: scheduledDateTime
+        }
+        e.preventDefault();
+        fetch(endpointUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status == 'success') { 
+                alert(data.message);
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    });
+
+    addVideoComponentForm.addEventListener('submit', function(e) {
+        
+
+        const endpointUrl = "{{ url_for('manager.youtube_manager') }}";
+        const videoUuid = addVideoComponentForm.video_uuid.value;
+        const dialogueNarration = addVideoComponentForm.dialogue_narration.value;
+        const voiceRecording = addVideoComponentForm.voice_recording.files[0];
+        const videoImgInstruction = addVideoComponentForm.video_img_instruction.value;
+        const thumbnailInstruction = addVideoComponentForm.thumbnail_instruction.value;
+        const youtubeCardInstruction = addVideoComponentForm.youtube_card_instruction.value;
+
+        const formData = new FormData();
+        formData.append('voice_recording', voiceRecording);
+        formData.append('video_uuid', videoUuid);
+        formData.append('type', 'add-video-component');
+        formData.append('dialogue_narration', dialogueNarration);
+        formData.append('video_img_instruction', videoImgInstruction);
+        formData.append('thumbnail_instruction', thumbnailInstruction);
+        formData.append('youtube_card_instruction', youtubeCardInstruction);
+        
+        e.preventDefault();
+        fetch(endpointUrl, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status == 'success') { 
+                alert(data.message);
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    });
+</script>
+{% endblock %}
