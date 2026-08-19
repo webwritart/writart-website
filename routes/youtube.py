@@ -2,7 +2,9 @@ from flask import Blueprint, render_template, request, redirect, flash, send_fil
 from flask_login import current_user
 from extensions import db, current_year,p
 from models.youtube import *
+from models.member import *
 import pprint as pp
+import markdown
 
 
 youtube = Blueprint('youtube', __name__, static_folder='static', template_folder='templates/youtube')
@@ -10,6 +12,7 @@ youtube = Blueprint('youtube', __name__, static_folder='static', template_folder
 
 @youtube.route('/', methods=['GET', 'POST'])
 def home():
+    admin = db.session.query(Role).filter_by(name='admin').one_or_none()
     if 'youtube_logged_in' not in session or session['youtube_logged_in'] != True:
         return redirect(url_for('youtube.login'))
     else:
@@ -47,7 +50,6 @@ def home():
                 default_video_dict['img_vid_instruction'] = first_img_vid_instruction
                 default_video_dict['thumbnail_instruction'] = first_thumbnail_instruction
                 default_video_dict['youtube_card_instruction'] = first_youtube_card_instruction
-                pp.pprint(default_video_dict)
             else:
                 default_video_dict = {}
         
@@ -83,13 +85,13 @@ def home():
                     elif c.component_type == 'youtube_card_instruction':
                         youtube_card_instruction = c.text
                 vid_dict['temp_title'] = video_temp_title
-                vid_dict['dialogue_narration'] = dialogue_narration
-                vid_dict['voice_recording'] = '.' + voice_recording
-                vid_dict['img_vid_instruction'] = img_vid_instruction
-                vid_dict['thumbnail_instruction'] = thumbnail_instruction
-                vid_dict['youtube_card_instruction'] = youtube_card_instruction
-                return jsonify(temp_title= video_temp_title, dialogue_narration= dialogue_narration, voice_recording= voice_recording, img_vid_instruction= img_vid_instruction, thumbnail_instruction= thumbnail_instruction, youtube_card_instruction= youtube_card_instruction)
-        return render_template('youtube.html', current_year=current_year, channels=channels, default_video_dict=default_video_dict, logged_in=current_user.is_authenticated)
+                vid_dict['dialogue_narration'] = markdown.markdown(dialogue_narration).replace('\n', '<br>')
+                vid_dict['voice_recording'] = voice_recording
+                vid_dict['img_vid_instruction'] = markdown.markdown(img_vid_instruction).replace('\n', '<br>')
+                vid_dict['thumbnail_instruction'] = markdown.markdown(thumbnail_instruction).replace('\n', '<br>')
+                vid_dict['youtube_card_instruction'] = markdown.markdown(youtube_card_instruction).replace('\n', '<br>')
+                return jsonify(vid_dict)
+        return render_template('youtube.html', current_year=current_year, channels=channels, default_video_dict=default_video_dict, logged_in=current_user.is_authenticated, admin=admin)
 
 
 @youtube.route('/login', methods=['GET', 'POST'])

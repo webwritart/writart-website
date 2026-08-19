@@ -116,6 +116,17 @@
         font-size: .9rem;
         box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
     }
+    textarea {
+        width: 100%;
+        background: rgb(248, 255, 224);
+        color: black;
+        padding: 1% 2%;
+        border: none;
+        border-radius: 1.5rem;
+        margin-bottom: 1%;
+        font-size: .9rem;
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+    }
     .form-submit-btn {
         background: rgb(50, 97, 50);
         color: white;
@@ -129,7 +140,7 @@
     .form-submit-btn:hover {
         background: rgb(4, 92, 4);
     }
-    #dialogue-narration, #voice-recording, #video-img-instruction, #thumbnail-instruction, #youtube-card-instruction {
+    #dialogue-narration, #voice-recording, #video-img-instruction, #thumbnail-instruction, #youtube-card-instruction, #dialogue-narration-container, #video-img-instruction-container, #thumbnail-instruction-container, #youtube-card-instruction-container {
         display: none;
     }
     #voice-recording-text {
@@ -199,7 +210,10 @@
                         <option value="youtube-card-instruction">Youtube card instruction</option>
                     </select>
                     <!-- --------------------------------Dialogue and Narration------------------------------------------------ -->
-                    <input id="dialogue-narration" type="text" name="dialogue_narration" placeholder="Dialogue and Narration">
+                    <div id="dialogue-narration-container" class="inline_inputs">
+                        <label for="dialogue-narration">Dialogue and Narration&ensp;</label>
+                        <textarea id="dialogue-narration" type="text" name="dialogue_narration" placeholder="Dialogue and Narration"></textarea>
+                    </div>
                     <!-- --------------------------------Voice Recording------------------------------------------------ -->
                     <div id="voice-recording" class="inline-inputs">
                         <label for="voice-recording">Voice Recording&ensp;</label>
@@ -207,11 +221,20 @@
                         <p id="voice-recording-text"></p>
                     </div>
                     <!-- --------------------------------video/image instruction------------------------------------------------ -->
-                    <input id="video-img-instruction" type="text" name="video_img_instruction" placeholder="video/image instruction">
+                    <div id="video-img-instruction-container" class="inline_inputs">
+                        <label for="video-img-instruction">video/image instruction&ensp;</label>
+                        <textarea id="video-img-instruction" type="text" name="video_img_instruction" placeholder="video/image instruction"></textarea>
+                    </div>
                     <!-- --------------------------------Thumbnail instruction------------------------------------------------ -->
-                    <input id="thumbnail-instruction" type="text" name="thumbnail_instruction" placeholder="Thumbnail instruction">
+                    <div id="thumbnail-instruction-container" class="inline_inputs">
+                        <label for="thumbnail-instruction">Thumbnail instruction&ensp;</label>
+                        <textarea id="thumbnail-instruction" type="text" name="thumbnail_instruction" placeholder="Thumbnail instruction"></textarea>
+                    </div>
                     <!-- --------------------------------Youtube card instruction------------------------------------------------ -->
-                    <input id="youtube-card-instruction" type="text" name="youtube_card_instruction" placeholder="Youtube card instruction">
+                    <div id="youtube-card-instruction-container" class="inline_inputs">
+                        <label for="youtube-card-instruction">Youtube card instruction&ensp;</label>
+                        <textarea id="youtube-card-instruction" type="text" name="youtube_card_instruction" placeholder="Youtube card instruction"></textarea>
+                    </div>
                     <button type="submit" name="submit" value="add-video-component" class="form-submit-btn">Add video component</button>
                 </form>
             </div>
@@ -225,6 +248,10 @@
     const addVideoComponentForm = document.getElementById("add-video-component-form");
     const operation = document.getElementById("operation");
     const videoUuid = document.getElementById("video_uuid");
+    const dialogueNarrationContainer = document.getElementById("dialogue-narration-container");
+    const videoImgInstructionContainer = document.getElementById("video-img-instruction-container");
+    const thumbnailInstructionContainer = document.getElementById("thumbnail-instruction-container");
+    const youtubeCardInstructionContainer = document.getElementById("youtube-card-instruction-container");
     function hideAllForms() {
         addChannelForm.style.display = "none";
         addVideoForm.style.display = "none";
@@ -249,6 +276,10 @@
         document.getElementById('video-img-instruction').style.display = 'none';
         document.getElementById('thumbnail-instruction').style.display = 'none';
         document.getElementById('youtube-card-instruction').style.display = 'none';
+        dialogueNarrationContainer.style.display = 'none';
+        videoImgInstructionContainer.style.display = 'none';
+        thumbnailInstructionContainer.style.display = 'none';
+        youtubeCardInstructionContainer.style.display = 'none';
     }
     function showAllOperations() {
         document.getElementById('dialogue-narration').style.display = 'block';
@@ -256,6 +287,10 @@
         document.getElementById('video-img-instruction').style.display = 'block';
         document.getElementById('thumbnail-instruction').style.display = 'block';
         document.getElementById('youtube-card-instruction').style.display = 'block';
+        dialogueNarrationContainer.style.display = 'block';
+        videoImgInstructionContainer.style.display = 'block';
+        thumbnailInstructionContainer.style.display = 'block';
+        youtubeCardInstructionContainer.style.display = 'block';
     }
 
     operation.addEventListener('change', function() {
@@ -358,6 +393,7 @@
         const videoImgInstruction = addVideoComponentForm.video_img_instruction.value;
         const thumbnailInstruction = addVideoComponentForm.thumbnail_instruction.value;
         const youtubeCardInstruction = addVideoComponentForm.youtube_card_instruction.value;
+        const voiceRecordingText = document.getElementById('voice-recording-text');
 
         const formData = new FormData();
         formData.append('voice_recording', voiceRecording);
@@ -367,6 +403,7 @@
         formData.append('video_img_instruction', videoImgInstruction);
         formData.append('thumbnail_instruction', thumbnailInstruction);
         formData.append('youtube_card_instruction', youtubeCardInstruction);
+        formData.append('voice_recording_text', voiceRecordingText.innerHTML);
         
         e.preventDefault();
         fetch(endpointUrl, {

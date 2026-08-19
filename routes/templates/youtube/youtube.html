@@ -1,6 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
 <style>
+    h4, h3, h2, h5, h6 {
+        line-height: 0;
+        margin: 0%;
+        padding: 0%;
+    }
+    p {
+        margin: 0% !important;
+        padding: 0% !important;
+    }
     #root-container {
         display: flex;
         flex-direction: column;
@@ -128,17 +137,20 @@
     }
     .vid-detail-section {
         display: flex;
+        flex-direction: column;
+        align-items: center;
         min-height: 10vh;
         background: white;
         margin: .5% 0%;
         width: 100%;
         border-radius: 1.5rem;
-        padding: 1%;
+        padding: 1.5% 1%;
         height: 30vh;
         overflow-y: auto;
     }
     #voice_recording_container {
         display: flex;
+        height: auto;
         justify-content: center;
     }
 </style>
@@ -196,6 +208,36 @@
 </div>
 
 <script>
+    function convertMarkdownToHtml(markdown) {
+        let html = markdown;
+
+        // 1. Convert Headers (### h3, ## h2, # h1)
+        html = html.replace(/^### (.*$)/gim, '<h5>$1</h5>');
+        html = html.replace(/^## (.*$)/gim, '<h4>$1</h4>');
+        html = html.replace(/^# (.*$)/gim, '<h3>$1</h3>');
+
+        // 2. Convert Bold (**text** or __text__)
+        html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        html = html.replace(/__(.*?)__/g, '<strong>$1</strong>');
+
+        // 3. Convert Italics (*text* or _text_)
+        html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+        html = html.replace(/_(.*?)_/g, '<em>$1</em>');
+
+        // 4. Convert Links ([anchor](url))
+        html = html.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>');
+
+        // 5. Convert Line Breaks into Paragraphs
+        html = html.split(/\n\n+/).map(p => {
+            if (!p.trim().startsWith('<h') && !p.trim().startsWith('<a')) {
+            return `<p>${p.trim().replace(/\n/g, '<br>')}</p>`;
+            }
+            return p.trim();
+        }).join('\n');
+
+        return html;
+        }
+
     function selectChannel(channel_uuid) {
         const endpointUrl = "{{ url_for('youtube.home') }}";
         fetch(endpointUrl, {
@@ -252,6 +294,7 @@
             imgVidInstruction.innerHTML = data.img_vid_instruction;
             thumbnailInstruction.innerHTML = data.thumbnail_instruction;
             youtubeCardInstruction.innerHTML = data.youtube_card_instruction;
+
         }).catch(error => {
             console.error('Error:', error);
         });

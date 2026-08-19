@@ -46,7 +46,7 @@ class YoutubeVideoComponent(db.Model):
     version = db.Column(db.String(50)) # eg 1.0, 1.1, 1.2, 1.3, etc.
     component_type = db.Column(db.String(50)) # eg dialogue_&_narration, voice_recording, img_vid_instruction, editing_fx, thumbnail, seo, yt_card, upload_time, etc.
     subtype = db.Column(db.String(50)) # e.g. for seo, the subtypes are yt_title, yt_description, yt_keywords
-    text = db.Column(db.String(5000)) # text for dialogue_&_narration, img_vid_instruction, and other initial instructions excluding each video, image or any other work feedbacks
+    text = db.Column(db.Text) # text for dialogue_&_narration, img_vid_instruction, and other initial instructions excluding each video, image or any other work feedbacks
     file_path = db.Column(db.String(200)) # path for files like uplaoded images, videos, voice recordings, etc.
     feedback = db.Column(db.String(1000)) # feedback for each video, image or any other work
     approval_status = db.Column(db.String(50)) # eg pending, approved, rejected, revise, etc.
