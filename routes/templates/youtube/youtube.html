@@ -162,11 +162,13 @@
     <div id="main-section">
         <div id="display">
             <p id="temp_title">{{ default_video_dict['temp_title'] }}</p>
+            <p>{{ first_video }}</p>
+            <p>{{ first_channel }}</p>
 
             <div id="display-inner-container">
                 <p class="vid-detail-section-header">Dialogue & narration</p>
                 <div id="dialogue_narration" class="vid-detail-section">
-                    <p id="dialogue_narration_text">{{ default_video_dict['dialogue_narration'] }}</p>
+                    {{ default_video_dict['dialogue_narration'] }}
                 </div>
 
                 <p class="vid-detail-section-header">Voice recording</p>
@@ -176,17 +178,17 @@
 
                 <p class="vid-detail-section-header">Image/Video instruction</p>
                 <div id="img_vid_instruction" class="vid-detail-section">
-                    <p id="img_vid_instruction_text">{{ default_video_dict['img_vid_instruction'] }}</p>
+                    {{ default_video_dict['img_vid_instruction'] }}
                 </div>
 
                 <p class="vid-detail-section-header">Thumbnail instruction</p>
                 <div id="thumbnail_instruction" class="vid-detail-section">
-                    <p id="thumbnail_instruction_text">{{ default_video_dict['thumbnail_instruction'] }}</p>
+                    {{ default_video_dict['thumbnail_instruction'] }}
                 </div>
 
                 <p class="vid-detail-section-header">Youtube card instruction</p>
                 <div id="youtube_card_instruction" class="vid-detail-section">
-                    <p id="youtube_card_instruction_text">{{ default_video_dict['youtube_card_instruction'] }}</p>
+                    {{ default_video_dict['youtube_card_instruction'] }}
                 </div>
             </div>
         </div>
@@ -208,36 +210,19 @@
 </div>
 
 <script>
-    function convertMarkdownToHtml(markdown) {
-        let html = markdown;
+    const defaultVideoDict = {{ default_video_dict | tojson }};
 
-        // 1. Convert Headers (### h3, ## h2, # h1)
-        html = html.replace(/^### (.*$)/gim, '<h5>$1</h5>');
-        html = html.replace(/^## (.*$)/gim, '<h4>$1</h4>');
-        html = html.replace(/^# (.*$)/gim, '<h3>$1</h3>');
-
-        // 2. Convert Bold (**text** or __text__)
-        html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-        html = html.replace(/__(.*?)__/g, '<strong>$1</strong>');
-
-        // 3. Convert Italics (*text* or _text_)
-        html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
-        html = html.replace(/_(.*?)_/g, '<em>$1</em>');
-
-        // 4. Convert Links ([anchor](url))
-        html = html.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>');
-
-        // 5. Convert Line Breaks into Paragraphs
-        html = html.split(/\n\n+/).map(p => {
-            if (!p.trim().startsWith('<h') && !p.trim().startsWith('<a')) {
-            return `<p>${p.trim().replace(/\n/g, '<br>')}</p>`;
-            }
-            return p.trim();
-        }).join('\n');
-
-        return html;
-        }
-
+    function initialLoad() {
+        const dialogueNarration = document.getElementById('dialogue_narration');
+        const imgVidInstruction = document.getElementById('img_vid_instruction');
+        const thumbnailInstruction = document.getElementById('thumbnail_instruction');
+        const youtubeCardInstruction = document.getElementById('youtube_card_instruction');
+        dialogueNarration.innerHTML = defaultVideoDict['dialogue_narration'];
+        imgVidInstruction.innerHTML = defaultVideoDict['img_vid_instruction'];
+        thumbnailInstruction.innerHTML = defaultVideoDict['thumbnail_instruction'];
+        youtubeCardInstruction.innerHTML = defaultVideoDict['youtube_card_instruction'];      
+    }
+    initialLoad();
     function selectChannel(channel_uuid) {
         const endpointUrl = "{{ url_for('youtube.home') }}";
         fetch(endpointUrl, {

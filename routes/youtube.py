@@ -51,13 +51,26 @@ def home():
                     first_img_vid_instruction = ''
                     first_thumbnail_instruction = ''
                     first_youtube_card_instruction = ''
+                    
                 default_video_dict['vid_uuid_name_list'] = default_vid_uuid_name_list
                 default_video_dict['temp_title'] = first_video.temp_title
-                default_video_dict['dialogue_narration'] = first_dialogue_narration
+                try:
+                    default_video_dict['dialogue_narration'] = markdown.markdown(first_dialogue_narration).replace('\n', '<br>')
+                except:
+                    default_video_dict['dialogue_narration'] = first_dialogue_narration
                 default_video_dict['voice_recording'] = first_voice_recording
-                default_video_dict['img_vid_instruction'] = first_img_vid_instruction
-                default_video_dict['thumbnail_instruction'] = first_thumbnail_instruction
-                default_video_dict['youtube_card_instruction'] = first_youtube_card_instruction
+                try:
+                    default_video_dict['img_vid_instruction'] = markdown.markdown(first_img_vid_instruction).replace('\n', '<br>')
+                except:
+                    default_video_dict['img_vid_instruction'] = first_img_vid_instruction
+                try:
+                    default_video_dict['thumbnail_instruction'] = markdown.markdown(first_thumbnail_instruction).replace('\n', '<br>')
+                except:
+                    default_video_dict['thumbnail_instruction'] = first_thumbnail_instruction
+                try:
+                    default_video_dict['youtube_card_instruction'] = markdown.markdown(first_youtube_card_instruction).replace('\n', '<br>')
+                except:
+                    default_video_dict['youtube_card_instruction'] = first_youtube_card_instruction
             else:
                 default_video_dict = {}
         
@@ -99,7 +112,7 @@ def home():
                 vid_dict['thumbnail_instruction'] = markdown.markdown(thumbnail_instruction).replace('\n', '<br>')
                 vid_dict['youtube_card_instruction'] = markdown.markdown(youtube_card_instruction).replace('\n', '<br>')
                 return jsonify(vid_dict)
-        return render_template('youtube.html', current_year=current_year, channels=channels, default_video_dict=default_video_dict, logged_in=current_user.is_authenticated, admin=admin)
+        return render_template('youtube.html', current_year=current_year, channels=channels, default_video_dict=default_video_dict, logged_in=current_user.is_authenticated, admin=admin, first_channel=first_channel.channel_name, first_video=first_video.temp_title)
 
 
 @youtube.route('/login', methods=['GET', 'POST'])
