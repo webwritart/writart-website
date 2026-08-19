@@ -1424,7 +1424,7 @@ def youtube_manager():
                     handle = data['handle']
                     custom_url = data['custom_url']
                     existing_channel_uuid_list = [a.uuid for a in db.session.query(YoutubeChannel).all()]
-                    uuid = create_uuid(existing_channel_uuid_list, 12)
+                    uuid = create_uuid(existing_channel_uuid_list, 9)
                     date_time = datetime.datetime.now().replace(microsecond=0)
                     entry = YoutubeChannel(
                         uuid=uuid,
@@ -1455,7 +1455,7 @@ def youtube_manager():
                         serial = serial_raw
                     title = f"{category}_{serial}"
                     existing_video_uuid_list = [a.uuid for a in db.session.query(YoutubeVideo).all()]
-                    uuid = create_uuid(existing_video_uuid_list, 12)
+                    uuid = create_uuid(existing_video_uuid_list, 9)
                     date_time = datetime.datetime.now().replace(microsecond=0)
                     entry = YoutubeVideo(
                         uuid=uuid,
@@ -1486,7 +1486,7 @@ def youtube_manager():
 
                 if dialogue_narration:
                     existing_video_component_uuid_list = [a.uuid for a in db.session.query(YoutubeVideoComponent).all()]
-                    uuid = create_uuid(existing_video_component_uuid_list, 12)
+                    uuid = create_uuid(existing_video_component_uuid_list, 9)
                     entry = YoutubeVideoComponent(
                         uuid=uuid,
                         main=True,
@@ -1506,7 +1506,7 @@ def youtube_manager():
                     if not os.path.exists(base_save_path):
                         os.makedirs(base_save_path)
                     existing_video_component_uuid_list = [a.uuid for a in db.session.query(YoutubeVideoComponent).all()]
-                    uuid = create_uuid(existing_video_component_uuid_list, 12)
+                    uuid = create_uuid(existing_video_component_uuid_list, 9)
                     recording_name = f"{uuid}_{secure_filename(voice_recording.filename)}"
                     save_path = base_save_path + recording_name
                     voice_recording.save(save_path)
@@ -1527,7 +1527,7 @@ def youtube_manager():
 
                 if video_img_instruction:
                     existing_video_component_uuid_list = [a.uuid for a in db.session.query(YoutubeVideoComponent).all()]
-                    uuid = create_uuid(existing_video_component_uuid_list, 12)
+                    uuid = create_uuid(existing_video_component_uuid_list, 9)
                     entry = YoutubeVideoComponent(
                         uuid=uuid,
                         main=True,
@@ -1544,7 +1544,7 @@ def youtube_manager():
 
                 if thumbnail_instruction:
                     existing_video_component_uuid_list = [a.uuid for a in db.session.query(YoutubeVideoComponent).all()]
-                    uuid = create_uuid(existing_video_component_uuid_list, 12)
+                    uuid = create_uuid(existing_video_component_uuid_list, 9)
                     entry = YoutubeVideoComponent(
                         uuid=uuid,
                         main=True,
@@ -1561,7 +1561,7 @@ def youtube_manager():
 
                 if youtube_card_instruction:
                     existing_video_component_uuid_list = [a.uuid for a in db.session.query(YoutubeVideoComponent).all()]
-                    uuid = create_uuid(existing_video_component_uuid_list, 12)
+                    uuid = create_uuid(existing_video_component_uuid_list, 9)
                     entry = YoutubeVideoComponent(
                         uuid=uuid,
                         main=True,
