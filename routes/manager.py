@@ -1412,184 +1412,188 @@ def school_manager():
 @manager.route('/youtube-manager', methods=['GET', 'POST'])
 def youtube_manager():
     admin = db.session.query(Role).filter_by(name='admin').one_or_none()
-    if current_user.is_authenticated and admin in current_user.role:
-        if request.method == 'POST' and request.is_json:
-            data = request.get_json()
-            if data['type'] == 'add-channel':
-                channel_name = data['channel_name']
-                email = data['email']
-                channel_id = data['channel_id']
-                description = data['description']
-                handle = data['handle']
-                custom_url = data['custom_url']
-                existing_channel_uuid_list = [a.uuid for a in db.session.query(YoutubeChannel).all()]
-                uuid = create_uuid(existing_channel_uuid_list, 12)
+    if current_user.is_authenticated:
+        if admin in current_user.role:
+            if request.method == 'POST' and request.is_json:
+                data = request.get_json()
+                if data['type'] == 'add-channel':
+                    channel_name = data['channel_name']
+                    email = data['email']
+                    channel_id = data['channel_id']
+                    description = data['description']
+                    handle = data['handle']
+                    custom_url = data['custom_url']
+                    existing_channel_uuid_list = [a.uuid for a in db.session.query(YoutubeChannel).all()]
+                    uuid = create_uuid(existing_channel_uuid_list, 12)
+                    date_time = datetime.datetime.now().replace(microsecond=0)
+                    entry = YoutubeChannel(
+                        uuid=uuid,
+                        channel_name=channel_name,
+                        email=email,
+                        channel_id=channel_id,
+                        description=description,
+                        handle=handle,
+                        custom_url=custom_url,
+                        date_time=date_time
+                    )
+                    db.session.add(entry)
+                    db.session.commit()
+                    return jsonify(status="success", message= "Channel added successfully!")
+
+                if data['type'] == 'add-video':
+                    channel_uuid = data['channel_uuid']
+                    category = data['category']
+                    temp_title = data['temp_title']
+                    scheduled_date_time = data['scheduled_date_time']
+                    channel_id = db.session.query(YoutubeChannel).filter_by(uuid=channel_uuid).scalar().id
+                    serial_raw = db.session.query(Tools).filter_by(keyword='yt_video_serial').scalar().data
+                    if len(serial_raw) == 1:
+                        serial = f"00{serial_raw}"
+                    elif len(serial_raw) == 2:
+                        serial = f"0{serial_raw}"
+                    elif len(serial_raw) == 3:
+                        serial = serial_raw
+                    title = f"{category}_{serial}"
+                    existing_video_uuid_list = [a.uuid for a in db.session.query(YoutubeVideo).all()]
+                    uuid = create_uuid(existing_video_uuid_list, 12)
+                    date_time = datetime.datetime.now().replace(microsecond=0)
+                    entry = YoutubeVideo(
+                        uuid=uuid,
+                        category=category,
+                        title=title,
+                        temp_title=temp_title,
+                        date_time=date_time,
+                        status="pending",
+                        scheduled_date_time=scheduled_date_time,
+                        channel_id=channel_id
+                    )
+                    db.session.add(entry)
+                    new_serial = int(serial_raw) + 1
+                    db.session.query(Tools).filter_by(keyword='yt_video_serial').scalar().data = str(new_serial)
+                    db.session.commit()
+                    return jsonify(status="success", message= "Video added successfully!")
+
+            if request.method == 'POST' and request.form.get('type') == 'add-video-component':
+                video_uuid = request.form.get('video_uuid')
+                dialogue_narration = request.form.get('dialogue_narration')
+                video_img_instruction = request.form.get('video_img_instruction')
+                thumbnail_instruction = request.form.get('thumbnail_instruction')
+                youtube_card_instruction = request.form.get('youtube_card_instruction')
+                voice_recording = request.files.get('voice_recording')
+                channel_id = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar().channel_id
+                video_id = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar().id
                 date_time = datetime.datetime.now().replace(microsecond=0)
-                entry = YoutubeChannel(
-                    uuid=uuid,
-                    channel_name=channel_name,
-                    email=email,
-                    channel_id=channel_id,
-                    description=description,
-                    handle=handle,
-                    custom_url=custom_url,
-                    date_time=date_time
-                )
-                db.session.add(entry)
-                db.session.commit()
-                return jsonify(status="success", message= "Channel added successfully!")
 
-            if data['type'] == 'add-video':
-                channel_uuid = data['channel_uuid']
-                category = data['category']
-                temp_title = data['temp_title']
-                scheduled_date_time = data['scheduled_date_time']
-                channel_id = db.session.query(YoutubeChannel).filter_by(uuid=channel_uuid).scalar().id
-                serial_raw = db.session.query(Tools).filter_by(keyword='yt_video_serial').scalar().data
-                if len(serial_raw) == 1:
-                    serial = f"00{serial_raw}"
-                elif len(serial_raw) == 2:
-                    serial = f"0{serial_raw}"
-                elif len(serial_raw) == 3:
-                    serial = serial_raw
-                title = f"{category}_{serial}"
-                existing_video_uuid_list = [a.uuid for a in db.session.query(YoutubeVideo).all()]
-                uuid = create_uuid(existing_video_uuid_list, 12)
-                date_time = datetime.datetime.now().replace(microsecond=0)
-                entry = YoutubeVideo(
-                    uuid=uuid,
-                    category=category,
-                    title=title,
-                    temp_title=temp_title,
-                    date_time=date_time,
-                    status="pending",
-                    scheduled_date_time=scheduled_date_time,
-                    channel_id=channel_id
-                )
-                db.session.add(entry)
-                new_serial = int(serial_raw) + 1
-                db.session.query(Tools).filter_by(keyword='yt_video_serial').scalar().data = str(new_serial)
-                db.session.commit()
-                return jsonify(status="success", message= "Video added successfully!")
+                if dialogue_narration:
+                    existing_video_component_uuid_list = [a.uuid for a in db.session.query(YoutubeVideoComponent).all()]
+                    uuid = create_uuid(existing_video_component_uuid_list, 12)
+                    entry = YoutubeVideoComponent(
+                        uuid=uuid,
+                        main=True,
+                        version_list=json.dumps([]),
+                        version='1.0',
+                        component_type='dialogue_&_narration',
+                        text=dialogue_narration,
+                        date_time=date_time,
+                        approval_status='pending',
+                        youtube_video_id=video_id
+                    )
+                    db.session.add(entry)
+                    db.session.commit()
 
-        if request.method == 'POST' and request.form.get('type') == 'add-video-component':
-            video_uuid = request.form.get('video_uuid')
-            dialogue_narration = request.form.get('dialogue_narration')
-            video_img_instruction = request.form.get('video_img_instruction')
-            thumbnail_instruction = request.form.get('thumbnail_instruction')
-            youtube_card_instruction = request.form.get('youtube_card_instruction')
-            voice_recording = request.files.get('voice_recording')
-            channel_id = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar().channel_id
-            video_id = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar().id
-            date_time = datetime.datetime.now().replace(microsecond=0)
+                if voice_recording:
+                    base_save_path = f'./static/files/youtube/{channel_id}/{video_id}/voice_recording/'
+                    if not os.path.exists(base_save_path):
+                        os.makedirs(base_save_path)
+                    existing_video_component_uuid_list = [a.uuid for a in db.session.query(YoutubeVideoComponent).all()]
+                    uuid = create_uuid(existing_video_component_uuid_list, 12)
+                    recording_name = f"{uuid}_{secure_filename(voice_recording.filename)}"
+                    save_path = base_save_path + recording_name
+                    voice_recording.save(save_path)
+                    p('Recording saved successfully!')
+                    entry = YoutubeVideoComponent(
+                        uuid=uuid,
+                        main=True,
+                        version_list=json.dumps([]),
+                        version='1.0',
+                        component_type='voice_recording',
+                        file_path=save_path[1:],
+                        date_time=date_time,
+                        approval_status='pending',
+                        youtube_video_id=video_id
+                    )
+                    db.session.add(entry)
+                    db.session.commit()
 
-            if dialogue_narration:
-                existing_video_component_uuid_list = [a.uuid for a in db.session.query(YoutubeVideoComponent).all()]
-                uuid = create_uuid(existing_video_component_uuid_list, 12)
-                entry = YoutubeVideoComponent(
-                    uuid=uuid,
-                    main=True,
-                    version_list=json.dumps([]),
-                    version='1.0',
-                    component_type='dialogue_&_narration',
-                    text=dialogue_narration,
-                    date_time=date_time,
-                    approval_status='pending',
-                    youtube_video_id=video_id
-                )
-                db.session.add(entry)
-                db.session.commit()
+                if video_img_instruction:
+                    existing_video_component_uuid_list = [a.uuid for a in db.session.query(YoutubeVideoComponent).all()]
+                    uuid = create_uuid(existing_video_component_uuid_list, 12)
+                    entry = YoutubeVideoComponent(
+                        uuid=uuid,
+                        main=True,
+                        version_list=json.dumps([]),
+                        version='1.0',
+                        component_type='img_vid_instruction',
+                        text=video_img_instruction,
+                        date_time=date_time,
+                        approval_status='pending',
+                        youtube_video_id=video_id
+                    )
+                    db.session.add(entry)
+                    db.session.commit()
 
-            if voice_recording:
-                base_save_path = f'./static/files/youtube/{channel_id}/{video_id}/voice_recording/'
-                if not os.path.exists(base_save_path):
-                    os.makedirs(base_save_path)
-                existing_video_component_uuid_list = [a.uuid for a in db.session.query(YoutubeVideoComponent).all()]
-                uuid = create_uuid(existing_video_component_uuid_list, 12)
-                recording_name = f"{uuid}_{secure_filename(voice_recording.filename)}"
-                save_path = base_save_path + recording_name
-                voice_recording.save(save_path)
-                p('Recording saved successfully!')
-                entry = YoutubeVideoComponent(
-                    uuid=uuid,
-                    main=True,
-                    version_list=json.dumps([]),
-                    version='1.0',
-                    component_type='voice_recording',
-                    file_path=save_path[1:],
-                    date_time=date_time,
-                    approval_status='pending',
-                    youtube_video_id=video_id
-                )
-                db.session.add(entry)
-                db.session.commit()
+                if thumbnail_instruction:
+                    existing_video_component_uuid_list = [a.uuid for a in db.session.query(YoutubeVideoComponent).all()]
+                    uuid = create_uuid(existing_video_component_uuid_list, 12)
+                    entry = YoutubeVideoComponent(
+                        uuid=uuid,
+                        main=True,
+                        version_list=json.dumps([]),
+                        version='1.0',
+                        component_type='thumbnail_instruction',
+                        text=thumbnail_instruction,
+                        approval_status='pending',
+                        date_time=date_time,
+                        youtube_video_id=video_id
+                    )
+                    db.session.add(entry)
+                    db.session.commit()
 
-            if video_img_instruction:
-                existing_video_component_uuid_list = [a.uuid for a in db.session.query(YoutubeVideoComponent).all()]
-                uuid = create_uuid(existing_video_component_uuid_list, 12)
-                entry = YoutubeVideoComponent(
-                    uuid=uuid,
-                    main=True,
-                    version_list=json.dumps([]),
-                    version='1.0',
-                    component_type='img_vid_instruction',
-                    text=video_img_instruction,
-                    date_time=date_time,
-                    approval_status='pending',
-                    youtube_video_id=video_id
-                )
-                db.session.add(entry)
-                db.session.commit()
+                if youtube_card_instruction:
+                    existing_video_component_uuid_list = [a.uuid for a in db.session.query(YoutubeVideoComponent).all()]
+                    uuid = create_uuid(existing_video_component_uuid_list, 12)
+                    entry = YoutubeVideoComponent(
+                        uuid=uuid,
+                        main=True,
+                        version_list=json.dumps([]),
+                        version='1.0',
+                        component_type='youtube_card_instruction',
+                        text=youtube_card_instruction,
+                        approval_status='pending',
+                        date_time=date_time,
+                        youtube_video_id=video_id
+                    )
+                    db.session.add(entry)
+                    db.session.commit()
+            
+                return jsonify(status="success", message= "Video component added successfully!")
 
-            if thumbnail_instruction:
-                existing_video_component_uuid_list = [a.uuid for a in db.session.query(YoutubeVideoComponent).all()]
-                uuid = create_uuid(existing_video_component_uuid_list, 12)
-                entry = YoutubeVideoComponent(
-                    uuid=uuid,
-                    main=True,
-                    version_list=json.dumps([]),
-                    version='1.0',
-                    component_type='thumbnail_instruction',
-                    text=thumbnail_instruction,
-                    approval_status='pending',
-                    date_time=date_time,
-                    youtube_video_id=video_id
-                )
-                db.session.add(entry)
-                db.session.commit()
+            channels = db.session.query(YoutubeChannel).all()
+            channel_list = []
+            for c in channels:
+                uuid = c.uuid
+                name = c.channel_name
+                channel_list.append((uuid, name))
 
-            if youtube_card_instruction:
-                existing_video_component_uuid_list = [a.uuid for a in db.session.query(YoutubeVideoComponent).all()]
-                uuid = create_uuid(existing_video_component_uuid_list, 12)
-                entry = YoutubeVideoComponent(
-                    uuid=uuid,
-                    main=True,
-                    version_list=json.dumps([]),
-                    version='1.0',
-                    component_type='youtube_card_instruction',
-                    text=youtube_card_instruction,
-                    approval_status='pending',
-                    date_time=date_time,
-                    youtube_video_id=video_id
-                )
-                db.session.add(entry)
-                db.session.commit()
-        
-            return jsonify(status="success", message= "Video component added successfully!")
-
-        channels = db.session.query(YoutubeChannel).all()
-        channel_list = []
-        for c in channels:
-            uuid = c.uuid
-            name = c.channel_name
-            channel_list.append((uuid, name))
-
-        video_list = []
-        all_progress_videos = [a for a in db.session.query(YoutubeVideo).filter(or_(YoutubeVideo.status == "pending", YoutubeVideo.status == "in-progress")).all()]
-        for vid in all_progress_videos:
-            uuid = vid.uuid
-            temp_title = vid.temp_title
-            video_list.append((uuid, temp_title))
-        return render_template('youtube_manager.html', current_year=current_year, admin=admin, logged_in=current_user.is_authenticated, channel_list=channel_list, video_list=video_list)
+            video_list = []
+            all_progress_videos = [a for a in db.session.query(YoutubeVideo).filter(or_(YoutubeVideo.status == "pending", YoutubeVideo.status == "in-progress")).all()]
+            for vid in all_progress_videos:
+                uuid = vid.uuid
+                temp_title = vid.temp_title
+                video_list.append((uuid, temp_title))
+            return render_template('youtube_manager.html', current_year=current_year, admin=admin, logged_in=current_user.is_authenticated, channel_list=channel_list, video_list=video_list)
+        else:
+            return render_template('admin_area.html')
     else:
-        return render_template('admin_area.html')
+        session['url'] = url_for('manager.youtube_manager')
+        return redirect(url_for('account.login'))

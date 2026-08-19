@@ -1,15 +1,261 @@
 {% extends "base.html" %}
 {% block content %}
 <style>
-
+    #root-container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        align-items: center;
+        min-height: 90vh;
+        background: rgb(170, 181, 132);
+    }
+    #main-section {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+    }
+    #logout-form {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        padding: 1%;
+    }
+    #logout-btn {
+        width: 20%;
+        background: rgb(19, 22, 17);
+        border-radius: 1.5rem;
+        color: white;
+        font-weight: 600;
+        padding: .2%
+    }
+    #display {
+        width: 80%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 0% 0% 2% 0%;
+        margin: 0% 1% 2% 2%;
+        background: rgb(227, 238, 205);
+        border-radius: 1.5rem;
+        overflow: hidden;
+        min-height: 75vh;
+    }
+    #project-selection-section {
+        width: 20%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2%;
+        margin: 0% 2% 2% 1%;
+        background: rgb(210, 222, 180);
+        border-radius: 1.5rem;
+    }
+    .channel-btn {
+        width: 100%;
+        background: rgb(127, 148, 56);
+        border-radius: 1.5rem;
+        border: none;
+        margin: 2%;
+        color: black;
+        padding: 1%;
+    }
+    #project-selection-parent-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        margin: 5% 2% 0% 2%;
+        background: rgb(253, 255, 224);
+        min-height: 60vh;
+        padding: 5% 10%;
+        border-radius: 1.5rem;
+    }
+   
+    .selection-header {
+        display: block;
+        margin: 0%;
+        font-weight: 600;
+        color: black;
+        font-size: 1rem;
+        width: 100%;
+        text-align: center;
+    }
+    #project-selection-header {
+        display: block;
+    }
+    #project-selection-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+    }
+ 
+    .project-btn {
+        width: 100%;
+        background: rgb(62, 79, 8);
+        border-radius: 1.5rem;
+        border: none;
+        margin: 2%;
+        color: white;
+        padding: 1%;
+    }
+    #display-inner-container {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 0% 5%;
+    }
+    #temp_title {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        font-weight: 500;
+        color: white;
+        background: rgb(94, 119, 11);
+        font-size: 1.5rem;
+    }
+    .vid-detail-section-header {
+        display: block;
+        margin: 0%;
+        font-weight: 600;
+        color: black;
+        font-size: 1.2rem;
+        width: 100%;
+        text-align: center;
+    }
+    .vid-detail-section {
+        display: flex;
+        min-height: 10vh;
+        background: white;
+        margin: .5% 0%;
+        width: 100%;
+        border-radius: 1.5rem;
+        padding: 1%;
+        height: 30vh;
+        overflow-y: auto;
+    }
+    #voice_recording_container {
+        display: flex;
+        justify-content: center;
+    }
 </style>
 
 <div id="root-container">
-    <p></p>
-    <div class="flex-column-container">
+    <form id="logout-form" action="{{url_for('youtube.logout')}}" method="post">
+        <button type="submit" name="submit" value="logout" id="logout-btn">Logout</button>
+    </form>
+    <div id="main-section">
+        <div id="display">
+            <p id="temp_title">{{ default_video_dict['temp_title'] }}</p>
 
+            <div id="display-inner-container">
+                <p class="vid-detail-section-header">Dialogue & narration</p>
+                <div id="dialogue_narration" class="vid-detail-section">
+                    <p id="dialogue_narration_text">{{ default_video_dict['dialogue_narration'] }}</p>
+                </div>
+
+                <p class="vid-detail-section-header">Voice recording</p>
+                <div id="voice_recording_container" class="vid-detail-section">
+                    <audio id="voice_recording" src="{{ default_video_dict['voice_recording']}}" controls></audio>
+                </div>
+
+                <p class="vid-detail-section-header">Image/Video instruction</p>
+                <div id="img_vid_instruction" class="vid-detail-section">
+                    <p id="img_vid_instruction_text">{{ default_video_dict['img_vid_instruction'] }}</p>
+                </div>
+
+                <p class="vid-detail-section-header">Thumbnail instruction</p>
+                <div id="thumbnail_instruction" class="vid-detail-section">
+                    <p id="thumbnail_instruction_text">{{ default_video_dict['thumbnail_instruction'] }}</p>
+                </div>
+
+                <p class="vid-detail-section-header">Youtube card instruction</p>
+                <div id="youtube_card_instruction" class="vid-detail-section">
+                    <p id="youtube_card_instruction_text">{{ default_video_dict['youtube_card_instruction'] }}</p>
+                </div>
+            </div>
+        </div>
+        <div id="project-selection-section">
+            <p class="selection-header">Channels</p>
+            {% for c in channels %}
+            <button class="channel-btn" onclick="selectChannel('{{c[0]}}')">{{c[1]}}</button>
+            {% endfor %}
+            <div id="project-selection-parent-container">
+                <p class="selection-header" id="project-selection-header">Projects</p>
+                <div id="project-selection-container">
+                    {% for v in default_video_dict['vid_uuid_name_list'] %}
+                    <button class="project-btn" onclick="displayVideoDetails('{{v[0]}}')">{{ v[1] }}</button>
+                    {% endfor %}
+            </div>
+            </div>
+        </div>
     </div>
 </div>
 
+<script>
+    function selectChannel(channel_uuid) {
+        const endpointUrl = "{{ url_for('youtube.home') }}";
+        fetch(endpointUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                'channel_uuid': channel_uuid,
+                'type': 'select_channel'
+            })
+        }).then(response => response.json()).then(data => {
+            const videoList = data.video_list;
+            const projectSelectionHeader = document.getElementById('project-selection-header');
+            for (const vid of videoList) {
+                document.getElementById('project-selection-container').replaceChildren();
+                const myButton = document.createElement('button');
+                myButton.innerHTML = vid[1];
+                myButton.classList.add('project-btn');
+                myButton.onclick = () => displayVideoDetails(vid[0]);
+                document.getElementById('project-selection-container').appendChild(myButton);
+                document.getElementById('project-selection-header').style.display = 'block';
+            }
+            projectSelectionHeader.style.display = 'block';
+        }).catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    function displayVideoDetails(video_uuid) {
+        const endpointUrl = "{{ url_for('youtube.home') }}";
+        fetch(endpointUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                'video_uuid': video_uuid,
+                'type': 'select_video',
+            })
+        }).then(response => response.json()).then(data => {
+            const vidDetailSection = document.querySelectorAll('.vid-detail-section');
+            const vidDetailSectionHeader = document.querySelectorAll('.vid-detail-section-header');
+            const voiceRecordingContainer = document.getElementById('voice_recording_container');
+            const tempTitle = document.getElementById('temp_title');
+            const dialogueNarration = document.getElementById('dialogue_narration');
+            const voiceRecording = document.getElementById('voice_recording');
+            const imgVidInstruction = document.getElementById('img_vid_instruction');
+            const thumbnailInstruction = document.getElementById('thumbnail_instruction');
+            const youtubeCardInstruction = document.getElementById('youtube_card_instruction');
+            tempTitle.innerHTML = data.temp_title;
+            dialogueNarration.innerHTML = data.dialogue_narration;
+            voiceRecording.src = data.voice_recording;
+            imgVidInstruction.innerHTML = data.img_vid_instruction;
+            thumbnailInstruction.innerHTML = data.thumbnail_instruction;
+            youtubeCardInstruction.innerHTML = data.youtube_card_instruction;
+        }).catch(error => {
+            console.error('Error:', error);
+        });
+    }
+</script>
 
 {% endblock %}

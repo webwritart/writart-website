@@ -2080,6 +2080,8 @@ def login():
                 artist = db.session.query(Role).filter_by(name='artist').scalar()
                 user_roles = current_user.role
                 session['logged_in'] = True
+                if session.get('url') == url_for('manager.youtube_manager'):
+                    return redirect(url_for('manager.youtube_manager'))
                 if session.get('url') == url_for('school.course'):
                     return redirect(url_for('school.course'))
                 if session.get('url') == url_for('school.classroom'):
