@@ -132,6 +132,10 @@
     #dialogue-narration, #voice-recording, #video-img-instruction, #thumbnail-instruction, #youtube-card-instruction {
         display: none;
     }
+    #voice-recording-text {
+        display: none;
+        width: 100%;
+    }
 </style>
 <div id="root-container">
     <div id="main-section">
@@ -179,7 +183,7 @@
                 </form>
                 <form id="add-video-component-form">
                     <p class="section-title">Add Video Component</p>
-                    <select name="video_uuid" required>
+                    <select id="video_uuid" name="video_uuid" oninput="showExistingData()" required>
                         <option value="">Select Video</option>
                         {% for video in video_list %}
                         <option value="{{video[0]}}">{{video[1]}}</option>
@@ -200,6 +204,7 @@
                     <div id="voice-recording" class="inline-inputs">
                         <label for="voice-recording">Voice Recording&ensp;</label>
                         <input type="file" name="voice_recording" accept="audio/*">
+                        <p id="voice-recording-text"></p>
                     </div>
                     <!-- --------------------------------video/image instruction------------------------------------------------ -->
                     <input id="video-img-instruction" type="text" name="video_img_instruction" placeholder="video/image instruction">
@@ -219,6 +224,7 @@
     const addVideoForm = document.getElementById("add-video-form");
     const addVideoComponentForm = document.getElementById("add-video-component-form");
     const operation = document.getElementById("operation");
+    const videoUuid = document.getElementById("video_uuid");
     function hideAllForms() {
         addChannelForm.style.display = "none";
         addVideoForm.style.display = "none";
@@ -310,8 +316,6 @@
 
 
     addVideoForm.addEventListener('submit', function(e) {
-      
-
         const endpointUrl = "{{ url_for('manager.youtube_manager') }}";
         const channelUuid = addVideoForm.channel_uuid.value;
         const category = addVideoForm.category.value;
@@ -347,8 +351,6 @@
     });
 
     addVideoComponentForm.addEventListener('submit', function(e) {
-        
-
         const endpointUrl = "{{ url_for('manager.youtube_manager') }}";
         const videoUuid = addVideoComponentForm.video_uuid.value;
         const dialogueNarration = addVideoComponentForm.dialogue_narration.value;
@@ -383,5 +385,38 @@
             console.error('Error:', error);
         });
     });
+
+    function showExistingData() {
+        const videoUuidValue = videoUuid.value;
+        const dialogueNarration = document.getElementById('dialogue-narration');
+        const voiceRecording = document.getElementById('voice-recording-text');
+        const videoImgInstruction = document.getElementById('video-img-instruction');
+        const thumbnailInstruction = document.getElementById('thumbnail-instruction');
+        const youtubeCardInstruction = document.getElementById('youtube-card-instruction');
+        const endpointUrl = "{{ url_for('manager.youtube_manager') }}";
+        const data = {
+            type: 'show-existing-data',
+            video_uuid: videoUuidValue
+        }
+        fetch(endpointUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            dialogueNarration.value = data.video_component_dict.dialogue_narration;
+            voiceRecording.innerHTML = data.video_component_dict.voice_recording;
+            videoImgInstruction.value = data.video_component_dict.img_vid_instruction;
+            thumbnailInstruction.value = data.video_component_dict.thumbnail_instruction;
+            youtubeCardInstruction.value = data.video_component_dict.youtube_card_instruction;
+            voiceRecording.style.display = 'block';
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
 </script>
 {% endblock %}

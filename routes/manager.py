@@ -1416,6 +1416,34 @@ def youtube_manager():
         if admin in current_user.role:
             if request.method == 'POST' and request.is_json:
                 data = request.get_json()
+                if data['type'] == 'show-existing-data':
+                    video_component_dict = {}
+                    video_uuid = data['video_uuid']
+                    video = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).one_or_none()
+                    components = video.components
+                    dialogue_narration = ''
+                    voice_recording = ''
+                    img_vid_instruction = ''
+                    thumbnail_instruction = ''
+                    youtube_card_instruction = ''
+                    for c in components:
+                        if c.component_type == 'dialogue_&_narration':
+                            dialogue_narration = c.text
+                        elif c.component_type == 'voice_recording':
+                            voice_recording = c.file_path
+                        elif c.component_type == 'img_vid_instruction':
+                            img_vid_instruction = c.text
+                        elif c.component_type == 'thumbnail_instruction':
+                            thumbnail_instruction = c.text
+                        elif c.component_type == 'youtube_card_instruction':
+                            youtube_card_instruction = c.text
+                    video_component_dict['dialogue_narration'] = dialogue_narration
+                    video_component_dict['voice_recording'] = voice_recording
+                    video_component_dict['img_vid_instruction'] = img_vid_instruction
+                    video_component_dict['thumbnail_instruction'] = thumbnail_instruction
+                    video_component_dict['youtube_card_instruction'] = youtube_card_instruction
+                    return jsonify(video_component_dict=video_component_dict)
+                
                 if data['type'] == 'add-channel':
                     channel_name = data['channel_name']
                     email = data['email']
