@@ -38,11 +38,19 @@ def home():
                     if v.status == 'pending' or v.status == 'in-progress':
                         if len(v.components) > 0:
                             default_vid_uuid_name_list.append((v.uuid, v.temp_title))
-                first_dialogue_narration = [a.text for a in first_video.components if a.component_type == 'dialogue_&_narration'][0]
-                first_voice_recording = [a.file_path for a in first_video.components if a.component_type == 'voice_recording'][0]
-                first_img_vid_instruction = [a.text for a in first_video.components if a.component_type == 'img_vid_instruction'][0]
-                first_thumbnail_instruction = [a.text for a in first_video.components if a.component_type == 'thumbnail_instruction'][0]
-                first_youtube_card_instruction = [a.text for a in first_video.components if a.component_type == 'youtube_card_instruction'][0]
+                try:
+                    first_dialogue_narration = [a.text for a in first_video.components if a.component_type == 'dialogue_&_narration'][0]
+                    first_voice_recording = [a.file_path for a in first_video.components if a.component_type == 'voice_recording'][0]
+                    first_img_vid_instruction = [a.text for a in first_video.components if a.component_type == 'img_vid_instruction'][0]
+                    first_thumbnail_instruction = [a.text for a in first_video.components if a.component_type == 'thumbnail_instruction'][0]
+                    first_youtube_card_instruction = [a.text for a in first_video.components if a.component_type == 'youtube_card_instruction'][0]
+                except Exception as e:
+                    p(e)
+                    first_dialogue_narration = ''
+                    first_voice_recording = ''
+                    first_img_vid_instruction = ''
+                    first_thumbnail_instruction = ''
+                    first_youtube_card_instruction = ''
                 default_video_dict['vid_uuid_name_list'] = default_vid_uuid_name_list
                 default_video_dict['temp_title'] = first_video.temp_title
                 default_video_dict['dialogue_narration'] = first_dialogue_narration
