@@ -5,10 +5,18 @@ from models.youtube import *
 from models.member import *
 import pprint as pp
 import markdown
+from werkzeug.utils import secure_filename
+import os, json
+from operations.miscellaneous import *
+from datetime import datetime
+
 
 
 youtube = Blueprint('youtube', __name__, static_folder='static', template_folder='templates/youtube')
 
+
+
+date_time_now = datetime.now().replace(microsecond=0)
 
 @youtube.route('/', methods=['GET', 'POST'])
 def home():
@@ -54,7 +62,9 @@ def home():
                     first_youtube_card_instruction = [a.text for a in first_video.components if a.component_type == 'youtube_card_instruction'][0]
                 except:
                     first_youtube_card_instruction = ''
-                    
+                
+                default_image_list = [a.file_path for a in first_video.components if a.component_type == 'image']
+                default_video_dict['image_list'] = default_image_list
                 default_video_dict['vid_uuid_name_list'] = default_vid_uuid_name_list
                 default_video_dict['temp_title'] = first_video.temp_title
                 try:
@@ -69,6 +79,7 @@ def home():
                 except:
                     first_voice_recording = ''
                 default_video_dict['voice_recordings'] = first_voice_recording_list
+                default_video_dict['video_uuid'] = first_video.uuid
                 try:
                     default_video_dict['img_vid_instruction'] = markdown.markdown(first_img_vid_instruction).replace('\n', '<br>')
                 except:
@@ -101,12 +112,15 @@ def home():
                 vid_dict = {}
                 dialogue_narration = ''
                 voice_recordings = []
+                image_list = []
                 img_vid_instruction = ''
                 thumbnail_instruction = ''
                 youtube_card_instruction = ''
                 for c in video_components:
                     if c.component_type == 'dialogue_&_narration':
                         dialogue_narration = c.text
+                    elif c.component_type == 'image':
+                        image_list.append(c.file_path)
                     elif c.component_type == 'voice_recording':
                         voice_recordings.append(c.file_path)
                     elif c.component_type == 'img_vid_instruction':
@@ -116,11 +130,13 @@ def home():
                     elif c.component_type == 'youtube_card_instruction':
                         youtube_card_instruction = c.text
                 vid_dict['temp_title'] = video_temp_title
+                vid_dict['video_uuid'] = video_uuid
                 try:
                     vid_dict['dialogue_narration'] = markdown.markdown(dialogue_narration).replace('\n', '<br>')
                 except:
                     vid_dict['dialogue_narration'] = dialogue_narration
                 vid_dict['voice_recordings'] = voice_recordings
+                vid_dict['image_list'] = image_list
                 try:
                     vid_dict['img_vid_instruction'] = markdown.markdown(img_vid_instruction).replace('\n', '<br>')
                 except:
@@ -134,6 +150,38 @@ def home():
                 except:
                     vid_dict['youtube_card_instruction'] = youtube_card_instruction
                 return jsonify(vid_dict)
+
+        if request.method == 'POST' and request.form.get('submit') == 'upload_images':
+            files = request.files.getlist('image-files')
+            video_uuid = request.form.get('video_uuid')
+            video = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar()
+            channel_id = video.youtube_channel.id
+            video_id = video.id
+            base_path = f"./static/files/youtube/{channel_id}/{video_id}/images/"
+            if not os.path.exists(base_path):
+                os.makedirs(base_path)
+            for f in files:
+                if f.filename == '':
+                    flash('No selected file', 'error')
+                    return redirect(request.url)
+                filename_base = secure_filename(f.filename)
+                save_path = base_path + filename_base
+                f.save(save_path)
+                existing_uuid_list = [a.uuid for a in db.session.query(YoutubeVideoComponent) if a.component_type == 'image']
+                uuid = create_uuid(existing_uuid_list, 9)
+                entry = YoutubeVideoComponent(
+                    uuid=uuid,
+                    main=True,
+                    version_list=json.dumps([]),
+                    version='1.0',
+                    component_type='image',
+                    file_path=save_path[1:],
+                    approval_status='pending',
+                    date_time=date_time_now,
+                    youtube_video_id=video_id
+                )
+                db.session.add(entry)
+            db.session.commit()
         return render_template('youtube.html', current_year=current_year, channels=channels, default_video_dict=default_video_dict, logged_in=current_user.is_authenticated, admin=admin, first_channel=first_channel)
 
 

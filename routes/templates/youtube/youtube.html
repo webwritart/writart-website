@@ -6,7 +6,19 @@
         margin: 0% !important;
         padding: 0% !important;
     }
+    h4 {
+        font-size: 1.4rem;
+        font-weight: 600 !important;
+        margin: 0% !important;
+        padding: 0% !important;
+    }
+    h5 {
+        font-size: 1.2rem;
+        margin: 0% !important;
+        padding: 0% !important;
+    }
     p {
+        font-size: 1rem;
         margin: 0% !important;
         padding: 0% !important;
     }
@@ -15,6 +27,7 @@
         flex-direction: column;
         width: 100%;
         align-items: center;
+        justify-content: center;
         min-height: 90vh;
         background: rgb(170, 181, 132);
     }
@@ -76,11 +89,23 @@
         width: 100%;
         margin: 5% 2% 0% 2%;
         background: rgb(253, 255, 224);
-        min-height: 60vh;
+        height: 35vh;
         padding: 5% 10%;
         border-radius: 1.5rem;
+        overflow-y: auto;
     }
-   
+    #operations-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        margin: 5% 2% 0% 2%;
+        background: rgb(253, 255, 224);
+        height: 35vh;
+        padding: 5% 10%;
+        border-radius: 1.5rem;
+        overflow-y: auto;
+    }
     .selection-header {
         display: block;
         margin: 0%;
@@ -109,6 +134,18 @@
         margin: 2%;
         color: white;
         padding: 1%;
+    }
+    .operation-btn {
+        width: 100%;
+        background: rgb(202, 102, 7);
+        border-radius: 1.5rem;
+        border: none;
+        margin: 2%;
+        color: white;
+        padding: 1%;
+    }
+    .operation-btn:hover {
+        background: rgb(150, 75, 5);
     }
     #display-inner-container {
         width: 100%;
@@ -159,6 +196,56 @@
         display: block;
         margin: 1%;
     }
+    /* ------------------------------------------ UPLOAD IMAGES -------------------------------------------------- */
+    #upload-images-section {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        min-height: 20vh;
+        width: 100%;
+    }
+    #upload-images-form {
+        background: rgb(244, 244, 203);
+        width: 60%;
+        padding: 3% 10%;
+        border-radius: 2rem;
+    }
+    #upload-images-header {
+        width: 100%;
+        text-align: center;
+        font-weight: 600;
+        margin: 0% 0% 2% 0% !important;
+        font-size: 1.2rem;
+    }
+    #upload-images-form input {
+        padding: .5% 1% 0.5% 1%;
+        border-radius: 1.5rem;
+    }
+    #upload-images-btn {
+        width: 100%;
+        background: rgb(168, 108, 12);
+        border-radius: 1.5rem;
+        border: none;
+        color: white;
+        padding: 1%;
+    }
+    #upload-images-btn:hover {
+        background: rgb(132, 73, 6);
+    }
+    /* --------------------------------------------------IMAGES DISPLAY---------------------------------------------------- */
+    #images-container {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        height: 30vh;
+    }
+    .image {
+        height: 100%;
+        width: auto;
+    }
+
+    /* ------------------------------------------ MEDIA QUERIES -------------------------------------------------- */
+
     @media(max-width: 1200px) {
         #display {
             width: 70%;
@@ -167,6 +254,26 @@
         #project-selection-section {
             width: 30%;
             margin: 0% .5% 1% .5%
+        }
+        .vid-detail-section {
+            padding: 3% 3%;
+        }
+        h4 {
+            font-size: 1.1rem !important;
+            font-weight: 600 !important;
+            line-height: 0 !important;
+            margin: 0% !important;
+            padding: 0% !important;
+        }
+        h5 {
+            font-size: 1rem !important;
+            padding: 0% !important;
+            margin: 0% !important;
+        }
+        p {
+            font-size: .9rem !important;
+            padding: 0% !important;
+            margin: 0% !important;
         }
     }
 
@@ -185,8 +292,22 @@
         .vid-detail-section {
             padding: 6% 4%;
         }
-        h4, h3 {
-            font-size: 1rem !Important;
+        h4 {
+            font-size: .9rem !important;
+            font-weight: 600 !important;
+            line-height: 0 !important;
+            margin: 0% !important;
+            padding: 0% !important;
+        }
+        h5 {
+            font-size: .8rem !important;
+            padding: 0% !important;
+            margin: 0% !important;
+        }
+        p {
+            font-size: .7rem !important;
+            padding: 0% !important;
+            margin: 0% !important;
         }
         .voice_recording {
             width: 90%;
@@ -217,6 +338,15 @@
         #project-selection-parent-container {
             padding: 3% 3%;
         }
+        #upload-images-form {
+            width: 80%;
+        }
+        #upload-images-form input {
+            font-size: .7rem;
+        }
+        #upload-images-btn {
+            font-size: .8rem;
+        }
     }
 </style>
 
@@ -244,7 +374,12 @@
                 <div id="img_vid_instruction" class="vid-detail-section">
                     {{ default_video_dict['img_vid_instruction'] }}
                 </div>
-
+                <!-- <p class="vid-detail-section-header">Images</p>
+                <div id="images-container" class="vid-detail-section">
+                {% for img in default_video_dict['image_list'] %}
+                    <img class="image" src="{{ img }}" alt="image">
+                {% endfor %}
+                </div> -->
                 <p class="vid-detail-section-header">Thumbnail instruction</p>
                 <div id="thumbnail_instruction" class="vid-detail-section">
                     {{ default_video_dict['thumbnail_instruction'] }}
@@ -267,9 +402,21 @@
                     {% for v in default_video_dict['vid_uuid_name_list'] %}
                     <button class="project-btn" onclick="displayVideoDetails('{{v[0]}}')">{{ v[1] }}</button>
                     {% endfor %}
+                </div>
             </div>
+            <div id="operations-container">
+                <p class="selection-header" id="operations-header">Operations</p>
+                <button id="upload-img" class="operation-btn" onclick="uploadImages()">Upload images</button>
             </div>
         </div>
+    </div>
+    <div id="upload-images-section">
+        <form id="upload-images-form" action="{{url_for('youtube.home')}}" method="post" enctype="multipart/form-data">
+            <p id="upload-images-header">Upload images</p>
+            <input type="file" name="image-files" class="file-upload-input" accept=".jpg, .jpeg, .png, image/jpeg, image/png" multiple required>
+            <input type="hidden" name="video_uuid" id="img-upload-video-uuid" value="{{ default_video_dict['video_uuid'] }}">
+            <button type="submit" name="submit" value="upload_images" id="upload-images-btn" class="form-button">Upload images</button>
+        </form>
     </div>
 </div>
 
@@ -353,10 +500,33 @@
             imgVidInstruction.innerHTML = data.img_vid_instruction;
             thumbnailInstruction.innerHTML = data.thumbnail_instruction;
             youtubeCardInstruction.innerHTML = data.youtube_card_instruction;
+            document.getElementById('img-upload-video-uuid').value = data.video_uuid;
         }).catch(error => {
             console.error('Error:', error);
         });
     }
+    function uploadImages() {
+        const mainSection = document.getElementById('main-section');
+        mainSection.style.display = 'none';
+        const uploadImagesSection = document.getElementById('upload-images-section');
+        uploadImagesSection.style.display = 'flex';
+    }
+
+    // ----------------------------------------------- AVOID MULTIPLE CLICK SUBMITS -----------------------------------------------
+    document.getElementById('upload-images-form').addEventListener('submit', function(e) {
+        const submitBtn = document.getElementById('upload-images-btn');
+        
+        // Check if form is already submitting
+        if (this.classList.contains('is-submitting')) {
+            e.preventDefault(); // Stop the double submission
+            return false;
+        }
+        
+        // Mark form as submitting and provide visual feedback
+        this.classList.add('is-submitting');
+        // submitBtn.disabled = true; 
+        submitBtn.innerText = 'Submitting...';
+    })
 </script>
 
 {% endblock %}
