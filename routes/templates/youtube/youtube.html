@@ -235,6 +235,8 @@
     /* --------------------------------------------------IMAGES DISPLAY---------------------------------------------------- */
     #images-container {
         display: flex;
+        flex-direction: row !important;
+        background: rgb(35, 43, 3) !important;
         flex-wrap: nowrap;
         overflow-x: auto;
         height: 30vh;
@@ -242,6 +244,7 @@
     .image {
         height: 100%;
         width: auto;
+        margin: 0% .5%;
     }
 
     /* ------------------------------------------ MEDIA QUERIES -------------------------------------------------- */
@@ -374,12 +377,12 @@
                 <div id="img_vid_instruction" class="vid-detail-section">
                     {{ default_video_dict['img_vid_instruction'] }}
                 </div>
-                <!-- <p class="vid-detail-section-header">Images</p>
+                <p class="vid-detail-section-header">Images</p>
                 <div id="images-container" class="vid-detail-section">
                 {% for img in default_video_dict['image_list'] %}
                     <img class="image" src="{{ img }}" alt="image">
                 {% endfor %}
-                </div> -->
+                </div>
                 <p class="vid-detail-section-header">Thumbnail instruction</p>
                 <div id="thumbnail_instruction" class="vid-detail-section">
                     {{ default_video_dict['thumbnail_instruction'] }}
@@ -483,6 +486,17 @@
             const imgVidInstruction = document.getElementById('img_vid_instruction');
             const thumbnailInstruction = document.getElementById('thumbnail_instruction');
             const youtubeCardInstruction = document.getElementById('youtube_card_instruction');
+            const imagesContainer = document.getElementById('images-container');
+            const imageList = data.image_list;
+            imagesContainer.replaceChildren();
+            for (const im of imageList) {
+                const imageTag = document.createElement('img');
+                imageTag.src = im;
+                imageTag.classList.add('image');
+                imagesContainer.appendChild(imageTag);
+            }
+            vidDetailSection[0].style.display = 'flex';
+            vidDetailSectionHeader[0].style.display = 'block';
             const voiceRecordingList = data.voice_recordings;
             voiceRecordingContainer.replaceChildren();
             for (const a of voiceRecordingList) {
