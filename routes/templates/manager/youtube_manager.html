@@ -173,7 +173,7 @@
     .form-submit-btn:hover {
         background: rgb(4, 92, 4);
     }
-    #dialogue-narration, #voice-recording, #video-img-instruction, #thumbnail-instruction, #youtube-card-instruction, #dialogue-narration-container, #video-img-instruction-container, #thumbnail-instruction-container, #youtube-card-instruction-container {
+     #voice-recording, #dialogue-narration-container, #video-img-instruction-container, #thumbnail-instruction-container, #youtube-card-instruction-container {
         display: none;
     }
     #voice-recording-text {
@@ -255,8 +255,13 @@
                     </div>
                     <!-- --------------------------------Voice Recording------------------------------------------------ -->
                     <div id="voice-recording" class="inline-inputs">
-                        <label for="voice-recording">Voice Recording&ensp;</label>
+                        <label for="voice_recording">Voice Recording&ensp;</label>
                         <input type="file" name="voice_recording" accept="audio/*">
+                        <select name="voice_recording_language" required>
+                            <option value="">Select Language</option>
+                            <option value="english">English</option>
+                            <option value="hindi">Hindi</option>
+                        </select>
                         <p id="voice-recording-text"></p>
                     </div>
                     <!-- --------------------------------video/image instruction------------------------------------------------ -->
@@ -302,10 +307,6 @@
     const sendEmailNotificationForm = document.getElementById("send-email-notification-form");
     const operation = document.getElementById("operation");
     const videoUuid = document.getElementById("video_uuid");
-    const dialogueNarrationContainer = document.getElementById("dialogue-narration-container");
-    const videoImgInstructionContainer = document.getElementById("video-img-instruction-container");
-    const thumbnailInstructionContainer = document.getElementById("thumbnail-instruction-container");
-    const youtubeCardInstructionContainer = document.getElementById("youtube-card-instruction-container");
     function hideAllForms() {
         addChannelForm.style.display = "none";
         addVideoForm.style.display = "none";
@@ -330,27 +331,19 @@
     }
 
     function hideAllOperations() {
-        document.getElementById('dialogue-narration').style.display = 'none';
+        document.getElementById('dialogue-narration-container').style.display = 'none';
         document.getElementById('voice-recording').style.display = 'none';
-        document.getElementById('video-img-instruction').style.display = 'none';
-        document.getElementById('thumbnail-instruction').style.display = 'none';
-        document.getElementById('youtube-card-instruction').style.display = 'none';
-        dialogueNarrationContainer.style.display = 'none';
-        videoImgInstructionContainer.style.display = 'none';
-        thumbnailInstructionContainer.style.display = 'none';
-        youtubeCardInstructionContainer.style.display = 'none';
+        document.getElementById('video-img-instruction-container').style.display = 'none';
+        document.getElementById('thumbnail-instruction-container').style.display = 'none';
+        document.getElementById('youtube-card-instruction-container').style.display = 'none';
 
     }
     function showAllOperations() {
-        document.getElementById('dialogue-narration').style.display = 'block';
+        document.getElementById('dialogue-narration-container').style.display = 'block';
         document.getElementById('voice-recording').style.display = 'block';
-        document.getElementById('video-img-instruction').style.display = 'block';
-        document.getElementById('thumbnail-instruction').style.display = 'block';
-        document.getElementById('youtube-card-instruction').style.display = 'block';
-        dialogueNarrationContainer.style.display = 'block';
-        videoImgInstructionContainer.style.display = 'block';
-        thumbnailInstructionContainer.style.display = 'block';
-        youtubeCardInstructionContainer.style.display = 'block';
+        document.getElementById('video-img-instruction-container').style.display = 'block';
+        document.getElementById('thumbnail-instruction-container').style.display = 'block';
+        document.getElementById('youtube-card-instruction-container').style.display = 'block';
     }
 
     operation.addEventListener('change', function() {
@@ -358,15 +351,15 @@
         if (operation.value === 'all') {
             showAllOperations();
         } else if (operation.value === 'dialogue-and-narration') {
-            document.getElementById('dialogue-narration').style.display = 'block';
+            document.getElementById('dialogue-narration-container').style.display = 'block';
         } else if (operation.value === 'voice-recording') {
             document.getElementById('voice-recording').style.display = 'block';
         } else if (operation.value === 'video-img-instruction') {
-            document.getElementById('video-img-instruction').style.display = 'block';
+            document.getElementById('video-img-instruction-container').style.display = 'block';
         } else if (operation.value === 'thumbnail-instruction') {
-            document.getElementById('thumbnail-instruction').style.display = 'block';
+            document.getElementById('thumbnail-instruction-container').style.display = 'block';
         } else if (operation.value === 'youtube-card-instruction') {
-            document.getElementById('youtube-card-instruction').style.display = 'block';
+            document.getElementById('youtube-card-instruction-container').style.display = 'block';
         } 
     });
 
@@ -453,6 +446,7 @@
         const videoImgInstruction = addVideoComponentForm.video_img_instruction.value;
         const thumbnailInstruction = addVideoComponentForm.thumbnail_instruction.value;
         const youtubeCardInstruction = addVideoComponentForm.youtube_card_instruction.value;
+        const voiceRecordingLanguage = addVideoComponentForm.voice_recording_language.value;
         const voiceRecordingText = document.getElementById('voice-recording-text');
 
         const formData = new FormData();
@@ -463,7 +457,7 @@
         formData.append('video_img_instruction', videoImgInstruction);
         formData.append('thumbnail_instruction', thumbnailInstruction);
         formData.append('youtube_card_instruction', youtubeCardInstruction);
-        formData.append('voice_recording_text', voiceRecordingText.innerHTML);
+        formData.append('voice_recording_language', voiceRecordingLanguage);
         
         e.preventDefault();
         fetch(endpointUrl, {

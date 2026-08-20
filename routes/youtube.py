@@ -62,10 +62,13 @@ def home():
                 except:
                     default_video_dict['dialogue_narration'] = first_dialogue_narration
                 try:
-                    first_voice_recording = [a.file_path for a in first_video.components if a.component_type == 'voice_recording'][0]
+                    first_voice_recording_list = []
+                    first_voice_recordings = [a.file_path for a in first_video.components if a.component_type == 'voice_recording']
+                    for f in first_voice_recordings:
+                        first_voice_recording_list.append(f)
                 except:
                     first_voice_recording = ''
-                default_video_dict['voice_recording'] = first_voice_recording
+                default_video_dict['voice_recordings'] = first_voice_recording_list
                 try:
                     default_video_dict['img_vid_instruction'] = markdown.markdown(first_img_vid_instruction).replace('\n', '<br>')
                 except:
@@ -97,7 +100,7 @@ def home():
                 video_components = video.components
                 vid_dict = {}
                 dialogue_narration = ''
-                voice_recording = ''
+                voice_recordings = []
                 img_vid_instruction = ''
                 thumbnail_instruction = ''
                 youtube_card_instruction = ''
@@ -105,7 +108,7 @@ def home():
                     if c.component_type == 'dialogue_&_narration':
                         dialogue_narration = c.text
                     elif c.component_type == 'voice_recording':
-                        voice_recording = c.file_path
+                        voice_recordings.append(c.file_path)
                     elif c.component_type == 'img_vid_instruction':
                         img_vid_instruction = c.text
                     elif c.component_type == 'thumbnail_instruction':
@@ -113,11 +116,23 @@ def home():
                     elif c.component_type == 'youtube_card_instruction':
                         youtube_card_instruction = c.text
                 vid_dict['temp_title'] = video_temp_title
-                vid_dict['dialogue_narration'] = markdown.markdown(dialogue_narration).replace('\n', '<br>')
-                vid_dict['voice_recording'] = voice_recording
-                vid_dict['img_vid_instruction'] = markdown.markdown(img_vid_instruction).replace('\n', '<br>')
-                vid_dict['thumbnail_instruction'] = markdown.markdown(thumbnail_instruction).replace('\n', '<br>')
-                vid_dict['youtube_card_instruction'] = markdown.markdown(youtube_card_instruction).replace('\n', '<br>')
+                try:
+                    vid_dict['dialogue_narration'] = markdown.markdown(dialogue_narration).replace('\n', '<br>')
+                except:
+                    vid_dict['dialogue_narration'] = dialogue_narration
+                vid_dict['voice_recordings'] = voice_recordings
+                try:
+                    vid_dict['img_vid_instruction'] = markdown.markdown(img_vid_instruction).replace('\n', '<br>')
+                except:
+                    vid_dict['img_vid_instruction'] = img_vid_instruction
+                try:
+                    vid_dict['thumbnail_instruction'] = markdown.markdown(thumbnail_instruction).replace('\n', '<br>')
+                except:
+                    vid_dict['thumbnail_instruction'] = thumbnail_instruction
+                try:
+                    vid_dict['youtube_card_instruction'] = markdown.markdown(youtube_card_instruction).replace('\n', '<br>')
+                except:
+                    vid_dict['youtube_card_instruction'] = youtube_card_instruction
                 return jsonify(vid_dict)
         return render_template('youtube.html', current_year=current_year, channels=channels, default_video_dict=default_video_dict, logged_in=current_user.is_authenticated, admin=admin, first_channel=first_channel)
 

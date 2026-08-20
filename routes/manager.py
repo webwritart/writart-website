@@ -1529,7 +1529,7 @@ def youtube_manager():
                 thumbnail_instruction = request.form.get('thumbnail_instruction')
                 youtube_card_instruction = request.form.get('youtube_card_instruction')
                 voice_recording = request.files.get('voice_recording')
-                voice_recording_text = request.files.get('voice_recording_text')
+                voice_recording_language = request.form.get('voice_recording_language').capitalize()
                 channel_id = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar().channel_id
                 video_id = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar().id
                 date_time = datetime.datetime.now().replace(microsecond=0)
@@ -1563,36 +1563,27 @@ def youtube_manager():
 
                 if voice_recording:
                     all_components = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar().components
-                    exits = False
-                    voice_recording_row = None
-                    for c in all_components:
-                        if c.component_type == 'voice_recording':
-                            voice_recording_row = c
-                            exits = True
-                    if exits:
-                        voice_recording_row.file_path = voice_recording_text
-                    else:
-                        base_save_path = f'./static/files/youtube/{channel_id}/{video_id}/voice_recording/'
-                        if not os.path.exists(base_save_path):
-                            os.makedirs(base_save_path)
-                        existing_video_component_uuid_list = [a.uuid for a in db.session.query(YoutubeVideoComponent).all()]
-                        uuid = create_uuid(existing_video_component_uuid_list, 9)
-                        recording_name = f"{uuid}_{secure_filename(voice_recording.filename)}"
-                        save_path = base_save_path + recording_name
-                        voice_recording.save(save_path)
-                        p('Recording saved successfully!')
-                        entry = YoutubeVideoComponent(
-                            uuid=uuid,
-                            main=True,
-                            version_list=json.dumps([]),
-                            version='1.0',
-                            component_type='voice_recording',
-                            file_path=save_path[1:],
-                            date_time=date_time,
-                            approval_status='pending',
-                            youtube_video_id=video_id
-                        )
-                        db.session.add(entry)
+                    base_save_path = f'./static/files/youtube/{channel_id}/{video_id}/voice_recording/'
+                    if not os.path.exists(base_save_path):
+                        os.makedirs(base_save_path)
+                    existing_video_component_uuid_list = [a.uuid for a in db.session.query(YoutubeVideoComponent).all()]
+                    uuid = create_uuid(existing_video_component_uuid_list, 9)
+                    recording_name = f"{uuid}_{secure_filename(voice_recording.filename)}_{voice_recording_language}"
+                    save_path = base_save_path + recording_name
+                    voice_recording.save(save_path)
+                    entry = YoutubeVideoComponent(
+                        uuid=uuid,
+                        main=True,
+                        version_list=json.dumps([]),
+                        version='1.0',
+                        component_type='voice_recording',
+                        subtype=voice_recording_language,
+                        file_path=save_path[1:],
+                        date_time=date_time,
+                        approval_status='pending',
+                        youtube_video_id=video_id
+                    )
+                    db.session.add(entry)
                     db.session.commit()
 
                 if video_img_instruction:
