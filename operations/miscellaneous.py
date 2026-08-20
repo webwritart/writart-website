@@ -760,3 +760,16 @@ def create_uuid(existing_uuid_list, uuid_length_in_digit):
             
     return uuid
 
+def make_unicode_bold(text):
+    # Maps standard lowercase and uppercase letters to Unicode bold characters
+    bold_chars = ""
+    for char in text:
+        if 'a' <= char <= 'z':
+            bold_chars += chr(ord(char) + 119737)
+        elif 'A' <= char <= 'Z':
+            bold_chars += chr(ord(char) + 119743)
+        elif '0' <= char <= '9':
+            bold_chars += chr(ord(char) + 120734)
+        else:
+            bold_chars += char
+    return bold_chars

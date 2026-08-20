@@ -26,6 +26,48 @@
         border-radius: 1.5rem;
         padding: 2% 1%;
         margin: 1%;
+        justify-content: space-between;
+    }
+    #operation-btn-section {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        align-items: center;
+        padding: 0% 5%;
+    }
+    .form-btn {
+        background: green;
+        color: white;
+        padding: 1% 2%;
+        border: none;
+        border-radius: 1.5rem;
+        margin: 1%;
+        cursor: pointer;
+        font-size: .9rem;
+        width: 100%;
+    }
+    .form-btn:hover {
+        background: rgb(4, 92, 4);
+    }
+    #btn-section-special {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        align-items: center;
+        padding: 0% 5%;
+    }
+    #project-dashboard-link {
+        text-decoration: none;
+        color: white;
+        background: rgb(65, 85, 26);
+        width: 100%;
+        padding: 1% 0%;
+        border-radius: 1.5rem;
+        margin: 1%;
+        text-align: center;
+    }
+    #project-dashboard-link:hover {
+        background: rgb(76, 111, 4);
     }
     #form-section {
         display: flex;
@@ -59,6 +101,9 @@
     #add-video-component-form {
         display: none;
     }
+    #send-email-notification-form {
+        display: none;
+    }
     .section-title {
         font-weight: bold;
         font-size: 1.2rem;
@@ -68,19 +113,7 @@
         margin-bottom: 2%;
         padding: 2% 0%;
     }
-    .form-btn {
-        background: green;
-        color: white;
-        padding: 1% 2%;
-        border: none;
-        border-radius: 1.5rem;
-        margin: 1%;
-        cursor: pointer;
-        font-size: .9rem;
-    }
-    .form-btn:hover {
-        background: rgb(4, 92, 4);
-    }
+    
     .inline-inputs {
         display: flex;
         width: 100%;
@@ -151,10 +184,16 @@
 <div id="root-container">
     <div id="main-section">
         <div id="button-section">
-            <p class="section-title">Operations</p>
-            <button id="add-channel-btn" class="form-btn" onclick="addChannel()">Add channel</button>
-            <button id="add-video-btn" class="form-btn" onclick="addVideo()">Add video</button>
-            <button id="add-video-component-btn" class="form-btn" onclick="addVideoComponent()">Add video component</button>
+            <div id="operation-btn-section">
+                <p class="section-title">Operations</p>
+                <button id="add-channel-btn" class="form-btn" onclick="addChannel()">Add channel</button>
+                <button id="add-video-btn" class="form-btn" onclick="addVideo()">Add video</button>
+                <button id="add-video-component-btn" class="form-btn" onclick="addVideoComponent()">Add video component</button>
+                <button id="send-email-notification-btn" class="form-btn" onclick="sendEmailNotification()">Send email notification</button>
+            </div>
+            <div id="btn-section-special">
+                <a id="project-dashboard-link" href="{{url_for('youtube.home')}}">Youtube dashboard</a>
+            </div>
         </div>
         <div id="form-section">
             <div class="form-container">
@@ -237,6 +276,20 @@
                     </div>
                     <button type="submit" name="submit" value="add-video-component" class="form-submit-btn">Add video component</button>
                 </form>
+                <form id="send-email-notification-form">
+                    <p class="section-title">Send Email Notification</p>
+                    <select name="team_member" required>
+                        <option value="">Select Team Member</option>
+                        <option value="abhijeet">Abhijeet</option>
+                    </select>
+                    <select name="video_uuid" required>
+                        <option value="">Select Video</option>
+                        {% for video in video_list %}
+                        <option value="{{video[0]}}">{{video[1]}}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" name="submit" value="send-email-notification" id="send-email-notification-form-btn" class="form-submit-btn">Send Email</button>
+                </form>
             </div>
         </div>
     </div>
@@ -246,6 +299,7 @@
     const addChannelForm = document.getElementById("add-channel-form");
     const addVideoForm = document.getElementById("add-video-form");
     const addVideoComponentForm = document.getElementById("add-video-component-form");
+    const sendEmailNotificationForm = document.getElementById("send-email-notification-form");
     const operation = document.getElementById("operation");
     const videoUuid = document.getElementById("video_uuid");
     const dialogueNarrationContainer = document.getElementById("dialogue-narration-container");
@@ -256,6 +310,7 @@
         addChannelForm.style.display = "none";
         addVideoForm.style.display = "none";
         addVideoComponentForm.style.display = "none";
+        sendEmailNotificationForm.style.display = "none";
     }
     function addChannel() {
         hideAllForms();
@@ -269,6 +324,10 @@
         hideAllForms();
         addVideoComponentForm.style.display = "block";
     }
+    function sendEmailNotification() {
+        hideAllForms();
+        sendEmailNotificationForm.style.display = "block";
+    }
 
     function hideAllOperations() {
         document.getElementById('dialogue-narration').style.display = 'none';
@@ -280,6 +339,7 @@
         videoImgInstructionContainer.style.display = 'none';
         thumbnailInstructionContainer.style.display = 'none';
         youtubeCardInstructionContainer.style.display = 'none';
+
     }
     function showAllOperations() {
         document.getElementById('dialogue-narration').style.display = 'block';
@@ -422,6 +482,39 @@
             console.error('Error:', error);
         });
     });
+
+    sendEmailNotificationForm.addEventListener('submit', function(e) {
+        const endpointUrl = "{{ url_for('manager.youtube_manager') }}";
+        const videoUuid = sendEmailNotificationForm.video_uuid.value;
+        const teamMember = sendEmailNotificationForm.team_member.value;
+        const sendEmailNotificationBtn = document.getElementById('send-email-notification-form-btn');
+        sendEmailNotificationBtn.textContent = 'Sending Email...';
+        data = {
+            type: 'send-email-notification',
+            video_uuid: videoUuid,
+            team_member: teamMember
+        }
+        e.preventDefault();
+        fetch(endpointUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            sendEmailNotificationBtn.textContent = 'Send Email';
+            if (data.status == 'success') {
+                alert(data.message);
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    })
 
     function showExistingData() {
         const videoUuidValue = videoUuid.value;

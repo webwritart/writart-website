@@ -1416,6 +1416,27 @@ def youtube_manager():
         if admin in current_user.role:
             if request.method == 'POST' and request.is_json:
                 data = request.get_json()
+                if data['type'] == 'send-email-notification':
+                    video_uuid = data['video_uuid']
+                    video = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).one_or_none()
+                    video_temp_title = video.temp_title
+                    img_vid_instruction_list = [a for a in video.components if a.component_type == 'img_vid_instruction']
+                    affirmative = False
+                    if len(img_vid_instruction_list) > 0:
+                        if img_vid_instruction_list[0].text:
+                            affirmative = True
+                    if affirmative:
+                        team_member = data['team_member']
+                        if team_member == 'abhijeet':
+                            email = "abhijeetsingh9490@gmail.com"
+                        subject = f"New job - {video_temp_title} - Writart Studio"
+                        video_temp_title_bold = make_unicode_bold(video_temp_title)
+                        message = f"Dear {team_member},\nInstruction for AI img/video generation added for {video_temp_title_bold}.\nPlease begin the work as soon as possible.\n\nAll the best!"
+                        try:
+                            send_email_studio(subject, [email], message, None, None)
+                            return {'status': 'success', 'message': 'Email notification sent successfully.'}
+                        except Exception as e:
+                            return {'status': 'error', 'message': f"An error occured while sending email notification: {str(e)}"}
                 if data['type'] == 'show-existing-data':
                     video_component_dict = {}
                     video_uuid = data['video_uuid']
