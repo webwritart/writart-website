@@ -151,39 +151,44 @@ def home():
                     vid_dict['youtube_card_instruction'] = youtube_card_instruction
                 return jsonify(vid_dict)
 
-        if request.method == 'POST' and request.form.get('submit') == 'upload_images':
-            files = request.files.getlist('image-files')
-            video_uuid = request.form.get('video_uuid')
-            video = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar()
-            channel_id = video.youtube_channel.id
-            video_id = video.id
-            base_path = f"./static/files/youtube/{channel_id}/{video_id}/images/"
-            if not os.path.exists(base_path):
-                os.makedirs(base_path)
-            for f in files:
-                if f.filename == '':
-                    flash('No selected file', 'error')
-                    return redirect(request.url)
-                filename_base = secure_filename(f.filename)
-                save_path = base_path + filename_base
-                f.save(save_path)
-                existing_uuid_list = [a.uuid for a in db.session.query(YoutubeVideoComponent) if a.component_type == 'image']
-                uuid = create_uuid(existing_uuid_list, 9)
-                entry = YoutubeVideoComponent(
-                    uuid=uuid,
-                    main=True,
-                    version_list=json.dumps([]),
-                    version='1.0',
-                    component_type='image',
-                    file_path=save_path[1:],
-                    approval_status='pending',
-                    date_time=date_time_now,
-                    youtube_video_id=video_id
-                )
-                db.session.add(entry)
-            db.session.commit()
         return render_template('youtube.html', current_year=current_year, channels=channels, default_video_dict=default_video_dict, logged_in=current_user.is_authenticated, admin=admin, first_channel=first_channel)
 
+
+@youtube.route('/upload-images', methods=['GET', 'POST'])
+def upload_images():
+    if request.method == 'POST' and request.form.get('type') == 'upload_images':
+        files = request.files.getlist('files')
+        video_uuid = request.form.get('video_uuid')
+        video = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar()
+        channel_id = video.youtube_channel.id
+        video_id = video.id
+        base_path = f"./static/files/youtube/{channel_id}/{video_id}/images/"
+        if not os.path.exists(base_path):
+            os.makedirs(base_path)
+        for f in files:
+            if f.filename == '':
+                flash('No selected file', 'error')
+                return redirect(request.url)
+            filename_base = secure_filename(f.filename)
+            save_path = base_path + filename_base
+            f.save(save_path)
+            existing_uuid_list = [a.uuid for a in db.session.query(YoutubeVideoComponent) if a.component_type == 'image']
+            uuid = create_uuid(existing_uuid_list, 9)
+            entry = YoutubeVideoComponent(
+                uuid=uuid,
+                main=True,
+                version_list=json.dumps([]),
+                version='1.0',
+                component_type='image',
+                file_path=save_path[1:],
+                approval_status='pending',
+                date_time=date_time_now,
+                youtube_video_id=video_id
+            )
+            db.session.add(entry)
+        db.session.commit()
+
+        return jsonify('success')
 
 @youtube.route('/login', methods=['GET', 'POST'])
 def login():
@@ -204,3 +209,4 @@ def login():
 def logout():
     session['youtube_logged_in'] = False
     return redirect(url_for('youtube.login'))
+    

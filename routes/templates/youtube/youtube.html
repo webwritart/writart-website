@@ -105,6 +105,7 @@
         padding: 5% 10%;
         border-radius: 1.5rem;
         overflow-y: auto;
+        overflow-x: hidden;
     }
     .selection-header {
         display: block;
@@ -383,6 +384,7 @@
                     <img class="image" src="{{ img }}" alt="image">
                 {% endfor %}
                 </div>
+
                 <p class="vid-detail-section-header">Thumbnail instruction</p>
                 <div id="thumbnail_instruction" class="vid-detail-section">
                     {{ default_video_dict['thumbnail_instruction'] }}
@@ -414,11 +416,12 @@
         </div>
     </div>
     <div id="upload-images-section">
-        <form id="upload-images-form" action="{{url_for('youtube.home')}}" method="post" enctype="multipart/form-data">
+        <form id="upload-images-form">
             <p id="upload-images-header">Upload images</p>
-            <input type="file" name="image-files" class="file-upload-input" accept=".jpg, .jpeg, .png, image/jpeg, image/png" multiple required>
+            <input type="file" id="image-files" name="image-files" class="file-upload-input" accept=".jpg, .jpeg, .png, image/jpeg, image/png" multiple required>
             <input type="hidden" name="video_uuid" id="img-upload-video-uuid" value="{{ default_video_dict['video_uuid'] }}">
             <button type="submit" name="submit" value="upload_images" id="upload-images-btn" class="form-button">Upload images</button>
+            <div id="status-message"></div>
         </form>
     </div>
 </div>
@@ -541,6 +544,53 @@
         // submitBtn.disabled = true; 
         submitBtn.innerText = 'Submitting...';
     })
+// ------------------------------------------------- UPLOAD IMAGES -------------------------------------------------------
+    const uploadImagesForm = document.getElementById('upload-images-form');
+    uploadImagesForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const submitBtn = document.getElementById('upload-images-btn');
+        const imgUploadEndpointUrl = "{{ url_for('youtube.upload_images') }}";
+        const fileInput = document.getElementById('image-files');
+        const statusMessage = document.getElementById('status-message');
+        const videoUuid = document.getElementById('img-upload-video-uuid').value;
+
+        if (fileInput.files.length === 0) {
+            statusMessage.textContent = 'Please select at least one image file.';
+            return;
+        }
+
+        submitBtn.innerText = 'Uploading...';
+        submitBtn.disabled = true;
+        const formData = new FormData();
+        for (const file of fileInput.files) {
+            formData.append('files', file);
+        }
+        formData.append('video_uuid', videoUuid);
+        formData.append('type', 'upload_images');
+        try {
+            const response = await fetch(imgUploadEndpointUrl, {
+            method: 'POST',
+            body: formData // Passed directly; do not set Content-Type header
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            alert(result);
+            console.log('Success:', result);
+            statusMessage.textContent = 'Image uploaded successfully.';
+        
+        } catch (error) {
+            console.error('Submission failed:', error);
+            statusMessage.textContent = 'Image upload failed. Please try again.';
+        } finally {
+            submitBtn.innerText = 'Upload images';
+            submitBtn.disabled = false;
+        }
+    });
 </script>
 
 {% endblock %}
