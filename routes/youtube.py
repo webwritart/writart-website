@@ -187,7 +187,7 @@ def home():
 
 @youtube.route('/login', methods=['GET', 'POST'])
 def login():
-    username_list = ['abhijeet', 'shwetabh']
+    username_list = ['abhijeet', 'shwetabh', 'yash']
     default_password = '@iig974#lon99!'
     if request.method == 'POST':
         username = request.form.get('username')
