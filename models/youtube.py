@@ -40,10 +40,6 @@ class YoutubeVideoComponent(db.Model):
     __tablename__ = 'youtube_video_component'
     id = db.Column(db.Integer, primary_key=True)
     uuid = db.Column(db.Integer, unique=True)
-    main = db.Column(db.Boolean, default=False, nullable=False)
-    parent_id = db.Column(db.Integer) # applicable in case of revisions.
-    version_list = db.Column(db.String(200)) # applicable in case of parent. Contains a list of all revision_version numbers
-    version = db.Column(db.String(50)) # eg 1.0, 1.1, 1.2, 1.3, etc.
     component_type = db.Column(db.String(50)) # eg dialogue_&_narration, voice_recording, img_vid_instruction, editing_fx, thumbnail, seo, yt_card, upload_time, etc.
     subtype = db.Column(db.String(50)) # e.g. for seo, the subtypes are yt_title, yt_description, yt_keywords
     text = db.Column(db.Text) # text for dialogue_&_narration, img_vid_instruction, and other initial instructions excluding each video, image or any other work feedbacks
@@ -52,3 +48,22 @@ class YoutubeVideoComponent(db.Model):
     approval_status = db.Column(db.String(50)) # eg pending, approved, rejected, revise, etc.
     date_time = db.Column(db.String(50))
     youtube_video_id = db.Column(db.Integer, db.ForeignKey('youtube_video.id'))
+
+    def __repr__(self):
+        return f"Component type: {self.component_type}, subtype: {self.subtype}, date_time: {self.date_time}"
+
+
+class YoutubeVideoComponentRevision(db.Model):
+    __tablename__ = 'youtube_video_component_revision'
+
+    id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.Integer, unique=True)
+    version = db.Column(db.String(50))
+    text = db.Column(db.Text) # applicable in case of revisions.
+    file_path = db.Column(db.String(200)) # applicable in case of revisions.
+    feedback = db.Column(db.String(1000)) # applicable in case of revisions.
+    date_time = db.Column(db.String(50))
+    youtube_video_component_id = db.Column(db.Integer, db.ForeignKey('youtube_video_component.id'))
+
+    def __repr__(self):
+        return f"Version: {self.version}, date_time: {self.date_time}"

@@ -44,7 +44,7 @@
     }
     #logout-btn {
         width: 20%;
-        background: rgb(19, 22, 17);
+        background: rgb(93, 103, 66);
         border-radius: 1.5rem;
         color: white;
         font-weight: 600;
@@ -241,13 +241,41 @@
         flex-wrap: nowrap;
         overflow-x: auto;
         height: 30vh;
+        margin-bottom: 0%;
     }
     .image {
         height: 100%;
         width: auto;
         margin: 0% .5%;
     }
-
+    .section-action-button-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        width: 100%;
+        margin-top: 0%;
+        padding-top:0.5%;
+        padding-bottom: .5%;
+        background: rgb(131, 138, 120);
+        border-radius: 1.5rem;
+        border: 2px solid rgb(37, 40, 26);
+        margin-bottom: 2%;
+    }
+    .section-action-button {
+        background: rgb(127, 55, 4);
+        border-radius: 1.5rem;
+        border: none;
+        margin: 0%;
+        color: white;
+        padding: 0% 2%;
+        text-decoration: none;
+        border: 1px solid rgb(0, 0, 0);
+    }
+    .section-action-button:hover {
+        background: rgb(90, 46, 7);
+        text-decoration: none;
+        color: white;
+    }
     /* ------------------------------------------ MEDIA QUERIES -------------------------------------------------- */
 
     @media(max-width: 1200px) {
@@ -378,12 +406,18 @@
                 <div id="img_vid_instruction" class="vid-detail-section">
                     {{ default_video_dict['img_vid_instruction'] }}
                 </div>
+
+
                 <p class="vid-detail-section-header">Images</p>
                 <div id="images-container" class="vid-detail-section">
                 {% for img in default_video_dict['image_list'] %}
                     <img class="image" src="{{ img }}" alt="image">
                 {% endfor %}
                 </div>
+                <div class="section-action-button-container">
+                    <button class="section-action-button" id="image-feedback-btn" onclick="openImageFeedback({{ default_video_dict['video_uuid']}})">Feedbacks</button>
+                </div>
+
 
                 <p class="vid-detail-section-header">Thumbnail instruction</p>
                 <div id="thumbnail_instruction" class="vid-detail-section">
@@ -518,6 +552,7 @@
             thumbnailInstruction.innerHTML = data.thumbnail_instruction;
             youtubeCardInstruction.innerHTML = data.youtube_card_instruction;
             document.getElementById('img-upload-video-uuid').value = data.video_uuid;
+            document.getElementById('image-feedback-btn').onclick = () => openImageFeedback(data.video_uuid);
         }).catch(error => {
             console.error('Error:', error);
         });
@@ -591,6 +626,11 @@
             submitBtn.disabled = false;
         }
     });
+    // -------------------------------------------- OPEN IMAGE FEEDBACK PAGE ---------------------------------------------------------
+    function openImageFeedback(video_uuid) {
+        const endpointUrl = "{{ url_for('youtube.image_feedback') }}";
+        window.location.href = endpointUrl + '?video_uuid=' + video_uuid;
+    }
 </script>
 
 {% endblock %}

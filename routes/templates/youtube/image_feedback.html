@@ -1,0 +1,289 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    #root-container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        align-items: center;
+        min-height: 90vh;
+        background: rgb(160, 175, 129);
+    }
+    #title {
+        font-weight: 900;
+        font-size: 1.3rem;
+        color: black;
+        padding-top: 1%;
+    }
+    #images-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 90%;
+        min-height: 80vh;
+        background: rgb(216, 228, 187);
+        margin-bottom: 2%;
+        border-radius: 2rem;
+    }
+    #table-container {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2%;
+    }
+    #video-temp-title {
+        font-weight: 700;
+        font-size: 1.4rem;
+        color: rgb(63, 80, 21);
+        padding-top: 1%;
+    }
+    table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        border-radius: 1.5rem;
+        overflow: hidden;
+        border: 2px solid rgb(46, 67, 5);
+    }
+    th, td {
+        border: solid 1px rgb(97, 123, 19);
+        padding: .5%;
+        text-align: center;
+        word-wrap: break-word;
+    }
+    td {
+        height: 16vh;
+    }
+    .col_1 { width: 20%; }
+    .col_2 { width: 60%; }
+    .col_3 { width: 10%; }
+    .col_4 { width: 10%; }
+    th {
+        background: rgb(77, 98, 58);
+        color: white;
+    }
+    .image {
+        object-fit: contain;
+        max-height: 100%;
+        max-width: 100%;
+        cursor: pointer;
+    }
+    .revision-btn {
+        border: none;
+        background: #083011;
+        color: white;
+        padding: 2% 0%;
+        width: 100%;
+        border-radius: 1.5rem;
+        transition: background .15s ease-in-out;
+        font-size: .8rem;
+    }
+    .revision-btn:hover {
+        background: #37731F;
+    }
+    /* ------------------------------------------------ LARGE IMAGE POPUP --------------------------------------------- */
+    .popup {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+    }
+
+    .popup-content {
+        position: relative;
+        width: 80%;
+        height: 80%;
+        margin: 5% auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .popup-content img {
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+    .close {
+        position: absolute;
+        top: -30px;
+        right: 0;
+        color: white;
+        font-size: 35px;
+        cursor: pointer;
+    }
+    #audio-recording-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 1%;
+    }
+</style>
+<div id="root-container">
+    <p id="title">Images Feedback</p>
+    
+    <div id="images-section">
+        <div id="table-container">
+            <p id="video-temp-title">{{ temp_title }}</p>
+            <table id="images-table">
+                <thead>
+                    <tr>
+                        <th class="col_1">Images (click to enlarge)</th>
+                        <th class="col_2">Feedback</th>
+                        <th class="col_3">Upload Revision</th>
+                        <th class="col_4">Approval status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for image in image_dict %}
+                    <tr>
+                        <td><img class="image" src="{{image_dict[image]['file_path']}}" data-image-path="{{image_dict[image]['file_path']}}" onclick="openImageLargeSize(this.dataset.imagePath)"></td>
+                        <td>
+                            {% if is_admin %}
+                            <button class="image-feedback-recording-btn" data-image_uuid="{{image_dict[image]['uuid']}}" onclick="openImageFeedbackRecordingPopup(this.dataset.image_uuid)">Record Feedback</button>
+                            {% endif %}
+                            {% if image_dict[image]['feedback'] %}
+                            <audio class="feedback-audio" src="{{image_dict[image]['feedback']}}" controls></audio>
+                            {% endif %}
+                        </td>
+                        <td><button class="revision-btn" onclick="uploadRevision({{ image_dict['uuid'] }})">Upload Revision</button></td>
+                        <td style="background: {{image_dict[image]['approval_status'][1]}}">{{image_dict[image]['approval_status'][0]}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+        </div>
+    </div>
+</div>
+<div id="image-popup" class="popup">
+    <div class="popup-content">
+        <span class="close" onclick="closePopup()">&times;</span>
+        <img id="image-large-size" src="" alt="Large image">
+    </div>
+</div>
+<div id="audio-recording-popup" class="popup">
+    <div class="popup-content">
+        <span class="close" onclick="closePopup()">&times;</span>
+        <button id="startBtn">Start Recording</button>
+        <button id="stopBtn" disabled>Stop Recording</button>
+        <audio id="audioPlayback" controls></audio>
+        <button id="save-image-feedback-recording">Save Audio</button>
+    </div>
+</div>
+<script>
+    function openPopup() {
+        document.getElementById("image-popup").style.display = "block";
+    }
+    function closePopup() {
+        document.getElementById("image-popup").style.display = "none";
+        document.getElementById("audio-recording-popup").style.display = "none";
+    }
+
+    function openImageLargeSize(imagePath) {
+        const image = document.getElementById("image-large-size");
+        image.src = imagePath;
+        openPopup();
+    }
+    
+    function openImageFeedbackRecordingPopup(image_uuid) {
+        document.getElementById("audio-recording-popup").style.display = "block";
+        document.getElementById("save-image-feedback-recording").onclick = () => saveAudio(image_uuid);
+    }
+    // ----------------------------------------------- FEEDBACK RECORDING ------------------------------------------------
+    // Keep track of the recorder instance and raw audio data
+    let mediaRecorder;
+    let audioChunks = [];
+    let audioBlob;
+
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const audioPlayback = document.getElementById('audioPlayback');
+
+    // 1. Start Recording
+    startBtn.addEventListener('click', async () => {
+        audioChunks = []; // Clear previous data
+        
+        try {
+            // Request microphone permission from the browser
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            
+            // Initialize MediaRecorder with the hardware audio stream
+            mediaRecorder = new MediaRecorder(stream);
+            
+            // Collect audio data fragments as they become available
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    audioChunks.push(event.data);
+                }
+            };
+            
+            // Process the final recording once the stream stops
+            mediaRecorder.onstop = () => {
+                // Combine chunks into a single audio Blob file
+                audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                
+                // Create a local URL pointing to the file and set it to the player
+                const audioUrl = URL.createObjectURL(audioBlob);
+                audioPlayback.src = audioUrl;
+                
+                // Stop all hardware mic tracks to turn off the recording indicator
+                stream.getTracks().forEach(track => track.stop());
+            };
+            
+            // Begin recording
+            mediaRecorder.start();
+            
+            // Adjust UI button states
+            startBtn.disabled = true;
+            stopBtn.disabled = false;
+            
+        } catch (error) {
+            console.error('Error accessing microphone:', error);
+            alert('Could not access microphone. Please check permissions.');
+        }
+    });
+
+    // 2. Stop Recording
+    stopBtn.addEventListener('click', () => {
+        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+            mediaRecorder.stop(); // Triggers the onstop event handler above
+            
+            // Reset UI button states
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+        }
+    });
+    function saveAudio(image_uuid) {
+        const endpointUrl = "{{ url_for('youtube.save_audio') }}";
+        if (audioBlob) {
+            const formData = new FormData();
+            formData.append('audio', audioBlob, 'audio.webm');
+            formData.append('image_uuid', image_uuid);
+            formData.append('type', 'save_audio');
+            fetch(endpointUrl, { method: 'POST', body: formData })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Audio saved successfully.');
+                    } else {
+                        alert('Failed to save audio.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error saving audio:', error);
+                    alert('Failed to save audio.');
+                });
+        } else {
+            alert('No audio data available.');
+        }
+
+    }
+</script>
+
+{% endblock %}
