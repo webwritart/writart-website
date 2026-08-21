@@ -199,9 +199,7 @@ def image_feedback():
     if not current_user.is_authenticated:
         return redirect(url_for('account.login'))
     else:
-        if youtube_img_creator not in current_user.role or youtube_admin not in current_user.role:
-            return redirect(url_for('main.home'))
-        else:
+        if youtube_img_creator in current_user.role or youtube_admin in current_user.role:
             video_uuid = request.args.get('video_uuid')
             image_dict = {}
             video_component_list = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar().components
@@ -221,7 +219,9 @@ def image_feedback():
                         'approval_status': approval_status_tuple
                     }
             temp_title = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).one_or_none().temp_title
-        return render_template('image_feedback.html', logged_in=current_user.is_authenticated, admin=admin, image_dict=image_dict, temp_title=temp_title, is_admin=is_admin)
+        else:
+            return render_template('admin_area.html')
+        return render_template('image_feedback.html', logged_in=current_user.is_authenticated, admin=admin, image_dict=image_dict, temp_title=temp_title)
 
 
 @youtube.route('/save_audio', methods=['POST'])
