@@ -160,6 +160,7 @@ def upload_images():
     if request.method == 'POST' and request.form.get('type') == 'upload_images':
         files = request.files.getlist('files')
         video_uuid = request.form.get('video_uuid')
+        image_text = request.form.get('image_text')
         video = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar()
         channel_id = video.youtube_channel.id
         video_id = video.id
@@ -177,17 +178,16 @@ def upload_images():
             uuid = create_uuid(existing_uuid_list, 9)
             entry = YoutubeVideoComponent(
                 uuid=uuid,
-                main=True,
-                version_list=json.dumps([]),
-                version='1.0',
                 component_type='image',
                 file_path=save_path[1:],
                 approval_status='pending',
                 date_time=date_time_now,
-                youtube_video_id=video_id
+                youtube_video_id=video_id,
+                text=image_text,
+                member_id=current_user.id
             )
             db.session.add(entry)
-        db.session.commit()
+            db.session.commit()
 
         return jsonify('success')
 
@@ -227,7 +227,8 @@ def image_feedback():
                         'feedback': c.feedback,
                         'approval_status': approval_status_tuple,
                         'assigned_to_uuid': assigned_to_uuid,
-                        'assigned_to_name': assigned_to_name
+                        'assigned_to_name': assigned_to_name,
+                        'text': c.text
                     }
             all_mates = [(a.uuid, a.name) for a in db.session.query(Member).all() if len([b for b in a.role if b.name == 'youtube_img_creator']) > 0]
             temp_title = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).one_or_none().temp_title

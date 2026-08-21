@@ -127,6 +127,11 @@
         border-radius: 1.5rem;
         width: 100%;
     }
+    .image-text-container {
+        overflow-y: auto;
+        height: 100%;
+        width: 100%;
+    }
     /* ------------------------------------------------ LARGE IMAGE POPUP --------------------------------------------- */
     .popup {
         display: none;
@@ -289,7 +294,10 @@
                     {% for image in image_dict %}
                     <tr>
                         <td><img class="image" src="{{image_dict[image]['file_path']}}" data-image-path="{{image_dict[image]['file_path']}}" onclick="openImageLargeSize(this.dataset.imagePath)"></td>
-                        <td>{{image_dict[image]['text']}}</td>
+                        <td>
+                            <div class="image-text-container">
+                                {{image_dict[image]['text']}}</td>
+                            </div>
                         <td>
                             <div class="img-feedback-recording-container">
                                 {% if youtube_admin in current_user.role %}
