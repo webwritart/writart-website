@@ -206,6 +206,7 @@ def image_feedback():
             video_component_list = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar().components
             for c in video_component_list:
                 if c.component_type == 'image':
+                    approval_status_tuple = None
                     approval_status = c.approval_status
                     if approval_status == 'approved':
                         approval_status_tuple = (c.approval_status, '#2dad31')
