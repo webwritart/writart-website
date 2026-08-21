@@ -36,15 +36,9 @@
     <form action="{{ url_for('manager.role_management') }}" method="post">
         <input type="text" name="email" placeholder="Email" required="required" />
         <select id="role" name="role">
-            <option value="student">student</option>
-            <option value="admin">admin</option>
-            <option value="animation_admin">animation_admin</option>
-            <option value="editor">editor</option>
-            <option value="blogger">blogger</option>
-            <option value="artist">artist</option>
-            <option value="customer">customer</option>
-            <option value="client">client</option>
-            <option value="instructor">instructor</option>
+            {% for role in roles %}
+            <option value="{{role[0]}}">{{role[1]}}</option>
+            {% endfor %}
         </select>
         <button type="submit" class="btn btn-primary btn-block btn-large" value="Assign by email">Assign by Email</button>
     </form>
@@ -52,16 +46,10 @@
 <div class="box2">
     <form action="{{ url_for('manager.role_management') }}" method="post">
         <input type="text" name="email" placeholder="Email" required="required" />
-        <select name="role">
-            <option value="student1">student</option>
-            <option value="admin1">admin</option>
-            <option value="animation_admin1">animation_admin</option>
-            <option value="editor1">editor</option>
-            <option value="blogger1">blogger</option>
-            <option value="artist1">artist</option>
-            <option value="customer1">customer</option>
-            <option value="animation_client1">animation_client</option>
-            <option value="instructor1">instructor</option>
+        <select name="role_remove">
+            {% for role in roles %}
+            <option value="{{role[0]}}">{{role[1]}}</option>
+            {% endfor %}
         </select>
         <button type="submit" class="btn btn-primary btn-block btn-large" value="Remove by email">Remove by Email</button>
     </form>

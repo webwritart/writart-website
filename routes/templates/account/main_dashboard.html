@@ -38,13 +38,16 @@
 <div id="container">
     <h1>Main dashboard</h1>
     {% if instructor in current_user.role %}
-    <a class="btn btn-primary btn-block btn-large" href="{{url_for('account.instructor_dashboard')}}">INSTRUCTOR DASHBOARD</a>
+    <a class="btn btn-primary btn-block btn-large" href="{{url_for('account.instructor_dashboard')}}">Instructor Dashboard</a>
     {% endif %}
     {% if student in current_user.role %}
-    <a class="btn btn-primary btn-block btn-large" href="{{url_for('account.student_dashboard')}}">STUDENT DASHBOARD</a>
+    <a class="btn btn-primary btn-block btn-large" href="{{url_for('account.student_dashboard')}}">Student Dashboard</a>
     {% endif %}
     {% if artist in current_user.role %}
-    <a class="btn btn-primary btn-block btn-large" href="{{url_for('account.artist_dashboard')}}">ARTIST DASHBOARD</a>
+    <a class="btn btn-primary btn-block btn-large" href="{{url_for('account.artist_dashboard')}}">Artist Dashboard</a>
+    {% endif %}
+    {% if youtube_img_creator in current_user.role or youtube_admin in current_user.role %}
+    <a class="btn btn-primary btn-block btn-large" href="{{url_for('youtube.home')}}">Youtube Dashboard</a>
     {% endif %}
     
 </div>

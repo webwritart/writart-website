@@ -966,6 +966,10 @@ def role_management():
     customer = db.session.query(Role).filter_by(name='customer').one_or_none()
     client = db.session.query(Role).filter_by(name='client').one_or_none()
     instructor = db.session.query(Role).filter_by(name='instructor').one_or_none()
+    youtube_img_creator = db.session.query(Role).filter_by(name='youtube_img_creator').one_or_none()
+    youtube_admin = db.session.query(Role).filter_by(name='youtube_admin').one_or_none()
+
+    roles = [(a.name, a.name.capitalize()) for a in db.session.query(Role).all()]
     matching_member_dict = {}
     if request.method == 'POST':
         email = request.form.get('email')
@@ -994,6 +998,12 @@ def role_management():
         elif request.form.get('role') == 'client' and client not in user.role:
             user.role.append(client)
             flash(f"{email} has been assigned client role", "success")
+        elif request.form.get('role') == 'youtube_img_creator' and youtube_img_creator not in user.role:
+            user.role.append(youtube_img_creator)
+            flash(f"{email} has been assigned youtube_img_creator role", "success")
+        elif request.form.get('role') == 'youtube_admin' and youtube_admin not in user.role:
+            user.role.append(youtube_admin)
+            flash(f"{email} has been assigned youtube_admin role", "success")
         elif request.form.get('role') == 'instructor' and instructor not in user.role:
             user.role.append(instructor)
             flash(f"{email} has been assigned instructor role", "success")
@@ -1001,31 +1011,37 @@ def role_management():
             flash(f"{email} already has this role!!""success")
         db.session.commit()
 
-        if request.form.get('role') == 'student1' and student in user.role:
+        if request.form.get('role_remove') == 'student' and student in user.role:
             user.role.remove(student)
             flash(f"{email} has been removed from student role", "success")
-        elif request.form.get('role') == 'admin1' and admin in user.role:
+        elif request.form.get('role_remove') == 'admin' and admin in user.role:
             user.role.remove(admin)
             flash(f"{email} has been removed from admin role", "success")
-        elif request.form.get('role') == 'animation_admin1' and animation_admin in user.role:
+        elif request.form.get('role_remove') == 'animation_admin' and animation_admin in user.role:
             user.role.remove(animation_admin)
             flash(f"{email} has been removed from admin role", "success")
-        elif request.form.get('role') == 'editor1' and editor in user.role:
+        elif request.form.get('role_remove') == 'editor' and editor in user.role:
             user.role.remove(editor)
             flash(f"{email} has been removed from editor role", "success")
-        elif request.form.get('role') == 'blogger1' and blogger in user.role:
+        elif request.form.get('role_remove') == 'blogger' and blogger in user.role:
             user.role.remove(blogger)
             flash(f"{email} has been removed from blogger role", "success")
-        elif request.form.get('role') == 'artist1' and artist in user.role:
+        elif request.form.get('role_remove') == 'artist' and artist in user.role:
             user.role.remove(artist)
             flash(f"{email} has been removed from artist role", "success")
-        elif request.form.get('role') == 'customer1' and customer in user.role:
+        elif request.form.get('role_remove') == 'customer' and customer in user.role:
             user.role.remove(customer)
             flash(f"{email} has been removed from customer role", "success")
-        elif request.form.get('role') == 'animation_client1' and client in user.role:
+        elif request.form.get('role_remove') == 'animation_client' and client in user.role:
             user.role.remove(client)
             flash(f"{email} has been removed from animation_client role", "success")
-        elif request.form.get('role') == 'instructor1' and instructor in user.role:
+        elif request.form.get('role_remove') == 'youtube_img_creator' and youtube_img_creator in user.role:
+            user.role.remove(youtube_img_creator)
+            flash(f"{email} has been removed from youtube_img_creator role", "success")
+        elif request.form.get('role_remove') == 'youtube_admin' and youtube_admin in user.role:
+            user.role.remove(youtube_admin)
+            flash(f"{email} has been removed from youtube_admin role", "success")
+        elif request.form.get('role_remove') == 'instructor' and instructor in user.role:
             user.role.remove(instructor)
             flash(f"{email} has been removed from instructor role", "success")
         db.session.commit()
@@ -1063,7 +1079,7 @@ def role_management():
         return redirect(url_for('manager.role_management'))
     admin = db.session.query(Role).filter_by(name='admin').one_or_none()
     return render_template('role_management.html', logged_in=current_user.is_authenticated, admin=admin,
-                           current_year=current_year, member_dict=matching_member_dict)
+                           current_year=current_year, member_dict=matching_member_dict, roles=roles)
 
 
 @login_required

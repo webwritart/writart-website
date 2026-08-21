@@ -21,8 +21,8 @@ date_time_now = datetime.now().replace(microsecond=0)
 @youtube.route('/', methods=['GET', 'POST'])
 def home():
     admin = db.session.query(Role).filter_by(name='admin').one_or_none()
-    if 'youtube_logged_in' not in session or session['youtube_logged_in'] != True:
-        return redirect(url_for('youtube.login'))
+    if not current_user.is_authenticated:
+        return redirect(url_for('account.login'))
     else:
         global first_channel, first_video
         channels = []
@@ -250,24 +250,4 @@ def save_audio():
             db.session.commit()
             return jsonify(success='success')
 
-
-@youtube.route('/login', methods=['GET', 'POST'])
-def login():
-    username_list = ['abhijeet', 'shwetabh', 'yash']
-    default_password = '@iig974#lon99!'
-    if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
-        if username in username_list and password == default_password:
-            session['youtube_logged_in'] = True
-            return redirect(url_for('youtube.home'))
-        else:
-            flash("Please enter the correct username and password", category="error")
-    return render_template('youtube_login.html', logged_in=current_user.is_authenticated)
-
-
-@youtube.route('/logout', methods=['GET', 'POST'])
-def logout():
-    session['youtube_logged_in'] = False
-    return redirect(url_for('youtube.login'))
     

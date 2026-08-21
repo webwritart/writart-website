@@ -36,20 +36,6 @@
         width: 100%;
         justify-content: center;
     }
-    #logout-form {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        padding: 1%;
-    }
-    #logout-btn {
-        width: 20%;
-        background: rgb(93, 103, 66);
-        border-radius: 1.5rem;
-        color: white;
-        font-weight: 600;
-        padding: .2%
-    }
     #display {
         width: 80%;
         display: flex;
@@ -345,10 +331,6 @@
             width: 90%;
             height: 50%;
         }
-        #logout-btn {
-            width: 30%;
-            font-size: .8rem;
-        }
         #temp_title {
             font-size: 1rem;
         }
@@ -383,9 +365,6 @@
 </style>
 
 <div id="root-container">
-    <form id="logout-form" action="{{url_for('youtube.logout')}}" method="post">
-        <button type="submit" name="submit" value="logout" id="logout-btn">Logout</button>
-    </form>
     <div id="main-section">
         <div id="display">
             <p id="temp_title">{{ default_video_dict['temp_title'] }}</p>

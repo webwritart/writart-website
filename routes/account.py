@@ -192,6 +192,8 @@ def main_dashboard():
     student = db.session.query(Role).filter_by(name='student').scalar()
     artist = db.session.query(Role).filter_by(name='artist').scalar()
     instructor = db.session.query(Role).filter_by(name='instructor').scalar()
+    youtube_img_creator = db.session.query(Role).filter_by(name='youtube_img_creator').scalar()
+    youtube_admin = db.session.query(Role).filter_by(name='youtube_admin').scalar()
 
     roles = current_user.role
 
@@ -200,7 +202,7 @@ def main_dashboard():
             return redirect(url_for('account.student_dashboard', logged_in=current_user.is_authenticated, current_year=current_year))
 
     return render_template('main_dashboard.html', logged_in=current_user.is_authenticated, current_year=current_year, admin=admin,
-                           artist=artist, instructor=instructor, student=student)
+                           artist=artist, instructor=instructor, student=student, youtube_img_creator=youtube_img_creator, youtube_admin=youtube_admin)
 
 
 
@@ -2078,6 +2080,8 @@ def login():
                 admin = db.session.query(Role).filter_by(name='admin').scalar()
                 instructor = db.session.query(Role).filter_by(name='instructor').scalar()
                 artist = db.session.query(Role).filter_by(name='artist').scalar()
+                youtube_img_creator = db.session.query(Role).filter_by(name='youtube_img_creator').scalar()
+
                 user_roles = current_user.role
                 session['logged_in'] = True
                 if session.get('url') == url_for('manager.youtube_manager'):
@@ -2091,13 +2095,15 @@ def login():
                 if len(user_roles) > 1:
                     return redirect(url_for('account.main_dashboard'))
                 else:
-                    if student in user_roles:
+                    if youtube_img_creator in user_roles and len(user_roles) < 2:
+                        return redirect(url_for('youtube.home'))
+                    if student in user_roles and len(user_roles) < 2:
                         return redirect(url_for('account.student_dashboard'))
                     if admin in user_roles:
                         return redirect(url_for('manager.home'))
-                    if instructor in user_roles:
+                    if instructor in user_roles and len(user_roles) < 2:
                         return redirect(url_for('account.instructor_dashboard'))
-                    if artist in user_roles:
+                    if artist in user_roles and len(user_roles) < 2:
                         return redirect(url_for('account.artist_dashboard'))
                     if not current_user.sex or current_user.sex == '':
                         return render_template('update_account.html')
