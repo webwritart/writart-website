@@ -217,12 +217,16 @@ def image_feedback():
                         assigned_to_name = db.session.query(Member).filter_by(uuid=c.assigned_to_uuid).one_or_none().name
                     except:
                         assigned_to_name = ''
+                    try:
+                        assigned_to_uuid = int(c.assigned_to_uuid)
+                    except:
+                        assigned_to_uuid = None
                     image_dict[c.uuid] = {
                         'uuid': c.uuid,
                         'file_path': c.file_path,
                         'feedback': c.feedback,
                         'approval_status': approval_status_tuple,
-                        'assigned_to_uuid': int(c.assigned_to_uuid),
+                        'assigned_to_uuid': assigned_to_uuid,
                         'assigned_to_name': assigned_to_name
                     }
             all_mates = [(a.uuid, a.name) for a in db.session.query(Member).all() if len([b for b in a.role if b.name == 'youtube_img_creator']) > 0]
