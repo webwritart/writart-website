@@ -194,32 +194,33 @@ def upload_images():
 @youtube.route('/image-feedback', methods=['GET', 'POST'])
 def image_feedback():
     admin = db.session.query(Role).filter_by(name='admin').one_or_none()
-    if current_user.is_authenticated and admin in current_user.role:
-        is_admin = True
+    youtube_img_creator = db.session.query(Role).filter_by(name='youtube_img_creator').one_or_none()
+    youtube_admin = db.session.query(Role).filter_by(name='youtube_admin').one_or_none()
+    if not current_user.is_authenticated:
+        return redirect(url_for('account.login'))
     else:
-        is_admin = False
-    if not session.get('youtube_logged_in') or session['youtube_logged_in'] != True:
-        return redirect(url_for('youtube.login'))
-    else:
-        video_uuid = request.args.get('video_uuid')
-        image_dict = {}
-        video_component_list = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar().components
-        for c in video_component_list:
-            if c.component_type == 'image':
-                approval_status = c.approval_status
-                if approval_status == 'approved':
-                    approval_status_tuple = (c.approval_status, '#2dad31')
-                elif approval_status == 'pending':
-                    approval_status_tuple = (c.approval_status, "#a87e2a")
-                elif approval_status == 'rejected':
-                    approval_status_tuple = (c.approval_status, "#606060")
-                image_dict[c.uuid] = {
-                    'uuid': c.uuid,
-                    'file_path': c.file_path,
-                    'feedback': c.feedback,
-                    'approval_status': approval_status_tuple
-                }
-        temp_title = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).one_or_none().temp_title
+        if youtube_img_creator not in current_user.role or youtube_admin not in current_user.role:
+            return redirect(url_for('main.home'))
+        else:
+            video_uuid = request.args.get('video_uuid')
+            image_dict = {}
+            video_component_list = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar().components
+            for c in video_component_list:
+                if c.component_type == 'image':
+                    approval_status = c.approval_status
+                    if approval_status == 'approved':
+                        approval_status_tuple = (c.approval_status, '#2dad31')
+                    elif approval_status == 'pending':
+                        approval_status_tuple = (c.approval_status, "#a87e2a")
+                    elif approval_status == 'rejected':
+                        approval_status_tuple = (c.approval_status, "#606060")
+                    image_dict[c.uuid] = {
+                        'uuid': c.uuid,
+                        'file_path': c.file_path,
+                        'feedback': c.feedback,
+                        'approval_status': approval_status_tuple
+                    }
+            temp_title = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).one_or_none().temp_title
         return render_template('image_feedback.html', logged_in=current_user.is_authenticated, admin=admin, image_dict=image_dict, temp_title=temp_title, is_admin=is_admin)
 
 
