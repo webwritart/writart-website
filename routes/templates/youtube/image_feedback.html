@@ -327,7 +327,7 @@
                         <td style="background: {{image_dict[image]['approval_status'][1]}}">
                             <div>
                                 {% if youtube_admin in current_user.role %}
-                                <select id="{{image}}" class="approval-status-select" data-img_uuid="{{image}}" oninput="submitApprovalStatus(this.dataset.img_uuid)">
+                                <select id="approval-{{image}}" class="approval-status-select" data-img_uuid="{{image}}" oninput="submitApprovalStatus(this.dataset.img_uuid)">
                                     <option>Select</option>
                                     <option value="approved">Approved</option>
                                     <option value="rejected">Rejected</option>
@@ -541,7 +541,7 @@
 
 // ------------------------------------------- IMAGE APPROVAL STATUS -----------------------------------------------------
     function submitApprovalStatus(image_uuid) {
-        const approvalStatus = document.getElementById(image_uuid).value;
+        const approvalStatus = document.getElementById('approval-'+image_uuid).value;
         const endpointUrl = "{{ url_for('youtube.submit_approval_status') }}";
         const formData = new FormData();
         formData.append('image_uuid', image_uuid);
