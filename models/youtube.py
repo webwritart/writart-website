@@ -48,6 +48,7 @@ class YoutubeVideoComponent(db.Model):
     approval_status = db.Column(db.String(50)) # eg pending, approved, rejected, revise, etc.
     date_time = db.Column(db.String(50))
     youtube_video_id = db.Column(db.Integer, db.ForeignKey('youtube_video.id'))
+    member_id = db.Column(db.Integer, db.ForeignKey('member.id'))
 
     def __repr__(self):
         return f"Component type: {self.component_type}, subtype: {self.subtype}, date_time: {self.date_time}"

@@ -70,6 +70,7 @@ class Member(UserMixin, db.Model):
     given_coas = db.relationship('Coa', foreign_keys='Coa.artist_id', back_populates='artist')
     taken_coas = db.relationship('Coa', foreign_keys='Coa.client_id', back_populates='client')
     testimonials = db.relationship('Testimonial', backref='member')
+    youtube_video_component = db.relationship('YoutubeVideoComponent', backref='member')
 
 
     def __repr__(self):
