@@ -30,7 +30,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: 2%;
+        padding: 0% 2% 2% 2%;
     }
     #video-temp-title {
         font-weight: 700;
@@ -55,10 +55,12 @@
     td {
         height: 16vh;
     }
-    .col_1 { width: 20%; }
-    .col_2 { width: 60%; }
+    .col_1 { width: 10%; }
+    .col_2 { width: 30%; }
     .col_3 { width: 10%; }
     .col_4 { width: 10%; }
+    .col_5 { width: 20%; }
+    .col_6 { width: 10%; }
     th {
         background: rgb(77, 98, 58);
         color: white;
@@ -71,7 +73,7 @@
     }
     .revision-btn {
         border: none;
-        background: #083011;
+        background: #293c0a;
         color: white;
         padding: 2% 0%;
         width: 100%;
@@ -80,7 +82,50 @@
         font-size: .8rem;
     }
     .revision-btn:hover {
-        background: #37731F;
+        background: #4a6a1d;
+    }
+    .img-feedback-recording-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+    .image-feedback-recording-btn {
+        border: none;
+        background: #2a3c11;
+        color: white;
+        padding: .8% 2%;
+        border-radius: 1.5rem;
+        transition: background .15s ease-in-out;
+        font-size: .8rem;
+        margin: 1%;
+    }
+    .image-feedback-recording-btn:hover {
+        background: #4a6a1d;
+    }
+    .approval-status-select {
+        width: 100%;
+        padding: 2% 0%;
+        border-radius: 1.5rem;
+        font-size: .8rem;
+        background: #d5f6a6;
+        color: black;
+        border: none;
+    }
+    .assigned-to-name {
+        padding: .5%;
+        font-size: 1rem;
+        background: #f9ffc7;
+        color: rgb(208, 101, 59);
+        font-weight: 700;
+    }
+    .assigned-to-mate {
+        padding: .5%;
+        font-size: .9rem;
+        background: #377a18;
+        color: white;
+        border-radius: 1.5rem;
+        width: 100%;
     }
     /* ------------------------------------------------ LARGE IMAGE POPUP --------------------------------------------- */
     .popup {
@@ -103,8 +148,12 @@
         justify-content: center;
         align-items: center;
     }
-
+    
     .popup-content img {
+        max-width: 100%;
+        max-height: 100%;
+    }
+    #feedback-recording-popup-img {
         max-width: 100%;
         max-height: 100%;
     }
@@ -117,12 +166,107 @@
         font-size: 35px;
         cursor: pointer;
     }
+    .close:hover {
+        color: white;
+    }
+    /* ------------------------------------------------ AUDIO RECORDING POPUP --------------------------------------------- */
+    #audio-recording-popup-content-inner {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        width: 100%;
+    }
     #audio-recording-container {
         display: flex;
         align-items: center;
         justify-content: center;
         margin: 1%;
     }
+    #audio-recording-popup-btn-container {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+        margin: 1%;
+    }
+    #startBtn, #stopBtn, #save-image-feedback-recording {
+        border: none;
+        background: #b6e372;
+        color: black;
+        padding: 0% 2% !important;
+        border-radius: 1.5rem;
+        transition: background .15s ease-in-out;
+        font-size: .8rem;
+        margin: .5%
+    }
+    #startBtn:disabled, #stopBtn:disabled, #save-image-feedback-recording:disabled {
+        background: #838383;
+        color: black;
+        cursor: not-allowed;
+    }
+    /* ------------------------------------------------- UPLOAD REVISION IMAGE ------------------------------------------------ */
+    .form-button {
+        border: none;
+        background: #2a3c11;
+        color: white;
+        padding: .8% 2%;
+        border-radius: 1.5rem;
+        transition: background .15s ease-in-out;
+        font-size: .8rem;
+        width: 100%;
+    }
+    .form-button:hover {
+        background: #4a6a1d;
+    }
+    #upload-revision-header {
+        width: 100%;
+        text-align: center;
+        font-weight: 600;
+        margin: 0% 0% 2% 0% !important;
+    }
+    #upload-revision-form-container {
+        background: rgb(237, 244, 206);
+        width: 60%;
+        padding: 3%;
+        border-radius: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    #upload-revision-previous-image-container {
+        width: 30%;
+        height: 30vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    #upload-revision-previous-image {
+        max-width: 100%;
+        max-height: 100%;
+    }
+    input {
+        border-radius: 1.5rem;
+        color: black;
+        border: none;
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.6);
+        padding: 0.5% 1% .5% 2%;
+    }
+    input::placeholder {
+        color: rgb(105, 126, 56);
+    }
+    #revision-image-files {
+        color: rgb(105, 126, 56);
+    }
+    #revision-image-files::file-selector-button {
+        border-radius: 1.5rem;
+        color: rgb(105, 126, 56);
+        border: none;
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.6);
+        padding: 0.5% 1% .5% 2%;
+    }
+        
+
 </style>
 <div id="root-container">
     <p id="title">Images Feedback</p>
@@ -134,7 +278,9 @@
                 <thead>
                     <tr>
                         <th class="col_1">Images (click to enlarge)</th>
+                        <th class="col_5">Image text</th>
                         <th class="col_2">Feedback</th>
+                        <th class="col_6">Assigned to</th>
                         <th class="col_3">Upload Revision</th>
                         <th class="col_4">Approval status</th>
                     </tr>
@@ -143,16 +289,46 @@
                     {% for image in image_dict %}
                     <tr>
                         <td><img class="image" src="{{image_dict[image]['file_path']}}" data-image-path="{{image_dict[image]['file_path']}}" onclick="openImageLargeSize(this.dataset.imagePath)"></td>
+                        <td>{{image_dict[image]['text']}}</td>
                         <td>
-                            {% if is_admin %}
-                            <button class="image-feedback-recording-btn" data-image_uuid="{{image_dict[image]['uuid']}}" onclick="openImageFeedbackRecordingPopup(this.dataset.image_uuid)">Record Feedback</button>
+                            <div class="img-feedback-recording-container">
+                                {% if youtube_admin in current_user.role %}
+                                <button class="image-feedback-recording-btn" data-img_path="{{image_dict[image]['file_path']}}" data-image_uuid="{{image_dict[image]['uuid']}}" onclick="openImageFeedbackRecordingPopup(this.dataset.image_uuid, this.dataset.img_path)">Record Feedback</button>
+                                {% endif %}
+                                {% if image_dict[image]['feedback'] %}
+                                <audio class="feedback-audio" src="{{image_dict[image]['feedback']}}" controls></audio>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td class="assigned-to-name">
+                            {% if youtube_admin in current_user.role %}
+                            <select class="assigned-to-mate" id="{{image}}" data-img_uuid="{{image}}" oninput="assignMate(this.dataset.img_uuid)">
+                                <option>Select mate</option>
+                                {% for mate in mates %}
+                                <option value="{{mate[0]}}">{{mate[1]}}</option>
+                                {% endfor %}
+                            </select>
                             {% endif %}
-                            {% if image_dict[image]['feedback'] %}
-                            <audio class="feedback-audio" src="{{image_dict[image]['feedback']}}" controls></audio>
+                            {{image_dict[image]['assigned_to_name']}}
+                        </td>
+                        <td>
+                            {% if image_dict[image]['assigned_to_uuid'] == current_user.uuid %}
+                            <button class="revision-btn" data-img_uuid="{{image}}" data-img_path="{{image_dict[image]['file_path']}}" onclick="uploadRevisionPopup(this.dataset.img_uuid, this.dataset.img_path)">Upload Revision</button>
                             {% endif %}
                         </td>
-                        <td><button class="revision-btn" onclick="uploadRevision({{ image_dict['uuid'] }})">Upload Revision</button></td>
-                        <td style="background: {{image_dict[image]['approval_status'][1]}}">{{image_dict[image]['approval_status'][0]}}</td>
+                        <td style="background: {{image_dict[image]['approval_status'][1]}}">
+                            <div>
+                                {% if youtube_admin in current_user.role %}
+                                <select id="{{image}}" class="approval-status-select" data-img_uuid="{{image}}" oninput="submitApprovalStatus(this.dataset.img_uuid)">
+                                    <option>Select</option>
+                                    <option value="approved">Approved</option>
+                                    <option value="rejected">Rejected</option>
+                                    <option value="pending">Pending</option>
+                                </select>
+                                {% endif %}
+                            {{image_dict[image]['approval_status'][0]}}
+                            </div>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -169,11 +345,34 @@
 </div>
 <div id="audio-recording-popup" class="popup">
     <div class="popup-content">
-        <span class="close" onclick="closePopup()">&times;</span>
-        <button id="startBtn">Start Recording</button>
-        <button id="stopBtn" disabled>Stop Recording</button>
-        <audio id="audioPlayback" controls></audio>
-        <button id="save-image-feedback-recording">Save Audio</button>
+        <div id="audio-recording-popup-content-inner">
+            <span class="close" onclick="closePopup()">&times;</span>
+            <img id="feedback-recording-popup-img" src="">
+            <div id="audio-recording-popup-btn-container">
+                <button id="startBtn">Start Recording</button>
+                <button id="stopBtn" disabled>Stop Recording</button>
+                <audio id="audioPlayback" controls></audio>
+                <button id="save-image-feedback-recording">Save Audio</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="upload-revision-popup" class="popup">
+    <div class="popup-content">
+        <div id="upload-revision-form-container">
+            <span class="close" onclick="closePopup()">&times;</span>
+            <div id="upload-revision-previous-image-container">
+                <img id="upload-revision-previous-image" src="/static/files/youtube/2/2/images/kristofer-loffan-labedzki-all-characters-siluette-lineup.jpg">
+            </div>
+            <form id="upload-revision-form" enctype="multipart/form-data">
+                <p id="upload-revision-header">Upload revision</p>
+                <input type="hidden" id="parent-img-uuid" name="parent-img-uuid">
+                <input type="file" id="revision-image-files" name="revision_image_files" class="file-upload-input" accept=".jpg, .jpeg, .png, image/jpeg, image/png" required>
+                <input type="text" id="revision-image-text" name="revision-image-text" placeholder="Anything you want to say?">
+                <button type="submit" name="submit" value="upload_revision" id="upload-revision-btn" class="form-button">Upload revised image</button>
+                <div id="upload-image-status-message"></div>
+            </form>
+        </div>
     </div>
 </div>
 <script>
@@ -183,6 +382,7 @@
     function closePopup() {
         document.getElementById("image-popup").style.display = "none";
         document.getElementById("audio-recording-popup").style.display = "none";
+        document.getElementById("upload-revision-popup").style.display = "none";
     }
 
     function openImageLargeSize(imagePath) {
@@ -191,9 +391,10 @@
         openPopup();
     }
     
-    function openImageFeedbackRecordingPopup(image_uuid) {
+    function openImageFeedbackRecordingPopup(image_uuid, img_path) {
         document.getElementById("audio-recording-popup").style.display = "block";
         document.getElementById("save-image-feedback-recording").onclick = () => saveAudio(image_uuid);
+        document.getElementById("feedback-recording-popup-img").src = img_path;
     }
     // ----------------------------------------------- FEEDBACK RECORDING ------------------------------------------------
     // Keep track of the recorder instance and raw audio data
@@ -203,7 +404,10 @@
 
     const startBtn = document.getElementById('startBtn');
     const stopBtn = document.getElementById('stopBtn');
+    const saveAudioBtn = document.getElementById('save-image-feedback-recording');
     const audioPlayback = document.getElementById('audioPlayback');
+
+    saveAudioBtn.disabled = true;
 
     // 1. Start Recording
     startBtn.addEventListener('click', async () => {
@@ -257,6 +461,7 @@
             // Reset UI button states
             startBtn.disabled = false;
             stopBtn.disabled = true;
+            saveAudioBtn.disabled = false;
         }
     });
     function saveAudio(image_uuid) {
@@ -282,7 +487,94 @@
         } else {
             alert('No audio data available.');
         }
+    }
+    // --------------------------------------- REVISION IMAGE POPUP ----------------------------------------------
+    function uploadRevisionPopup(img_uuid, img_path) {
+        document.getElementById("upload-revision-popup").style.display = "block";
+        document.getElementById("parent-img-uuid").value = img_uuid;
+        document.getElementById("upload-revision-previous-image").src = img_path;
+    }
+    const revisionForm = document.getElementById('upload-revision-form');
+    revisionForm.addEventListener('submit', (event) => {
+        event.preventDefault(); // Prevent the form from submitting normally
+        const saveRevisionImageEndpointUrl = "{{ url_for('youtube.save_revision_img') }}";
+        const statusMessage = document.getElementById('upload-revision-status-message');
+        const fileInput = document.getElementById("revision-image-files");
+        const parentImgUuid = document.getElementById("parent-img-uuid").value;
+        const revisionImageText = document.getElementById("revision-image-text").value;
 
+        files = fileInput.files;
+        if (files.length === 0) {
+            statusMessage.textContent = 'Please select at least one image file.';
+            return;
+        }
+        const formData = new FormData();
+        formData.append('parent_img_uuid', parentImgUuid);
+        for (let i = 0; i < files.length; i++) {
+            formData.append('revised_images[]', files[i]);
+        }
+        formData.append('type', 'upload_revision_img');
+        formData.append('revision_image_text', revisionImageText);
+
+        fetch(saveRevisionImageEndpointUrl, { method: 'POST', body: formData })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Revision uploaded successfully.');
+                } else {
+                    alert('Failed to upload revision.');
+                }
+            })
+            .catch(error => {
+                console.error('Error uploading revision:', error);
+                alert('Failed to upload revision.');
+            });
+    });
+
+// ------------------------------------------- IMAGE APPROVAL STATUS -----------------------------------------------------
+    function submitApprovalStatus(image_uuid) {
+        const approvalStatus = document.getElementById(image_uuid).value;
+        const endpointUrl = "{{ url_for('youtube.submit_approval_status') }}";
+        const formData = new FormData();
+        formData.append('image_uuid', image_uuid);
+        formData.append('approval_status', approvalStatus);
+        formData.append('type', 'submit_approval_status');
+        fetch(endpointUrl, { method: 'POST', body: formData })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert('Failed to update approval status.');
+                }
+            })
+            .catch(error => {
+                console.error('Error updating approval status:', error);
+                alert('Failed to update approval status.');
+            });
+    }
+// ------------------------------------------- ASSIGN MATE -----------------------------------------------------
+    function assignMate(image_uuid) {
+        const mateUuid = document.getElementById(image_uuid).value;
+        const endpointUrl = "{{ url_for('youtube.assign_mate') }}";
+        const formData = new FormData();
+        formData.append('image_uuid', image_uuid);
+        formData.append('mate_uuid', mateUuid);
+        formData.append('type', 'assign_mate');
+
+        fetch(endpointUrl, { method: 'POST', body: formData })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert('Failed to assign mate.');
+                }
+            })
+            .catch(error => {
+                console.error('Error assigning mate:', error);
+                alert('Failed to assign mate.');
+            });
     }
 </script>
 

@@ -47,6 +47,7 @@ class YoutubeVideoComponent(db.Model):
     feedback = db.Column(db.String(1000)) # feedback for each video, image or any other work
     approval_status = db.Column(db.String(50)) # eg pending, approved, rejected, revise, etc.
     date_time = db.Column(db.String(50))
+    assigned_to_uuid = db.Column(db.String(500))  # uuid of the team member the task is assigned to
     youtube_video_id = db.Column(db.Integer, db.ForeignKey('youtube_video.id'))
     member_id = db.Column(db.Integer, db.ForeignKey('member.id'))
     revisions = db.relationship('YoutubeVideoComponentRevision', backref='youtube_video_component')

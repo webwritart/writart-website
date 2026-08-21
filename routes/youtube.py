@@ -8,6 +8,7 @@ import markdown
 from werkzeug.utils import secure_filename
 import os, json
 from operations.miscellaneous import *
+from operations.messenger import *
 from datetime import datetime
 
 
@@ -212,43 +213,111 @@ def image_feedback():
                         approval_status_tuple = (c.approval_status, "#a87e2a")
                     elif approval_status == 'rejected':
                         approval_status_tuple = (c.approval_status, "#606060")
+                    try:
+                        assigned_to_name = db.session.query(Member).filter_by(uuid=c.assigned_to_uuid).one_or_none().name
+                    except:
+                        assigned_to_name = ''
                     image_dict[c.uuid] = {
                         'uuid': c.uuid,
                         'file_path': c.file_path,
                         'feedback': c.feedback,
-                        'approval_status': approval_status_tuple
+                        'approval_status': approval_status_tuple,
+                        'assigned_to_uuid': int(c.assigned_to_uuid),
+                        'assigned_to_name': assigned_to_name
                     }
+            all_mates = [(a.uuid, a.name) for a in db.session.query(Member).all() if len([b for b in a.role if b.name == 'youtube_img_creator']) > 0]
             temp_title = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).one_or_none().temp_title
         else:
             return render_template('admin_area.html')
-        return render_template('image_feedback.html', logged_in=current_user.is_authenticated, admin=admin, image_dict=image_dict, temp_title=temp_title)
+        return render_template('image_feedback.html', logged_in=current_user.is_authenticated, admin=admin, image_dict=image_dict, temp_title=temp_title, youtube_admin=youtube_admin, youtube_img_creator=youtube_img_creator, mates=all_mates)
+
+@youtube.route('/save-revision-img', methods=['POST'])
+def save_revision_img():
+    if request.method == 'POST' and request.form.get('type') == 'upload_revision_img':
+        revised_image = request.files.getlist('revised_images[]')[0]
+        revision_image_text = request.form.get('revision_image_text')
+        parent_img_uuid = request.form.get('parent_img_uuid')
+        parent_image = db.session.query(YoutubeVideoComponent).filter_by(uuid=parent_img_uuid).scalar()
+
+        base_path = f"./static/files/youtube/{parent_image.youtube_video.youtube_channel.id}/{parent_image.youtube_video.id}/image_revisions/"
+        if not os.path.exists(base_path):
+            os.makedirs(base_path)
+
+        existing_uuid_list = [a.uuid for a in db.session.query(YoutubeVideoComponentRevision)]
+        uuid = create_uuid(existing_uuid_list, 9)
+        file_name = revised_image.filename
+        save_path = base_path + file_name
+        revised_image.save(save_path)
+
+        version_list = [a.version for a in parent_image.revisions]
+        if len(version_list) == 0:
+            version = str(1.0+.1)
+        else:
+            version_list_int = [float(i) for i in version_list]
+            version = str(max(version_list_int)+.1)
+
+        entry = YoutubeVideoComponentRevision(
+            uuid=uuid,
+            version=version,
+            file_path=save_path[1:],
+            text=revision_image_text,
+            date_time=date_time_now,
+            youtube_video_component_id=parent_image.id
+        )
+        db.session.add(entry)
+        db.session.commit()
+        return jsonify(success='success')
+
+@youtube.route('/assign-mate', methods=['POST'])
+def assign_mate():
+    if request.method == 'POST' and request.form.get('type') == 'assign_mate':
+        image_uuid = request.form.get('image_uuid')
+        mate_uuid = request.form.get('mate_uuid')
+        mate_name = db.session.query(Member).filter_by(uuid=mate_uuid).scalar().name
+        mate_email = db.session.query(Member).filter_by(uuid=mate_uuid).scalar().email
+        image = db.session.query(YoutubeVideoComponent).filter_by(uuid=image_uuid).scalar()
+        image.assigned_to_uuid = mate_uuid
+        db.session.commit()
+        subject = f'New image assigned to you - {image.youtube_video.temp_title}'
+        video_name = make_unicode_bold(image.youtube_video.temp_title)
+        body = f"Hi {mate_name},\nYou have been assigned an image for revision.\nVideo name: {video_name}\nHope you'll begin ASAP!" 
+        send_email_studio(subject, [mate_email], body, '', {})
+        return jsonify(success='success')
 
 
+@youtube.route('/submit-approval-status', methods=['POST'])
+def submit_approval_status():
+    if request.method == 'POST' and request.form.get('type') == 'submit_approval_status':
+        image_uuid = request.form.get('image_uuid')
+        approval_status = request.form.get('approval_status')
+        image = db.session.query(YoutubeVideoComponent).filter_by(uuid=image_uuid).scalar()
+        image.approval_status = approval_status
+        db.session.commit()
+        return jsonify(success='success')
+    
+    
 @youtube.route('/save_audio', methods=['POST'])
 def save_audio():
-    if not session.get('youtube_logged_in') or session['youtube_logged_in'] != True:
-        return redirect(url_for('youtube.login'))
-    else:
-        if request.method == 'POST' and request.form.get('type') == 'save_audio':
-            image_uuid = request.form.get('image_uuid')
-            audio = request.files['audio']
-            image = db.session.query(YoutubeVideoComponent).filter_by(uuid=image_uuid).scalar()
-            video = image.youtube_video
-            video_id = video.id
-            channel = video.youtube_channel
-            channel_id = channel.id
+    if request.method == 'POST' and request.form.get('type') == 'save_audio':
+        image_uuid = request.form.get('image_uuid')
+        audio = request.files['audio']
+        image = db.session.query(YoutubeVideoComponent).filter_by(uuid=image_uuid).scalar()
+        video = image.youtube_video
+        video_id = video.id
+        channel = video.youtube_channel
+        channel_id = channel.id
 
-            if audio.filename == '':
-                flash('No selected file', 'error')
-                return redirect(request.url)
-            filename = f"{image_uuid}_feedback.webm"
-            save_base_path = f"./static/files/youtube/{channel_id}/{video_id}/image_feedback/"
-            if not os.path.exists(save_base_path):
-                os.makedirs(save_base_path)
-            save_path = save_base_path + filename
-            audio.save(save_path)
-            image.feedback = save_path[1:]
-            db.session.commit()
-            return jsonify(success='success')
+        if audio.filename == '':
+            flash('No selected file', 'error')
+            return redirect(request.url)
+        filename = f"{image_uuid}_feedback.webm"
+        save_base_path = f"./static/files/youtube/{channel_id}/{video_id}/image_feedback/"
+        if not os.path.exists(save_base_path):
+            os.makedirs(save_base_path)
+        save_path = save_base_path + filename
+        audio.save(save_path)
+        image.feedback = save_path[1:]
+        db.session.commit()
+        return jsonify(success='success')
 
     
