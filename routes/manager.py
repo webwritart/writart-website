@@ -1569,6 +1569,7 @@ def youtube_manager():
                             text=dialogue_narration,
                             date_time=date_time,
                             approval_status='pending',
+                            member_id=current_user.id,
                             youtube_video_id=video_id
                         )
                         db.session.add(entry)
@@ -1591,7 +1592,8 @@ def youtube_manager():
                         file_path=save_path[1:],
                         date_time=date_time,
                         approval_status='pending',
-                        youtube_video_id=video_id
+                        youtube_video_id=video_id,
+                        member_id=current_user.id
                     )
                     db.session.add(entry)
                     db.session.commit()
@@ -1615,7 +1617,8 @@ def youtube_manager():
                             text=video_img_instruction,
                             date_time=date_time,
                             approval_status='pending',
-                            youtube_video_id=video_id
+                            youtube_video_id=video_id,
+                            member_id=current_user.id
                         )
                         db.session.add(entry)
                     db.session.commit()
@@ -1642,7 +1645,8 @@ def youtube_manager():
                             text=thumbnail_instruction,
                             approval_status='pending',
                             date_time=date_time,
-                            youtube_video_id=video_id
+                            youtube_video_id=video_id,
+                            member_id=current_user.id
                         )
                         db.session.add(entry)
                     db.session.commit()
@@ -1666,7 +1670,8 @@ def youtube_manager():
                             text=youtube_card_instruction,
                             approval_status='pending',
                             date_time=date_time,
-                            youtube_video_id=video_id
+                            youtube_video_id=video_id,
+                            member_id=current_user.id
                         )
                         db.session.add(entry)
                     db.session.commit()
