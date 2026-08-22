@@ -542,6 +542,9 @@
     })
     async function downloadVideoImagesSubmit(event) {
         event?.preventDefault();
+        const downloadVideoImagesFormBtn = document.getElementById('download-video-images-form-btn');
+        downloadVideoImagesFormBtn.disabled = true;
+        downloadVideoImagesFormBtn.textContent = 'Downloading...';
         const endpointUrl = "{{ url_for('manager.youtube_manager') }}";
         const downloadVideoImagesVideo = document.getElementById('download-video-images-video');
         const videoUuid = downloadVideoImagesVideo.value;
@@ -583,6 +586,8 @@
             a.remove();
             URL.revokeObjectURL(url);
         }, 1000);
+        downloadVideoImagesFormBtn.disabled = false;
+        downloadVideoImagesFormBtn.textContent = 'Download';
     }
 
     function showExistingData() {
