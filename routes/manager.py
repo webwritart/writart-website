@@ -1565,9 +1565,6 @@ def youtube_manager():
                         uuid = create_uuid(existing_video_component_uuid_list, 9)
                         entry = YoutubeVideoComponent(
                             uuid=uuid,
-                            main=True,
-                            version_list=json.dumps([]),
-                            version='1.0',
                             component_type='dialogue_&_narration',
                             text=dialogue_narration,
                             date_time=date_time,
@@ -1589,9 +1586,6 @@ def youtube_manager():
                     voice_recording.save(save_path)
                     entry = YoutubeVideoComponent(
                         uuid=uuid,
-                        main=True,
-                        version_list=json.dumps([]),
-                        version='1.0',
                         component_type='voice_recording',
                         subtype=voice_recording_language,
                         file_path=save_path[1:],
@@ -1617,9 +1611,6 @@ def youtube_manager():
                         uuid = create_uuid(existing_video_component_uuid_list, 9)
                         entry = YoutubeVideoComponent(
                             uuid=uuid,
-                            main=True,
-                            version_list=json.dumps([]),
-                            version='1.0',
                             component_type='img_vid_instruction',
                             text=video_img_instruction,
                             date_time=date_time,
@@ -1671,9 +1662,6 @@ def youtube_manager():
                         uuid = create_uuid(existing_video_component_uuid_list, 9)
                         entry = YoutubeVideoComponent(
                             uuid=uuid,
-                            main=True,
-                            version_list=json.dumps([]),
-                            version='1.0',
                             component_type='youtube_card_instruction',
                             text=youtube_card_instruction,
                             approval_status='pending',

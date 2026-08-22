@@ -279,7 +279,7 @@
                         <label for="youtube-card-instruction">Youtube card instruction&ensp;</label>
                         <textarea id="youtube-card-instruction" type="text" name="youtube_card_instruction" placeholder="Youtube card instruction"></textarea>
                     </div>
-                    <button type="submit" name="submit" value="add-video-component" class="form-submit-btn">Add video component</button>
+                    <button type="submit" name="submit" value="add-video-component" id="add-video-component-submit-btn" class="form-submit-btn">Add video component</button>
                 </form>
                 <form id="send-email-notification-form">
                     <p class="section-title">Send Email Notification</p>
@@ -449,6 +449,8 @@
         const voiceRecordingLanguage = addVideoComponentForm.voice_recording_language.value;
         const voiceRecordingText = document.getElementById('voice-recording-text');
 
+        document.getElementById('add-video-component-submit-btn').textContent = 'Adding...';
+        document.getElementById('add-video-component-submit-btn').disabled = true;
         const formData = new FormData();
         formData.append('voice_recording', voiceRecording);
         formData.append('video_uuid', videoUuid);
@@ -458,6 +460,7 @@
         formData.append('thumbnail_instruction', thumbnailInstruction);
         formData.append('youtube_card_instruction', youtubeCardInstruction);
         formData.append('voice_recording_language', voiceRecordingLanguage);
+
         
         e.preventDefault();
         fetch(endpointUrl, {
@@ -468,6 +471,7 @@
         .then(data => {
             if (data.status == 'success') { 
                 alert(data.message);
+                window.location.reload();
             } else {
                 alert(data.message);
             }
