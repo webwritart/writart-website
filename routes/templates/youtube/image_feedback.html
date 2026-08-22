@@ -316,6 +316,7 @@
                             {% if youtube_admin in current_user.role %}
                             <select class="assigned-to-mate" id="assign-mate-{{image}}" data-img_uuid="{{image}}" oninput="assignMate(this.dataset.img_uuid)">
                                 <option>Select mate</option>
+                                <option value="remove-mate">Remove Mate</option>
                                 {% for mate in mates %}
                                 <option value="{{mate[0]}}">{{mate[1]}}</option>
                                 {% endfor %}

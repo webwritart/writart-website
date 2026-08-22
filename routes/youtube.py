@@ -324,17 +324,24 @@ def assign_mate():
     if request.method == 'POST' and request.form.get('type') == 'assign_mate':
         image_uuid = request.form.get('image_uuid')
         mate_uuid = request.form.get('mate_uuid')
-        mate_name = db.session.query(Member).filter_by(uuid=mate_uuid).scalar().name
-        mate_email = db.session.query(Member).filter_by(uuid=mate_uuid).scalar().email
         image = db.session.query(YoutubeVideoComponent).filter_by(uuid=image_uuid).scalar()
-        image.assigned_to_uuid = mate_uuid
-        image.approval_status = 'revision-required'
-        db.session.commit()
-        subject = f'New image assigned to you - {image.youtube_video.temp_title}'
-        video_name = make_unicode_bold(image.youtube_video.temp_title)
-        body = f"Hi {mate_name},\nYou have been assigned an image for revision.\nVideo name: {video_name}\nHope you'll begin ASAP!" 
-        send_email_studio(subject, [mate_email], body, '', {})
-        return jsonify(success='success')
+
+        if mate_uuid == 'remove-mate':
+            image.assigned_to_uuid = None
+            image.approval_status = 'pending'
+            db.session.commit()
+            return jsonify(success='success')
+        else:
+            mate_name = db.session.query(Member).filter_by(uuid=mate_uuid).scalar().name
+            mate_email = db.session.query(Member).filter_by(uuid=mate_uuid).scalar().email
+            image.assigned_to_uuid = mate_uuid
+            image.approval_status = 'revision-required'
+            db.session.commit()
+            subject = f'New image assigned to you - {image.youtube_video.temp_title}'
+            video_name = make_unicode_bold(image.youtube_video.temp_title)
+            body = f"Hi {mate_name},\nYou have been assigned an image for revision.\nVideo name: {video_name}\nHope you'll begin ASAP!" 
+            send_email_studio(subject, [mate_email], body, '', {})
+            return jsonify(success='success')
 
 
 @youtube.route('/submit-status', methods=['POST'])
