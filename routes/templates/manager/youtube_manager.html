@@ -104,6 +104,9 @@
     #send-email-notification-form {
         display: none;
     }
+    #download-video-images-form {
+        display: none;
+    }
     .section-title {
         font-weight: bold;
         font-size: 1.2rem;
@@ -189,6 +192,7 @@
                 <button id="add-channel-btn" class="form-btn" onclick="addChannel()">Add channel</button>
                 <button id="add-video-btn" class="form-btn" onclick="addVideo()">Add video</button>
                 <button id="add-video-component-btn" class="form-btn" onclick="addVideoComponent()">Add video component</button>
+                <button id="download-video-images" class="form-btn" onclick="downloadVideoImages()">Download video images</button>
                 <button id="send-email-notification-btn" class="form-btn" onclick="sendEmailNotification()">Send email notification</button>
             </div>
             <div id="btn-section-special">
@@ -295,6 +299,23 @@
                     </select>
                     <button type="submit" name="submit" value="send-email-notification" id="send-email-notification-form-btn" class="form-submit-btn">Send Email</button>
                 </form>
+                <form id="download-video-images-form">
+                    <p class="section-title">Download video images</p>
+                    <select name="video_uuid" id="download-video-images-video" required>
+                        <option value="">Select Video</option>
+                        {% for video in video_list %}
+                        <option value="{{video[0]}}">{{video[1]}}</option>
+                        {% endfor %}
+                    </select>
+                    <select name="status">
+                        <option value="">Select Status</option>
+                        <option value="approved">Approved</option>
+                        <option value="pending">Pending</option>
+                        <option value="rejected">Rejected</option>
+                        <option value="all">All</option>
+                    </select>
+                    <button type="submit" name="submit" value="download-video-images" id="download-video-images-form-btn" class="form-submit-btn" onclick="downloadVideoImagesSubmit(event)">Download</button>
+                </form>
             </div>
         </div>
     </div>
@@ -305,6 +326,7 @@
     const addVideoForm = document.getElementById("add-video-form");
     const addVideoComponentForm = document.getElementById("add-video-component-form");
     const sendEmailNotificationForm = document.getElementById("send-email-notification-form");
+    const downloadVideoImagesForm = document.getElementById("download-video-images-form");
     const operation = document.getElementById("operation");
     const videoUuid = document.getElementById("video_uuid");
     function hideAllForms() {
@@ -312,6 +334,7 @@
         addVideoForm.style.display = "none";
         addVideoComponentForm.style.display = "none";
         sendEmailNotificationForm.style.display = "none";
+        downloadVideoImagesForm.style.display = "none";
     }
     function addChannel() {
         hideAllForms();
@@ -328,6 +351,10 @@
     function sendEmailNotification() {
         hideAllForms();
         sendEmailNotificationForm.style.display = "block";
+    }
+    function downloadVideoImages() {
+        hideAllForms();
+        downloadVideoImagesForm.style.display = "block";
     }
 
     function hideAllOperations() {
@@ -513,6 +540,50 @@
             console.error('Error:', error);
         });
     })
+    async function downloadVideoImagesSubmit(event) {
+        event?.preventDefault();
+        const endpointUrl = "{{ url_for('manager.youtube_manager') }}";
+        const downloadVideoImagesVideo = document.getElementById('download-video-images-video');
+        const videoUuid = downloadVideoImagesVideo.value;
+        const videoTempTitle = downloadVideoImagesVideo.options[downloadVideoImagesVideo.selectedIndex].text;
+        const status = downloadVideoImagesForm.status.value;
+        data = {
+            type: 'download-video-images',
+            video_uuid: videoUuid,
+            status: status,
+            video_temp_title: videoTempTitle
+        }
+        const response = await fetch(endpointUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+       
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const blob = await response.blob();
+         
+
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+
+        a.download = `${videoTempTitle}.zip`;
+        a.style.display = "none";
+
+        document.body.appendChild(a);
+
+        a.click();
+
+
+        setTimeout(() => {
+            a.remove();
+            URL.revokeObjectURL(url);
+        }, 1000);
+    }
 
     function showExistingData() {
         const videoUuidValue = videoUuid.value;

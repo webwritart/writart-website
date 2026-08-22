@@ -72,6 +72,21 @@
         max-width: 100%;
         cursor: pointer;
     }
+    .image:hover {
+        filter: saturate(0);
+    }
+    .download-displaying-img-btn {
+        background: rgb(166, 166, 166);
+        border: none;
+        border-radius: 1.5rem;
+        width: 100%;
+        margin-top: 2%;
+        font-size: .8rem;
+        transition: all .15s ease-in-out;
+    }
+    .download-displaying-img-btn:hover {
+        background: rgb(130, 130, 130);
+    }
     .revision-btn {
         border: none;
         background: #293c0a;
@@ -297,7 +312,10 @@
                 <tbody>
                     {% for image in image_dict %}
                     <tr>
-                        <td><img class="image" src="{{image_dict[image]['file_path']}}" data-image-path="{{image_dict[image]['file_path']}}" onclick="openImageLargeSize(this.dataset.imagePath)"></td>
+                        <td>
+                            <img class="image" src="{{image_dict[image]['file_path']}}" data-image-path="{{image_dict[image]['file_path']}}" onclick="openImageLargeSize(this.dataset.imagePath)">
+                            <button class="download-displaying-img-btn" data-img_path="{{image_dict[image]['file_path']}}" onclick="downloadDisplayingImage(this.dataset.img_path)">Download</button>
+                        </td>
                         <td>
                             <div class="image-text-container">
                                 {{image_dict[image]['text']}}</td>
@@ -596,6 +614,14 @@
                 alert('Failed to assign mate.');
             });
     }
+    <!----------------------------------------- DOWNLOAD DISPLAYING IMAGE ----------------------------------------------->
+    function downloadDisplayingImage(img_path) {
+        const link = document.createElement('a');
+        link.href = img_path;
+        link.download = 'displaying_image.jpg';
+        link.click();
+    }
 </script>
+
 
 {% endblock %}

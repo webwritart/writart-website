@@ -1,8 +1,6 @@
-import os
-import pprint
-import random
+import os, pprint, random, zipfile
 import pandas as pd
-from flask import Blueprint, render_template, request, flash, redirect, url_for, send_file, jsonify
+from flask import Blueprint, render_template, request, flash, redirect, url_for, send_file, jsonify, abort
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash
 from werkzeug.utils import secure_filename
@@ -19,11 +17,9 @@ from models.news import News
 from models.youtube import *
 from operations.miscellaneous import *
 from routes.account import today_date
-import datetime
-import difflib
+import difflib, io, datetime, json
 from PIL import Image
 from sqlalchemy import or_
-import json
 
 
 manager = Blueprint('manager', __name__, static_folder='static', template_folder='templates/manager')
@@ -1537,6 +1533,50 @@ def youtube_manager():
                     db.session.query(Tools).filter_by(keyword='yt_video_serial').scalar().data = str(new_serial)
                     db.session.commit()
                     return jsonify(status="success", message= "Video added successfully!")
+                if data['type'] == 'download-video-images':
+                    video_uuid = data['video_uuid']
+                    status = data['status']
+                    video_temp_title = data['video_temp_title']
+
+                    video = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar()
+                    image_file_path_list = []
+                    video_main_images_file_path_list = [(a, a.file_path, a.approval_status) for a in db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar().components if a.component_type == 'image']
+                    for v in video_main_images_file_path_list:
+                        if v[2] == status:
+                            if len(v[0].revisions) > 0:
+                                revision_version_list = []
+                                for r in v[0].revisions:
+                                    revision_version_list.append(float(r.version))
+                                latest_revision = max(revision_version_list)
+                                latest_revision = [a for a in v[0].revisions if a.version == str(latest_revision)][0]
+                                file_path = latest_revision.file_path
+                                image_file_path_list.append('.'+file_path)
+                            else:
+                                file_path = v[1]
+                                image_file_path_list.append('.'+file_path)
+                    if status == 'all':
+                        for v in video_main_images_file_path_list:
+                            if len(v[0].revisions) > 0:
+                                revision_version_list = []
+                                for r in v[0].revisions:
+                                    revision_version_list.append(float(r.version))
+                                latest_revision = max(revision_version_list)
+                                latest_revision = [a for a in v[0].revisions if a.version == str(latest_revision)][0]
+                                file_path = latest_revision.file_path
+                                image_file_path_list.append('.'+file_path)
+                            else:
+                                file_path = v[1]
+                                image_file_path_list.append('.'+file_path)
+
+                    memory_file = io.BytesIO()
+                    with zipfile.ZipFile(memory_file, 'w', zipfile.ZIP_DEFLATED) as zf:
+                        for f in image_file_path_list:
+                            zf.write(f, os.path.basename(f))
+                    memory_file.seek(0)
+                    if memory_file.getbuffer().nbytes == 0:
+                        return {"error": "No files were added"}, 404
+                    p(memory_file.getbuffer().nbytes)
+                    return send_file(memory_file, mimetype='application/zip', as_attachment=True, download_name=f"{video.temp_title}-{status}.zip")
 
             if request.method == 'POST' and request.form.get('type') == 'add-video-component':
                 video_uuid = request.form.get('video_uuid')
