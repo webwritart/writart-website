@@ -162,8 +162,11 @@ def upload_images():
         video_uuid = request.form.get('video_uuid')
         image_text = request.form.get('image_text')
         video = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar()
+        video_temp_title = video.temp_title
         channel_id = video.youtube_channel.id
+        channel_name = db.session.query(YoutubeChannel).filter_by(id=channel_id).scalar().channel_name
         video_id = video.id
+        member_name = current_user.name
         base_path = f"./static/files/youtube/{channel_id}/{video_id}/images/"
         if not os.path.exists(base_path):
             os.makedirs(base_path)
@@ -189,6 +192,10 @@ def upload_images():
             db.session.add(entry)
             db.session.commit()
 
+            # send email to Leader -----------------------------------------------------
+            subject = f"Image uploaded - {date_time_now}"
+            body = f"New image uploaded\n\nVideo: {video_temp_title}\nMember: {member_name}\nChannel: {channel_name}"
+            send_email_studio(subject, ['shwetabhartist@gmail.com'], body, '', {})
         return jsonify('success')
 
 
@@ -269,6 +276,9 @@ def save_revision_img():
         revision_image_text = request.form.get('revision_image_text')
         parent_img_uuid = request.form.get('parent_img_uuid')
         parent_image = db.session.query(YoutubeVideoComponent).filter_by(uuid=parent_img_uuid).scalar()
+        video_temp_title = parent_image.youtube_video.temp_title
+        channel_name = parent_image.youtube_video.youtube_channel.channel_name
+        member_name = current_user.name
 
         base_path = f"./static/files/youtube/{parent_image.youtube_video.youtube_channel.id}/{parent_image.youtube_video.id}/image_revisions/"
         if not os.path.exists(base_path):
@@ -302,6 +312,11 @@ def save_revision_img():
         parent_image.assigned_to_uuid = None
         parent_image.last_assigned = temp_assigned_uuid
         db.session.commit()
+
+        # send email to the Project lead ------------------------------------------------
+        subject = f"Revised image uploaded - {date_time_now}"
+        body = f"New revised image uploaded\n\nMember: {member_name}\nVideo: {video_temp_title}\nChannel: {channel_name}"
+        send_email_studio(subject, ['shwetabhartist@gmail.com'], body, '', {})
         return jsonify(success='success')
 
 @youtube.route('/assign-mate', methods=['POST'])
