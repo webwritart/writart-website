@@ -48,6 +48,7 @@ class YoutubeVideoComponent(db.Model):
     approval_status = db.Column(db.String(50)) # eg pending, approved, rejected, revise, etc.
     date_time = db.Column(db.String(50))
     assigned_to_uuid = db.Column(db.String(500))  # uuid of the team member the task is assigned to
+    last_assigned = db.Column(db.String(50)) # uuid of the team member who was last assigned this iteration
     youtube_video_id = db.Column(db.Integer, db.ForeignKey('youtube_video.id'))
     member_id = db.Column(db.Integer, db.ForeignKey('member.id'))
     revisions = db.relationship('YoutubeVideoComponentRevision', backref='youtube_video_component')
@@ -66,6 +67,7 @@ class YoutubeVideoComponentRevision(db.Model):
     file_path = db.Column(db.String(200)) # applicable in case of revisions.
     feedback = db.Column(db.String(1000)) # applicable in case of revisions.
     date_time = db.Column(db.String(50))
+    member_id = db.Column(db.Integer, db.ForeignKey('member.id'))
     youtube_video_component_id = db.Column(db.Integer, db.ForeignKey('youtube_video_component.id'))
 
     def __repr__(self):

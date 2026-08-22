@@ -287,7 +287,7 @@
                         <th class="col_2">Feedback</th>
                         <th class="col_6">Assigned to</th>
                         <th class="col_3">Upload Revision</th>
-                        <th class="col_4">Approval status</th>
+                        <th class="col_4">Status</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -301,7 +301,7 @@
                         <td>
                             <div class="img-feedback-recording-container">
                                 {% if youtube_admin in current_user.role %}
-                                <button class="image-feedback-recording-btn" data-img_path="{{image_dict[image]['file_path']}}" data-image_uuid="{{image_dict[image]['uuid']}}" onclick="openImageFeedbackRecordingPopup(this.dataset.image_uuid, this.dataset.img_path)">Record Feedback</button>
+                                <button class="image-feedback-recording-btn" data-img_path="{{image_dict[image]['file_path']}}" data-image_uuid="{{image}}" data-revision_uuid="{{image_dict[image]['revision_uuid']}}" onclick="openImageFeedbackRecordingPopup(this.dataset.revision_uuid, this.dataset.image_uuid, this.dataset.img_path)">Record Feedback</button>
                                 {% endif %}
                                 {% if image_dict[image]['feedback'] %}
                                 <audio class="feedback-audio" src="{{image_dict[image]['feedback']}}" controls></audio>
@@ -310,7 +310,7 @@
                         </td>
                         <td class="assigned-to-name">
                             {% if youtube_admin in current_user.role %}
-                            <select class="assigned-to-mate" id="{{image}}" data-img_uuid="{{image}}" oninput="assignMate(this.dataset.img_uuid)">
+                            <select class="assigned-to-mate" id="assign-mate-{{image}}" data-img_uuid="{{image}}" oninput="assignMate(this.dataset.img_uuid)">
                                 <option>Select mate</option>
                                 {% for mate in mates %}
                                 <option value="{{mate[0]}}">{{mate[1]}}</option>
@@ -318,17 +318,21 @@
                             </select>
                             {% endif %}
                             {{image_dict[image]['assigned_to_name']}}
+                            {% if not image_dict[image]['assigned_to_name'] %}
+                            <p style="color: black; font-weight: 500;">Last assigned: {{image_dict[image]['last_assigned_name']}}</p>
+                            {% endif %}
                         </td>
                         <td>
                             {% if image_dict[image]['assigned_to_uuid'] == current_user.uuid %}
                             <button class="revision-btn" data-img_uuid="{{image}}" data-img_path="{{image_dict[image]['file_path']}}" onclick="uploadRevisionPopup(this.dataset.img_uuid, this.dataset.img_path)">Upload Revision</button>
                             {% endif %}
                         </td>
-                        <td style="background: {{image_dict[image]['approval_status'][1]}}">
+                        <td style="background: {{image_dict[image]['approval_status'][1]}}; color: white;">
                             <div>
                                 {% if youtube_admin in current_user.role %}
-                                <select id="approval-{{image}}" class="approval-status-select" data-img_uuid="{{image}}" oninput="submitApprovalStatus(this.dataset.img_uuid)">
+                                <select id="approval-{{image}}" class="approval-status-select" data-img_uuid="{{image}}" oninput="submitStatus(this.dataset.img_uuid)">
                                     <option>Select</option>
+                                    <option value="revision-required">Revision Required</option>
                                     <option value="approved">Approved</option>
                                     <option value="rejected">Rejected</option>
                                     <option value="pending">Pending</option>
@@ -399,9 +403,9 @@
         openPopup();
     }
     
-    function openImageFeedbackRecordingPopup(image_uuid, img_path) {
+    function openImageFeedbackRecordingPopup(revision_uuid, image_uuid, img_path) {
         document.getElementById("audio-recording-popup").style.display = "block";
-        document.getElementById("save-image-feedback-recording").onclick = () => saveAudio(image_uuid);
+        document.getElementById("save-image-feedback-recording").onclick = () => saveAudio(revision_uuid, image_uuid);
         document.getElementById("feedback-recording-popup-img").src = img_path;
     }
     // ----------------------------------------------- FEEDBACK RECORDING ------------------------------------------------
@@ -472,18 +476,20 @@
             saveAudioBtn.disabled = false;
         }
     });
-    function saveAudio(image_uuid) {
+    function saveAudio(revision_uuid, image_uuid) {
         const endpointUrl = "{{ url_for('youtube.save_audio') }}";
         if (audioBlob) {
             const formData = new FormData();
             formData.append('audio', audioBlob, 'audio.webm');
             formData.append('image_uuid', image_uuid);
+            formData.append('revision_uuid', revision_uuid);
             formData.append('type', 'save_audio');
             fetch(endpointUrl, { method: 'POST', body: formData })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
                         alert('Audio saved successfully.');
+                        window.location.reload();
                     } else {
                         alert('Failed to save audio.');
                     }
@@ -529,6 +535,7 @@
             .then(data => {
                 if (data.success) {
                     alert('Revision uploaded successfully.');
+                    window.location.reload();
                 } else {
                     alert('Failed to upload revision.');
                 }
@@ -540,9 +547,9 @@
     });
 
 // ------------------------------------------- IMAGE APPROVAL STATUS -----------------------------------------------------
-    function submitApprovalStatus(image_uuid) {
+    function submitStatus(image_uuid) {
         const approvalStatus = document.getElementById('approval-'+image_uuid).value;
-        const endpointUrl = "{{ url_for('youtube.submit_approval_status') }}";
+        const endpointUrl = "{{ url_for('youtube.submit_status') }}";
         const formData = new FormData();
         formData.append('image_uuid', image_uuid);
         formData.append('approval_status', approvalStatus);
@@ -563,7 +570,7 @@
     }
 // ------------------------------------------- ASSIGN MATE -----------------------------------------------------
     function assignMate(image_uuid) {
-        const mateUuid = document.getElementById(image_uuid).value;
+        const mateUuid = document.getElementById('assign-mate-'+image_uuid).value;
         const endpointUrl = "{{ url_for('youtube.assign_mate') }}";
         const formData = new FormData();
         formData.append('image_uuid', image_uuid);
