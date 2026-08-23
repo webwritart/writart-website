@@ -466,7 +466,6 @@
     });
 
     addVideoComponentForm.addEventListener('submit', function(e) {
-        alert('Adding...');
         const endpointUrl = "{{ url_for('manager.youtube_manager') }}";
         const videoUuid = addVideoComponentForm.video_uuid.value;
         const dialogueNarration = addVideoComponentForm.dialogue_narration.value;
