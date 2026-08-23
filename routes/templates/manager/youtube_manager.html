@@ -261,7 +261,7 @@
                     <div id="voice-recording" class="inline-inputs">
                         <label for="voice_recording">Voice Recording&ensp;</label>
                         <input type="file" name="voice_recording" accept="audio/*">
-                        <select name="voice_recording_language" required>
+                        <select name="voice_recording_language">
                             <option value="">Select Language</option>
                             <option value="english">English</option>
                             <option value="hindi">Hindi</option>
@@ -466,6 +466,7 @@
     });
 
     addVideoComponentForm.addEventListener('submit', function(e) {
+        alert('Adding...');
         const endpointUrl = "{{ url_for('manager.youtube_manager') }}";
         const videoUuid = addVideoComponentForm.video_uuid.value;
         const dialogueNarration = addVideoComponentForm.dialogue_narration.value;
