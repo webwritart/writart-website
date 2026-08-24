@@ -72,11 +72,23 @@ class Member(UserMixin, db.Model):
     testimonials = db.relationship('Testimonial', backref='member')
     youtube_video_component = db.relationship('YoutubeVideoComponent', backref='member')
     youtube_video_component_revision = db.relationship('YoutubeVideoComponentRevision', backref='member')
+    tools = db.relationship('MemberTools', backref='member')
 
 
     def __repr__(self):
         return f'{self.name.split()[0]} -- {self.email}'
 
+
+class MemberTools(db.Model):
+    __tablename__ = 'member_tools'
+
+    id = db.Column(db.Integer, primary_key=True)
+    member_id = db.Column(db.Integer, db.ForeignKey('member.id'))
+    key = db.Column(db.String(200))
+    value = db.Column(db.String(200))
+
+    def __repr__(self):
+        return f'{self.key} -- {self.value}'
 
 
 class Certificate(db.Model):

@@ -34,8 +34,15 @@ def home():
             uuid = c.uuid
             name = c.channel_name
             channels.append((uuid, name))
+        # ---------------------------------------------- SELECT CURRENT VIDEO ------------------------------------------------------
+        channel = db.session.query(YoutubeChannel).all()[0]
+        current_video_option_list = [(v.uuid, v.temp_title) for v in channel.videos]
+
+        # ----------------------------------------------------------------------------------------------------------------------------
         if len(channels) > 0:
             channel_list_with_pending_videos_and_componenets = [a for a in db.session.query(YoutubeChannel).all() if len([b for b in a.videos if (b.status=='pending' or b.status=='in-progress')]) > 0]
+            if len([a for a in current_user.tools if a.key == 'current_video_uuid']) > 0:
+                current_video_uuid = [a.value for a in current_user.tools if a.key == 'current_video_uuid'][0]
             if len(channel_list_with_pending_videos_and_componenets) > 0:
                 for c in channel_list_with_pending_videos_and_componenets:
                     videos = c.videos
@@ -151,8 +158,25 @@ def home():
                 except:
                     vid_dict['youtube_card_instruction'] = youtube_card_instruction
                 return jsonify(vid_dict)
+            
+            if data['type'] == 'select_current_video':
+                video_uuid = data['video_uuid']
+                stored_current_video_count = len([a for a in current_user.tools if a.key == 'current_video_uuid'])
+                if stored_current_video_count > 0:
+                    existing_current_video_uuid = [a.value for a in current_user.tools if a.key == 'current_video_uuid'][0]
+                    p(existing_current_video_uuid)
+                    for c in current_user.tools:
+                        if c.key == 'current_video_uuid':
+                            c.value = video_uuid
+                            db.session.commit()
+                else:
+                    entry = MemberTools(key='current_video_uuid', value=video_uuid, member_id=current_user.id)
+                    db.session.add(entry)
+                    db.session.commit()
+                return jsonify(success='success')
 
-        return render_template('youtube.html', current_year=current_year, channels=channels, default_video_dict=default_video_dict, logged_in=current_user.is_authenticated, admin=admin, first_channel=first_channel)
+        return render_template('youtube.html', current_year=current_year, channels=channels, default_video_dict=default_video_dict, logged_in=current_user.is_authenticated, admin=admin, first_channel=first_channel,
+                               current_video_option_list=current_video_option_list)
 
 
 @youtube.route('/upload-images', methods=['GET', 'POST'])

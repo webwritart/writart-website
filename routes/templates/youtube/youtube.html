@@ -183,6 +183,52 @@
         display: block;
         margin: 1%;
     }
+    /* ------------------------------------------ SELECT CURRENT VIDEO ---------------------------------------------- */
+    #select-current-video-btn {
+        width: 100%;
+        background: rgb(60, 60, 60);
+        color: white;
+        border-radius: 1.5rem;
+    }
+    #select-current-video-btn:hover {
+        background: rgb(109, 129, 27);
+    }
+
+    #select-current-video-section {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        min-height: 20vh;
+        width: 100%;
+        justify-content: center;
+    }
+    #select-current-video-form {
+        background: rgb(244, 244, 203);
+        display: flex;
+        flex-direction: column;
+        width: 60%;
+        padding: 3% 10%;
+        border-radius: 2rem;
+    }
+    #select-current-video-submit-btn {
+        width: 100%;
+        background: rgb(168, 108, 12);
+        border-radius: 1.5rem;
+        border: none;
+        color: white;
+        padding: 1%;
+    }
+    #select_current_video_select {
+        width: 100%;
+        background: rgb(248, 255, 224);
+        color: black;
+        padding: 1% 2%;
+        border: none;
+        border-radius: 1.5rem;
+        font-size: .9rem;
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+        margin-bottom: 2%;
+    }
     /* ------------------------------------------ UPLOAD IMAGES -------------------------------------------------- */
     #upload-images-section {
         display: none;
@@ -440,6 +486,7 @@
             </div>
             <div id="operations-container">
                 <p class="selection-header" id="operations-header">Operations</p>
+                <button id="select-current-video-btn" onclick="selectCurrentVideoSection()">Select Current Video</button>
                 <button id="upload-img" class="operation-btn" onclick="uploadImages()">Upload images</button>
             </div>
         </div>
@@ -454,6 +501,18 @@
             <div id="status-message"></div>
         </form>
         <button id="go-back" onclick="goBack()">Go back</button>
+    </div>
+    <div id="select-current-video-section">
+        <form id="select-current-video-form">
+            <p id="upload-images-header">Select current video</p>
+            <select name="select_current_video_select" id="select_current_video_select">
+                <option value="">Select Video</option>
+                {% for video in current_video_option_list %}
+                <option value="{{video[0]}}">{{video[1]}}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" name="submit" value="select_current_video" id="select-current-video-submit-btn" class="form-button" onclick="setCurrentVideo()">Set Current video</button>
+        </form>
     </div>
 </div>
 
@@ -554,6 +613,32 @@
             console.error('Error:', error);
         });
     }
+    function selectCurrentVideoSection() {
+        const mainSection = document.getElementById('main-section');
+        mainSection.style.display = 'none';
+        const selectCurrentVideoSection = document.getElementById('select-current-video-section');
+        selectCurrentVideoSection.style.display = 'flex';
+    }
+    function setCurrentVideo() {
+        const selectedVideoUuid = document.getElementById('select_current_video_select').value;
+        const endpointUrl = "{{ url_for('youtube.home') }}";
+        fetch(endpointUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                'video_uuid': selectedVideoUuid,
+                'type': 'select_current_video',
+            })
+        }).then(response => response.json()).then(data => {
+            alert('Current video updated successfully.');
+            window.location.reload();
+        }).catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
     function uploadImages() {
         const mainSection = document.getElementById('main-section');
         mainSection.style.display = 'none';
@@ -627,6 +712,10 @@
     
     function goBack() {
         window.location.reload();
+    }
+    // -------------------------------------------- SELECT CURRENT VIDEO -----------------------------------------------------------
+    function selectCurrentVideoPopup() {
+        
     }
     // -------------------------------------------- OPEN IMAGE FEEDBACK PAGE ---------------------------------------------------------
     function openImageFeedback(video_uuid) {
