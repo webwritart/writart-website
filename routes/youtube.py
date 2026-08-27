@@ -39,10 +39,14 @@ def home():
         current_video_option_list = [(v.uuid, v.temp_title) for v in channel.videos]
 
         # ----------------------------------------------------------------------------------------------------------------------------
+        current_video_exists = False
         if len(channels) > 0:
             channel_list_with_pending_videos_and_componenets = [a for a in db.session.query(YoutubeChannel).all() if len([b for b in a.videos if (b.status=='pending' or b.status=='in-progress')]) > 0]
             if len([a for a in current_user.tools if a.key == 'current_video_uuid']) > 0:
                 current_video_uuid = [a.value for a in current_user.tools if a.key == 'current_video_uuid'][0]
+                current_video = db.session.query(YoutubeVideo).filter_by(uuid=current_video_uuid).scalar()
+                current_video_exists = True
+                
             if len(channel_list_with_pending_videos_and_componenets) > 0:
                 for c in channel_list_with_pending_videos_and_componenets:
                     videos = c.videos
@@ -70,36 +74,63 @@ def home():
                     first_youtube_card_instruction = [a.text for a in first_video.components if a.component_type == 'youtube_card_instruction'][0]
                 except:
                     first_youtube_card_instruction = ''
-                
-                default_image_list = [a.file_path for a in first_video.components if a.component_type == 'image']
-                default_video_dict['image_list'] = default_image_list
+
                 default_video_dict['vid_uuid_name_list'] = default_vid_uuid_name_list
-                default_video_dict['temp_title'] = first_video.temp_title
-                try:
-                    default_video_dict['dialogue_narration'] = markdown.markdown(first_dialogue_narration).replace('\n', '<br>')
-                except:
-                    default_video_dict['dialogue_narration'] = first_dialogue_narration
-                try:
-                    first_voice_recording_list = []
-                    first_voice_recordings = [a.file_path for a in first_video.components if a.component_type == 'voice_recording']
-                    for f in first_voice_recordings:
-                        first_voice_recording_list.append(f)
-                except:
-                    first_voice_recording = ''
-                default_video_dict['voice_recordings'] = first_voice_recording_list
-                default_video_dict['video_uuid'] = first_video.uuid
-                try:
-                    default_video_dict['img_vid_instruction'] = markdown.markdown(first_img_vid_instruction).replace('\n', '<br>')
-                except:
-                    default_video_dict['img_vid_instruction'] = first_img_vid_instruction
-                try:
-                    default_video_dict['thumbnail_instruction'] = markdown.markdown(first_thumbnail_instruction).replace('\n', '<br>')
-                except:
-                    default_video_dict['thumbnail_instruction'] = first_thumbnail_instruction
-                try:
-                    default_video_dict['youtube_card_instruction'] = markdown.markdown(first_youtube_card_instruction).replace('\n', '<br>')
-                except:
-                    default_video_dict['youtube_card_instruction'] = first_youtube_card_instruction
+                if current_video_exists:
+                    default_video_dict['image_list'] = [a.file_path for a in current_video.components if a.component_type == 'image']
+                else:
+                    default_video_dict['image_list'] = [a.file_path for a in first_video.components if a.component_type == 'image']
+                if current_video_exists:
+                    default_video_dict['temp_title'] = current_video.temp_title
+                    try:
+                        default_video_dict['dialogue_narration'] = markdown.markdown([a.text for a in current_video.components if a.component_type == 'dialogue_&_narration'][0]).replace('\n', '<br>')
+                    except:
+                        default_video_dict['dialogue_narration'] = ''
+                    try:
+                        default_video_dict['dialogue_narration'] = markdown.markdown([a.text for a in current_video.components if a.component_type == 'dialogue_&_narration'][0]).replace('\n', '<br>')
+                    except:
+                        default_video_dict['dialogue_narration'] = ''
+                    default_video_dict['voice_recordings'] = [a.file_path for a in current_video.components if a.component_type == 'voice_recording']
+                    try:
+                        default_video_dict['img_vid_instruction'] = markdown.markdown([a.text for a in current_video.components if a.component_type == 'img_vid_instruction'][0]).replace('\n', '<br>')
+                    except:
+                        default_video_dict['img_vid_instruction'] = ''
+                    try:
+                        default_video_dict['thumbnail_instruction'] = markdown.markdown([a.text for a in current_video.components if a.component_type == 'thumbnail_instruction'][0]).replace('\n', '<br>')
+                    except:
+                        default_video_dict['thumbnail_instruction'] = ''
+                    try:
+                        default_video_dict['youtube_card_instruction'] = markdown.markdown([a.text for a in current_video.components if a.component_type == 'youtube_card_instruction'][0]).replace('\n', '<br>')
+                    except:
+                        default_video_dict['youtube_card_instruction'] = ''
+                    default_video_dict['video_uuid'] = current_video.uuid
+                else:
+                    default_video_dict['temp_title'] = first_video.temp_title
+                    try:
+                        default_video_dict['dialogue_narration'] = markdown.markdown(first_dialogue_narration).replace('\n', '<br>')
+                    except:
+                        default_video_dict['dialogue_narration'] = first_dialogue_narration
+                    try:
+                        first_voice_recording_list = []
+                        first_voice_recordings = [a.file_path for a in first_video.components if a.component_type == 'voice_recording']
+                        for f in first_voice_recordings:
+                            first_voice_recording_list.append(f)
+                    except:
+                        first_voice_recordings = ''
+                    default_video_dict['voice_recordings'] = first_voice_recording_list
+                    default_video_dict['video_uuid'] = first_video.uuid
+                    try:
+                        default_video_dict['img_vid_instruction'] = markdown.markdown(first_img_vid_instruction).replace('\n', '<br>')
+                    except:
+                        default_video_dict['img_vid_instruction'] = first_img_vid_instruction
+                    try:
+                        default_video_dict['thumbnail_instruction'] = markdown.markdown(first_thumbnail_instruction).replace('\n', '<br>')
+                    except:
+                        default_video_dict['thumbnail_instruction'] = first_thumbnail_instruction
+                    try:
+                        default_video_dict['youtube_card_instruction'] = markdown.markdown(first_youtube_card_instruction).replace('\n', '<br>')
+                    except:
+                        default_video_dict['youtube_card_instruction'] = first_youtube_card_instruction
             else:
                 default_video_dict = {}
         
