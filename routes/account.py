@@ -1428,6 +1428,8 @@ def instructor_dashboard():
                         yt_vid_id=demo_yt_url,
                         vid_caption=demo_title,
                         instructor='Shwetabh Suman',
+                        date_time=date_time,
+                        month_id=course_month.id
                     )
                     db.session.add(entry)
                     db.session.commit()

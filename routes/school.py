@@ -692,7 +692,6 @@ def course():
     # -------------------------------------- DEMO VIDEOS ------------------------------------------------------ #
             demo_vid_dict = {}
             all_demo_videos = []
-
             for m in course_enrolled_months:
                 videos = m.demos
                 for v in videos:
@@ -702,6 +701,7 @@ def course():
                     'vid_id': v.yt_vid_id,
                     'vid_caption': v.vid_caption
                 }
+            p(all_demo_videos)
             demo_video_count = len(demo_vid_dict)
 
             # ------------------------------ STUDY MATERIAL ----------------------------------------------- #
