@@ -192,6 +192,9 @@
         height: 50vh;
         overflow-y: auto;
     }
+    .video {
+        margin:0% .5%;
+    }
     /* ------------------------------------------ SELECT CURRENT VIDEO ---------------------------------------------- */
     #select-current-video-btn {
         width: 100%;
@@ -501,6 +504,10 @@
                     <video class="video" src="{{ video }}" controls height="200"></video>
                     {% endfor %}
                 </div>
+                <div id="images-action-button-container" class="section-action-button-container">
+                    <button class="section-action-button" id="video-feedback-btn" onclick="openImageFeedback({{ default_video_dict['video_uuid']}})">Feedbacks</button>
+                </div>
+                
                 <p id="thumbnail-instruction-section-header" class="vid-detail-section-header">Thumbnail instruction</p>
                 <div id="thumbnail_instruction" class="vid-detail-section">
                     {{ default_video_dict['thumbnail_instruction'] }}
@@ -695,6 +702,9 @@
             const storyboardSectionHeader = document.getElementById('storyboard-section-header');
             const selectedStoryboardContainer = document.getElementById('selected_storyboard_container');
             const imageList = data.image_list;
+            document.getElementById('image-feedback-btn').onclick = () => openImageFeedback(data.video_uuid);
+            document.getElementById('video-feedback-btn').onclick = () => openImageFeedback(data.video_uuid);
+            
             imagesContainer.replaceChildren();
             for (const im of imageList) {
                 const imageTag = document.createElement('img');
@@ -791,7 +801,8 @@
             document.getElementById('default-storyboard-section-header').style.display = 'none';
             document.getElementById('storyboard_container').style.display = 'none';
             document.getElementById('img-upload-video-uuid').value = data.video_uuid;
-            document.getElementById('image-feedback-btn').onclick = () => openImageFeedback(data.video_uuid);
+            document.getElementById('vid-upload-video-uuid').value = data.video_uuid;
+            
         }).catch(error => {
             console.error('Error:', error);
         });
@@ -869,7 +880,7 @@
             return;
         }
 
-        submitBtn.innerText = 'Uploading...';
+        submitBtn.textContent = 'Uploading...';
         submitBtn.disabled = true;
         const formData = new FormData();
         for (const file of fileInput.files) {
@@ -898,7 +909,7 @@
             statusMessage.textContent = 'Image upload failed. Please try again.';
         } finally {
             uploadImagesForm.reset();
-            submitBtn.innerText = 'Upload images';
+            submitBtn.textContent = 'Upload images';
             submitBtn.disabled = false;
         }
     });
@@ -906,7 +917,9 @@
     uploadVideoForm.addEventListener('submit', async function(e) {
         e.preventDefault();
 
-        const submitBtn = document.getElementById('upload-video-btn');
+        const videoSubmitBtn = document.getElementById('upload-video-btn');
+        videoSubmitBtn.textContent = 'Uploading...';
+
         const imgUploadEndpointUrl = "{{ url_for('youtube.upload_video') }}";
         const sceneInput = document.querySelector('#upload-video-form input[name="scene"]');
         const shotInput = document.querySelector('#upload-video-form input[name="shot"]');
@@ -923,8 +936,7 @@
             return;
         }
 
-        submitBtn.innerText = 'Uploading...';
-        submitBtn.disabled = true;
+        videoSubmitBtn.disabled = true;
 
         const formData = new FormData();
         for (const file of fileInput.files) {
@@ -954,8 +966,8 @@
             statusMessage.textContent = 'Video upload failed. Please try again.';
         } finally {
             uploadVideoForm.reset();
-            submitBtn.innerText = 'Upload video';
-            submitBtn.disabled = false;
+            videoSubmitBtn.textContent = 'Upload video';
+            videoSubmitBtn.disabled = false;
         }
     });
     

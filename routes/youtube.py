@@ -10,6 +10,7 @@ import os, json
 from operations.miscellaneous import *
 from operations.messenger import *
 from datetime import datetime
+from collections import defaultdict
 
 
 
@@ -199,7 +200,6 @@ def home():
                     vid_dict['youtube_card_instruction'] = markdown.markdown(youtube_card_instruction).replace('\n', '<br>')
                 except:
                     vid_dict['youtube_card_instruction'] = youtube_card_instruction
-                pp.pprint(vid_dict)
                 return jsonify(vid_dict)
             
             if data['type'] == 'select_current_video':
@@ -317,10 +317,18 @@ def image_feedback():
     else:
         if youtube_img_creator in current_user.role or youtube_admin in current_user.role:
             video_uuid = request.args.get('video_uuid')
+            p(video_uuid)
             image_dict = {}
+            video_dict = {}
             video_component_list = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar().components
-            for c in video_component_list:
-                if c.component_type == 'image':
+
+            groups = defaultdict(list)
+            for row in video_component_list:
+                groups[row.component_type].append(row)
+
+            groups = dict(groups)
+            if 'image' in groups.keys():
+                for c in groups['image']:
                     file_path = None
                     file_text = None
                     feedback = None
@@ -371,11 +379,29 @@ def image_feedback():
                         'last_assigned_name': last_assigned_name,
                         'text': file_text
                     }
+            if 'video' in groups.keys():
+                video_dict = defaultdict(lambda: defaultdict(dict))
+                for row in groups['video']:
+                    video_dict[row.scene][row.shot][row.uuid] = {'file_path': row.file_path, 'text': row.text, 'feedback': row.feedback,
+                                                                 'approval_status': (row.approval_status, {
+                                                                     'approved': '#2dad31',
+                                                                     'pending': "#a87e2a",
+                                                                     'rejected': "#606060",
+                                                                     'revision-required': "#DA1C1C"
+                                                                 }.get(row.approval_status, "gray")), 
+                                                                 'assigned_to_name': db.session.query(Member).filter_by(uuid=row.assigned_to_uuid).scalar().name if row.assigned_to_uuid else '', 'last_assigned': db.session.query(Member).filter_by(uuid=row.last_assigned).scalar().name if row.last_assigned else '',
+                                                                 'assigned_to_uuid': int(row.assigned_to_uuid) if row.assigned_to_uuid else row.assigned_to_uuid,
+                                                             'last_revision': [(a.uuid, a.version, a.file_path, a.text, a.feedback) for a in row.revisions if len(row.revisions) > 0 and a.version == str(max([float(b.version) for b in row.revisions]))],
+                                                             'all_revisions': [(a.uuid, a.version, a.file_path, a.text, a.feedback) for a in row.revisions if len(row.revisions) > 0],
+                                                             'revisions': len([float(a.version) for a in row.revisions if len(row.revisions) > 0])}
+                video_dict = dict(video_dict)
+                pp.pprint(video_dict)
+                
             all_mates = [(a.uuid, a.name) for a in db.session.query(Member).all() if len([b for b in a.role if b.name == 'youtube_img_creator']) > 0]
             temp_title = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).one_or_none().temp_title
         else:
             return render_template('admin_area.html')
-        return render_template('image_feedback.html', logged_in=current_user.is_authenticated, admin=admin, image_dict=image_dict, temp_title=temp_title, youtube_admin=youtube_admin, youtube_img_creator=youtube_img_creator, mates=all_mates)
+        return render_template('image_feedback.html', logged_in=current_user.is_authenticated, admin=admin, image_dict=image_dict, video_dict=video_dict, temp_title=temp_title, youtube_admin=youtube_admin, youtube_img_creator=youtube_img_creator, mates=all_mates)
 
 @youtube.route('/save-revision-img', methods=['POST'])
 def save_revision_img():
@@ -427,6 +453,59 @@ def save_revision_img():
         send_email_studio(subject, ['shwetabhartist@gmail.com'], body, '', {})
         return jsonify(success='success')
 
+
+@youtube.route('/save-revision-video', methods=['POST'])
+def save_revision_video():
+    if request.method == 'POST' and request.is_json:
+        data = request.get_json()
+        if data['type'] == 'get_video_and_revisions_details':
+            video_uuid = data['video_uuid']
+            video = db.session.query(YoutubeVideoComponent).filter_by(uuid=video_uuid).scalar()
+            scene_shot = f"{video.scene}-{video.shot}"
+            if len(video.revisions) > 0:
+                last_version = [{'file_path': a.file_path, 'version': a.version} for a in video.revisions if a.version == str(max([float(b.version) for b in video.revisions]))][0]
+            else:
+                last_version = {"file_path": video.file_path, "version": "1.0"}
+            return jsonify(scene_shot=scene_shot, last_version=last_version)
+    if request.method == 'POST' and request.form.get('type') == 'upload_revision_video':
+        parent_video_uuid = request.form.get('parent_video_uuid')
+        parent_video = db.session.query(YoutubeVideoComponent).filter_by(uuid=parent_video_uuid).scalar()
+        video_revision_file = request.files['video_revision_file']
+        file_name = secure_filename(video_revision_file.filename)
+        revision_video_text = request.form.get('revision_video_text')
+        base_path = f"./static/files/youtube/{parent_video.youtube_video.youtube_channel.id}/{parent_video.youtube_video.id}/video_revisions/"
+        if not os.path.exists(base_path):
+            os.makedirs(base_path)
+        save_path = base_path + file_name
+        video_revision_file.save(save_path)
+
+        existing_uuid_list = [a.uuid for a in db.session.query(YoutubeVideoComponentRevision)]
+        uuid = create_uuid(existing_uuid_list, 9)
+        version_list = [a.version for a in parent_video.revisions]
+        if len(version_list) == 0:
+            version = str(1.0+.1)
+        else:
+            version_list_int = [float(i) for i in version_list]
+            version = f"{(max(version_list_int)+.1):.1f}"
+
+        entry = YoutubeVideoComponentRevision(
+            uuid=uuid,
+            version=version,
+            file_path=save_path[1:],
+            text=revision_video_text,
+            date_time=date_time_now,
+            youtube_video_component_id=parent_video.id,
+            member_id = current_user.id
+        )
+        db.session.add(entry)
+        parent_video.approval_status = 'pending'
+        temp_assigned_uuid = parent_video.assigned_to_uuid
+        parent_video.assigned_to_uuid = None
+        parent_video.last_assigned = temp_assigned_uuid
+        db.session.commit()
+        return jsonify(success='success')
+
+
 @youtube.route('/assign-mate', methods=['POST'])
 def assign_mate():
     if request.method == 'POST' and request.form.get('type') == 'assign_mate':
@@ -451,6 +530,28 @@ def assign_mate():
             send_email_studio(subject, [mate_email], body, '', {})
             return jsonify(success='success')
 
+    elif request.method == 'POST' and request.form.get('type') == 'assign_mate_video':
+        video_uuid = request.form.get('video_uuid')
+        mate_uuid = request.form.get('mate_uuid')
+        video = db.session.query(YoutubeVideoComponent).filter_by(uuid=video_uuid).scalar()
+
+        if mate_uuid == 'remove-mate':
+            video.assigned_to_uuid = None
+            video.approval_status = 'pending'
+            db.session.commit()
+            return jsonify(success='success')
+        else:
+            mate_name = db.session.query(Member).filter_by(uuid=mate_uuid).scalar().name
+            mate_email = db.session.query(Member).filter_by(uuid=mate_uuid).scalar().email
+            video.assigned_to_uuid = mate_uuid
+            video.approval_status = 'revision-required'
+            db.session.commit()
+            subject = f'New video-clip assigned to you - {video.youtube_video.temp_title}'
+            video_name = make_unicode_bold(video.youtube_video.temp_title)
+            body = f"Hi {mate_name},\nYou have been assigned a video-clip for revision.\nVideo name: {video_name}\nHope you'll begin ASAP!" 
+            send_email_studio(subject, [mate_email], body, '', {})
+            return jsonify(success='success')
+
 
 @youtube.route('/submit-status', methods=['POST'])
 def submit_status():
@@ -461,7 +562,13 @@ def submit_status():
         image.approval_status = approval_status
         db.session.commit()
         return jsonify(success='success')
-    
+    elif request.method == 'POST' and request.form.get('type') == 'submit_video_approval_status':
+        video_uuid = request.form.get('video_uuid')
+        approval_status = request.form.get('approval_status')
+        video = db.session.query(YoutubeVideoComponent).filter_by(uuid=video_uuid).scalar()
+        video.approval_status = approval_status
+        db.session.commit()
+        return jsonify(success='success')
     
 @youtube.route('/save_audio', methods=['POST'])
 def save_audio():
@@ -495,5 +602,48 @@ def save_audio():
             db.session.query(YoutubeVideoComponentRevision).filter_by(uuid=revision_uuid).scalar().feedback = save_path[1:]
         db.session.commit()
         return jsonify(success='success')
+    if request.method == 'POST' and request.form.get('type') == 'save_video_audio':
+        audio = request.files['audio']
+        video_uuid = request.form.get('video_uuid')
+        kind = None
+        video = db.session.query(YoutubeVideoComponent).filter_by(uuid=video_uuid).scalar()
+        last_revision_uuid = [a.uuid for a in video.revisions if len(video.revisions) > 0 and a.version == max([a.version for a in video.revisions])][0] if len(video.revisions) > 0 else video_uuid
+        if video_uuid == last_revision_uuid:
+            kind = 'main_video'
+        else:
+            kind = 'revision_video'
+        video_id = video.youtube_video.id
+        channel = video.youtube_video.youtube_channel
+        channel_id = channel.id
+
+        if audio.filename == '':
+            flash('No selected file', 'error')
+            return redirect(request.url)
+        filename = f"{last_revision_uuid}_feedback.webm"
+        save_base_path = f"./static/files/youtube/{channel_id}/{video_id}/video_feedback/"
+        if not os.path.exists(save_base_path):
+            os.makedirs(save_base_path)
+        save_path = save_base_path + filename
+        audio.save(save_path)
+        if kind == 'main_video':
+            video.feedback = save_path[1:]
+        elif kind == 'revision_video':
+            db.session.query(YoutubeVideoComponentRevision).filter_by(uuid=last_revision_uuid).scalar().feedback = save_path[1:]
+        db.session.commit()
+        return jsonify(success='success')
+    if request.method == 'POST' and request.is_json:
+        data = request.get_json()
+        if data['type'] == 'get_all_videos_details':
+            video_uuid = data['video_uuid']
+            video = db.session.query(YoutubeVideoComponent).filter_by(uuid=video_uuid).scalar()
+            main_and_revision_list = []
+            main_video_tuple = (video.file_path, 'Main')
+            main_and_revision_list.append(main_video_tuple)
+            if len(video.revisions) > 0:
+                for revision in video.revisions:
+                    revision_tuple = (revision.file_path, revision.version)
+                    main_and_revision_list.append(revision_tuple)
+            scene_shot = f"{video.scene}-{video.shot}"
+            return jsonify(video_list=main_and_revision_list, scene_shot=scene_shot)
 
     

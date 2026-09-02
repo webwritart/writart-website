@@ -9,11 +9,15 @@
         min-height: 90vh;
         background: rgb(160, 175, 129);
     }
-    #title {
+
+    .table-main-header {
         font-weight: 900;
-        font-size: 1.3rem;
-        color: black;
-        padding-top: 1%;
+        font-size: 1.8rem;
+        color: white;
+        background: black;
+        width: 100%;
+        text-align: center;
+        padding: 1% 0%;
     }
     #images-section {
         display: flex;
@@ -44,7 +48,7 @@
         border-spacing: 0;
         border-radius: 1.5rem;
         overflow: hidden;
-        border: 2px solid rgb(46, 67, 5);
+        border: 2px solid rgba(46, 67, 5, 0.608);
     }
     th, td {
         border: solid 1px rgb(97, 123, 19);
@@ -63,7 +67,7 @@
     .col_5 { width: 20%; }
     .col_6 { width: 10%; }
     th {
-        background: rgb(77, 98, 58);
+        background: rgb(118, 143, 96);
         color: white;
     }
     .image {
@@ -151,6 +155,61 @@
         height: 100%;
         width: 100%;
     }
+
+    /* ------------------------------------------------- VIDEO TABLE ---------------------------------------------------- */
+    .videos-table {
+    }
+    .videos-table td {
+        height: 15vh;
+    }
+    .vid-col_1 { width: 5%; }
+    .vid-col_2 { width: 15%; }
+    .vid-col_3 { width: 24%; }
+    .vid-col_4 { width: 11%; }
+    .vid-col_5 { width: 15%; }
+    .vid-col_6 { width: 9%; }
+    .scene-container {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 2%;
+        background: rgb(255, 255, 232);
+        border: 2px solid rgb(46, 67, 5);
+        border-radius: 1.5rem;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+        overflow: hidden;
+    }
+    .scene-inner-container {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0% 2% 2%2%;
+    }
+    .scene-header {
+        font-weight: 400;
+        font-size: 1.4rem;
+        color: white;
+        margin: 0%;
+        width: 100%;
+        background: rgb(100, 82, 7);
+        text-align: center;
+    }
+    .shot-header {
+        font-weight: 700;
+        font-size: 1.2rem;
+        color: rgb(63, 80, 21);
+        padding-top: 1%;
+        padding-left: 2%;
+        width: 100%;
+        margin: 0%;
+    }
+    .video {
+        max-width: 100%;
+        max-height: 100%;
+    }
+
     /* ------------------------------------------------ LARGE IMAGE POPUP --------------------------------------------- */
     .popup {
         display: none;
@@ -189,9 +248,13 @@
         color: white;
         font-size: 35px;
         cursor: pointer;
+        background: black;
+        opacity: 1;
+        padding: 1%;
     }
     .close:hover {
-        color: white;
+        color: rgb(226, 103, 36);
+        opacity: 1 !important;
     }
     /* ------------------------------------------------ AUDIO RECORDING POPUP --------------------------------------------- */
     #audio-recording-popup-content-inner {
@@ -214,6 +277,7 @@
         justify-content: center;
         margin: 1%;
     }
+    
     #startBtn, #stopBtn, #save-image-feedback-recording {
         border: none;
         background: #b6e372;
@@ -224,11 +288,84 @@
         font-size: .8rem;
         margin: .5%
     }
+    
     #startBtn:disabled, #stopBtn:disabled, #save-image-feedback-recording:disabled {
         background: #838383;
         color: black;
         cursor: not-allowed;
     }
+    
+    #video-feedback-recording-popup-content-inner {
+        background: rgb(201, 213, 152);
+        height: 70vh;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 2%;
+        border-radius: 1.5rem;
+    }
+    #video-feedback-video-container {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        overflow-x: auto;
+        overflow-y: hidden;
+        background: rgb(224, 238, 195);
+        padding: 2% 0%;
+        border-radius: 1.5rem;
+    }
+    .video-feedback-video-container-inner {
+        height: 100%;
+        flex: 0 0 auto;
+        margin: 0% .5%;
+    }
+    .video-feedback-video {
+        height: 100%;
+        width: auto;
+        max-height: 100%;
+        object-fit: contain;
+    }
+    .video-feedback-version-text {
+        width: 100%;
+        text-align: center;
+        font-weight: 900;
+        font-size: 1.2rem;
+        color: rgb(15, 137, 15);
+    }
+    #video-feedback-recording-popup-btn-container {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+        margin: 1%;
+        background: black;
+        padding: 1%;
+    }
+    #video-startBtn, #video-stopBtn, #save-video-feedback-recording {
+        border: none;
+        background: #b6e372;
+        color: black;
+        padding: 0% 2% !important;
+        border-radius: 1.5rem;
+        transition: background .15s ease-in-out;
+        font-size: .8rem;
+        margin: .5%
+    }
+    #video-startBtn:disabled, #video-stopBtn:disabled, #save-video-feedback-recording:disabled {
+        background: #838383;
+        color: black;
+        cursor: not-allowed;
+    }
+    #video-feedback-scene-shot {
+        margin: 0%;
+        font-weight: 900;
+        font-size: 1.5rem;
+        color: rgb(15, 137, 15);
+    }
+    
     /* ------------------------------------------------- UPLOAD REVISION IMAGE ------------------------------------------------ */
     .form-button {
         border: none;
@@ -249,6 +386,12 @@
         font-weight: 600;
         margin: 0% 0% 2% 0% !important;
     }
+    #upload-video-revision-header {
+        width: 100%;
+        text-align: center;
+        font-weight: 600;
+        margin: 0% 0% 2% 0% !important;
+    }
     #upload-revision-form-container {
         background: rgb(237, 244, 206);
         width: 60%;
@@ -258,6 +401,16 @@
         flex-direction: column;
         align-items: center;
     }
+    #upload-video-revision-form-container {
+        background: rgb(237, 244, 206);
+        width: 100%;
+        padding: 3%;
+        border-radius: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
     #upload-revision-previous-image-container {
         width: 30%;
         height: 30vh;
@@ -289,15 +442,131 @@
         box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.6);
         padding: 0.5% 1% .5% 2%;
     }
-        
+    #upload-video-revision-scene-shot {
+        font-weight: 900;
+        font-size: 1.5rem;
+
+    }
+    #upload-video-revision-video-container {
+        width: 100%;
+        height: 50vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    #upload-video-revision-video-version {
+        font-weight: 900;
+        font-size: 1.2rem;
+        color: rgb(15, 137, 15);
+    }
+    .upload-video-revision-video {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
 
 </style>
 <div id="root-container">
-    <p id="title">Images Feedback</p>
-    
     <div id="images-section">
         <div id="table-container">
             <p id="video-temp-title">{{ temp_title }}</p>
+            {% if video_dict %}
+            <p class="table-main-header">--------------- VIDEOS ---------------</p>
+            {% for scene in video_dict %}
+            <div class="scene-container">
+                <p class="scene-header">Scene {{ scene }}</p>
+                <div class="scene-inner-container">
+                    {% for shot in video_dict[scene] %}
+                    <p class="shot-header">Shot {{ shot }}</p>
+                    <table class="videos-table">
+                        <thead>
+                            <tr>
+                                <th class="vid-col_1">SS</th>
+                                <th class="vid-col_2">Video (click for details)</th>
+                                <th class="vid-col-6">Revisions</th>
+                                <th class="vid-col_5">Text</th>
+                                <th class="vid-col_3">Feedback</th>
+                                <th class="vid-col_4">Assigned to</th>
+                                <th class="vid-col_4">Upload Revision</th>
+                                <th class="vid-col_4">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for video in video_dict[scene][shot] %}
+                            <tr>
+                                <td><b>{{ scene }}-{{ shot }}</b></td>
+                                <td>
+                                    {% if video_dict[scene][shot][video]['last_revision'] != [] %}
+                                    <video class="video" src="{{video_dict[scene][shot][video]['last_revision'][0][2]}}" controls></video>
+                                    {% else %}
+                                    <video class="video" src="{{video_dict[scene][shot][video]['file_path']}}" controls></video>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <p>{{ video_dict[scene][shot][video]['revisions'] }}</p>
+                                </td>
+                                <td>
+                                    {% if video_dict[scene][shot][video]['last_revision'] != [] %}
+                                    {{video_dict[scene][shot][video]['last_revision'][0][3]}}
+                                    {% else %}
+                                    {{video_dict[scene][shot][video]['text']}}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if youtube_admin in current_user.role %}
+                                    <button class="image-feedback-recording-btn" data-video_uuid="{{video}}" onclick="openVideoFeedbackRecordingPopup(this.dataset.video_uuid)">Record Feedback</button>
+                                    {% endif %}
+                                    {% if video_dict[scene][shot][video]['last_revision'] != [] and video_dict[scene][shot][video]['last_revision'][0][4] %}
+                                    <audio class="feedback-audio" src="{{ video_dict[scene][shot][video]['last_revision'][0][4] }}" controls></audio>
+                                    {% elif video_dict[scene][shot][video]['feedback'] %}
+                                    <audio class="feedback-audio" src="{{ video_dict[scene][shot][video]['feedback'] }}" controls></audio>
+                                    {% endif %}
+                                </td>
+                                <td class="assigned-to-name">
+                                    {% if youtube_admin in current_user.role %}
+                                    <select class="assigned-to-mate" id="assign-mate-video-{{video}}" data-video_uuid="{{video}}" oninput="assignMateVideo(this.dataset.video_uuid)">
+                                        <option>Select mate</option>
+                                        <option value="remove-mate">Remove Mate</option>
+                                        {% for mate in mates %}
+                                        <option value="{{mate[0]}}">{{mate[1]}}</option>
+                                        {% endfor %}
+                                    </select>
+                                    {% endif %}
+                                    {{video_dict[scene][shot][video]['assigned_to_name']}}
+                                    {% if not video_dict[scene][shot][video]['assigned_to_name'] %}
+                                    <p style="color: black; font-weight: 500;">Last assigned: {{video_dict[scene][shot][video]['last_assigned']}}</p>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if video_dict[scene][shot][video]['assigned_to_uuid'] == current_user.uuid %}
+                                    <button class="revision-btn" data-video_uuid="{{video}}" onclick="uploadVideoRevisionPopup(this.dataset.video_uuid)">Upload Revision</button>
+                                    {% endif %}
+                                </td>
+                                <td style="background: {{video_dict[scene][shot][video]['approval_status'][1]}}; color: white;">
+                                    <div>
+                                        {% if youtube_admin in current_user.role %}
+                                        <select id="approval-{{video}}" class="approval-status-select" data-video_uuid="{{video}}" oninput="submitVideoStatus(this.dataset.video_uuid)">
+                                            <option>Select</option>
+                                            <option value="revision-required">Revision Required</option>
+                                            <option value="approved">Approved</option>
+                                            <option value="rejected">Rejected</option>
+                                            <option value="pending">Pending</option>
+                                        </select>
+                                        {% endif %}
+                                    {{video_dict[scene][shot][video]['approval_status'][0]}}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% if image_dict %}
+            <p class="table-main-header">--------------- IMAGES ---------------</p>
             <table id="images-table">
                 <thead>
                     <tr>
@@ -368,6 +637,7 @@
                     {% endfor %}
                 </tbody>
             </table>
+            {% endif %}
             
         </div>
     </div>
@@ -392,6 +662,23 @@
         </div>
     </div>
 </div>
+
+<div id="video-feedback-recording-popup" class="popup">
+    <div class="popup-content">
+        <div id="video-feedback-recording-popup-content-inner">
+            <span class="close" onclick="closePopup()">&times;</span>
+            <p id="video-feedback-scene-shot"></p>
+            <div id="video-feedback-video-container"></div>
+            <div id="video-feedback-recording-popup-btn-container">
+                <button id="video-startBtn">Start Recording</button>
+                <button id="video-stopBtn" disabled>Stop Recording</button>
+                <audio id="videoAudioPlayback" controls></audio>
+                <button id="save-video-feedback-recording">Save Video</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div id="upload-revision-popup" class="popup">
     <div class="popup-content">
         <div id="upload-revision-form-container">
@@ -410,6 +697,28 @@
         </div>
     </div>
 </div>
+
+<div id="upload-video-revision-popup" class="popup">
+    <div class="popup-content">
+        <div id="upload-video-revision-form-container">
+            <span class="close" onclick="closePopup()">&times;</span>
+            <p id="upload-video-revision-scene-shot"></p>
+            <div id="upload-video-revision-video-container">
+                <video class="upload-video-revision-video" src="" controls></video>
+                <p class="upload-video-revision-version"></p>
+            </div>
+            <p id="upload-video-revision-video-version"></p>
+            <form id="upload-video-revision-form" enctype="multipart/form-data">
+                <p id="upload-video-revision-header">Upload revised video</p>
+                <input type="hidden" id="parent-video-uuid" name="parent-video-uuid">
+                <input type="file" id="video-revision-file" name="video-revision-file" class="file-upload-input" accept=".mp4, .avi, .mov, video/mp4, video/avi, video/mov" required>
+                <input type="text" id="video-revision-text-input" name="video-revision-text-input" placeholder="Anything you want to say?">
+                <button type="submit" name="submit" value="upload_video_revision" id="upload-video-revision-btn" class="form-button">Upload revised video</button>
+                <div id="upload-video-revision-status-message"></div>
+            </form>
+        </div>
+    </div>
+</div>
 <script>
     function openPopup() {
         document.getElementById("image-popup").style.display = "block";
@@ -418,6 +727,9 @@
         document.getElementById("image-popup").style.display = "none";
         document.getElementById("audio-recording-popup").style.display = "none";
         document.getElementById("upload-revision-popup").style.display = "none";
+        document.getElementById("upload-video-revision-popup").style.display = "none";
+        document.getElementById("video-feedback-recording-popup").style.display = "none";
+        window.location.reload();
     }
 
     function openImageLargeSize(imagePath) {
@@ -431,7 +743,49 @@
         document.getElementById("save-image-feedback-recording").onclick = () => saveAudio(revision_uuid, image_uuid);
         document.getElementById("feedback-recording-popup-img").src = img_path;
     }
-    // ----------------------------------------------- FEEDBACK RECORDING ------------------------------------------------
+
+    function openVideoFeedbackRecordingPopup(video_uuid) {
+        document.getElementById("video-feedback-recording-popup").style.display = "block";
+        document.getElementById("save-video-feedback-recording").onclick = () => saveVideoAudio(video_uuid);
+        const endpointUrl = "{{ url_for('youtube.save_audio') }}";
+        fetch(endpointUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                'video_uuid': video_uuid,
+                'type': 'get_all_videos_details',
+            })
+        }).then(response => response.json()).then(data => {
+
+            const videoContainer = document.getElementById("video-feedback-video-container");
+            videoContainer.replaceChildren();
+            for (const item of data.video_list) {
+                const newDiv = document.createElement('div');
+                const newVideo = document.createElement('video');
+                const newVersion = document.createElement('p');
+                newVideo.src = item[0];
+                newVideo.classList.add('video-feedback-video');
+                newVideo.controls = true;
+
+                newVersion.classList.add('video-feedback-version-text');
+                newVersion.textContent = item[1];
+                newDiv.appendChild(newVideo);
+                newDiv.appendChild(newVersion);
+                newDiv.classList.add('video-feedback-video-container-inner');
+
+                videoContainer.appendChild(newDiv);
+            }
+            document.getElementById('video-feedback-scene-shot').innerHTML = data.scene_shot;
+        }).catch(error => {
+            console.error('Error:', error);
+        });
+        
+    }
+
+    
+    // ----------------------------------------------- IMAGE FEEDBACK RECORDING ------------------------------------------------
     // Keep track of the recorder instance and raw audio data
     let mediaRecorder;
     let audioChunks = [];
@@ -499,6 +853,97 @@
             saveAudioBtn.disabled = false;
         }
     });
+
+    // ----------------------------------------------- VIDEO FEEDBACK RECORDING ------------------------------------------------
+    // Keep track of the recorder instance and raw audio data
+
+    const videoStartBtn = document.getElementById('video-startBtn');
+    const videoStopBtn = document.getElementById('video-stopBtn');
+    const saveVideoAudioBtn = document.getElementById('save-video-feedback-recording');
+    const videoAudioPlayback = document.getElementById('videoAudioPlayback');
+
+    saveVideoAudioBtn.disabled = true;
+
+    // 1. Start Recording
+    videoStartBtn.addEventListener('click', async () => {
+        audioChunks = []; // Clear previous data
+        
+        try {
+            // Request microphone permission from the browser
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            
+            // Initialize MediaRecorder with the hardware audio stream
+            mediaRecorder = new MediaRecorder(stream);
+            
+            // Collect audio data fragments as they become available
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    audioChunks.push(event.data);
+                }
+            };
+            
+            // Process the final recording once the stream stops
+            mediaRecorder.onstop = () => {
+                // Combine chunks into a single audio Blob file
+                audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                
+                // Create a local URL pointing to the file and set it to the player
+                const audioUrl = URL.createObjectURL(audioBlob);
+                videoAudioPlayback.src = audioUrl;
+                
+                // Stop all hardware mic tracks to turn off the recording indicator
+                stream.getTracks().forEach(track => track.stop());
+            };
+            
+            // Begin recording
+            mediaRecorder.start();
+            
+            // Adjust UI button states
+            videoStartBtn.disabled = true;
+            videoStopBtn.disabled = false;
+            
+        } catch (error) {
+            console.error('Error accessing microphone:', error);
+            alert('Could not access microphone. Please check permissions.');
+        }
+    });
+
+    // 2. Stop Recording
+    videoStopBtn.addEventListener('click', () => {
+        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+            mediaRecorder.stop(); // Triggers the onstop event handler above
+            
+            // Reset UI button states
+            videoStartBtn.disabled = false;
+            videoStopBtn.disabled = true;
+            saveVideoAudioBtn.disabled = false;
+        }
+    });
+    function saveVideoAudio(video_uuid) {
+        const endpointUrl = "{{ url_for('youtube.save_audio') }}";
+        if (audioBlob) {
+            const formData = new FormData();
+            formData.append('audio', audioBlob, 'audio.webm');
+            formData.append('video_uuid', video_uuid);
+            formData.append('type', 'save_video_audio');
+            fetch(endpointUrl, { method: 'POST', body: formData })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.reload();
+                    } else {
+                        alert('Failed to save audio.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error saving audio:', error);
+                    alert('Failed to save audio.');
+                });
+        } else {
+            alert('No audio data available.');
+        }
+    }
+    // --------------------------------------------------------------------------------------------------------------------------
     function saveAudio(revision_uuid, image_uuid) {
         const endpointUrl = "{{ url_for('youtube.save_audio') }}";
         if (audioBlob) {
@@ -525,11 +970,43 @@
             alert('No audio data available.');
         }
     }
-    // --------------------------------------- REVISION IMAGE POPUP ----------------------------------------------
+    // --------------------------------------------------- REVISION POPUP -----------------------------------------------
     function uploadRevisionPopup(img_uuid, img_path) {
         document.getElementById("upload-revision-popup").style.display = "block";
         document.getElementById("parent-img-uuid").value = img_uuid;
         document.getElementById("upload-revision-previous-image").src = img_path;
+    }
+    function uploadVideoRevisionPopup(video_uuid) {
+        document.getElementById("upload-video-revision-popup").style.display = "block";
+        document.getElementById("parent-video-uuid").value = video_uuid;
+        const endpointUrl = "{{ url_for('youtube.save_revision_video') }}";
+        data = {
+            'video_uuid': video_uuid,
+            'type': 'get_video_and_revisions_details'
+        };
+        fetch(endpointUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then(response => response.json()).then(data => {
+            if (data.last_version) {
+                const uploadVideoRevisionVideoContainer = document.getElementById("upload-video-revision-video-container");
+                uploadVideoRevisionVideoContainer.replaceChildren();
+                const video = document.createElement('video');
+                video.src = data.last_version.file_path;
+                video.controls = true;
+                video.classList.add('upload-video-revision-video');
+                uploadVideoRevisionVideoContainer.appendChild(video);
+                document.getElementById('upload-video-revision-scene-shot').innerHTML = data.scene_shot;
+                document.getElementById('upload-video-revision-video-version').innerHTML = `Version: ${data.last_version.version}`;
+            } else {
+                alert('Failed to fetch video details.');
+            }
+        }).catch(error => {
+            console.error('Error:', error);
+        })
     }
     const revisionForm = document.getElementById('upload-revision-form');
     revisionForm.addEventListener('submit', (event) => {
@@ -568,6 +1045,41 @@
                 alert('Failed to upload revision.');
             });
     });
+    const videoRevisionForm = document.getElementById('upload-video-revision-form');
+    videoRevisionForm.addEventListener('submit', (event) => {
+        event.preventDefault(); // Prevent the form from submitting normally
+        const saveRevisionVideoEndpointUrl = "{{ url_for('youtube.save_revision_video') }}";
+        const statusMessage = document.getElementById('upload-video-revision-status-message');
+        const fileInput = document.getElementById("video-revision-file");
+        const parentVideoUuid = document.getElementById("parent-video-uuid").value;
+        const revisionVideoText = document.getElementById("video-revision-text-input").value;
+        const submitBtn = document.getElementById("upload-video-revision-btn");
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Uploading...';
+
+        const formData = new FormData();
+        formData.append('parent_video_uuid', parentVideoUuid);
+        formData.append('video_revision_file', fileInput.files[0]);
+        formData.append('type', 'upload_revision_video');
+        formData.append('revision_video_text', revisionVideoText);
+
+        fetch(saveRevisionVideoEndpointUrl, { method: 'POST', body: formData })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Revision uploaded successfully.');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Upload revised video';
+                    videoRevisionForm.reset();
+                } else {
+                    alert('Failed to upload revision.');
+                }
+            })
+            .catch(error => {
+                console.error('Error uploading revision:', error);
+                alert('Failed to upload revision.');
+            });
+    });
 
 // ------------------------------------------- IMAGE APPROVAL STATUS -----------------------------------------------------
     function submitStatus(image_uuid) {
@@ -591,6 +1103,28 @@
                 alert('Failed to update approval status.');
             });
     }
+
+    function submitVideoStatus(video_uuid) {
+        const approvalStatus = document.getElementById('approval-'+video_uuid).value;
+        const endpointUrl = "{{ url_for('youtube.submit_status') }}";
+        const formData = new FormData();
+        formData.append('video_uuid', video_uuid);
+        formData.append('approval_status', approvalStatus);
+        formData.append('type', 'submit_video_approval_status');
+        fetch(endpointUrl, { method: 'POST', body: formData })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert('Failed to update approval status.');
+                }
+            })
+            .catch(error => {
+                console.error('Error updating approval status:', error);
+                alert('Failed to update approval status.');
+            });
+    }
 // ------------------------------------------- ASSIGN MATE -----------------------------------------------------
     function assignMate(image_uuid) {
         const mateUuid = document.getElementById('assign-mate-'+image_uuid).value;
@@ -599,6 +1133,29 @@
         formData.append('image_uuid', image_uuid);
         formData.append('mate_uuid', mateUuid);
         formData.append('type', 'assign_mate');
+
+        fetch(endpointUrl, { method: 'POST', body: formData })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert('Failed to assign mate.');
+                }
+            })
+            .catch(error => {
+                console.error('Error assigning mate:', error);
+                alert('Failed to assign mate.');
+            });
+    }
+
+    function assignMateVideo(video_uuid) {
+        const mateUuid = document.getElementById('assign-mate-video-'+video_uuid).value;
+        const endpointUrl = "{{ url_for('youtube.assign_mate') }}";
+        const formData = new FormData();
+        formData.append('video_uuid', video_uuid);
+        formData.append('mate_uuid', mateUuid);
+        formData.append('type', 'assign_mate_video');
 
         fetch(endpointUrl, { method: 'POST', body: formData })
             .then(response => response.json())
