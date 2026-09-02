@@ -40,7 +40,7 @@ class YoutubeVideoComponent(db.Model):
     __tablename__ = 'youtube_video_component'
     id = db.Column(db.Integer, primary_key=True)
     uuid = db.Column(db.Integer, unique=True)
-    component_type = db.Column(db.String(50)) # eg dialogue_&_narration, voice_recording, img_vid_instruction, editing_fx, thumbnail, seo, yt_card, upload_time, etc.
+    component_type = db.Column(db.String(50)) # eg dialogue_&_narration, image, video, voice_recording, img_vid_instruction, editing_fx, thumbnail, seo, yt_card, upload_time, etc.
     subtype = db.Column(db.String(50)) # e.g. for seo, the subtypes are yt_title, yt_description, yt_keywords
     text = db.Column(db.Text) # text for dialogue_&_narration, img_vid_instruction, and other initial instructions excluding each video, image or any other work feedbacks
     file_path = db.Column(db.String(200)) # path for files like uplaoded images, videos, voice recordings, etc.
@@ -49,6 +49,8 @@ class YoutubeVideoComponent(db.Model):
     date_time = db.Column(db.String(50))
     assigned_to_uuid = db.Column(db.String(500))  # uuid of the team member the task is assigned to
     last_assigned = db.Column(db.String(50)) # uuid of the team member who was last assigned this iteration
+    scene = db.Column(db.String(50)) # applicable in case of video, eg. 1, 2, 3
+    shot = db.Column(db.String(50)) # applicable in case of video, eg. A, B, C etc. | scene and shot together 1-A, 1-B, 2-A, 2-B etc.
     youtube_video_id = db.Column(db.Integer, db.ForeignKey('youtube_video.id'))
     member_id = db.Column(db.Integer, db.ForeignKey('member.id'))
     revisions = db.relationship('YoutubeVideoComponentRevision', backref='youtube_video_component')

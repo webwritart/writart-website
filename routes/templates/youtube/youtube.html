@@ -41,7 +41,6 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
         padding: 0% 0% 2% 0%;
         margin: 1% 1% 2% 2%;
         background: rgb(227, 238, 205);
@@ -112,7 +111,7 @@
         width: 100%;
         height: 100%;
     }
- 
+    
     .project-btn {
         width: 100%;
         background: rgb(62, 79, 8);
@@ -183,6 +182,16 @@
         display: block;
         margin: 1%;
     }
+    #storyboard-section-header {
+        display: none;
+    }
+    #selected_storyboard_container {
+        display: none;
+    }
+    .storyboard_container {
+        height: 50vh;
+        overflow-y: auto;
+    }
     /* ------------------------------------------ SELECT CURRENT VIDEO ---------------------------------------------- */
     #select-current-video-btn {
         width: 100%;
@@ -229,6 +238,9 @@
         box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
         margin-bottom: 2%;
     }
+    label {
+        margin: 0%;
+    }
     /* ------------------------------------------ UPLOAD IMAGES -------------------------------------------------- */
     #upload-images-section {
         display: none;
@@ -237,7 +249,14 @@
         min-height: 20vh;
         width: 100%;
     }
-    #upload-images-form {
+    #upload-video-section {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        min-height: 20vh;
+        width: 100%;
+    }
+    .upload-form {
         background: rgb(244, 244, 203);
         width: 60%;
         padding: 3% 10%;
@@ -258,7 +277,7 @@
     #upload-images-form input::placeholder {
         color: rgb(111, 133, 79);
     }
-    #upload-images-btn {
+    .upload-button {
         width: 100%;
         background: rgb(168, 108, 12);
         border-radius: 1.5rem;
@@ -269,7 +288,7 @@
     #upload-images-btn:hover {
         background: rgb(132, 73, 6);
     }
-    #go-back {
+    .go-back {
         background: rgb(81, 87, 59);
         border-radius: 1.5rem;
         border: none;
@@ -283,6 +302,15 @@
     }
     /* --------------------------------------------------IMAGES DISPLAY---------------------------------------------------- */
     #images-container {
+        display: flex;
+        flex-direction: row !important;
+        background: rgb(35, 43, 3) !important;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        height: 30vh;
+        margin-bottom: 0%;
+    }
+    #videos-container {
         display: flex;
         flex-direction: row !important;
         background: rgb(35, 43, 3) !important;
@@ -432,40 +460,53 @@
             <p id="temp_title">{{ default_video_dict['temp_title'] }}</p>
 
             <div id="display-inner-container">
-                <p class="vid-detail-section-header">Dialogue & narration</p>
+                <p id="dialogue_narration-section-header" class="vid-detail-section-header">Dialogue & narration</p>
                 <div id="dialogue_narration" class="vid-detail-section">
                     {{ default_video_dict['dialogue_narration'] }}
                 </div>
 
-                <p class="vid-detail-section-header">Voice recording</p>
+                <p id="voice-recording-section-header" class="vid-detail-section-header">Voice recording</p>
                 <div id="voice_recording_container" class="vid-detail-section">
                     {% for audio in default_video_dict['voice_recordings'] %}
                     <audio id="voice_recording" class="voice_recording" src="{{ audio }}" controls volume="0.5" loop></audio>
                     {% endfor %}
                 </div>
-                <p class="vid-detail-section-header">Image/Video instruction</p>
+                {% if default_video_dict['storyboard'] %}
+                <p id="default-storyboard-section-header" class="vid-detail-section-header">Storyboard</p>
+                <div id="storyboard_container" class="vid-detail-section storyboard_container">
+                    <iframe src="{{ default_video_dict['storyboard'][0] }}" width="100%" height="1200px" style="border: none;" title="Embedded PDF"></iframe>
+                </div>
+                {% endif %}
+                <p id="storyboard-section-header" class="vid-detail-section-header">Storyboard</p>
+                <div id="selected_storyboard_container" class="vid-detail-section storyboard_container">
+                    <iframe id="storyboard" src="" width="100%" height="1200px" style="border: none;" title="Embedded PDF"></iframe>
+                </div>
+                <p id="image-video-instruction-section-header" class="vid-detail-section-header">Image/Video instruction</p>
                 <div id="img_vid_instruction" class="vid-detail-section">
                     {{ default_video_dict['img_vid_instruction'] }}
                 </div>
-
-
-                <p class="vid-detail-section-header">Images</p>
+                <p id="images-section-header" class="vid-detail-section-header">Images</p>
                 <div id="images-container" class="vid-detail-section">
                 {% for img in default_video_dict['image_list'] %}
                     <img class="image" src="{{ img }}" alt="image">
                 {% endfor %}
                 </div>
-                <div class="section-action-button-container">
+                <div id="images-action-button-container" class="section-action-button-container">
                     <button class="section-action-button" id="image-feedback-btn" onclick="openImageFeedback({{ default_video_dict['video_uuid']}})">Feedbacks</button>
                 </div>
 
-
-                <p class="vid-detail-section-header">Thumbnail instruction</p>
+                <p id="videos-section-header" class="vid-detail-section-header">Videos</p>
+                <div id="videos-container" class="vid-detail-section">
+                    {% for video in default_video_dict['video_list'] %}
+                    <video class="video" src="{{ video }}" controls height="200"></video>
+                    {% endfor %}
+                </div>
+                <p id="thumbnail-instruction-section-header" class="vid-detail-section-header">Thumbnail instruction</p>
                 <div id="thumbnail_instruction" class="vid-detail-section">
                     {{ default_video_dict['thumbnail_instruction'] }}
                 </div>
 
-                <p class="vid-detail-section-header">Youtube card instruction</p>
+                <p id="yt-card-section-header" class="vid-detail-section-header">Youtube card instruction</p>
                 <div id="youtube_card_instruction" class="vid-detail-section">
                     {{ default_video_dict['youtube_card_instruction'] }}
                 </div>
@@ -487,20 +528,36 @@
             <div id="operations-container">
                 <p class="selection-header" id="operations-header">Operations</p>
                 <button id="select-current-video-btn" onclick="selectCurrentVideoSection()">Select Current Video</button>
+                <hr>
                 <button id="upload-img" class="operation-btn" onclick="uploadImages()">Upload images</button>
+                <button id="upload-video-btn" class="operation-btn" onclick="uploadVideo()">Upload video</button>
             </div>
         </div>
     </div>
     <div id="upload-images-section">
-        <form id="upload-images-form">
+        <form id="upload-images-form" class="upload-form">
             <p id="upload-images-header">Upload images</p>
             <input type="file" id="image-files" name="image-files" class="file-upload-input" accept=".jpg, .jpeg, .png, image/jpeg, image/png" multiple required>
             <input type="text" id="image-text" name="image-text" placeholder="Anything you want to say?">
             <input type="hidden" name="video_uuid" id="img-upload-video-uuid" value="{{ default_video_dict['video_uuid'] }}">
-            <button type="submit" name="submit" value="upload_images" id="upload-images-btn" class="form-button">Upload images</button>
+            <button type="submit" name="submit" value="upload_images" id="upload-images-btn" class="form-button upload-button">Upload images</button>
             <div id="status-message"></div>
         </form>
-        <button id="go-back" onclick="goBack()">Go back</button>
+        <button class="go-back" onclick="goBack()">Go back</button>
+    </div>
+    <div id="upload-video-section">
+        <form id="upload-video-form" class="upload-form">
+            <p id="upload-images-header">Upload video</p>
+            <label>Scene</label>
+            <input type="number" name="scene" placeholder="Scene (example 1, 2, 3, etc.)">
+            <label>Shot</label>
+            <input type="text" name="shot" placeholder="Shot (example A, B, C, a, b, c etc.)">
+            <input type="file" id="video-file" name="video-file" class="file-upload-input" accept=".mp4, .avi, .mov, video/mp4, video/avi, video/mov" required>
+            <input type="hidden" name="video_uuid" id="video-upload-video-uuid" value="{{ default_video_dict['video_uuid'] }}">
+            <button type="submit" name="submit" value="upload_video" id="upload-video-btn" class="form-button upload-button">Upload video</button>
+            <div id="video-status-message"></div>
+        </form>
+        <button class="go-back" onclick="goBack()">Go back</button>
     </div>
     <div id="select-current-video-section">
         <form id="select-current-video-form">
@@ -522,12 +579,66 @@
     function initialLoad() {
         const dialogueNarration = document.getElementById('dialogue_narration');
         const imgVidInstruction = document.getElementById('img_vid_instruction');
+        const voiceRecording = document.getElementById('voice_recording_container');
+        const imagesContainer = document.getElementById('images-container');
         const thumbnailInstruction = document.getElementById('thumbnail_instruction');
         const youtubeCardInstruction = document.getElementById('youtube_card_instruction');
         dialogueNarration.innerHTML = defaultVideoDict['dialogue_narration'];
         imgVidInstruction.innerHTML = defaultVideoDict['img_vid_instruction'];
         thumbnailInstruction.innerHTML = defaultVideoDict['thumbnail_instruction'];
-        youtubeCardInstruction.innerHTML = defaultVideoDict['youtube_card_instruction'];      
+        youtubeCardInstruction.innerHTML = defaultVideoDict['youtube_card_instruction'];   
+        
+        if (defaultVideoDict['dialogue_narration'] != '' && defaultVideoDict['dialogue_narration'] != null) {
+            dialogueNarration.style.display = 'flex';
+            document.getElementById('dialogue_narration-section-header').style.display = 'block';
+        } else {
+            dialogueNarration.style.display = 'none';
+            document.getElementById('dialogue_narration-section-header').style.display = 'none';
+        }
+        if (defaultVideoDict['voice_recordings'].length > 0) {
+            voiceRecording.style.display = 'flex';
+            document.getElementById('voice-recording-section-header').style.display = 'block';
+        } else {
+            voiceRecording.style.display = 'none';
+            document.getElementById('voice-recording-section-header').style.display = 'none';
+        }
+        if (defaultVideoDict['image_list'].length > 0) {
+            imagesContainer.style.display = 'flex';
+            document.getElementById('images-section-header').style.display = 'block';
+            document.getElementById('images-action-button-container').style.display = 'flex';
+        } else {
+            imagesContainer.style.display = 'none';
+            document.getElementById('images-section-header').style.display = 'none';
+            document.getElementById('images-action-button-container').style.display = 'none';
+        }
+        if (defaultVideoDict['video_list'].length > 0) {
+            document.getElementById('videos-section-header').style.display = 'block';
+            document.getElementById('videos-container').style.display = 'flex';
+        } else {
+            document.getElementById('videos-section-header').style.display = 'none';
+            document.getElementById('videos-container').style.display = 'none';
+        }
+        if (defaultVideoDict['img_vid_instruction'] != '' && defaultVideoDict['img_vid_instruction'] != null) {
+            imgVidInstruction.style.display = 'flex';
+            document.getElementById('image-video-instruction-section-header').style.display = 'block';
+        } else {
+            imgVidInstruction.style.display = 'none';
+            document.getElementById('image-video-instruction-section-header').style.display = 'none';
+        }
+        if (defaultVideoDict['thumbnail_instruction'] != '' && defaultVideoDict['thumbnail_instruction'] != null) {
+            thumbnailInstruction.style.display = 'flex';
+            document.getElementById('thumbnail-instruction-section-header').style.display = 'block';
+        } else {
+            thumbnailInstruction.style.display = 'none';
+            document.getElementById('thumbnail-instruction-section-header').style.display = 'none';
+        }
+        if (defaultVideoDict['youtube_card_instruction'] != '' && defaultVideoDict['youtube_card_instruction'] != null) {
+            youtubeCardInstruction.style.display = 'flex';
+            document.getElementById('yt-card-section-header').style.display = 'block';
+        } else {
+            youtubeCardInstruction.style.display = 'none';
+            document.getElementById('yt-card-section-header').style.display = 'none';
+        }
     }
     initialLoad();
     function selectChannel(channel_uuid) {
@@ -580,6 +691,10 @@
             const thumbnailInstruction = document.getElementById('thumbnail_instruction');
             const youtubeCardInstruction = document.getElementById('youtube_card_instruction');
             const imagesContainer = document.getElementById('images-container');
+            const videoContainer = document.getElementById('videos-container');
+            const storyboard = document.getElementById('storyboard');
+            const storyboardSectionHeader = document.getElementById('storyboard-section-header');
+            const selectedStoryboardContainer = document.getElementById('selected_storyboard_container');
             const imageList = data.image_list;
             imagesContainer.replaceChildren();
             for (const im of imageList) {
@@ -587,6 +702,15 @@
                 imageTag.src = im;
                 imageTag.classList.add('image');
                 imagesContainer.appendChild(imageTag);
+            }
+            videoContainer.replaceChildren();
+            for (const vid of data.video_list) {
+                const videoTag = document.createElement('video');
+                videoTag.src = vid;
+                videoTag.classList.add('video');
+                videoTag.controls = true;
+                videoTag.height = 200;
+                videoContainer.appendChild(videoTag);
             }
             vidDetailSection[0].style.display = 'flex';
             vidDetailSectionHeader[0].style.display = 'block';
@@ -601,12 +725,72 @@
                 audioTag.volume = 0.5;
                 voiceRecordingContainer.appendChild(audioTag);
             }
-            voiceRecordingContainer.style.display = 'flex';
             tempTitle.innerHTML = data.temp_title;
             dialogueNarration.innerHTML = data.dialogue_narration;
             imgVidInstruction.innerHTML = data.img_vid_instruction;
             thumbnailInstruction.innerHTML = data.thumbnail_instruction;
             youtubeCardInstruction.innerHTML = data.youtube_card_instruction;
+            storyboard.src = data.storyboard;
+            if (data.dialogueNarration != '' && data.dialogueNarration != null) {
+                dialogueNarration.style.display = 'flex';
+                document.getElementById('dialogue_narration-section-header').style.display = 'block';
+            } else {
+                dialogueNarration.style.display = 'none';
+                document.getElementById('dialogue_narration-section-header').style.display = 'none';
+            }
+            if (data.voice_recordings.length > 0) {
+                voiceRecordingContainer.style.display = 'flex';
+                document.getElementById('voice-recording-section-header').style.display = 'block';
+            } else {
+                voiceRecordingContainer.style.display = 'none';
+                document.getElementById('voice-recording-section-header').style.display = 'none';
+            }
+            if (data.img_vid_instruction != '' && data.img_vid_instruction != null) {
+                imgVidInstruction.style.display = 'flex';
+                document.getElementById('image-video-instruction-section-header').style.display = 'block';
+            } else {
+                imgVidInstruction.style.display = 'none';
+                document.getElementById('image-video-instruction-section-header').style.display = 'none';
+            }
+            if (data.storyboard != null && data.storyboard != "") {
+                storyboardSectionHeader.style.display = 'block';
+                selectedStoryboardContainer.style.display = 'block';
+            } else {
+                storyboardSectionHeader.style.display = 'none';
+                selectedStoryboardContainer.style.display = 'none';
+            }
+            if (data.video_list.length == 0) {
+                document.getElementById('videos-section-header').style.display = 'none';
+                videoContainer.style.display = 'none';
+            } else {
+                document.getElementById('videos-section-header').style.display = 'block';
+                videoContainer.style.display = 'flex';
+            }
+            if (data.image_list.length == 0) {
+                document.getElementById('images-section-header').style.display = 'none';
+                imagesContainer.style.display = 'none';
+                document.getElementById('images-action-button-container').style.display = 'none';
+            } else {
+                document.getElementById('images-section-header').style.display = 'block';
+                imagesContainer.style.display = 'flex';
+                document.getElementById('images-action-button-container').style.display = 'flex';
+            }
+            if (data.thumbnail_instruction != '' && data.thumbnail_instruction != null) {
+                thumbnailInstruction.style.display = 'flex';
+                document.getElementById('thumbnail-instruction-section-header').style.display = 'block';
+            } else {
+                thumbnailInstruction.style.display = 'none';
+                document.getElementById('thumbnail-instruction-section-header').style.display = 'none';
+            }
+            if (data.youtube_card_instruction != '' && data.youtube_card_instruction != null) {
+                youtubeCardInstruction.style.display = 'flex';
+                document.getElementById('yt-card-section-header').style.display = 'block';
+            } else {
+                youtubeCardInstruction.style.display = 'none';
+                document.getElementById('yt-card-section-header').style.display = 'none';
+            }
+            document.getElementById('default-storyboard-section-header').style.display = 'none';
+            document.getElementById('storyboard_container').style.display = 'none';
             document.getElementById('img-upload-video-uuid').value = data.video_uuid;
             document.getElementById('image-feedback-btn').onclick = () => openImageFeedback(data.video_uuid);
         }).catch(error => {
@@ -646,6 +830,13 @@
         uploadImagesSection.style.display = 'flex';
     }
 
+    function uploadVideo() {
+        const mainSection = document.getElementById('main-section');
+        mainSection.style.display = 'none';
+        const uploadVideoSection = document.getElementById('upload-video-section');
+        uploadVideoSection.style.display = 'flex';
+    }
+
     // ----------------------------------------------- AVOID MULTIPLE CLICK SUBMITS -----------------------------------------------
     document.getElementById('upload-images-form').addEventListener('submit', function(e) {
         const submitBtn = document.getElementById('upload-images-btn');
@@ -661,8 +852,10 @@
         // submitBtn.disabled = true; 
         submitBtn.innerText = 'Submitting...';
     })
-// ------------------------------------------------- UPLOAD IMAGES -------------------------------------------------------
+// ------------------------------------------------- UPLOAD IMAGES & VIDEO -------------------------------------------------------
     const uploadImagesForm = document.getElementById('upload-images-form');
+    const uploadVideoForm = document.getElementById('upload-video-form');
+
     uploadImagesForm.addEventListener('submit', async function(e) {
         e.preventDefault();
 
@@ -705,7 +898,64 @@
             console.error('Submission failed:', error);
             statusMessage.textContent = 'Image upload failed. Please try again.';
         } finally {
+            uploadImagesForm.reset();
             submitBtn.innerText = 'Upload images';
+            submitBtn.disabled = false;
+        }
+    });
+
+    uploadVideoForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const submitBtn = document.getElementById('upload-video-btn');
+        const imgUploadEndpointUrl = "{{ url_for('youtube.upload_video') }}";
+        const sceneInput = document.querySelector('#upload-video-form input[name="scene"]');
+        const shotInput = document.querySelector('#upload-video-form input[name="shot"]');
+        const fileInput = document.getElementById('video-file');
+        const statusMessage = document.getElementById('video-status-message');
+        const videoUuid = document.getElementById('video-upload-video-uuid').value;
+
+        if (sceneInput.value.trim() === '' || shotInput.value.trim() === '') {
+            statusMessage.textContent = 'Please provide both scene and shot information.';
+            return;
+        }
+        if (fileInput.files.length === 0) {
+            statusMessage.textContent = 'Please select at least one video file.';
+            return;
+        }
+
+        submitBtn.innerText = 'Uploading...';
+        submitBtn.disabled = true;
+
+        const formData = new FormData();
+        for (const file of fileInput.files) {
+            formData.append('files', file);
+        }
+        formData.append('video_uuid', videoUuid);
+        formData.append('scene', sceneInput.value.trim());
+        formData.append('shot', shotInput.value.trim());
+        formData.append('type', 'upload_video');
+        try {
+            const response = await fetch(imgUploadEndpointUrl, {
+            method: 'POST',
+            body: formData // Passed directly; do not set Content-Type header
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            alert(result);
+            console.log('Success:', result);
+            statusMessage.textContent = 'Video uploaded successfully.';
+        
+        } catch (error) {
+            console.error('Submission failed:', error);
+            statusMessage.textContent = 'Video upload failed. Please try again.';
+        } finally {
+            uploadVideoForm.reset();
+            submitBtn.innerText = 'Upload video';
             submitBtn.disabled = false;
         }
     });

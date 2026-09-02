@@ -78,8 +78,10 @@ def home():
                 default_video_dict['vid_uuid_name_list'] = default_vid_uuid_name_list
                 if current_video_exists:
                     default_video_dict['image_list'] = [a.file_path for a in current_video.components if a.component_type == 'image']
+                    default_video_dict['video_list'] = [a.file_path for a in current_video.components if a.component_type == 'video']
                 else:
                     default_video_dict['image_list'] = [a.file_path for a in first_video.components if a.component_type == 'image']
+                    default_video_dict['video_list'] = [a.file_path for a in first_video.components if a.component_type == 'video'] 
                 if current_video_exists:
                     default_video_dict['temp_title'] = current_video.temp_title
                     try:
@@ -91,6 +93,7 @@ def home():
                     except:
                         default_video_dict['dialogue_narration'] = ''
                     default_video_dict['voice_recordings'] = [a.file_path for a in current_video.components if a.component_type == 'voice_recording']
+                    default_video_dict['storyboard'] = [a.file_path for a in current_video.components if a.component_type == 'storyboard']
                     try:
                         default_video_dict['img_vid_instruction'] = markdown.markdown([a.text for a in current_video.components if a.component_type == 'img_vid_instruction'][0]).replace('\n', '<br>')
                     except:
@@ -118,6 +121,7 @@ def home():
                     except:
                         first_voice_recordings = ''
                     default_video_dict['voice_recordings'] = first_voice_recording_list
+                    default_video_dict['storyboard'] = [a.file_path for a in first_video.components if a.component_type == 'storyboard']
                     default_video_dict['video_uuid'] = first_video.uuid
                     try:
                         default_video_dict['img_vid_instruction'] = markdown.markdown(first_img_vid_instruction).replace('\n', '<br>')
@@ -133,7 +137,7 @@ def home():
                         default_video_dict['youtube_card_instruction'] = first_youtube_card_instruction
             else:
                 default_video_dict = {}
-        
+            pp.pprint(default_video_dict)
         if request.method == 'POST' and request.is_json:
             data = request.get_json()
             if data['type'] == 'select_channel':
@@ -152,6 +156,8 @@ def home():
                 dialogue_narration = ''
                 voice_recordings = []
                 image_list = []
+                video_list = []
+                storyboard = []
                 img_vid_instruction = ''
                 thumbnail_instruction = ''
                 youtube_card_instruction = ''
@@ -160,8 +166,12 @@ def home():
                         dialogue_narration = c.text
                     elif c.component_type == 'image':
                         image_list.append(c.file_path)
+                    elif c.component_type == 'video':
+                        video_list.append(c.file_path)
                     elif c.component_type == 'voice_recording':
                         voice_recordings.append(c.file_path)
+                    elif c.component_type == 'storyboard':
+                        storyboard = c.file_path
                     elif c.component_type == 'img_vid_instruction':
                         img_vid_instruction = c.text
                     elif c.component_type == 'thumbnail_instruction':
@@ -175,7 +185,9 @@ def home():
                 except:
                     vid_dict['dialogue_narration'] = dialogue_narration
                 vid_dict['voice_recordings'] = voice_recordings
+                vid_dict['storyboard'] = storyboard
                 vid_dict['image_list'] = image_list
+                vid_dict['video_list'] = video_list
                 try:
                     vid_dict['img_vid_instruction'] = markdown.markdown(img_vid_instruction).replace('\n', '<br>')
                 except:
@@ -253,6 +265,47 @@ def upload_images():
             send_email_studio(subject, ['shwetabhartist@gmail.com'], body, '', {})
         return jsonify('success')
 
+
+@youtube.route('/upload-video', methods=['GET', 'POST'])
+def upload_video():
+    if request.method == 'POST' and request.form.get('type') == 'upload_video':
+        video_file = request.files.get('files')
+        video_uuid = request.form.get('video_uuid')
+        scene = request.form.get('scene')
+        shot = request.form.get('shot').upper()
+        video = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar()
+        video_temp_title = video.temp_title
+        video_id = video.id
+        channel_id = video.channel_id
+        channel_name = db.session.query(YoutubeChannel).filter_by(id=channel_id).scalar().channel_name
+
+        base_path = f"./static/files/youtube/{channel_id}/{video_id}/videos/"
+        if not os.path.exists(base_path):
+            os.makedirs(base_path)
+        filename_base = secure_filename(video_file.filename)
+        save_path = base_path + filename_base
+        video_file.save(save_path)
+        existing_uuid_list = [a.uuid for a in db.session.query(YoutubeVideo)]
+        uuid = create_uuid(existing_uuid_list, 9)
+        entry = YoutubeVideoComponent(
+            uuid=uuid,
+            component_type='video',
+            file_path=save_path[1:],
+            approval_status='pending',
+            date_time=date_time_now,
+            youtube_video_id=video_id,
+            member_id=current_user.id,
+            scene=scene,
+            shot=shot
+        )
+        db.session.add(entry)
+        db.session.commit()
+
+        # send email to Leader -----------------------------------------------------
+        subject = f"New video uploaded - {date_time_now}"
+        body = f"New video uploaded\n\nVideo: {video_temp_title}\nScene-shot: {scene}-{shot}\nMember: {current_user.name}\nChannel: {channel_name}"
+        send_email_studio(subject, ['shwetabhartist@gmail.com'], body, '', {})
+        return jsonify('success')
 
 @youtube.route('/image-feedback', methods=['GET', 'POST'])
 def image_feedback():

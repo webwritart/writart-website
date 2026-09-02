@@ -1590,6 +1590,31 @@ def youtube_manager():
                 video_id = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar().id
                 date_time = datetime.datetime.now().replace(microsecond=0)
 
+                if 'storyboard' in request.files:
+                    p("storyboard posted")
+
+                    storyboard = request.files.get('storyboard')
+                    if storyboard.filename != '':
+                        base_save_path = f'./static/files/youtube/{channel_id}/{video_id}/storyboard/'
+                        if not os.path.exists(base_save_path):
+                            os.makedirs(base_save_path)
+                        existing_video_component_uuid_list = [a.uuid for a in db.session.query(YoutubeVideoComponent).all()]
+                        uuid = create_uuid(existing_video_component_uuid_list, 9)
+                        storyboard_name = f"{video_uuid}_{uuid}_{secure_filename(storyboard.filename)}"
+                        save_path = base_save_path + storyboard_name
+                        storyboard.save(save_path)
+                        entry = YoutubeVideoComponent(
+                            uuid=uuid,
+                            component_type='storyboard',
+                            file_path=save_path[1:],
+                            date_time=date_time,
+                            approval_status='pending',
+                            youtube_video_id=video_id,
+                            member_id=current_user.id
+                        )
+                        db.session.add(entry)
+                        db.session.commit()
+
                 if dialogue_narration:
                     all_components = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar().components
                     exits = False

@@ -176,7 +176,7 @@
     .form-submit-btn:hover {
         background: rgb(4, 92, 4);
     }
-     #voice-recording, #dialogue-narration-container, #video-img-instruction-container, #thumbnail-instruction-container, #youtube-card-instruction-container {
+     #voice-recording, #storyboard-container, #dialogue-narration-container, #video-img-instruction-container, #thumbnail-instruction-container, #youtube-card-instruction-container {
         display: none;
     }
     #voice-recording-text {
@@ -248,6 +248,7 @@
                         <option value="all">All operations</option>
                         <option value="dialogue-and-narration">Dialogue and Narration</option>
                         <option value="voice-recording">Voice Recording</option>
+                        <option value="storyboard">Storyboard</option>
                         <option value="video-img-instruction">video/image instruction</option>
                         <option value="thumbnail-instruction">Thumbnail instruction</option>
                         <option value="youtube-card-instruction">Youtube card instruction</option>
@@ -268,7 +269,12 @@
                         </select>
                         <p id="voice-recording-text"></p>
                     </div>
-                    <!-- --------------------------------video/image instruction------------------------------------------------ -->
+                    <!-- ----------------------------------------- Storyboard ------------------------------------------------ -->
+                    <div id="storyboard-container" class="inline_inputs">
+                        <label for="storyboard">Storyboard (PDF)&ensp;</label>
+                        <input type="file" name="storyboard" accept=".pdf">
+                    </div>
+                    <!-- --------------------------------image instruction------------------------------------------------ -->
                     <div id="video-img-instruction-container" class="inline_inputs">
                         <label for="video-img-instruction">video/image instruction&ensp;</label>
                         <textarea id="video-img-instruction" type="text" name="video_img_instruction" placeholder="video/image instruction"></textarea>
@@ -363,6 +369,7 @@
         document.getElementById('video-img-instruction-container').style.display = 'none';
         document.getElementById('thumbnail-instruction-container').style.display = 'none';
         document.getElementById('youtube-card-instruction-container').style.display = 'none';
+        document.getElementById('storyboard-container').style.display = 'none';
 
     }
     function showAllOperations() {
@@ -371,6 +378,7 @@
         document.getElementById('video-img-instruction-container').style.display = 'block';
         document.getElementById('thumbnail-instruction-container').style.display = 'block';
         document.getElementById('youtube-card-instruction-container').style.display = 'block';
+        document.getElementById('storyboard-container').style.display = 'block';
     }
 
     operation.addEventListener('change', function() {
@@ -387,7 +395,9 @@
             document.getElementById('thumbnail-instruction-container').style.display = 'block';
         } else if (operation.value === 'youtube-card-instruction') {
             document.getElementById('youtube-card-instruction-container').style.display = 'block';
-        } 
+        } else if (operation.value === 'storyboard') {
+            document.getElementById('storyboard-container').style.display = 'block';
+        }
     });
 
     addChannelForm.addEventListener('submit', function(e) {
@@ -470,6 +480,7 @@
         const videoUuid = addVideoComponentForm.video_uuid.value;
         const dialogueNarration = addVideoComponentForm.dialogue_narration.value;
         const voiceRecording = addVideoComponentForm.voice_recording.files[0];
+        const storyboard = addVideoComponentForm.storyboard.files[0];
         const videoImgInstruction = addVideoComponentForm.video_img_instruction.value;
         const thumbnailInstruction = addVideoComponentForm.thumbnail_instruction.value;
         const youtubeCardInstruction = addVideoComponentForm.youtube_card_instruction.value;
@@ -487,6 +498,7 @@
         formData.append('thumbnail_instruction', thumbnailInstruction);
         formData.append('youtube_card_instruction', youtubeCardInstruction);
         formData.append('voice_recording_language', voiceRecordingLanguage);
+        formData.append('storyboard', storyboard);
 
         
         e.preventDefault();
