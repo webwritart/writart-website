@@ -504,7 +504,7 @@
                     <video class="video" src="{{ video }}" controls height="200"></video>
                     {% endfor %}
                 </div>
-                <div id="images-action-button-container" class="section-action-button-container">
+                <div id="videos-action-button-container" class="section-action-button-container">
                     <button class="section-action-button" id="video-feedback-btn" onclick="openImageFeedback({{ default_video_dict['video_uuid']}})">Feedbacks</button>
                 </div>
                 
@@ -620,9 +620,11 @@
         if (defaultVideoDict['video_list'].length > 0) {
             document.getElementById('videos-section-header').style.display = 'block';
             document.getElementById('videos-container').style.display = 'flex';
+            document.getElementById('videos-action-button-container').style.display = 'flex';
         } else {
             document.getElementById('videos-section-header').style.display = 'none';
             document.getElementById('videos-container').style.display = 'none';
+            document.getElementById('videos-action-button-container').style.display = 'none';
         }
         if (defaultVideoDict['img_vid_instruction'] != '' && defaultVideoDict['img_vid_instruction'] != null) {
             imgVidInstruction.style.display = 'flex';
@@ -771,9 +773,11 @@
             if (data.video_list.length == 0) {
                 document.getElementById('videos-section-header').style.display = 'none';
                 videoContainer.style.display = 'none';
+                document.getElementById('videos-action-button-container').style.display = 'none';
             } else {
                 document.getElementById('videos-section-header').style.display = 'block';
                 videoContainer.style.display = 'flex';
+                document.getElementById('videos-action-button-container').style.display = 'flex';
             }
             if (data.image_list.length == 0) {
                 document.getElementById('images-section-header').style.display = 'none';
