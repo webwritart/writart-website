@@ -460,7 +460,7 @@
             <p id="temp_title">{{ default_video_dict['temp_title'] }}</p>
 
             <div id="display-inner-container">
-                <p id="dialogue_narration-section-header" class="vid-detail-section-header">Dialogue & narration</p>
+                <p id="dialogue-narration-section-header" class="vid-detail-section-header">Dialogue & narration</p>
                 <div id="dialogue_narration" class="vid-detail-section">
                     {{ default_video_dict['dialogue_narration'] }}
                 </div>
@@ -587,13 +587,12 @@
         imgVidInstruction.innerHTML = defaultVideoDict['img_vid_instruction'];
         thumbnailInstruction.innerHTML = defaultVideoDict['thumbnail_instruction'];
         youtubeCardInstruction.innerHTML = defaultVideoDict['youtube_card_instruction'];   
-        
         if (defaultVideoDict['dialogue_narration'] != '' && defaultVideoDict['dialogue_narration'] != null) {
             dialogueNarration.style.display = 'flex';
-            document.getElementById('dialogue_narration-section-header').style.display = 'block';
+            document.getElementById('dialogue-narration-section-header').style.display = 'block';
         } else {
             dialogueNarration.style.display = 'none';
-            document.getElementById('dialogue_narration-section-header').style.display = 'none';
+            document.getElementById('dialogue-narration-section-header').style.display = 'none';
         }
         if (defaultVideoDict['voice_recordings'].length > 0) {
             voiceRecording.style.display = 'flex';
@@ -731,12 +730,12 @@
             thumbnailInstruction.innerHTML = data.thumbnail_instruction;
             youtubeCardInstruction.innerHTML = data.youtube_card_instruction;
             storyboard.src = data.storyboard;
-            if (data.dialogueNarration != '' && data.dialogueNarration != null) {
+            if (data.dialogue_narration != '' && data.dialogue_narration != null) {
                 dialogueNarration.style.display = 'flex';
-                document.getElementById('dialogue_narration-section-header').style.display = 'block';
+                document.getElementById('dialogue-narration-section-header').style.display = 'block';
             } else {
                 dialogueNarration.style.display = 'none';
-                document.getElementById('dialogue_narration-section-header').style.display = 'none';
+                document.getElementById('dialogue-narration-section-header').style.display = 'none';
             }
             if (data.voice_recordings.length > 0) {
                 voiceRecordingContainer.style.display = 'flex';

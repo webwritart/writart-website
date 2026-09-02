@@ -137,7 +137,6 @@ def home():
                         default_video_dict['youtube_card_instruction'] = first_youtube_card_instruction
             else:
                 default_video_dict = {}
-            pp.pprint(default_video_dict)
         if request.method == 'POST' and request.is_json:
             data = request.get_json()
             if data['type'] == 'select_channel':
@@ -200,6 +199,7 @@ def home():
                     vid_dict['youtube_card_instruction'] = markdown.markdown(youtube_card_instruction).replace('\n', '<br>')
                 except:
                     vid_dict['youtube_card_instruction'] = youtube_card_instruction
+                pp.pprint(vid_dict)
                 return jsonify(vid_dict)
             
             if data['type'] == 'select_current_video':
