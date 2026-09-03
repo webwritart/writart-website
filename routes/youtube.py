@@ -43,11 +43,16 @@ def home():
         current_video_exists = False
         if len(channels) > 0:
             channel_list_with_pending_videos_and_componenets = [a for a in db.session.query(YoutubeChannel).all() if len([b for b in a.videos if (b.status=='pending' or b.status=='in-progress')]) > 0]
-            if len([a for a in current_user.tools if a.key == 'current_video_uuid']) > 0 and [a.value for a in current_user.tools if a.key == 'current_video_uuid'][0] != '':
+
+            try:
                 current_video_uuid = [a.value for a in current_user.tools if a.key == 'current_video_uuid'][0]
+                if current_video_uuid:
+                    current_video_exists = True
+            except Exception as e:
+                p(e)
+            if current_video_exists:
                 current_video = db.session.query(YoutubeVideo).filter_by(uuid=current_video_uuid).scalar()
-                current_video_exists = True
-                
+
             if len(channel_list_with_pending_videos_and_componenets) > 0:
                 for c in channel_list_with_pending_videos_and_componenets:
                     videos = c.videos
