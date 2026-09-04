@@ -538,7 +538,6 @@
                                     {% if video_dict[scene][shot][video]['assigned_to_uuid'] == current_user.uuid %}
                                     <button class="revision-btn" data-video_uuid="{{video}}" onclick="uploadVideoRevisionPopup(this.dataset.video_uuid)">Upload Revision</button>
                                     {% endif %}
-                                    <button class="revision-btn" data-video_uuid="{{video}}" onclick="uploadVideoRevisionPopup(this.dataset.video_uuid)">Upload Revision</button>
                                 </td>
                                 <td style="background: {{video_dict[scene][shot][video]['approval_status'][1]}}; color: white;">
                                     <div>
