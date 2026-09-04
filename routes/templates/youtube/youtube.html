@@ -512,12 +512,6 @@
                     <audio id="voice_recording" class="voice_recording" src="{{ audio }}" controls volume="0.5" loop></audio>
                     {% endfor %}
                 </div>
-                {% if default_video_dict['storyboard'] %}
-                <p id="default-storyboard-section-header" class="vid-detail-section-header">Storyboard</p>
-                <div id="storyboard_container" class="vid-detail-section storyboard_container">
-                    <iframe src="{{ default_video_dict['storyboard'][0] }}" width="100%" height="1200px" style="border: none;" title="Embedded PDF"></iframe>
-                </div>
-                {% endif %}
                 <p id="storyboard-section-header" class="vid-detail-section-header">Storyboard</p>
                 <div id="selected_storyboard_container" class="vid-detail-section storyboard_container">
                     <iframe id="storyboard" src="" width="100%" height="1200px" style="border: none;" title="Embedded PDF"></iframe>
@@ -616,8 +610,9 @@
             <label>Shot</label>
             <input type="text" name="shot" placeholder="Shot (example A, B, C, a, b, c etc.)">
             <input type="file" id="video-file" name="video-file" class="file-upload-input" accept=".mp4, .avi, .mov, video/mp4, video/avi, video/mov" required>
+            <input type="text" id="video-text" name="video-text" placeholder="Anything you want to say?">
             <input type="hidden" name="video_uuid" id="video-upload-video-uuid" value="{{ default_video_dict['video_uuid'] }}">
-            <button type="submit" name="submit" value="upload_video" id="upload-video-btn" class="form-button upload-button">Upload video</button>
+            <button type="submit" name="submit" value="upload_video" id="upload-video-form-btn" class="form-button upload-button">Upload video</button>
             <div id="video-status-message"></div>
         </form>
         <button class="go-back" onclick="goBack()">Go back</button>
@@ -669,7 +664,7 @@
 
 <script>
     const defaultVideoDict = {{ default_video_dict | tojson }};
-
+    
     function initialLoad() {
         const dialogueNarration = document.getElementById('dialogue_narration');
         const imgVidInstruction = document.getElementById('img_vid_instruction');
@@ -687,7 +682,7 @@
         ytTitle.innerHTML = defaultVideoDict['yt_title'];
         ytDescription.innerHTML = defaultVideoDict['yt_description'];
         ytTags.innerHTML = defaultVideoDict['yt_tags'];
-
+        
         if (defaultVideoDict['dialogue_narration'] != '' && defaultVideoDict['dialogue_narration'] != null) {
             dialogueNarration.style.display = 'flex';
             document.getElementById('dialogue-narration-section-header').style.display = 'block';
@@ -702,6 +697,15 @@
             voiceRecording.style.display = 'none';
             document.getElementById('voice-recording-section-header').style.display = 'none';
         }
+        if (defaultVideoDict['storyboard'].length > 0) {
+            document.getElementById('storyboard-section-header').style.display = 'block';
+            document.getElementById('selected_storyboard_container').style.display = 'flex';
+            document.getElementById('storyboard').src = defaultVideoDict['storyboard'][0];
+        } else {
+            document.getElementById('storyboard-section-header').style.display = 'none';
+            document.getElementById('selected_storyboard_container').style.display = 'none';
+        }
+
         if (defaultVideoDict['image_list'].length > 0) {
             imagesContainer.style.display = 'flex';
             document.getElementById('images-section-header').style.display = 'block';
@@ -763,7 +767,9 @@
             document.getElementById('yt-tags-section-header').style.display = 'none';
         }
     }
+    
     initialLoad();
+    
     function selectChannel(channel_uuid) {
         const endpointUrl = "{{ url_for('youtube.home') }}";
         fetch(endpointUrl, {
@@ -948,14 +954,11 @@
                 document.getElementById('yt-tags-section-header').style.display = 'none';
                 document.getElementById('yt_tags').style.display = 'none';
             }
-            document.getElementById('default-storyboard-section-header').style.display = 'none';
-            document.getElementById('storyboard_container').style.display = 'none';
             document.getElementById('img-upload-video-uuid').value = data.video_uuid;
             document.getElementById('video-upload-video-uuid').value = data.video_uuid;
             document.getElementById('add-yt-title-video-uuid').value = data.video_uuid;
             document.getElementById('add-yt-description-video-uuid').value = data.video_uuid;
             document.getElementById('add-yt-tags-video-uuid').value = data.video_uuid;
-            
         }).catch(error => {
             console.error('Error:', error);
         });
@@ -985,6 +988,7 @@
             console.error('Error:', error);
         });
     }
+    
 // ------------------------------------------------- MAIN OPERATIONS :: UPLOAD IMAGES & VIDEO ------------------------------------------------------- 
     function uploadImages() {
         const mainSection = document.getElementById('main-section');
@@ -1001,6 +1005,7 @@
     }
 
     // ---------------------------------------------- YOUTUBE SEO OPERATIONS ----------------------------------------------
+    
     function addTitle(video_uuid) {
         const endpointUrl = "{{ url_for('youtube.add_title_description_tags') }}";
         data = {
@@ -1074,21 +1079,6 @@
     }
 
 
-    // ----------------------------------------------- AVOID MULTIPLE CLICK SUBMITS -----------------------------------------------
-    document.getElementById('upload-images-form').addEventListener('submit', function(e) {
-        const submitBtn = document.getElementById('upload-images-btn');
-        
-        // Check if form is already submitting
-        if (this.classList.contains('is-submitting')) {
-            e.preventDefault(); // Stop the double submission
-            return false;
-        }
-        
-        // Mark form as submitting and provide visual feedback
-        this.classList.add('is-submitting');
-        // submitBtn.disabled = true; 
-        submitBtn.innerText = 'Submitting...';
-    })
 // ------------------------------------------------- OPERATIONS FORM SUBMISSIONS -------------------------------------------------------
     const uploadImagesForm = document.getElementById('upload-images-form');
     const uploadVideoForm = document.getElementById('upload-video-form');
@@ -1096,9 +1086,9 @@
     const addDescriptionForm = document.getElementById('add-description-form');
     const addTagsForm = document.getElementById('add-tags-form');
 
+
     uploadImagesForm.addEventListener('submit', async function(e) {
         e.preventDefault();
-
         const submitBtn = document.getElementById('upload-images-btn');
         const imgUploadEndpointUrl = "{{ url_for('youtube.upload_images') }}";
         const fileInput = document.getElementById('image-files');
@@ -1143,17 +1133,17 @@
             submitBtn.disabled = false;
         }
     });
-
     uploadVideoForm.addEventListener('submit', async function(e) {
         e.preventDefault();
 
-        const videoSubmitBtn = document.getElementById('upload-video-btn');
+        const videoSubmitBtn = document.getElementById('upload-video-form-btn');
         videoSubmitBtn.textContent = 'Uploading...';
 
         const imgUploadEndpointUrl = "{{ url_for('youtube.upload_video') }}";
         const sceneInput = document.querySelector('#upload-video-form input[name="scene"]');
         const shotInput = document.querySelector('#upload-video-form input[name="shot"]');
         const fileInput = document.getElementById('video-file');
+        const textInput = document.getElementById('video-text');
         const statusMessage = document.getElementById('video-status-message');
         const videoUuid = document.getElementById('video-upload-video-uuid').value;
 
@@ -1165,7 +1155,6 @@
             statusMessage.textContent = 'Please select at least one video file.';
             return;
         }
-
         videoSubmitBtn.disabled = true;
 
         const formData = new FormData();
@@ -1175,6 +1164,7 @@
         formData.append('video_uuid', videoUuid);
         formData.append('scene', sceneInput.value.trim());
         formData.append('shot', shotInput.value.trim());
+        formData.append('text', textInput.value.trim());
         formData.append('type', 'upload_video');
         try {
             const response = await fetch(imgUploadEndpointUrl, {

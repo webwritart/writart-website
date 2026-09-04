@@ -320,6 +320,7 @@ def home():
 @youtube.route('/upload-images', methods=['GET', 'POST'])
 def upload_images():
     if request.method == 'POST' and request.form.get('type') == 'upload_images':
+        p('upload images')
         files = request.files.getlist('files')
         video_uuid = request.form.get('video_uuid')
         image_text = request.form.get('image_text')
@@ -365,6 +366,7 @@ def upload_images():
 def upload_video():
     if request.method == 'POST' and request.form.get('type') == 'upload_video':
         video_file = request.files.get('files')
+        video_text = request.form.get('text')
         video_uuid = request.form.get('video_uuid')
         scene = request.form.get('scene')
         shot = request.form.get('shot').upper()
@@ -391,7 +393,8 @@ def upload_video():
             youtube_video_id=video_id,
             member_id=current_user.id,
             scene=scene,
-            shot=shot
+            shot=shot,
+            text=video_text
         )
         db.session.add(entry)
         db.session.commit()
@@ -587,7 +590,6 @@ def image_feedback():
     else:
         if youtube_img_creator in current_user.role or youtube_admin in current_user.role:
             video_uuid = request.args.get('video_uuid')
-            p(video_uuid)
             image_dict = {}
             video_dict = {}
             video_component_list = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar().components
@@ -604,6 +606,7 @@ def image_feedback():
                     feedback = None
                     revision_uuid = None
                     image_version_list = [float(a.version) for a in c.revisions if len(c.revisions) > 0]
+                    image_version_list_decreasing_order = sorted(image_version_list, reverse=True)
                     if len(image_version_list) == 0:
                         file_path = c.file_path
                         file_text = c.text
@@ -612,10 +615,23 @@ def image_feedback():
                     else:
                         last_version = max(image_version_list)
                         file_path = [a.file_path for a in c.revisions if a.version == str(last_version)][0]
-                        file_text = [a.text for a in c.revisions if a.version == str(last_version)][0]
                         feedback = [a.feedback for a in c.revisions if a.version == str(last_version)][0]
                         revision_uuid = [a.uuid for a in c.revisions if a.version == str(last_version)][0]
-
+                        run = True
+                        count = 0
+                        version_count = len(image_version_list_decreasing_order)
+                        while run:
+                            for v in image_version_list_decreasing_order:
+                                count += 1
+                                version_text = [a.text for a in c.revisions if a.version == str(v)][0]
+                                if version_text:
+                                    file_text = version_text
+                                    run = False
+                                else:
+                                    if count == version_count:
+                                        run = False
+                        if file_text == '' or file_text is None:
+                            file_text = c.text
                     approval_status_tuple = None
                     approval_status = c.approval_status
                     if approval_status == 'approved':
@@ -652,7 +668,22 @@ def image_feedback():
             if 'video' in groups.keys():
                 video_dict = defaultdict(lambda: defaultdict(dict))
                 for row in groups['video']:
-                    video_dict[row.scene][row.shot][row.uuid] = {'file_path': row.file_path, 'text': row.text, 'feedback': row.feedback,
+                    text = ''
+                    all_revisions = [(a.uuid, a.version, a.file_path, a.text, a.feedback) for a in row.revisions if len(row.revisions) > 0]
+                    revision_list = sorted(all_revisions, key=lambda x: float(x[1]), reverse=True)
+                    run_search = True
+                    if len(revision_list) != 0:
+                        for r in revision_list:
+                            if r[3]:
+                                text = r[3]
+                                break
+                                    
+                        if not text:
+                            text = row.text
+                    else:
+                        text = row.text
+                        
+                    video_dict[row.scene][row.shot][row.uuid] = {'file_path': row.file_path, 'text': text, 'feedback': row.feedback,
                                                                  'approval_status': (row.approval_status, {
                                                                      'approved': '#2dad31',
                                                                      'pending': "#a87e2a",
@@ -665,7 +696,6 @@ def image_feedback():
                                                              'all_revisions': [(a.uuid, a.version, a.file_path, a.text, a.feedback) for a in row.revisions if len(row.revisions) > 0],
                                                              'revisions': len([float(a.version) for a in row.revisions if len(row.revisions) > 0])}
                 video_dict = dict(video_dict)
-                pp.pprint(video_dict)
                 
             all_mates = [(a.uuid, a.name) for a in db.session.query(Member).all() if len([b for b in a.role if b.name == 'youtube_img_creator']) > 0]
             temp_title = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).one_or_none().temp_title

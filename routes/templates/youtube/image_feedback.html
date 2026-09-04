@@ -507,11 +507,7 @@
                                     <p>{{ video_dict[scene][shot][video]['revisions'] }}</p>
                                 </td>
                                 <td>
-                                    {% if video_dict[scene][shot][video]['last_revision'] != [] %}
-                                    {{video_dict[scene][shot][video]['last_revision'][0][3]}}
-                                    {% else %}
                                     {{video_dict[scene][shot][video]['text']}}
-                                    {% endif %}
                                 </td>
                                 <td>
                                     {% if youtube_admin in current_user.role %}
@@ -542,6 +538,7 @@
                                     {% if video_dict[scene][shot][video]['assigned_to_uuid'] == current_user.uuid %}
                                     <button class="revision-btn" data-video_uuid="{{video}}" onclick="uploadVideoRevisionPopup(this.dataset.video_uuid)">Upload Revision</button>
                                     {% endif %}
+                                    <button class="revision-btn" data-video_uuid="{{video}}" onclick="uploadVideoRevisionPopup(this.dataset.video_uuid)">Upload Revision</button>
                                 </td>
                                 <td style="background: {{video_dict[scene][shot][video]['approval_status'][1]}}; color: white;">
                                     <div>
@@ -619,6 +616,7 @@
                             {% if image_dict[image]['assigned_to_uuid'] == current_user.uuid %}
                             <button class="revision-btn" data-img_uuid="{{image}}" data-img_path="{{image_dict[image]['file_path']}}" onclick="uploadRevisionPopup(this.dataset.img_uuid, this.dataset.img_path)">Upload Revision</button>
                             {% endif %}
+                            
                         </td>
                         <td style="background: {{image_dict[image]['approval_status'][1]}}; color: white;">
                             <div>
@@ -1017,6 +1015,9 @@
         const fileInput = document.getElementById("revision-image-files");
         const parentImgUuid = document.getElementById("parent-img-uuid").value;
         const revisionImageText = document.getElementById("revision-image-text").value;
+        const submitBtn = document.getElementById('upload-revision-btn');
+        submitBtn.textContent = 'Uploading.....';
+        submitBtn.disabled = true;
 
         files = fileInput.files;
         if (files.length === 0) {
@@ -1069,9 +1070,7 @@
             .then(data => {
                 if (data.success) {
                     alert('Revision uploaded successfully.');
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Upload revised video';
-                    videoRevisionForm.reset();
+                    window.location.reload();
                 } else {
                     alert('Failed to upload revision.');
                 }
