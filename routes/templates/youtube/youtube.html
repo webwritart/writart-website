@@ -86,7 +86,7 @@
         width: 100%;
         margin: 5% 2% 0% 2%;
         background: rgb(253, 255, 224);
-        height: 35vh;
+        min-height: 35vh;
         padding: 5% 10%;
         border-radius: 1.5rem;
         overflow-y: auto;
@@ -97,6 +97,15 @@
         margin: 0%;
         font-weight: 600;
         color: black;
+        font-size: 1rem;
+        width: 100%;
+        text-align: center;
+    }
+    .operations-sub-header {
+        display: block;
+        margin: 0%;
+        font-weight: 600;
+        color: rgb(127, 127, 127);
         font-size: 1rem;
         width: 100%;
         text-align: center;
@@ -259,13 +268,34 @@
         min-height: 20vh;
         width: 100%;
     }
+    #add-title-section {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        min-height: 20vh;
+        width: 100%;
+    }
+    #add-description-section {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        min-height: 20vh;
+        width: 100%;
+    }
+    #add-tags-section {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        min-height: 20vh;
+        width: 100%;
+    }
     .upload-form {
         background: rgb(244, 244, 203);
         width: 60%;
         padding: 3% 10%;
         border-radius: 2rem;
     }
-    #upload-images-header {
+    .operations-form-header {
         width: 100%;
         text-align: center;
         font-weight: 600;
@@ -279,6 +309,14 @@
     }
     #upload-images-form input::placeholder {
         color: rgb(111, 133, 79);
+    }
+    input {
+        padding: .5% 1% 0.5% 1%;
+        border-radius: 1.5rem;
+        color: black;
+    }
+    input::placeholder {
+        color: rgb(111, 133, 79) !important;
     }
     .upload-button {
         width: 100%;
@@ -517,6 +555,19 @@
                 <div id="youtube_card_instruction" class="vid-detail-section">
                     {{ default_video_dict['youtube_card_instruction'] }}
                 </div>
+
+                <p id="yt-title-section-header" class="vid-detail-section-header">Youtube title</p>
+                <div id="yt_title" class="vid-detail-section">
+                    {{ default_video_dict['yt_title'] }}
+                </div>
+                <p id="yt-description-section-header" class="vid-detail-section-header">Youtube description</p>
+                <div id="yt_description" class="vid-detail-section">
+                    {{ default_video_dict['yt_description'] }}
+                </div>
+                <p id="yt-tags-section-header" class="vid-detail-section-header">Youtube tags</p>
+                <div id="yt_tags" class="vid-detail-section">
+                    {{ default_video_dict['yt_tags'] }}
+                </div>
             </div>
         </div>
         <div id="project-selection-section">
@@ -538,12 +589,17 @@
                 <hr>
                 <button id="upload-img" class="operation-btn" onclick="uploadImages()">Upload images</button>
                 <button id="upload-video-btn" class="operation-btn" onclick="uploadVideo()">Upload video</button>
+                <hr>
+                <p class="operations-sub-header">Youtube SEO</p>
+                <button id="add-title-btn" class="operation-btn" data-video_uuid="{{default_video_dict['video_uuid']}}" onclick="addTitle(this.dataset.video_uuid)">Add/edit title</button>
+                <button id="add-description-btn" class="operation-btn" data-video_uuid="{{default_video_dict['video_uuid']}}" onclick="addDescription(this.dataset.video_uuid)">Add/edit description</button>
+                <button id="add-tags-btn" class="operation-btn" data-video_uuid="{{default_video_dict['video_uuid']}}" onclick="addTags(this.dataset.video_uuid)">Add/edit tags</button>
             </div>
         </div>
     </div>
     <div id="upload-images-section">
         <form id="upload-images-form" class="upload-form">
-            <p id="upload-images-header">Upload images</p>
+            <p class="operations-form-header">Upload images</p>
             <input type="file" id="image-files" name="image-files" class="file-upload-input" accept=".jpg, .jpeg, .png, image/jpeg, image/png" multiple required>
             <input type="text" id="image-text" name="image-text" placeholder="Anything you want to say?">
             <input type="hidden" name="video_uuid" id="img-upload-video-uuid" value="{{ default_video_dict['video_uuid'] }}">
@@ -554,7 +610,7 @@
     </div>
     <div id="upload-video-section">
         <form id="upload-video-form" class="upload-form">
-            <p id="upload-images-header">Upload video</p>
+            <p class="operations-form-header">Upload video</p>
             <label>Scene</label>
             <input type="number" name="scene" placeholder="Scene (example 1, 2, 3, etc.)">
             <label>Shot</label>
@@ -566,9 +622,40 @@
         </form>
         <button class="go-back" onclick="goBack()">Go back</button>
     </div>
+    <div id="add-title-section">
+        <form id="add-title-form" class="upload-form">
+            <p class="operations-form-header">Add/Edit youtube title</p>
+            <input type="hidden" name="video_uuid" id="add-yt-title-video-uuid" value="{{ default_video_dict['video_uuid'] }}">
+            <input type="text" name="title" id="add-yt-title-input" placeholder="Write/paste Youtube title" maxlength="99" required>
+            <button type="submit" name="submit" value="add-yt-title" id="add-yt-title-btn" class="form-button upload-button">Add/edit title</button>
+            <div id="title-status-message"></div>
+        </form>
+        <button class="go-back" onclick="goBack()">Go back</button>
+    </div>
+    <div id="add-description-section">
+        <form id="add-description-form" class="upload-form">
+            <p class="operations-form-header">Add/Edit youtube description</p>
+            <input type="hidden" name="video_uuid" id="add-yt-description-video-uuid" value="{{ default_video_dict['video_uuid'] }}">
+            <input type="text" name="description" id="add-yt-description-input" placeholder="Write/paste Youtube description" maxlength="4999" required>
+            <button type="submit" name="submit" value="add-yt-description" id="add-yt-description-btn" class="form-button upload-button">Add/edit description</button>
+            <div id="description-status-message"></div>
+        </form>
+        <button class="go-back" onclick="goBack()">Go back</button>
+    </div>
+    <div id="add-tags-section">
+        <form id="add-tags-form" class="upload-form">
+            <p class="operations-form-header">Add/Edit youtube tags</p>
+            <input type="hidden" name="video_uuid" id="add-yt-tags-video-uuid" value="{{ default_video_dict['video_uuid'] }}">
+            <input type="text" name="tags" id="add-yt-tags-input" placeholder="Write/paste Youtube tags" maxlength="499" required>
+            <button type="submit" name="submit" value="add-yt-tags" id="add-yt-tags-btn" class="form-button upload-button">Add/edit tags</button>
+            <div id="tags-status-message"></div>
+        </form>
+        <button class="go-back" onclick="goBack()">Go back</button>
+    </div>
+    
     <div id="select-current-video-section">
         <form id="select-current-video-form">
-            <p id="upload-images-header">Select current video</p>
+            <p class="operations-form-header">Select current video</p>
             <select name="select_current_video_select" id="select_current_video_select">
                 <option value="">Select Video</option>
                 {% for video in current_video_option_list %}
@@ -590,10 +677,17 @@
         const imagesContainer = document.getElementById('images-container');
         const thumbnailInstruction = document.getElementById('thumbnail_instruction');
         const youtubeCardInstruction = document.getElementById('youtube_card_instruction');
+        const ytTitle = document.getElementById('yt_title');
+        const ytDescription = document.getElementById('yt_description');
+        const ytTags = document.getElementById('yt_tags');
         dialogueNarration.innerHTML = defaultVideoDict['dialogue_narration'];
         imgVidInstruction.innerHTML = defaultVideoDict['img_vid_instruction'];
         thumbnailInstruction.innerHTML = defaultVideoDict['thumbnail_instruction'];
-        youtubeCardInstruction.innerHTML = defaultVideoDict['youtube_card_instruction'];   
+        youtubeCardInstruction.innerHTML = defaultVideoDict['youtube_card_instruction'];
+        ytTitle.innerHTML = defaultVideoDict['yt_title'];
+        ytDescription.innerHTML = defaultVideoDict['yt_description'];
+        ytTags.innerHTML = defaultVideoDict['yt_tags'];
+
         if (defaultVideoDict['dialogue_narration'] != '' && defaultVideoDict['dialogue_narration'] != null) {
             dialogueNarration.style.display = 'flex';
             document.getElementById('dialogue-narration-section-header').style.display = 'block';
@@ -646,6 +740,27 @@
         } else {
             youtubeCardInstruction.style.display = 'none';
             document.getElementById('yt-card-section-header').style.display = 'none';
+        }
+        if (defaultVideoDict['yt_title'] != '' && defaultVideoDict['yt_title'] != null) {
+            ytTitle.style.display = 'flex';
+            document.getElementById('yt-title-section-header').style.display = 'block';
+        } else {
+            ytTitle.style.display = 'none';
+            document.getElementById('yt-title-section-header').style.display = 'none';
+        }
+        if (defaultVideoDict['yt_description'] != '' && defaultVideoDict['yt_description'] != null) {
+            ytDescription.style.display = 'flex';
+            document.getElementById('yt-description-section-header').style.display = 'block';
+        } else {
+            ytDescription.style.display = 'none';
+            document.getElementById('yt-description-section-header').style.display = 'none';
+        }
+        if (defaultVideoDict['yt_tags'] != '' && defaultVideoDict['yt_tags'] != null) {
+            ytTags.style.display = 'flex';
+            document.getElementById('yt-tags-section-header').style.display = 'block';
+        } else {
+            ytTags.style.display = 'none';
+            document.getElementById('yt-tags-section-header').style.display = 'none';
         }
     }
     initialLoad();
@@ -706,6 +821,9 @@
             const imageList = data.image_list;
             document.getElementById('image-feedback-btn').onclick = () => openImageFeedback(data.video_uuid);
             document.getElementById('video-feedback-btn').onclick = () => openImageFeedback(data.video_uuid);
+            document.getElementById('add-title-btn').onclick = () => addTitle(data.video_uuid);
+            document.getElementById('add-description-btn').onclick = () => addDescription(data.video_uuid);
+            document.getElementById('add-tags-btn').onclick = () => addTags(data.video_uuid);
             
             imagesContainer.replaceChildren();
             for (const im of imageList) {
@@ -741,6 +859,10 @@
             imgVidInstruction.innerHTML = data.img_vid_instruction;
             thumbnailInstruction.innerHTML = data.thumbnail_instruction;
             youtubeCardInstruction.innerHTML = data.youtube_card_instruction;
+            document.getElementById('yt_title').innerHTML = data.yt_title;
+            document.getElementById('yt_description').innerHTML = data.yt_description;
+            document.getElementById('yt_tags').innerHTML = data.yt_tags;
+
             storyboard.src = data.storyboard;
             if (data.dialogue_narration != '' && data.dialogue_narration != null) {
                 dialogueNarration.style.display = 'flex';
@@ -802,10 +924,37 @@
                 youtubeCardInstruction.style.display = 'none';
                 document.getElementById('yt-card-section-header').style.display = 'none';
             }
+            if (data.yt_title != '' && data.yt_title != null) {
+                document.getElementById('yt-title-section-header').style.display = 'block';
+                document.getElementById('yt_title').value = data.yt_title;
+                document.getElementById('yt_title').style.display = 'flex';
+            } else {
+                document.getElementById('yt-title-section-header').style.display = 'none';
+                document.getElementById('yt_title').style.display = 'none';
+            }
+            if (data.yt_description != '' && data.yt_description != null) {
+                document.getElementById('yt-description-section-header').style.display = 'block';
+                document.getElementById('yt_description').value = data.yt_description;
+                document.getElementById('yt_description').style.display = 'flex';
+            } else {
+                document.getElementById('yt-description-section-header').style.display = 'none';
+                document.getElementById('yt_description').style.display = 'none';
+            }
+            if (data.yt_tags != '' && data.yt_tags != null) {
+                document.getElementById('yt-tags-section-header').style.display = 'block';
+                document.getElementById('yt_tags').value = data.yt_tags;
+                document.getElementById('yt_tags').style.display = 'flex';
+            } else {
+                document.getElementById('yt-tags-section-header').style.display = 'none';
+                document.getElementById('yt_tags').style.display = 'none';
+            }
             document.getElementById('default-storyboard-section-header').style.display = 'none';
             document.getElementById('storyboard_container').style.display = 'none';
             document.getElementById('img-upload-video-uuid').value = data.video_uuid;
-            document.getElementById('vid-upload-video-uuid').value = data.video_uuid;
+            document.getElementById('video-upload-video-uuid').value = data.video_uuid;
+            document.getElementById('add-yt-title-video-uuid').value = data.video_uuid;
+            document.getElementById('add-yt-description-video-uuid').value = data.video_uuid;
+            document.getElementById('add-yt-tags-video-uuid').value = data.video_uuid;
             
         }).catch(error => {
             console.error('Error:', error);
@@ -836,7 +985,7 @@
             console.error('Error:', error);
         });
     }
-
+// ------------------------------------------------- MAIN OPERATIONS :: UPLOAD IMAGES & VIDEO ------------------------------------------------------- 
     function uploadImages() {
         const mainSection = document.getElementById('main-section');
         mainSection.style.display = 'none';
@@ -850,6 +999,80 @@
         const uploadVideoSection = document.getElementById('upload-video-section');
         uploadVideoSection.style.display = 'flex';
     }
+
+    // ---------------------------------------------- YOUTUBE SEO OPERATIONS ----------------------------------------------
+    function addTitle(video_uuid) {
+        const endpointUrl = "{{ url_for('youtube.add_title_description_tags') }}";
+        data = {
+            'video_uuid': video_uuid,
+            'type': 'get-existing-title'
+        }
+        fetch(endpointUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then(response => response.json()).then(data => {
+            document.getElementById('add-yt-title-video-uuid').value = video_uuid;
+            document.getElementById('add-yt-title-input').value = data;
+            const mainSection = document.getElementById('main-section');
+            mainSection.style.display = 'none';
+            const addTitleSection = document.getElementById('add-title-section');
+            addTitleSection.style.display = 'flex';
+        }).catch(error => {
+            alert(error);
+        });
+    }
+
+    function addDescription(video_uuid) {
+        const endpointUrl = "{{ url_for('youtube.add_title_description_tags') }}";
+        data = {
+            'video_uuid': video_uuid,
+            'type': 'get-existing-description'
+        }
+        fetch(endpointUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then(response => response.json()).then(data => {
+            document.getElementById('add-yt-description-video-uuid').value = video_uuid;
+            document.getElementById('add-yt-description-input').value = data;
+            const mainSection = document.getElementById('main-section');
+            mainSection.style.display = 'none';
+            const addTitleSection = document.getElementById('add-description-section');
+            addTitleSection.style.display = 'flex';
+        }).catch(error => {
+            alert(error);
+        });
+    }
+
+    function addTags(video_uuid) {
+        const endpointUrl = "{{ url_for('youtube.add_title_description_tags') }}";
+        data = {
+            'video_uuid': video_uuid,
+            'type': 'get-existing-tags'
+        }
+        fetch(endpointUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then(response => response.json()).then(data => {
+            document.getElementById('add-yt-tags-video-uuid').value = video_uuid;
+            document.getElementById('add-yt-tags-input').value = data;
+            const mainSection = document.getElementById('main-section');
+            mainSection.style.display = 'none';
+            const addTitleSection = document.getElementById('add-tags-section');
+            addTitleSection.style.display = 'flex';
+        }).catch(error => {
+            alert(error);
+        });
+    }
+
 
     // ----------------------------------------------- AVOID MULTIPLE CLICK SUBMITS -----------------------------------------------
     document.getElementById('upload-images-form').addEventListener('submit', function(e) {
@@ -866,9 +1089,12 @@
         // submitBtn.disabled = true; 
         submitBtn.innerText = 'Submitting...';
     })
-// ------------------------------------------------- UPLOAD IMAGES & VIDEO -------------------------------------------------------
+// ------------------------------------------------- OPERATIONS FORM SUBMISSIONS -------------------------------------------------------
     const uploadImagesForm = document.getElementById('upload-images-form');
     const uploadVideoForm = document.getElementById('upload-video-form');
+    const addTitleForm = document.getElementById('add-title-form');
+    const addDescriptionForm = document.getElementById('add-description-form');
+    const addTagsForm = document.getElementById('add-tags-form');
 
     uploadImagesForm.addEventListener('submit', async function(e) {
         e.preventDefault();
@@ -974,6 +1200,136 @@
             videoSubmitBtn.disabled = false;
         }
     });
+
+    addTitleForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const submitBtn = document.getElementById('add-yt-title-btn');
+        const endpointUrl = "{{ url_for('youtube.add_title_description_tags') }}";
+        const titleInput = document.getElementById('add-yt-title-input').value;
+        const statusMessage = document.getElementById('title-status-message');
+        const videoUuid = document.getElementById('add-yt-title-video-uuid').value;
+
+        submitBtn.textContent = 'Submitting...';
+        submitBtn.disabled = true;
+        
+        data = {
+            'video_uuid': videoUuid,
+            'title': titleInput,
+            'type': 'add-title'
+        };
+        try {
+            const response = await fetch(endpointUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            alert(result);
+            console.log('Success:', result);
+            statusMessage.textContent = 'Title added successfully.';
+        
+        } catch (error) {
+            console.error('Submission failed:', error);
+            statusMessage.textContent = 'Title addition failed. Please try again.';
+        } finally {
+            window.location.reload();
+        }
+    });
+
+    addDescriptionForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const submitBtn = document.getElementById('add-yt-description-btn');
+        const endpointUrl = "{{ url_for('youtube.add_title_description_tags') }}";
+        const descriptionInput = document.getElementById('add-yt-description-input').value;
+        const statusMessage = document.getElementById('description-status-message');
+        const videoUuid = document.getElementById('add-yt-description-video-uuid').value;
+
+        submitBtn.textContent = 'Submitting...';
+        submitBtn.disabled = true;
+        
+        data = {
+            'video_uuid': videoUuid,
+            'description': descriptionInput,
+            'type': 'add-description'
+        };
+        try {
+            const response = await fetch(endpointUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            alert(result);
+            console.log('Success:', result);
+            statusMessage.textContent = 'Description added successfully.';
+        
+        } catch (error) {
+            console.error('Submission failed:', error);
+            statusMessage.textContent = 'Description addition failed. Please try again.';
+        } finally {
+            window.location.reload();
+        }
+    });
+
+    addTagsForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const submitBtn = document.getElementById('add-yt-tags-btn');
+        const endpointUrl = "{{ url_for('youtube.add_title_description_tags') }}";
+        const tagsInput = document.getElementById('add-yt-tags-input').value;
+        const statusMessage = document.getElementById('tags-status-message');
+        const videoUuid = document.getElementById('add-yt-tags-video-uuid').value;
+
+        submitBtn.textContent = 'Submitting...';
+        submitBtn.disabled = true;
+        
+        data = {
+            'video_uuid': videoUuid,
+            'tags': tagsInput,
+            'type': 'add-tags'
+        };
+        try {
+            const response = await fetch(endpointUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            alert(result);
+            console.log('Success:', result);
+            statusMessage.textContent = 'Tags added successfully.';
+        
+        } catch (error) {
+            console.error('Submission failed:', error);
+            statusMessage.textContent = 'Tags addition failed. Please try again.';
+        } finally {
+            window.location.reload();
+        }
+    });
+        
     
     function goBack() {
         window.location.reload();

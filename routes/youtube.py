@@ -49,7 +49,7 @@ def home():
                 if current_video_uuid:
                     current_video_exists = True
             except Exception as e:
-                p(e)
+                p(f"finding current video exist status error : {e}")  # print(e)
             if current_video_exists:
                 current_video = db.session.query(YoutubeVideo).filter_by(uuid=current_video_uuid).scalar()
 
@@ -91,6 +91,36 @@ def home():
                 if current_video_exists:
                     default_video_dict['temp_title'] = current_video.temp_title
                     try:
+                        current_video_yt_title_revisions = [a for a in current_video.components if a.component_type == 'yt_title'][0].revisions
+                        if len(current_video_yt_title_revisions) > 0:
+                            current_video_yt_last_revision_no = max([float(a.version) for a in current_video_yt_title_revisions])
+                            current_video_yt_title = [a.text for a in current_video_yt_title_revisions if a.version == str(current_video_yt_last_revision_no)][0]
+                        else:
+                            current_video_yt_title = [a.text for a in current_video.components if a.component_type == 'yt_title'][0]
+                    except:
+                        current_video_yt_title = ''
+                    default_video_dict['yt_title'] = current_video_yt_title
+                    try:
+                        current_video_yt_description_revisions = [a for a in current_video.components if a.component_type == 'yt_description'][0].revisions
+                        if len(current_video_yt_description_revisions) > 0:
+                            current_video_yt_last_revision_no = max([float(a.version) for a in current_video_yt_description_revisions])
+                            current_video_yt_description = [a.text for a in current_video_yt_description_revisions if a.version == str(current_video_yt_last_revision_no)][0]
+                        else:
+                            current_video_yt_description = [a.text for a in current_video.components if a.component_type == 'yt_description'][0]
+                    except:
+                        current_video_yt_description = ''
+                    default_video_dict['yt_description'] = current_video_yt_description
+                    try:
+                        current_video_yt_tags_revisions = [a for a in current_video.components if a.component_type == 'yt_tags'][0].revisions
+                        if len(current_video_yt_tags_revisions) > 0:
+                            current_video_yt_last_revision_no = max([float(a.version) for a in current_video_yt_tags_revisions])
+                            current_video_yt_tags = [a.text for a in current_video_yt_tags_revisions if a.version == str(current_video_yt_last_revision_no)][0]
+                        else:
+                            current_video_yt_tags = [a.text for a in current_video.components if a.component_type == 'yt_tags'][0]
+                    except:
+                        current_video_yt_tags = ''
+                    default_video_dict['yt_tags'] = current_video_yt_tags
+                    try:
                         default_video_dict['dialogue_narration'] = markdown.markdown([a.text for a in current_video.components if a.component_type == 'dialogue_&_narration'][0]).replace('\n', '<br>')
                     except:
                         default_video_dict['dialogue_narration'] = ''
@@ -115,6 +145,38 @@ def home():
                     default_video_dict['video_uuid'] = current_video.uuid
                 else:
                     default_video_dict['temp_title'] = first_video.temp_title
+                    try:
+                        first_video_yt_title_revisions = [a for a in first_video.components if a.component_type == 'yt_title'][0].revisions
+                        p(first_video_yt_title_revisions)
+                        if len(first_video_yt_title_revisions) > 0:
+                            first_video_yt_last_revision_no = max([float(a.version) for a in first_video_yt_title_revisions])
+                            first_video_yt_title = [a.text for a in first_video_yt_title_revisions if a.version == str(first_video_yt_last_revision_no)][0]
+                        else:
+                            first_video_yt_title = [a.text for a in first_video.components if a.component_type == 'yt_title'][0]
+                    except:
+                        first_video_yt_title = ''
+
+                    default_video_dict['yt_title'] = first_video_yt_title
+                    try:
+                        first_video_yt_description_revisions = [a for a in first_video.components if a.component_type == 'yt_description'][0].revisions
+                        if len(first_video_yt_description_revisions) > 0:
+                            first_video_yt_last_revision_no = max([float(a.version) for a in first_video_yt_description_revisions])
+                            first_video_yt_description = [a.text for a in first_video_yt_description_revisions if a.version == str(first_video_yt_last_revision_no)][0]
+                        else:
+                            first_video_yt_description = [a.text for a in first_video.components if a.component_type == 'yt_description'][0]
+                    except:
+                        first_video_yt_description = ''
+                    default_video_dict['yt_description'] = first_video_yt_description
+                    try:
+                        first_video_yt_tags_revisions = [a for a in first_video.components if a.component_type == 'yt_tags'][0].revisions
+                        if len(first_video_yt_tags_revisions) > 0:
+                            first_video_yt_last_revision_no = max([float(a.version) for a in first_video_yt_tags_revisions])
+                            first_video_yt_tags = [a.text for a in first_video_yt_tags_revisions if a.version == str(first_video_yt_last_revision_no)][0]
+                        else:
+                            first_video_yt_tags = [a.text for a in first_video.components if a.component_type == 'yt_tags'][0]
+                    except:
+                        first_video_yt_tags = ''
+                    default_video_dict['yt_tags'] = first_video_yt_tags
                     try:
                         default_video_dict['dialogue_narration'] = markdown.markdown(first_dialogue_narration).replace('\n', '<br>')
                     except:
@@ -166,6 +228,9 @@ def home():
                 img_vid_instruction = ''
                 thumbnail_instruction = ''
                 youtube_card_instruction = ''
+                yt_title = ''
+                yt_description = ''
+                yt_tags = ''
                 for c in video_components:
                     if c.component_type == 'dialogue_&_narration':
                         dialogue_narration = c.text
@@ -183,6 +248,27 @@ def home():
                         thumbnail_instruction = c.text
                     elif c.component_type == 'youtube_card_instruction':
                         youtube_card_instruction = c.text
+                    elif c.component_type == 'yt_title':
+                        yt_title_revisions = c.revisions
+                        if len(yt_title_revisions) > 0:
+                            yt_last_revision_no = max([float(a.version) for a in yt_title_revisions])
+                            yt_title = [a.text for a in yt_title_revisions if a.version == str(yt_last_revision_no)][0]
+                        else:
+                            yt_title = c.text
+                    elif c.component_type == 'yt_description':
+                        yt_description_revisions = c.revisions
+                        if len(yt_description_revisions) > 0:
+                            yt_last_revision_no = max([float(a.version) for a in yt_description_revisions])
+                            yt_description = [a.text for a in yt_description_revisions if a.version == str(yt_last_revision_no)][0]
+                        else:
+                            yt_description = c.text
+                    elif c.component_type == 'yt_tags':
+                        yt_tags_revisions = c.revisions
+                        if len(yt_tags_revisions) > 0:
+                            yt_last_revision_no = max([float(a.version) for a in yt_tags_revisions])
+                            yt_tags = [a.text for a in yt_tags_revisions if a.version == str(yt_last_revision_no)][0]
+                        else:
+                            yt_tags = c.text
                 vid_dict['temp_title'] = video_temp_title
                 vid_dict['video_uuid'] = video_uuid
                 try:
@@ -193,6 +279,9 @@ def home():
                 vid_dict['storyboard'] = storyboard
                 vid_dict['image_list'] = image_list
                 vid_dict['video_list'] = video_list
+                vid_dict['yt_title'] = yt_title
+                vid_dict['yt_description'] = yt_description
+                vid_dict['yt_tags'] = yt_tags
                 try:
                     vid_dict['img_vid_instruction'] = markdown.markdown(img_vid_instruction).replace('\n', '<br>')
                 except:
@@ -205,6 +294,7 @@ def home():
                     vid_dict['youtube_card_instruction'] = markdown.markdown(youtube_card_instruction).replace('\n', '<br>')
                 except:
                     vid_dict['youtube_card_instruction'] = youtube_card_instruction
+                    
                 return jsonify(vid_dict)
             
             if data['type'] == 'select_current_video':
@@ -311,6 +401,181 @@ def upload_video():
         body = f"New video uploaded\n\nVideo: {video_temp_title}\nScene-shot: {scene}-{shot}\nMember: {current_user.name}\nChannel: {channel_name}"
         send_email_studio(subject, ['shwetabhartist@gmail.com'], body, '', {})
         return jsonify('success')
+
+
+@youtube.route('/add-title-description-tags', methods=['GET', 'POST'])
+def add_title_description_tags():
+    if request.method == 'POST' and request.get_json:
+        data = request.get_json()
+        if data['type'] == 'get-existing-title':
+            last_revision_yt_title = ''
+            video_uuid = data['video_uuid']
+            video = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar()
+            existing_yt_title_row_list = [a for a in video.components if a.component_type == 'yt_title']
+            if len(existing_yt_title_row_list) > 0:
+                existing_yt_title_row = existing_yt_title_row_list[0]
+                if len(existing_yt_title_row.revisions) > 0:
+                    last_version_no = max([float(a.version) for a in existing_yt_title_row.revisions])
+                    last_revision_yt_title = [a.text for a in existing_yt_title_row.revisions if a.version == str(last_version_no)][0]
+                else:
+                    last_revision_yt_title = existing_yt_title_row.text
+            else:
+                last_revision_yt_title = ''
+            return jsonify(last_revision_yt_title)
+        
+        if data['type'] == 'get-existing-description':
+            last_revision_yt_description = ''
+            video_uuid = data['video_uuid']
+            video = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar()
+            existing_yt_description_row_list = [a for a in video.components if a.component_type == 'yt_description']
+            if len(existing_yt_description_row_list) > 0:
+                existing_yt_description_row = existing_yt_description_row_list[0]
+                if len(existing_yt_description_row.revisions) > 0:
+                    last_version_no = max([float(a.version) for a in existing_yt_description_row.revisions])
+                    last_revision_yt_description = [a.text for a in existing_yt_description_row.revisions if a.version == str(last_version_no)][0]
+                else:
+                    last_revision_yt_description = existing_yt_description_row.text
+            else:
+                last_revision_yt_description = ''
+            p(last_revision_yt_description)
+            return jsonify(last_revision_yt_description)
+        
+        if data['type'] == 'get-existing-tags':
+            last_revision_yt_tags = ''
+            video_uuid = data['video_uuid']
+            video = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar()
+            existing_yt_tags_row_list = [a for a in video.components if a.component_type == 'yt_tags']
+            if len(existing_yt_tags_row_list) > 0:
+                existing_yt_tags_row = existing_yt_tags_row_list[0]
+                if len(existing_yt_tags_row.revisions) > 0:
+                    last_version_no = max([float(a.version) for a in existing_yt_tags_row.revisions])
+                    last_revision_yt_tags = [a.text for a in existing_yt_tags_row.revisions if a.version == str(last_version_no)][0]
+                else:
+                    last_revision_yt_tags = existing_yt_tags_row.text
+            else:
+                last_revision_yt_tags = ''
+            return jsonify(last_revision_yt_tags)
+        
+        if data['type'] == 'add-title':
+            video_uuid = data['video_uuid']
+            title = data['title']
+            video = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar()
+            try:
+                existing_yt_title = [a for a in video.components if a.component_type == 'yt_title'][0]
+                if len(existing_yt_title.revisions) > 0:
+                    new_revision_no = f"{(max([float(a.version) for a in existing_yt_title.revisions]) + .1):.1f}"
+                else:
+                    new_revision_no = 1.1
+
+                existing_uuid = [a.uuid for a in db.session.query(YoutubeVideoComponentRevision)]
+                uuid = create_uuid(existing_uuid, 9)
+                entry = YoutubeVideoComponentRevision(
+                    uuid=uuid,
+                    version=str(new_revision_no),
+                    date_time=date_time_now,
+                    text=title,
+                    youtube_video_component_id=existing_yt_title.id,
+                    member_id=current_user.id,
+                )
+                db.session.add(entry)
+
+            except Exception as e:
+                p(e)
+                existing_uuid_list = [a.uuid for a in db.session.query(YoutubeVideoComponent)]
+                uuid = create_uuid(existing_uuid_list, 9)
+                entry = YoutubeVideoComponent(
+                    uuid=uuid,
+                    component_type='yt_title',
+                    text=title,
+                    approval_status='pending',
+                    date_time=date_time_now,
+                    youtube_video_id=video.id,
+                    member_id=current_user.id,
+                )
+                db.session.add(entry)
+            db.session.commit()
+            return jsonify('success')
+        
+        if data['type'] == 'add-description':
+            video_uuid = data['video_uuid']
+            description = data['description']
+            video = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar()
+            try:
+                existing_yt_description = [a for a in video.components if a.component_type == 'yt_description'][0]
+                if len(existing_yt_description.revisions) > 0:
+                    new_revision_no = f"{(max([float(a.version) for a in existing_yt_description.revisions]) + .1):.1f}"
+                else:
+                    new_revision_no = 1.1
+
+                existing_uuid = [a.uuid for a in db.session.query(YoutubeVideoComponentRevision)]
+                uuid = create_uuid(existing_uuid, 9)
+                entry = YoutubeVideoComponentRevision(
+                    uuid=uuid,
+                    version=str(new_revision_no),
+                    date_time=date_time_now,
+                    text=description,
+                    youtube_video_component_id=existing_yt_description.id,
+                    member_id=current_user.id,
+                )
+                db.session.add(entry)
+
+            except Exception as e:
+                p(e)
+                existing_uuid_list = [a.uuid for a in db.session.query(YoutubeVideoComponent)]
+                uuid = create_uuid(existing_uuid_list, 9)
+                entry = YoutubeVideoComponent(
+                    uuid=uuid,
+                    component_type='yt_description',
+                    text=description,
+                    approval_status='pending',
+                    date_time=date_time_now,
+                    youtube_video_id=video.id,
+                    member_id=current_user.id,
+                )
+                db.session.add(entry)
+            db.session.commit()
+            return jsonify('success')
+        
+        if data['type'] == 'add-tags':
+            video_uuid = data['video_uuid']
+            tags = data['tags']
+            video = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar()
+            try:
+                existing_yt_tags = [a for a in video.components if a.component_type == 'yt_tags'][0]
+                if len(existing_yt_tags.revisions) > 0:
+                    new_revision_no = f"{(max([float(a.version) for a in existing_yt_tags.revisions]) + .1):.1f}"
+                else:
+                    new_revision_no = 1.1
+
+                existing_uuid = [a.uuid for a in db.session.query(YoutubeVideoComponentRevision)]
+                uuid = create_uuid(existing_uuid, 9)
+                entry = YoutubeVideoComponentRevision(
+                    uuid=uuid,
+                    version=str(new_revision_no),
+                    date_time=date_time_now,
+                    text=tags,
+                    youtube_video_component_id=existing_yt_tags.id,
+                    member_id=current_user.id,
+                )
+                db.session.add(entry)
+
+            except Exception as e:
+                p(e)
+                existing_uuid_list = [a.uuid for a in db.session.query(YoutubeVideoComponent)]
+                uuid = create_uuid(existing_uuid_list, 9)
+                entry = YoutubeVideoComponent(
+                    uuid=uuid,
+                    component_type='yt_tags',
+                    text=tags,
+                    approval_status='pending',
+                    date_time=date_time_now,
+                    youtube_video_id=video.id,
+                    member_id=current_user.id,
+                )
+                db.session.add(entry)
+            db.session.commit()
+            return jsonify('success')
+
 
 @youtube.route('/image-feedback', methods=['GET', 'POST'])
 def image_feedback():
