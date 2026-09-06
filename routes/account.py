@@ -1262,7 +1262,9 @@ def instructor_dashboard():
                     month_id=course_month.id
                 )
                 try:
+                    next_course_month = ''
                     db.session.add(entry)
+                    db.session.commit()
                     next_month_no = int(db.session.query(Tools).filter_by(keyword='current_course_month').scalar().data) + 1
                     current_course_uuid = db.session.query(Tools).filter_by(keyword='current_course_uuid').scalar().data
                     current_course = db.session.query(Workshop).filter_by(uuid=current_course_uuid).scalar()
@@ -1270,12 +1272,12 @@ def instructor_dashboard():
                     for c in course_months:
                         if int(c.month) == next_month_no:
                             next_course_month = c
-                    next_course_month_videos = next_course_month.videos
-                    if len(next_course_month_videos) > 0:
-                        db.session.query(Tools).filter_by(keyword='current_course_month').scalar().data = next_month_no
-                        db.session.query(Tools).filter_by(keyword='show_next_month_enrolment_alert').scalar().data = 'off'   
-                    db.session.commit()
-                    print('committed')
+                    if next_course_month != '':
+                        next_course_month_videos = next_course_month.videos
+                        if len(next_course_month_videos) > 0:
+                            db.session.query(Tools).filter_by(keyword='current_course_month').scalar().data = next_month_no
+                            db.session.query(Tools).filter_by(keyword='show_next_month_enrolment_alert').scalar().data = 'off'   
+                            db.session.commit()
                     flash('Data added successfully, Chief!', 'success')
                 except Exception as e:
                     p(e)
