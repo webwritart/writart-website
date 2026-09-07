@@ -64,6 +64,7 @@ def home():
                     if v.status == 'pending' or v.status == 'in-progress':
                         if len(v.components) > 0:
                             default_vid_uuid_name_list.append((v.uuid, v.temp_title))
+                default_vid_uuid_name_list.reverse()
                 try:
                     first_dialogue_narration = [a.text for a in first_video.components if a.component_type == 'dialogue_&_narration'][0]
                 except:
