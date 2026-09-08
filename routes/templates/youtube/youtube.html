@@ -33,17 +33,19 @@
     }
     #main-section {
         display: flex;
-        width: 100%;
+        max-width: 100%;
+        min-width: 100%;
         justify-content: center;
     }
     
     #display {
-        width: 100%;
+        min-width: 55%;
+        max-width: 100%;
         display: flex;
         flex-direction: column;
         align-items: center;
         padding: 0% 0% 2% 0%;
-        margin: 1% 1% 2% 2%;
+        margin: 1% 0% 2% 0%;
         background: rgb(227, 238, 205);
         border-radius: 1.5rem;
         overflow: hidden;
@@ -339,14 +341,59 @@
         max-height: 100%;
         object-fit: contain;
     }
-    /* ------------------------------------------ PROJECT SELECTION -------------------------------------------------- */
-    #project-selection-section {
-        width: 20%;
+    /* ------------------------------------------ LEFT SIDEBAR -------------------------------------------------- */
+    #left-sidebar {
+        min-width: 20%;
         display: flex;
         flex-direction: column;
         align-items: center;
         padding: 2%;
-        margin: 1% 2% 2% 1%;
+        margin: 1% 1% 2% 0%;
+        background: rgb(210, 222, 180);
+        border-radius: 1.5rem;
+    }
+    #open-left-section-icon {
+        display: none;
+        position: fixed; 
+        top:7%; left: 1%; 
+        height: 30px; 
+        width: 30px;
+        background: black;
+        cursor: pointer;
+    }
+    #close-left-section-icon {
+        position: fixed; 
+        top:7%; 
+        left: 1%; 
+        height: 30px; 
+        width: 30px;
+        cursor: pointer;
+    }
+    /* ------------------------------------------ RIGHT SIDEBAR -------------------------------------------------- */
+    #open-right-section-icon {
+        display: none;
+        position: fixed; 
+        top:7%; left: 97%; 
+        height: 30px; 
+        width: 30px;
+        background: black;
+        cursor: pointer;
+    }
+    #close-right-section-icon {
+        position: fixed; 
+        top:7%; 
+        left: 97%; 
+        height: 30px; 
+        width: 30px;
+        cursor: pointer;
+    }
+    #project-selection-section {
+        min-width: 20%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2%;
+        margin: 1% 0% 2% 1%;
         background: rgb(210, 222, 180);
         border-radius: 1.5rem;
     }
@@ -366,7 +413,7 @@
         width: 100%;
         margin: 5% 2% 0% 2%;
         background: rgb(253, 255, 224);
-        height: 35vh;
+        height: 80vh;
         padding: 5% 10%;
         border-radius: 1.5rem;
         overflow-y: auto;
@@ -378,7 +425,7 @@
         width: 100%;
         margin: 5% 2% 0% 2%;
         background: rgb(253, 255, 224);
-        min-height: 35vh;
+        min-height: 80vh;
         padding: 5% 10%;
         border-radius: 1.5rem;
         overflow-y: auto;
@@ -789,6 +836,20 @@
 
 <div id="root-container">
     <div id="main-section">
+        <div id="left-sidebar">
+            <p class="selection-header">Channels</p>
+            {% for c in channels %}
+            <button class="channel-btn" onclick="selectChannel('{{c[0]}}')">{{c[1]}}</button>
+            {% endfor %}
+            <div id="project-selection-parent-container">
+                <p class="selection-header" id="project-selection-header">Projects</p>
+                <div id="project-selection-container">
+                    {% for v in default_video_dict['vid_uuid_name_list'] %}
+                    <button class="project-btn" onclick="displayVideoDetails('{{v[0]}}')">{{ v[1] }}</button>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
         <div id="display">
             
             <!-- -----------------------------------NOTIFICATION CONTAINER -------------------------------------------- -->
@@ -912,19 +973,21 @@
                 </div>
             </div>
         </div>
+        <!--------------------------------------- right-side-bar-collapse-toggle ------------------------------------------------->
+        <div id="open-left-section-icon">
+            <img src="../static/images/icons/open-section.png" height="30px" width="30px" onclick="openLeftSidebar()">
+        </div>
+        <div id="close-left-section-icon">
+            <img src="../static/images/icons/close-section.png" height="30px" width="30px" onclick="closeLeftSidebar()">
+        </div>
+        <!--------------------------------------- left-side-bar-collapse-toggle ------------------------------------------------->
+        <div id="open-right-section-icon">
+            <img src="../static/images/icons/open-section.png" height="30px" width="30px" onclick="openRightSidebar()">
+        </div>
+        <div id="close-right-section-icon">
+            <img src="../static/images/icons/close-section.png" height="30px" width="30px" onclick="closeRightSidebar()">
+        </div>
         <div id="project-selection-section">
-            <p class="selection-header">Channels</p>
-            {% for c in channels %}
-            <button class="channel-btn" onclick="selectChannel('{{c[0]}}')">{{c[1]}}</button>
-            {% endfor %}
-            <div id="project-selection-parent-container">
-                <p class="selection-header" id="project-selection-header">Projects</p>
-                <div id="project-selection-container">
-                    {% for v in default_video_dict['vid_uuid_name_list'] %}
-                    <button class="project-btn" onclick="displayVideoDetails('{{v[0]}}')">{{ v[1] }}</button>
-                    {% endfor %}
-                </div>
-            </div>
             <div id="operations-container">
                 <p class="selection-header" id="operations-header">Operations</p>
                 <button id="select-current-video-btn" onclick="selectCurrentVideoSection()">Select Working Video</button>
@@ -1095,6 +1158,32 @@
             seoDropdown.style.display = 'block';
         }
     });
+
+    // ---------------------------------------------------- TOGGLE SIDE BARS DISPLAY -----------------------------------------------------
+    function openRightSidebar() {
+        const rightSidebar = document.getElementById('project-selection-section');
+        rightSidebar.style.display = 'block';
+        document.getElementById('open-right-section-icon').style.display = 'none';
+        document.getElementById('close-right-section-icon').style.display = 'block';
+    }
+    function closeRightSidebar() {
+        const rightSidebar = document.getElementById('project-selection-section');
+        rightSidebar.style.display = 'none';
+        document.getElementById('close-right-section-icon').style.display = 'none';
+        document.getElementById('open-right-section-icon').style.display = 'block';
+    }
+    function openLeftSidebar() {
+        const leftSidebar = document.getElementById('left-sidebar');
+        leftSidebar.style.display = 'block';
+        document.getElementById('open-left-section-icon').style.display = 'none';
+        document.getElementById('close-left-section-icon').style.display = 'block';
+    }
+    function closeLeftSidebar() {
+        const leftSidebar = document.getElementById('left-sidebar');
+        leftSidebar.style.display = 'none';
+        document.getElementById('close-left-section-icon').style.display = 'none';
+        document.getElementById('open-left-section-icon').style.display = 'block';
+    }
     
     function initialLoad() {
         const dialogueNarration = document.getElementById('dialogue_narration');
