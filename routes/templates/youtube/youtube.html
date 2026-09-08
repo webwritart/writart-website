@@ -39,13 +39,12 @@
     }
     
     #display {
-        min-width: 55%;
         max-width: 100%;
         display: flex;
         flex-direction: column;
         align-items: center;
         padding: 0% 0% 2% 0%;
-        margin: 1% 0% 2% 0%;
+        margin: 1% 1% 2% 1%;
         background: rgb(227, 238, 205);
         border-radius: 1.5rem;
         overflow: hidden;
@@ -348,14 +347,15 @@
         flex-direction: column;
         align-items: center;
         padding: 2%;
-        margin: 1% 1% 2% 0%;
+        margin: 1% 0% 2% 0%;
         background: rgb(210, 222, 180);
         border-radius: 1.5rem;
     }
     #open-left-section-icon {
         display: none;
         position: fixed; 
-        top:7%; left: 1%; 
+        top:7%; 
+        left: 1.5%; 
         height: 30px; 
         width: 30px;
         background: black;
@@ -364,7 +364,7 @@
     #close-left-section-icon {
         position: fixed; 
         top:7%; 
-        left: 1%; 
+        left: 1.5%; 
         height: 30px; 
         width: 30px;
         cursor: pointer;
@@ -393,7 +393,7 @@
         flex-direction: column;
         align-items: center;
         padding: 2%;
-        margin: 1% 0% 2% 1%;
+        margin: 1% 0% 2% 0%;
         background: rgb(210, 222, 180);
         border-radius: 1.5rem;
     }
@@ -482,7 +482,6 @@
         background: rgb(150, 75, 5);
     }
     #display-inner-container {
-        min-width: 55%;
         max-width: 100%;
         display: flex;
         flex-direction: column;
@@ -737,7 +736,6 @@
 
     @media(max-width: 1200px) {
         #display {
-            min-width: 55%;
             max-width: 100%;
             margin: 0% .5% 1% .5%
         }
@@ -769,7 +767,6 @@
 
     @media(max-width: 768px) {
         #display {
-            min-width: 55%;
             max-width: 100%;
         }
         #project-selection-section {
@@ -853,7 +850,6 @@
             </div>
         </div>
         <div id="display">
-            
             <!-- -----------------------------------NOTIFICATION CONTAINER -------------------------------------------- -->
             <div id="parent-notification-container">
                 <div id="revision-container" class="notification-container">
