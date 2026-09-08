@@ -482,7 +482,8 @@
         background: rgb(150, 75, 5);
     }
     #display-inner-container {
-        width: 100%;
+        min-width: 55%;
+        max-width: 100%;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -736,7 +737,8 @@
 
     @media(max-width: 1200px) {
         #display {
-            width: 70%;
+            min-width: 55%;
+            max-width: 100%;
             margin: 0% .5% 1% .5%
         }
         #project-selection-section {
@@ -767,8 +769,8 @@
 
     @media(max-width: 768px) {
         #display {
-            width: 65%;
-            margin: 0% .5% 1% .5%
+            min-width: 55%;
+            max-width: 100%;
         }
         #project-selection-section {
             width: 35%;
