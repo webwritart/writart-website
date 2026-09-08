@@ -1590,7 +1590,7 @@ def youtube_manager():
                 video_uuid = request.form.get('video_uuid')
                 dialogue_narration = request.form.get('dialogue_narration')
                 video_img_instruction = request.form.get('video_img_instruction')
-                video_id = request.form.get('video_id')
+                yt_video_id = request.form.get('video_id')
                 thumbnail_instruction = request.form.get('thumbnail_instruction')
                 youtube_card_instruction = request.form.get('youtube_card_instruction')
                 voice_recording = request.files.get('voice_recording')
@@ -1697,7 +1697,7 @@ def youtube_manager():
                         db.session.add(entry)
                     db.session.commit()
 
-                if video_id:
+                if yt_video_id:
                     all_components = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar().components
                     exits = False
                     video_id_row = None
@@ -1713,7 +1713,7 @@ def youtube_manager():
                         entry = YoutubeVideoComponent(
                             uuid=uuid,
                             component_type='video_id',
-                            text=video_id,
+                            text=yt_video_id,
                             approval_status='pending',
                             date_time=date_time,
                             youtube_video_id=video_id,
