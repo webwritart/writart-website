@@ -36,8 +36,9 @@
         width: 100%;
         justify-content: center;
     }
+    
     #display {
-        width: 80%;
+        width: 100%;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -48,6 +49,297 @@
         overflow: hidden;
         min-height: 75vh;
     }
+    /* ------------------------------------------ NOTIFICATIONS -------------------------------------------------- */
+    #parent-notification-container {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+    }
+    .notification-container {
+        position: relative;
+        display: inline-block;
+        margin: 0% .3%;
+        padding: .5% 0%;
+    }
+    .notification-btn {
+        background-color: rgb(255, 209, 130);
+        color: black;
+        padding: 0px 16px;
+        font-size: .9rem;
+        cursor: pointer;
+        border-radius: 5px;
+        border: none;
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.7);
+        transition: all .15s ease-in-out;
+    }
+    .notification-btn:hover {
+        background-color: rgb(255, 193, 87);
+    }
+    .notification-count {
+        color: red;
+        font-weight: 600;
+    }
+    .notification-dropdown {
+        display: none;
+        position: absolute;
+        background-color: rgb(218, 229, 142);
+        width: 500px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        padding: 8px 12px;
+        border: 2px solid rgb(96, 129, 52);
+        border-radius: .5rem;
+        z-index: 1;
+    }
+    .notification-dropdown-task {
+        border-bottom: 2px solid rgba(141, 147, 120, 0.545);
+        font-size: .9rem;
+        cursor: pointer;
+        color: rgb(111, 67, 0);
+        font-weight: 600;
+    }
+    .notification-dropdown-task:hover {
+        background-color: #fbffd0;
+    }
+    .notification-dropdown-task:last-child {
+        border-bottom: none;
+    }
+    /* -------------table------------- */
+    #feedback-temp-title {
+        width: 100%;
+        text-align: center;
+        font-weight: 600;
+        font-size: 1.2rem;
+        margin: 1% 0%;
+        color: rgb(84, 130, 28);
+    }
+    #table-container {
+        width: 100%;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 90vh;
+    }
+    .col_1 { width: 10%; }
+    .col_2 { width: 30%; }
+    .col_3 { width: 10%; }
+    .col_4 { width: 10%; }
+    .col_5 { width: 20%; }
+    .col_6 { width: 10%; }
+    th {
+        background: rgb(118, 143, 96);
+        color: white;
+    }
+    table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        border-radius: 1.5rem;
+        overflow: hidden;
+        border: 2px solid rgba(46, 67, 5, 0.608);
+    }
+    th, td {
+        border: solid 1px rgb(97, 123, 19);
+        padding: .5%;
+        text-align: center;
+        word-wrap: break-word;
+    }
+    td {
+        height: 16vh;
+        
+    }
+    .image {
+        object-fit: contain;
+        max-height: 100%;
+        max-width: 100%;
+        cursor: pointer;
+    }
+    .image:hover {
+        filter: saturate(0);
+    }
+    .download-displaying-img-btn {
+        background: rgb(166, 166, 166);
+        border: none;
+        border-radius: 1.5rem;
+        width: 100%;
+        margin-top: 2%;
+        font-size: .8rem;
+        transition: all .15s ease-in-out;
+    }
+    .download-displaying-img-btn:hover {
+        background: rgb(130, 130, 130);
+    }
+    .image-text-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow-y: auto;
+        height: 100%;
+        width: 100%;
+    }
+    .img-feedback-recording-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+    .assigned-to-name {
+        padding: .5%;
+        font-size: 1rem;
+        background: #f9ffc7;
+        color: rgb(208, 101, 59);
+        font-weight: 700;
+    }
+    .revision-btn {
+        border: none;
+        background: #293c0a;
+        color: white;
+        padding: 2% 0%;
+        width: 100%;
+        border-radius: 1.5rem;
+        transition: background .15s ease-in-out;
+        font-size: .8rem;
+    }
+    .revision-btn:hover {
+        background: #4a6a1d;
+    }
+    /* ------------- Feedback Table popups ------------- */
+    .close {
+        position: absolute;
+        top: -30px;
+        right: 0;
+        color: white;
+        font-size: 35px;
+        cursor: pointer;
+        background: black;
+        opacity: 1;
+        padding: 1%;
+    }
+    .close:hover {
+        color: rgb(226, 103, 36);
+        opacity: 1 !important;
+    }
+    .popup {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+    }
+    .popup-content {
+        position: relative;
+        width: 80%;
+        height: 80%;
+        margin: 5% auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .popup-content img {
+        max-width: 100%;
+        max-height: 100%;
+    }
+    .form-button {
+        border: none;
+        background: #2a3c11;
+        color: white;
+        padding: .8% 2%;
+        border-radius: 1.5rem;
+        transition: background .15s ease-in-out;
+        font-size: .8rem;
+        width: 100%;
+    }
+    .form-button:hover {
+        background: #4a6a1d;
+    }
+    #upload-revision-header {
+        width: 100%;
+        text-align: center;
+        font-weight: 600;
+        margin: 0% 0% 2% 0% !important;
+    }
+    #upload-video-revision-header {
+        width: 100%;
+        text-align: center;
+        font-weight: 600;
+        margin: 0% 0% 2% 0% !important;
+    }
+    #upload-revision-form-container {
+        background: rgb(237, 244, 206);
+        width: 60%;
+        padding: 3%;
+        border-radius: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    #upload-video-revision-form-container {
+        background: rgb(237, 244, 206);
+        width: 100%;
+        padding: 3%;
+        border-radius: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    #upload-revision-previous-image-container {
+        width: 30%;
+        height: 30vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    #upload-revision-previous-image {
+        max-width: 100%;
+        max-height: 100%;
+    }
+    input {
+        border-radius: 1.5rem;
+        color: black;
+        border: none;
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.6);
+        padding: 0.5% 1% .5% 2%;
+    }
+    input::placeholder {
+        color: rgb(105, 126, 56);
+    }
+    #revision-image-files {
+        color: rgb(105, 126, 56);
+    }
+    #revision-image-files::file-selector-button {
+        border-radius: 1.5rem;
+        color: rgb(105, 126, 56);
+        border: none;
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.6);
+        padding: 0.5% 1% .5% 2%;
+    }
+    #upload-video-revision-scene-shot {
+        font-weight: 900;
+        font-size: 1.5rem;
+
+    }
+    #upload-video-revision-video-container {
+        width: 100%;
+        height: 50vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    #upload-video-revision-video-version {
+        font-weight: 900;
+        font-size: 1.2rem;
+        color: rgb(15, 137, 15);
+    }
+    .upload-video-revision-video {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+    /* ------------------------------------------ PROJECT SELECTION -------------------------------------------------- */
     #project-selection-section {
         width: 20%;
         display: flex;
@@ -498,6 +790,62 @@
 <div id="root-container">
     <div id="main-section">
         <div id="display">
+            
+            <!-- -----------------------------------NOTIFICATION CONTAINER -------------------------------------------- -->
+            <div id="parent-notification-container">
+                <div id="revision-container" class="notification-container">
+                    <button id="revision-notification-btn" class="notification-btn">Revisions<span id="revision-count" class="notification-count"></span></button>
+                    
+                    <div id="revision-projects-dropdown" class="notification-dropdown">
+                    </div>
+                    
+                </div>
+                <div id="seo-container" class="notification-container">
+                    <button id="seo-notification-btn" class="notification-btn">SEO</button>
+                    <div id="seo-projects-dropdown" class="notification-dropdown">
+                    </div>
+                </div>
+            </div>
+            <!-- -----------------------------------IMAGE FEEDBACK TABLE -------------------------------------------- -->
+            <div id="table-container">
+                <p id="feedback-temp-title"></p>
+                <table id="images-table">
+                    <thead>
+                        <tr>
+                            <th class="col_1">Images (click to enlarge)</th>
+                            <th class="col_5">Image text</th>
+                            <th class="col_2">Feedback</th>
+                            <th class="col_6">Assigned to</th>
+                            <th class="col_3">Upload Revision</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <img class="image" id="feedback-table-image" src="" onclick="openImageLargeSize(this.src)">
+                                <button class="download-displaying-img-btn" id="download-displaying-img-btn">Download</button>
+                            </td>
+                            <td>
+                                <div class="image-text-container" id="feedback-img-text-container">
+                                    
+                                </div>
+                            </td>
+                            <td>
+                                <div class="img-feedback-recording-container" id="img-feedback-recording-container">
+                                    
+                                </div>
+                            </td>
+                            <td class="assigned-to-name" id="assigned-to-name">
+
+                            </td>
+                            <td>
+                                <button class="revision-btn" id="revision-btn" onclick="uploadRevisionPopup()">Upload Revision</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- -----------------------------------VIDEO DISPLAY CONTAINER -------------------------------------------- -->
             <p id="temp_title">{{ default_video_dict['temp_title'] }}</p>
 
             <div id="display-inner-container">
@@ -660,10 +1008,93 @@
             <button type="submit" name="submit" value="select_current_video" id="select-current-video-submit-btn" class="form-button" onclick="setCurrentVideo()">Set Current video</button>
         </form>
     </div>
+    <div id="image-popup" class="popup">
+        <div class="popup-content">
+            <span class="close" onclick="closePopup()">&times;</span>
+            <img id="image-large-size" src="" alt="Large image">
+        </div>
+    </div>
+    <div id="upload-revision-popup" class="popup">
+        <div class="popup-content">
+            <div id="upload-revision-form-container">
+                <span class="close" onclick="closePopup()">&times;</span>
+                <div id="upload-revision-previous-image-container">
+                    <img id="upload-revision-previous-image" src="/static/files/youtube/2/2/images/kristofer-loffan-labedzki-all-characters-siluette-lineup.jpg">
+                </div>
+                <form id="upload-revision-form" enctype="multipart/form-data">
+                    <p id="upload-revision-header">Upload revision</p>
+                    <input type="hidden" id="parent-img-uuid" name="parent-img-uuid">
+                    <input type="file" id="revision-image-files" name="revision_image_files" class="file-upload-input" accept=".jpg, .jpeg, .png, image/jpeg, image/png" required>
+                    <input type="text" id="revision-image-text" name="revision-image-text" placeholder="Anything you want to say?">
+                    <button type="submit" name="submit" value="upload_revision" id="upload-revision-btn" class="form-button">Upload revised image</button>
+                    <div id="upload-image-status-message"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="upload-video-revision-popup" class="popup">
+        <div class="popup-content">
+            <div id="upload-video-revision-form-container">
+                <span class="close" onclick="closePopup()">&times;</span>
+                <p id="upload-video-revision-scene-shot"></p>
+                <div id="upload-video-revision-video-container">
+                    <video class="upload-video-revision-video" src="" controls></video>
+                    <p class="upload-video-revision-version"></p>
+                </div>
+                <p id="upload-video-revision-video-version"></p>
+                <form id="upload-video-revision-form" enctype="multipart/form-data">
+                    <p id="upload-video-revision-header">Upload revised video</p>
+                    <input type="hidden" id="parent-video-uuid" name="parent-video-uuid">
+                    <input type="file" id="video-revision-file" name="video-revision-file" class="file-upload-input" accept=".mp4, .avi, .mov, video/mp4, video/avi, video/mov" required>
+                    <input type="text" id="video-revision-text-input" name="video-revision-text-input" placeholder="Anything you want to say?">
+                    <button type="submit" name="submit" value="upload_video_revision" id="upload-video-revision-btn" class="form-button">Upload revised video</button>
+                    <div id="upload-video-revision-status-message"></div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
+
+    // --------------------------------------------------- NOTIFICATION ------------------------------------------------------
     const defaultVideoDict = {{ default_video_dict | tojson }};
+    const pendingRevisions = {{ pending_revisions | tojson }};
+
+    function closeAllNotificationDropdowns() {
+        const revisionDropdown = document.getElementById('revision-projects-dropdown');
+        const seoDropdown = document.getElementById('seo-projects-dropdown');
+        if (revisionDropdown) {
+            revisionDropdown.style.display = 'none';
+        }
+        if (seoDropdown) {
+            seoDropdown.style.display = 'none';
+        }
+    }
+
+    const revisionNotificationBtn = document.getElementById('revision-notification-btn');
+    revisionNotificationBtn.addEventListener('click', () => {
+        const revisionDropdown = document.getElementById('revision-projects-dropdown');
+        const isOpen = revisionDropdown.style.display === 'block';
+
+        closeAllNotificationDropdowns();
+
+        if (!isOpen) {
+            revisionDropdown.style.display = 'block';
+        }
+    });
+
+    const seoNotificationBtn = document.getElementById('seo-notification-btn');
+    seoNotificationBtn.addEventListener('click', () => {
+        const seoDropdown = document.getElementById('seo-projects-dropdown');
+        const isOpen = seoDropdown.style.display === 'block';
+
+        closeAllNotificationDropdowns();
+
+        if (!isOpen) {
+            seoDropdown.style.display = 'block';
+        }
+    });
     
     function initialLoad() {
         const dialogueNarration = document.getElementById('dialogue_narration');
@@ -766,10 +1197,170 @@
             ytTags.style.display = 'none';
             document.getElementById('yt-tags-section-header').style.display = 'none';
         }
+        // ------------------------------------------ NOTIFICATION --------------------------------------------------
+        const revisionDropdown = document.getElementById('revision-projects-dropdown');
+        const revisionCount = document.getElementById('revision-count');
+        revisionCount.innerHTML = `(${pendingRevisions.length})`;
+        revisionDropdown.replaceChildren();
+        for (const task of pendingRevisions) {
+            const newParagraph = document.createElement('p');
+            newParagraph.classList.add('notification-dropdown-task');
+            newParagraph.innerHTML = `${task[1]}-(${task[2]})-${task[0]}`;
+            newParagraph.onclick = () => displayTask(task[0]);
+            revisionDropdown.appendChild(newParagraph);
+        }
     }
     
     initialLoad();
-    
+
+    // -------------------------------------------- NOTIFICATIONS OPERATIONS -------------------------------------------------------
+    function displayTask(task_uuid) {
+        const endpointUrl = "{{ url_for('youtube.home') }}";
+        fetch(endpointUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                'task_uuid': task_uuid,
+                'type': 'get_task_details'
+            })
+        }).then(response => response.json()).then(data => {
+            const tableContainer = document.getElementById('table-container');
+
+            if (data.task_dict.component_type == 'image') {
+                closeAllNotificationDropdowns();
+                const imagesTable = document.getElementById('images-table');
+                const feedbackTempTitle = document.getElementById('feedback-temp-title');
+                const feedbackImage = document.getElementById('feedback-table-image');
+                const downloadImage = document.getElementById('download-displaying-img-btn');
+                const feedbackText = document.getElementById('feedback-img-text-container');
+                const feedbackRecordingContainer = document.getElementById('img-feedback-recording-container');
+                const assignedToName = document.getElementById('assigned-to-name');
+                const revisionBtn = document.getElementById('revision-btn');
+
+                feedbackTempTitle.innerHTML = data.task_dict.temp_title;
+                feedbackImage.src = data.task_dict.file_path;
+                feedbackImage.onclick = () => openImageLargeSize(data.task_dict.file_path);
+                downloadImage.onclick = () => downloadDisplayingImage(data.task_dict.file_path);
+                feedbackText.innerHTML = data.task_dict.text;
+                feedbackRecordingContainer.replaceChildren();
+                if (data.task_dict.feedback) {
+                    const newAudio = document.createElement('audio');
+                    newAudio.src = data.task_dict.feedback;
+                    newAudio.controls = true;
+                    feedbackRecordingContainer.appendChild(newAudio);
+                }
+                if (data.task_dict.assigned_to_name) {
+                    assignedToName.innerHTML = data.task_dict.assigned_to_name;
+                } else {
+                    assignedToName.innerHTML = `Last assigned: ${data.task_dict.last_assigned}`;
+                }
+                revisionBtn.onclick = () => uploadRevisionPopup(data.task_dict.uuid, data.task_dict.file_path);
+                imagesTable.style.display = 'block';
+            }
+            tableContainer.style.padding = "0% 2% 2% 2%";
+            tableContainer.style.display = 'flex';
+            document.getElementById('temp_title').style.display = 'none';
+            document.getElementById('display-inner-container').style.display = 'none';
+        }).catch(error => {
+            console.error('Error:', error);
+        });
+    }
+    function closePopup() {
+        document.getElementById("image-popup").style.display = "none";
+        document.getElementById("upload-revision-popup").style.display = "none";
+        document.getElementById("upload-video-revision-popup").style.display = "none";
+    }
+    function openImageLargeSize(imagePath) {
+        const image = document.getElementById("image-large-size");
+        image.src = imagePath;
+        document.getElementById('image-popup').style.display = 'block';
+    }
+    function uploadRevisionPopup(img_uuid, img_path) {
+        document.getElementById("upload-revision-popup").style.display = "block";
+        document.getElementById("parent-img-uuid").value = img_uuid;
+        document.getElementById("upload-revision-previous-image").src = img_path;
+    }
+    const revisionForm = document.getElementById('upload-revision-form');
+    revisionForm.addEventListener('submit', (event) => {
+        event.preventDefault(); // Prevent the form from submitting normally
+        const saveRevisionImageEndpointUrl = "{{ url_for('youtube.save_revision_img') }}";
+        const statusMessage = document.getElementById('upload-revision-status-message');
+        const fileInput = document.getElementById("revision-image-files");
+        const parentImgUuid = document.getElementById("parent-img-uuid").value;
+        const revisionImageText = document.getElementById("revision-image-text").value;
+        const submitBtn = document.getElementById('upload-revision-btn');
+        submitBtn.textContent = 'Uploading.....';
+        submitBtn.disabled = true;
+        files = fileInput.files;
+        if (files.length === 0) {
+            statusMessage.textContent = 'Please select at least one image file.';
+            return;
+        }
+        const formData = new FormData();
+        formData.append('parent_img_uuid', parentImgUuid);
+        for (let i = 0; i < files.length; i++) {
+            formData.append('revised_images[]', files[i]);
+        }
+        formData.append('type', 'upload_revision_img');
+        formData.append('revision_image_text', revisionImageText);
+
+        fetch(saveRevisionImageEndpointUrl, { method: 'POST', body: formData })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Revision uploaded successfully.');
+                    window.location.reload();
+                } else {
+                    alert('Failed to upload revision.');
+                }
+            })
+            .catch(error => {
+                console.error('Error uploading revision:', error);
+                alert('Failed to upload revision.');
+            });
+    });
+    const videoRevisionForm = document.getElementById('upload-video-revision-form');
+    videoRevisionForm.addEventListener('submit', (event) => {
+        event.preventDefault(); // Prevent the form from submitting normally
+        const saveRevisionVideoEndpointUrl = "{{ url_for('youtube.save_revision_video') }}";
+        const statusMessage = document.getElementById('upload-video-revision-status-message');
+        const fileInput = document.getElementById("video-revision-file");
+        const parentVideoUuid = document.getElementById("parent-video-uuid").value;
+        const revisionVideoText = document.getElementById("video-revision-text-input").value;
+        const submitBtn = document.getElementById("upload-video-revision-btn");
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Uploading...';
+
+        const formData = new FormData();
+        formData.append('parent_video_uuid', parentVideoUuid);
+        formData.append('video_revision_file', fileInput.files[0]);
+        formData.append('type', 'upload_revision_video');
+        formData.append('revision_video_text', revisionVideoText);
+
+        fetch(saveRevisionVideoEndpointUrl, { method: 'POST', body: formData })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Revision uploaded successfully.');
+                    window.location.reload();
+                } else {
+                    alert('Failed to upload revision.');
+                }
+            })
+            .catch(error => {
+                console.error('Error uploading revision:', error);
+                alert('Failed to upload revision.');
+            });
+    });
+    function downloadDisplayingImage(file_path) {
+        const link = document.createElement('a');
+        link.href = file_path;
+        link.download = 'displaying_image.jpg';
+        link.click();
+    }
+    // -------------------------------------------- SELECT CHANNEL ---------------------------------------------------------------
     function selectChannel(channel_uuid) {
         const endpointUrl = "{{ url_for('youtube.home') }}";
         fetch(endpointUrl, {
@@ -811,6 +1402,9 @@
                 'type': 'select_video',
             })
         }).then(response => response.json()).then(data => {
+            const displayInnerContainer = document.getElementById('display-inner-container');
+            displayInnerContainer.style.display = 'flex';
+            document.getElementById("table-container").style.display = 'none';
             const vidDetailSection = document.querySelectorAll('.vid-detail-section');
             const vidDetailSectionHeader = document.querySelectorAll('.vid-detail-section-header');
             const voiceRecordingContainer = document.getElementById('voice_recording_container');

@@ -208,6 +208,81 @@ def home():
                 default_video_dict = {}
         if request.method == 'POST' and request.is_json:
             data = request.get_json()
+            if data['type'] == 'get_task_details':
+                task_uuid = data['task_uuid']
+                task = db.session.query(YoutubeVideoComponent).filter_by(uuid=task_uuid).scalar()
+                task_type = task.component_type
+                assigned_to_name = db.session.query(Member).filter_by(uuid=int(task.assigned_to_uuid)).scalar().name
+                try:
+                    last_assigned = db.session.query(Member).filter_by(uuid=int(task.last_assigned)).scalar().name
+                except:
+                    last_assigned = ''
+                file_path = ''
+                file_text = ''
+                feedback = ''
+                if task_type == 'image':
+                    if len(task.revisions) > 0:
+                        last_revision_no = max([float(a.version) for a in task.revisions])
+                        file_path = [a.file_path for a in task.revisions if a.version == str(last_revision_no)][0]
+                        all_revision_no_descending_order = sorted([float(a.version) for a in task.revisions], reverse=True)
+                        run = True
+                        count = 0
+                        version_count = len(all_revision_no_descending_order)
+                        while run:
+                            for i in all_revision_no_descending_order:
+                                count += 1
+                                version_text = [a.text for a in task.revisions if a.version == str(i)][0]
+                                if version_text:
+                                    file_text = version_text
+                                    run = False
+                                    break
+                                else:
+                                    if count == version_count:
+                                        run = False                                
+                        if not file_text:
+                            file_text = task.text
+
+                        feedback_run = True
+                        feedback_count = 0
+                        while feedback_run:
+                            for i in all_revision_no_descending_order:
+                                feedback_count += 1
+                                feedback_text = [a.feedback for a in task.revisions if a.version == str(i)][0]
+                                if feedback_text:
+                                    feedback = feedback_text
+                                    feedback_run = False
+                                    break
+                                else:
+                                    if feedback_count == version_count:
+                                        feedback_run = False
+                        if not feedback:
+                            feedback = task.feedback
+                    else:
+                        file_path = task.file_path
+                        file_name = Path(file_path).name
+                        file_text = task.text
+                        feedback = task.feedback
+                    task_dict = {
+                        'uuid': task.uuid,
+                        'component_type': task_type,
+                        'temp_title': task.youtube_video.temp_title,
+                        'file_path': file_path,
+                        'file_name': file_name,
+                        'text': file_text,
+                        'feedback': feedback,
+                        'assigned_to_name': assigned_to_name,
+                        'last_assigned': last_assigned,
+                    }
+                    return jsonify(task_dict=task_dict)
+                
+                elif task_type == 'video':
+                    task_dict = {
+                        'uuid': task.uuid,
+                        'component_type': task_type,
+                        'temp_title': task.temp_title,
+                    }
+                    return jsonify('success')
+                
             if data['type'] == 'select_channel':
                 channel_uuid = data['channel_uuid']
                 video_list = []
@@ -313,9 +388,14 @@ def home():
                     db.session.add(entry)
                     db.session.commit()
                 return jsonify(success='success')
-
+        # ----------------------------------------------------- NOTIFICATION ---------------------------------------------------------------
+        youtube_img_creator = db.session.query(Role).filter_by(name='youtube_img_creator').scalar()
+        if youtube_img_creator in current_user.role:
+            pending_revisions = [(a.uuid, a.youtube_video.temp_title, a.component_type) for a in db.session.query(YoutubeVideoComponent).filter_by(assigned_to_uuid=str(current_user.uuid)).all() if a.approval_status == 'revision-required']
+        else:
+            pending_revisions = []
         return render_template('youtube.html', current_year=current_year, channels=channels, default_video_dict=default_video_dict, logged_in=current_user.is_authenticated, admin=admin, first_channel=first_channel,
-                               current_video_option_list=current_video_option_list)
+                               current_video_option_list=current_video_option_list, pending_revisions=pending_revisions)
 
 
 @youtube.route('/upload-images', methods=['GET', 'POST'])
@@ -628,6 +708,7 @@ def image_feedback():
                                 if version_text:
                                     file_text = version_text
                                     run = False
+                                    break
                                 else:
                                     if count == version_count:
                                         run = False
