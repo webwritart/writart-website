@@ -1,6 +1,11 @@
 from extensions import db
 
 
+video_stage = db.Table('video_stage',
+    db.Column('youtube_video_id', db.Integer, db.ForeignKey('youtube_video.id')),
+    db.Column('youtube_video_stage_id', db.Integer, db.ForeignKey('youtube_video_stage.id'))
+    )
+
 class YoutubeChannel(db.Model):
     __tablename__ = 'youtube_channel'
     id = db.Column(db.Integer, primary_key=True)
@@ -31,6 +36,7 @@ class YoutubeVideo(db.Model):
     scheduled_date_time = db.Column(db.String(50))
     channel_id = db.Column(db.Integer, db.ForeignKey('youtube_channel.id'))
     components = db.relationship('YoutubeVideoComponent', backref='youtube_video', lazy=True)
+    stages = db.relationship('YoutubeVideoStage', secondary=video_stage, backref='youtube_video', lazy=True)
 
     def __repr__(self):
         return f"Temporary title: {self.temp_title}, category: {self.category}, date_time: {self.date_time}"
@@ -74,3 +80,13 @@ class YoutubeVideoComponentRevision(db.Model):
 
     def __repr__(self):
         return f"Version: {self.version}, date_time: {self.date_time}"
+
+
+class YoutubeVideoStage(db.Model):
+    __tablename__ = 'youtube_video_stage'
+    id = db.Column(db.Integer, primary_key=True)
+    stage = db.Column(db.String(50)) # all stages are: dialogue_&_narration, voice_recording, creative_instruction, creatives, thumbnail, yt_card, yt_title, yt_description, yt_tags, scheduled, released etc.
+    description = db.Column(db.String(100))
+    
+    def __repr__(self):
+        return f"Stage: {self.stage}, date_time: {self.date_time}"

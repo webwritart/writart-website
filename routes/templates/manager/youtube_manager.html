@@ -36,7 +36,7 @@
         padding: 0% 5%;
     }
     .form-btn {
-        background: green;
+        background: rgb(96, 131, 31);
         color: white;
         padding: 1% 2%;
         border: none;
@@ -47,7 +47,13 @@
         width: 100%;
     }
     .form-btn:hover {
-        background: rgb(4, 92, 4);
+        background: rgb(79, 96, 17);
+    }
+    #stage-update {
+        background: rgb(45, 50, 22);
+    }
+    #stage-update:hover {
+        background: rgb(0, 0, 0);
     }
     #btn-section-special {
         display: flex;
@@ -105,6 +111,9 @@
         display: none;
     }
     #download-video-images-form {
+        display: none;
+    }
+    #stage-update-form {
         display: none;
     }
     .section-title {
@@ -193,7 +202,7 @@
                 <button id="add-video-btn" class="form-btn" onclick="addVideo()">Add video</button>
                 <button id="add-video-component-btn" class="form-btn" onclick="addVideoComponent()">Add video component</button>
                 <button id="download-video-images" class="form-btn" onclick="downloadVideoImages()">Download video images</button>
-                <button id="send-email-notification-btn" class="form-btn" onclick="sendEmailNotification()">Send email notification</button>
+                <button id="stage-update" class="form-btn" onclick="stageUpdate()">Stage update</button>
             </div>
             <div id="btn-section-special">
                 <a id="project-dashboard-link" href="{{url_for('youtube.home')}}">Youtube dashboard</a>
@@ -250,7 +259,7 @@
                         <option value="voice-recording">Voice Recording</option>
                         <option value="storyboard">Storyboard</option>
                         <option value="video-img-instruction">video/image instruction</option>
-                        <option value="thumbnail-instruction">Thumbnail instruction</option>
+                        <option value="video">Video</option>
                         <option value="youtube-card-instruction">Youtube card instruction</option>
                     </select>
                     <!-- --------------------------------Dialogue and Narration------------------------------------------------ -->
@@ -279,6 +288,10 @@
                         <label for="video-img-instruction">video/image instruction&ensp;</label>
                         <textarea id="video-img-instruction" type="text" name="video_img_instruction" placeholder="video/image instruction"></textarea>
                     </div>
+                    <!-- -------------------------------- video ------------------------------------------------ -->
+                     <div id="video-video">
+                        <input type="text" id="video-id" name="video_id" placeholder="Youtube Video ID">
+                     </div>
                     <!-- --------------------------------Thumbnail instruction------------------------------------------------ -->
                     <div id="thumbnail-instruction-container" class="inline_inputs">
                         <label for="thumbnail-instruction">Thumbnail instruction&ensp;</label>
@@ -322,6 +335,22 @@
                     </select>
                     <button type="submit" name="submit" value="download-video-images" id="download-video-images-form-btn" class="form-submit-btn" onclick="downloadVideoImagesSubmit(event)">Download</button>
                 </form>
+                <form id="stage-update-form">
+                    <p class="section-title">Stage Update</p>
+                    <select name="video_uuid" id="stage-update-video-uuid" required>
+                        <option value="">Select Video</option>
+                        {% for video in video_list %}
+                        <option value="{{video[0]}}">{{video[1]}}</option>
+                        {% endfor %}
+                    </select>
+                    <select name="stage" id="stage-update-stage" required>
+                        <option value="">Select Stage</option>
+                        {% for s in stage_list %}
+                        <option value="{{s}}">{{s}}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" name="submit" value="stage-update" id="stage-update-form-btn" class="form-submit-btn" onclick="stageUpdateSubmit()">Update</button>
+                </form>
             </div>
         </div>
     </div>
@@ -333,6 +362,7 @@
     const addVideoComponentForm = document.getElementById("add-video-component-form");
     const sendEmailNotificationForm = document.getElementById("send-email-notification-form");
     const downloadVideoImagesForm = document.getElementById("download-video-images-form");
+    const stageUpdateForm = document.getElementById("stage-update-form");
     const operation = document.getElementById("operation");
     const videoUuid = document.getElementById("video_uuid");
     function hideAllForms() {
@@ -341,6 +371,7 @@
         addVideoComponentForm.style.display = "none";
         sendEmailNotificationForm.style.display = "none";
         downloadVideoImagesForm.style.display = "none";
+        stageUpdateForm.style.display = "none";
     }
     function addChannel() {
         hideAllForms();
@@ -362,6 +393,10 @@
         hideAllForms();
         downloadVideoImagesForm.style.display = "block";
     }
+    function stageUpdate() {
+        hideAllForms();
+        stageUpdateForm.style.display = "block";
+    }
 
     function hideAllOperations() {
         document.getElementById('dialogue-narration-container').style.display = 'none';
@@ -370,6 +405,7 @@
         document.getElementById('thumbnail-instruction-container').style.display = 'none';
         document.getElementById('youtube-card-instruction-container').style.display = 'none';
         document.getElementById('storyboard-container').style.display = 'none';
+        document.getElementById('video-video').style.display = 'none';
 
     }
     function showAllOperations() {
@@ -379,6 +415,7 @@
         document.getElementById('thumbnail-instruction-container').style.display = 'block';
         document.getElementById('youtube-card-instruction-container').style.display = 'block';
         document.getElementById('storyboard-container').style.display = 'block';
+        document.getElementById('video-video').style.display = 'block';
     }
 
     operation.addEventListener('change', function() {
@@ -397,6 +434,8 @@
             document.getElementById('youtube-card-instruction-container').style.display = 'block';
         } else if (operation.value === 'storyboard') {
             document.getElementById('storyboard-container').style.display = 'block';
+        } else if (operation.value === 'video') {
+            document.getElementById('video-video').style.display = 'block';
         }
     });
 
@@ -482,6 +521,7 @@
         const voiceRecording = addVideoComponentForm.voice_recording.files[0];
         const storyboard = addVideoComponentForm.storyboard.files[0];
         const videoImgInstruction = addVideoComponentForm.video_img_instruction.value;
+        const videoId = addVideoComponentForm.video_id.value;
         const thumbnailInstruction = addVideoComponentForm.thumbnail_instruction.value;
         const youtubeCardInstruction = addVideoComponentForm.youtube_card_instruction.value;
         const voiceRecordingLanguage = addVideoComponentForm.voice_recording_language.value;
@@ -495,6 +535,7 @@
         formData.append('type', 'add-video-component');
         formData.append('dialogue_narration', dialogueNarration);
         formData.append('video_img_instruction', videoImgInstruction);
+        formData.append('video_id', videoId);
         formData.append('thumbnail_instruction', thumbnailInstruction);
         formData.append('youtube_card_instruction', youtubeCardInstruction);
         formData.append('voice_recording_language', voiceRecordingLanguage);
@@ -600,6 +641,39 @@
         }, 1000);
         downloadVideoImagesFormBtn.disabled = false;
         downloadVideoImagesFormBtn.textContent = 'Download';
+    }
+    function stageUpdateSubmit(event) {
+        event?.preventDefault();
+        const stageUpdateFormBtn = document.getElementById('stage-update-form-btn');
+        stageUpdateFormBtn.disabled = true;
+        stageUpdateFormBtn.textContent = 'Updating...';
+        const endpointUrl = "{{ url_for('manager.youtube_manager') }}";
+        const videoUuid = stageUpdateForm.video_uuid.value;
+        const stage = stageUpdateForm.stage.value;
+        data = {
+            type: 'stage-update',
+            video_uuid: videoUuid,
+            stage: stage
+        }
+        fetch(endpointUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status == 'success') { 
+                alert(data.message);
+                window.location.reload();
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
     }
 
     function showExistingData() {

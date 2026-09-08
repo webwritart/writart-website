@@ -459,7 +459,21 @@
         width: 100%;
         height: 100%;
     }
+    #stage-selector {
+        width: 100%;
+        border: none;
+        border-radius: 1.5rem;
+        background: rgb(104, 165, 51);
+        padding: 1% 2%;
+        margin: 2%;
+        color: white;
+        font-size: 1rem;
+    }
     
+    #stage-selector option {
+        background: rgb(182, 203, 138);
+        color: black;
+    }
     .project-btn {
         width: 100%;
         background: rgb(62, 79, 8);
@@ -480,6 +494,29 @@
     }
     .operation-btn:hover {
         background: rgb(150, 75, 5);
+    }
+    #stage-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        margin: 5% 2% 0% 2%;
+        background: rgb(139, 143, 99);
+        height: 37vh;
+        border-radius: 1.5rem;
+        overflow-y: hidden;
+    }
+    #stage-header {
+       background: rgb(41, 46, 19);
+       width: 100%;
+       color: rgba(255, 255, 255, 0.802);
+       text-align: center;
+       padding: 2% 0% !important;
+       border-radius: 1.5rem 1.5rem 0% 0%;
+       margin-bottom: 2% !important;
+    }
+    .stage {
+        color: rgba(0, 0, 0, .4);
     }
     #display-inner-container {
         width: 100%;
@@ -842,6 +879,14 @@
             {% endfor %}
             <div id="project-selection-parent-container">
                 <p class="selection-header" id="project-selection-header">Projects</p>
+                <select name="stage_selector" id="stage-selector">
+                    <option value="">Select stage</option>
+                    <option value="pre-production">Pre-Production</option>
+                    <option value="video-ready">Video Ready</option>
+                    <option value="seo-ready">SEO Ready</option>
+                    <option value="scheduled">Scheduled</option>
+                    <option value="published">Published</option>
+                </select>
                 <div id="project-selection-container">
                     {% for v in default_video_dict['vid_uuid_name_list'] %}
                     <button class="project-btn" onclick="displayVideoDetails('{{v[0]}}')">{{ v[1] }}</button>
@@ -997,6 +1042,21 @@
                 <button id="add-title-btn" class="operation-btn" data-video_uuid="{{default_video_dict['video_uuid']}}" onclick="addTitle(this.dataset.video_uuid)">Add/edit title</button>
                 <button id="add-description-btn" class="operation-btn" data-video_uuid="{{default_video_dict['video_uuid']}}" onclick="addDescription(this.dataset.video_uuid)">Add/edit description</button>
                 <button id="add-tags-btn" class="operation-btn" data-video_uuid="{{default_video_dict['video_uuid']}}" onclick="addTags(this.dataset.video_uuid)">Add/edit tags</button>
+                <div id="stage-container">
+                    <p id="stage-header">Progress</p>
+                    <p class="stage" id="dialogue_&_narration">Dialogue & Narration</p>
+                    <p class="stage" id="voice_over">Voice-Over</p>
+                    <p class="stage" id="creative_instruction">Crative Instruction</p>
+                    <p class="stage" id="creatives">Creatives</p>
+                    <p class="stage" id="video">Video</p>
+                    <p class="stage" id="thumbnail">Thumbnail</p>
+                    <p class="stage" id="yt-card">Youtube Card</p>
+                    <p class="stage" id="yt-title">Youtube Title</p>
+                    <p class="stage" id="yt-description">Youtube Description</p>
+                    <p class="stage" id="yt-video-tags">Video Tags</p>
+                    <p class="stage" id="scheduled">Scheduled</p>
+                    <p class="stage" id="published">Published</p>
+                </div>
             </div>
         </div>
     </div>
@@ -1284,6 +1344,45 @@
             ytTags.style.display = 'none';
             document.getElementById('yt-tags-section-header').style.display = 'none';
         }
+        if (defaultVideoDict['stages'].length > 0) {
+            if(defaultVideoDict['stages'].includes('dialogue_&_narration')) {
+                document.getElementById('dialogue_&_narration').style.color = '#E3E3E3';
+            }
+            if(defaultVideoDict['stages'].includes('voice_over')) {
+                document.getElementById('voice_over').style.color = '#E3E3E3';
+            }
+            if(defaultVideoDict['stages'].includes('creative_instruction')) {
+                document.getElementById('creative_instruction').style.color = '#E3E3E3';
+            }
+            if(defaultVideoDict['stages'].includes('creatives')) {
+                document.getElementById('creatives').style.color = '#E3E3E3';
+            }
+            if(defaultVideoDict['stages'].includes('video')) {
+                document.getElementById('video').style.color = '#E3E3E3';
+            }
+            if(defaultVideoDict['stages'].includes('thumbnail')) {
+                document.getElementById('thumbnail').style.color = '#E3E3E3';
+            }
+            if(defaultVideoDict['stages'].includes('yt_card')) {
+                document.getElementById('yt-card').style.color = '#E3E3E3';
+            }
+            if(defaultVideoDict['stages'].includes('yt_title')) {
+                document.getElementById('yt-title').style.color = '#E3E3E3';
+            }
+            if(defaultVideoDict['stages'].includes(yt_description)) {
+                document.getElementById('yt-description').style.color = '#E3E3E3';
+            }
+            if(defaultVideoDict['stages'].includes(yt_video_tags)) {
+                document.getElementById('yt-video-tags').style.color = '#E3E3E3';
+            }
+            if(defaultVideoDict['stages'].includes('scheduled')) {
+                document.getElementById('scheduled').style.color = '#E3E3E3';
+            }
+            if(defaultVideoDict['stages'].includes('released')) {
+                document.getElementById('published').style.color = '#E3E3E3';
+            }
+        }
+
         // ------------------------------------------ NOTIFICATION --------------------------------------------------
         const revisionDropdown = document.getElementById('revision-projects-dropdown');
         const revisionCount = document.getElementById('revision-count');
@@ -1758,7 +1857,6 @@
             alert(error);
         });
     }
-
 
 // ------------------------------------------------- OPERATIONS FORM SUBMISSIONS -------------------------------------------------------
     const uploadImagesForm = document.getElementById('upload-images-form');

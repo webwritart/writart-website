@@ -1577,11 +1577,20 @@ def youtube_manager():
                         return {"error": "No files were added"}, 404
                     p(memory_file.getbuffer().nbytes)
                     return send_file(memory_file, mimetype='application/zip', as_attachment=True, download_name=f"{video.temp_title}-{status}.zip")
-
+                if data['type'] == 'stage-update':
+                    video_uuid = data['video_uuid']
+                    stage = data['stage']
+                    stage_object = db.session.query(YoutubeVideoStage).filter_by(stage=stage).scalar()
+                    video = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar()
+                    if stage not in video.stages:
+                        video.stages.append(stage_object)
+                    db.session.commit()
+                    return jsonify(status="success", message= "Stage updated successfully!")
             if request.method == 'POST' and request.form.get('type') == 'add-video-component':
                 video_uuid = request.form.get('video_uuid')
                 dialogue_narration = request.form.get('dialogue_narration')
                 video_img_instruction = request.form.get('video_img_instruction')
+                video_id = request.form.get('video_id')
                 thumbnail_instruction = request.form.get('thumbnail_instruction')
                 youtube_card_instruction = request.form.get('youtube_card_instruction')
                 voice_recording = request.files.get('voice_recording')
@@ -1688,6 +1697,30 @@ def youtube_manager():
                         db.session.add(entry)
                     db.session.commit()
 
+                if video_id:
+                    all_components = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar().components
+                    exits = False
+                    video_id_row = None
+                    for c in all_components:
+                        if c.component_type == 'video_id':
+                            video_id_row = c
+                            exits = True
+                    if exits:
+                        video_id_row.text = video_id
+                    else:
+                        existing_video_component_uuid_list = [a.uuid for a in db.session.query(YoutubeVideoComponent).all()]
+                        uuid = create_uuid(existing_video_component_uuid_list, 9)
+                        entry = YoutubeVideoComponent(
+                            uuid=uuid,
+                            component_type='video_id',
+                            text=video_id,
+                            approval_status='pending',
+                            date_time=date_time,
+                            youtube_video_id=video_id,
+                            member_id=current_user.id
+                        )
+                        db.session.add(entry)
+                    db.session.commit()
                 if thumbnail_instruction:
                     all_components = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar().components
                     exits = False
@@ -1756,7 +1789,14 @@ def youtube_manager():
                 uuid = vid.uuid
                 temp_title = vid.temp_title
                 video_list.append((uuid, temp_title))
-            return render_template('youtube_manager.html', current_year=current_year, admin=admin, logged_in=current_user.is_authenticated, channel_list=channel_list, video_list=video_list)
+
+            stages = db.session.query(YoutubeVideoStage).all()
+            stage_list = []
+            for s in stages:
+                stage = s.stage
+                stage_list.append(stage)
+            return render_template('youtube_manager.html', current_year=current_year, admin=admin, logged_in=current_user.is_authenticated, channel_list=channel_list, video_list=video_list,
+                                   stage_list=stage_list)
         else:
             return render_template('admin_area.html')
     else:

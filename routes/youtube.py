@@ -86,9 +86,11 @@ def home():
                 if current_video_exists:
                     default_video_dict['image_list'] = [a.file_path for a in current_video.components if a.component_type == 'image']
                     default_video_dict['video_list'] = [a.file_path for a in current_video.components if a.component_type == 'video']
+                    default_video_dict['stages'] = [a.stage for a in current_video.stages]
                 else:
                     default_video_dict['image_list'] = [a.file_path for a in first_video.components if a.component_type == 'image']
                     default_video_dict['video_list'] = [a.file_path for a in first_video.components if a.component_type == 'video'] 
+                    default_video_dict['stages'] = [a.stage for a in first_video.stages]
                 if current_video_exists:
                     default_video_dict['temp_title'] = current_video.temp_title
                     try:
@@ -394,6 +396,7 @@ def home():
             pending_revisions = [(a.uuid, a.youtube_video.temp_title, a.component_type) for a in db.session.query(YoutubeVideoComponent).filter_by(assigned_to_uuid=str(current_user.uuid)).all() if a.approval_status == 'revision-required']
         else:
             pending_revisions = []
+        p(default_video_dict['stages'])
         return render_template('youtube.html', current_year=current_year, channels=channels, default_video_dict=default_video_dict, logged_in=current_user.is_authenticated, admin=admin, first_channel=first_channel,
                                current_video_option_list=current_video_option_list, pending_revisions=pending_revisions)
 
@@ -1028,4 +1031,3 @@ def save_audio():
             scene_shot = f"{video.scene}-{video.shot}"
             return jsonify(video_list=main_and_revision_list, scene_shot=scene_shot)
 
-    
