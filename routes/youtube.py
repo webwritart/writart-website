@@ -297,6 +297,7 @@ def home():
                 video = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar()
                 video_temp_title = video.temp_title
                 video_components = video.components
+                stages = [a.stage for a in video.stages]
                 vid_dict = {}
                 dialogue_narration = ''
                 voice_recordings = []
@@ -309,6 +310,7 @@ def home():
                 yt_title = ''
                 yt_description = ''
                 yt_tags = ''
+                video_yt_id = ''
                 for c in video_components:
                     if c.component_type == 'dialogue_&_narration':
                         dialogue_narration = c.text
@@ -347,6 +349,9 @@ def home():
                             yt_tags = [a.text for a in yt_tags_revisions if a.version == str(yt_last_revision_no)][0]
                         else:
                             yt_tags = c.text
+                    elif c.component_type == 'video':
+                        video_yt_id = c.file_path
+                vid_dict['video_yt_id'] = video_yt_id
                 vid_dict['temp_title'] = video_temp_title
                 vid_dict['video_uuid'] = video_uuid
                 try:
@@ -360,6 +365,8 @@ def home():
                 vid_dict['yt_title'] = yt_title
                 vid_dict['yt_description'] = yt_description
                 vid_dict['yt_tags'] = yt_tags
+                # -------------------------------------- Add progress stages -------------------------------------------
+                vid_dict['stages'] = stages
                 try:
                     vid_dict['img_vid_instruction'] = markdown.markdown(img_vid_instruction).replace('\n', '<br>')
                 except:
@@ -372,7 +379,7 @@ def home():
                     vid_dict['youtube_card_instruction'] = markdown.markdown(youtube_card_instruction).replace('\n', '<br>')
                 except:
                     vid_dict['youtube_card_instruction'] = youtube_card_instruction
-                    
+                p(vid_dict['stages'])
                 return jsonify(vid_dict)
             
             if data['type'] == 'select_current_video':
