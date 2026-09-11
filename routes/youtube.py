@@ -1184,6 +1184,11 @@ def project_stage_operations():
 
 @youtube.route('/display-ready-videos', methods=['GET', 'POST'])
 def display_ready_videos():
-    video_uuid = request.args.get('video_uuid')
-    all_video_ready_projects = [(a.uuid, a.temp_title, [c.text for c in a.components if c.component_type == 'video_id'][0]) for a in db.session.query(YoutubeVideo).all() if len([b for b in a.components if b.component_type == 'video_id']) > 0]
-    return render_template('display_ready_videos.html', all_video_ready_projects=all_video_ready_projects, video_uuid=video_uuid)
+    back_video_uuid = request.args.get('video_uuid')
+    published = db.session.query(YoutubeVideoStage).filter_by(stage='published').scalar()
+    all_video_ready_projects_shorts = [(a.uuid, a.temp_title, [c.text for c in a.components if c.component_type == 'video_id'][0]) for a in db.session.query(YoutubeVideo).all() if len([b for b in a.components if b.component_type == 'video_id']) > 0 and 'short' in a.category and published not in a.stages]
+    all_video_ready_projects_longs = [(a.uuid, a.temp_title, [c.text for c in a.components if c.component_type == 'video_id'][0]) for a in db.session.query(YoutubeVideo).all() if len([b for b in a.components if b.component_type == 'video_id']) > 0 and 'long' in a.category and published not in a.stages]
+    shorts_count = len(all_video_ready_projects_shorts)
+    longs_count = len(all_video_ready_projects_longs)
+    return render_template('display_ready_videos.html', all_video_ready_projects_shorts=all_video_ready_projects_shorts, all_video_ready_projects_longs=all_video_ready_projects_longs, back_video_uuid=back_video_uuid,
+                           shorts_count=shorts_count, longs_count=longs_count)
