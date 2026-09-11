@@ -158,8 +158,7 @@
     }
 
     /* ------------------------------------------------- VIDEO TABLE ---------------------------------------------------- */
-    .videos-table {
-    }
+    
     .videos-table td {
         height: 15vh;
     }
@@ -499,8 +498,10 @@
                                 <td>
                                     {% if video_dict[scene][shot][video]['last_revision'] != [] %}
                                     <video class="video" src="{{video_dict[scene][shot][video]['last_revision'][0][2]}}" controls></video>
+                                    <button class ="download-displaying-img-btn" data-video_path="{{video_dict[scene][shot][video]['last_revision'][0][2]}}" onclick="downloadDisplayingImage(this.dataset.video_path)">Download</button>
                                     {% else %}
                                     <video class="video" src="{{video_dict[scene][shot][video]['file_path']}}" controls></video>
+                                    <button class ="download-displaying-img-btn" data-video_path="{{video_dict[scene][shot][video]['file_path']}}" onclick="downloadDisplayingImage(this.dataset.video_path)">Download</button>
                                     {% endif %}
                                 </td>
                                 <td>
