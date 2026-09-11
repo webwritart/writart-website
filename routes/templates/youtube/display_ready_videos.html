@@ -96,16 +96,16 @@
                 title="YouTube video player" frameborder="0" allow="accelerometer; clipboard-write;
                 encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen;" referrerpolicy="strict-origin-when-cross-origin"
                 allowfullscreen></iframe>
-                <button onclick="player.unMute()">🔊 Unmute</button>
-                <button onclick="player.mute()">🔇 Mute</button>
+                <!-- <button onclick="player.unMute()">🔊 Unmute</button> -->
+                <!-- <button onclick="player.mute()">🔇 Mute</button> -->
 
-                <input
+                <!-- <input
                     type="range"
                     min="0"
                     max="100"
                     value="100"
                     oninput="player.setVolume(this.value)"
-                >
+                > -->
                 <figcaption style="color: rgb(0, 0, 0);">{{ v[1] }}</figcaption>
                 <button class="project-view-btn" onclick="viewProject('{{ v[0] }}')">View Project</button>
             </figure>
