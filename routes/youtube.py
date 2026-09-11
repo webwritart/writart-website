@@ -53,7 +53,7 @@ def home():
                         current_video_uuid = request.args.get('project_uuid')
                     else:
                         current_video_uuid = [a.value for a in current_user.tools if a.key == 'current_video_uuid'][0]
-                        
+
                     if current_video_uuid:
                         current_video_exists = True
                 except Exception as e:
@@ -69,9 +69,10 @@ def home():
                                 first_video = v
                                 first_channel = c
                     for v in first_channel.videos:
-                        if v.status == 'pending' or v.status == 'in-progress':
-                            if len(v.components) > 0:
-                                default_vid_uuid_name_list.append((v.uuid, v.temp_title))
+                        if len([a for a in v.components if a.component_type == 'video_id']) == 0:
+                            if v.status == 'pending' or v.status == 'in-progress':
+                                if len(v.components) > 0:
+                                    default_vid_uuid_name_list.append((v.uuid, v.temp_title))
                     default_vid_uuid_name_list.reverse()
                     try:
                         first_dialogue_narration = [a.text for a in first_video.components if a.component_type == 'dialogue_&_narration'][0]
