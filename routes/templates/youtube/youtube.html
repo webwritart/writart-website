@@ -104,8 +104,23 @@
     .notification-dropdown-task:last-child {
         border-bottom: none;
     }
+    .close-task-operation {
+        border: none;
+        width: 20%;
+        padding: .3% 0%;
+        background: rgba(0, 0, 0, 0.100);
+        border-radius: 1rem;
+        cursor: pointer;
+        margin-top: 5%;
+        color: rgba(0, 0, 0, .7);
+        transition: all .15s ease-in-out;
+    }
+    .close-task-operation:hover {
+        background: rgba(0, 0, 0, 0.400);
+        color: rgba(0, 0, 0, 0.9);
+    }
     /* -------------table------------- */
-    #feedback-temp-title {
+    .task-project-title {
         width: 100%;
         text-align: center;
         font-weight: 600;
@@ -340,6 +355,64 @@
         max-height: 100%;
         object-fit: contain;
     }
+    /* ------------------------------------------ SEO TASK FORM --------------------------------------- */
+    #seo-task-parent-container {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding: 2% 1%;
+        margin: 1%;
+        border-radius: 1.5rem;
+        min-height: 80vh;
+    }
+    #seo-task-form-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding: 0% 1%;
+        margin: 1%;
+        border-radius: 1.5rem;
+    }
+    #seo-task-form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding: 0% 10%;
+        margin: 1%;
+        border-radius: 1.5rem;
+    }
+    #seo-task-form p {
+        width: 100%;
+        text-align: center;
+        font-weight: 600;
+        font-size: 1.2rem;
+        opacity: .8;
+    }
+    #seo-task-form textarea {
+        width: 100%;
+        border-radius: 1rem;
+        padding-left: 1%;
+        color: black;
+        border: none;
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.6);
+        padding: 0.5% 1% .5% 2%;
+    }
+    #seo-task-form label {
+        width: 100%;
+    }
+    #add-seo-task-btn {
+        margin-top: 2%;
+    }
+    #seo-task-yt-description {
+        margin-bottom: 1%;
+    }
+    
     /* ------------------------------------------ LEFT SIDEBAR -------------------------------------------------- */
     #left-sidebar {
         display: flex;
@@ -879,13 +952,15 @@
             {% endfor %}
             <div id="project-selection-parent-container">
                 <p class="selection-header" id="project-selection-header">Projects</p>
-                <select name="stage_selector" id="stage-selector">
+                <select name="stage_selector" id="stage-selector" onchange="showProjectByStage()">
                     <option value="">Select stage</option>
                     <option value="pre-production">Pre-Production</option>
-                    <option value="video-ready">Video Ready</option>
-                    <option value="seo-ready">SEO Ready</option>
+                    <option value="video-done">Video done</option>
+                    <option value="seo-done">SEO done</option>
                     <option value="scheduled">Scheduled</option>
+                    <option value="ready-for-publish">Ready for Publish</option>
                     <option value="published">Published</option>
+                    <option value="archived">Archived</option>
                 </select>
                 <div id="project-selection-container">
                     {% for v in default_video_dict['vid_uuid_name_list'] %}
@@ -905,14 +980,14 @@
                     
                 </div>
                 <div id="seo-container" class="notification-container">
-                    <button id="seo-notification-btn" class="notification-btn">SEO</button>
+                    <button id="seo-notification-btn" class="notification-btn">SEO<span id="seo-count" class="notification-count"></span></button>
                     <div id="seo-projects-dropdown" class="notification-dropdown">
                     </div>
                 </div>
             </div>
             <!-- -----------------------------------IMAGE FEEDBACK TABLE -------------------------------------------- -->
             <div id="table-container">
-                <p id="feedback-temp-title"></p>
+                <p id="feedback-temp-title" class="task-project-title"></p>
                 <table id="images-table">
                     <thead>
                         <tr>
@@ -949,6 +1024,25 @@
                     </tbody>
                 </table>
             </div>
+            <!-- --------------------------------------- SEO TASK CONTAINER -------------------------------------------- -->
+             <div id="seo-task-parent-container">
+                <p id="seo-temp-title" class="task-project-title"></p>
+                <div id="seo-task-form-container">
+                    <form id="seo-task-form">
+                        <p>Update SEO</p>
+                        <input type="hidden" id="seo-task-uuid" value="">
+                        <label for="seo-task-yt-title">Title</label>
+                        <input type="text" id="seo-task-yt-title-input" name="seo_task_yt_title_input">
+                        <label for="seo-task-yt-description">Description</label>
+                        <textarea id="seo-task-yt-description" name="seo_task_yt_description"></textarea>
+                        <label for="seo-task-yt-tags">Tags</label>
+                        <textarea id="seo-task-yt-tags" name="seo_task_yt_tags"></textarea>
+                        <button type="submit" name="submit" value="add-seo-task" id="add-seo-task-btn" class="form-button">Add/edit task</button>
+                        <div id="seo-task-status-message"></div>
+                    </form>
+                    <button id="close-seo-task-operation" class="close-task-operation">Close</button>
+                </div>
+             </div>
             <!-- -----------------------------------VIDEO DISPLAY CONTAINER -------------------------------------------- -->
             <p id="temp_title">{{ default_video_dict['temp_title'] }}</p>
 
@@ -1181,6 +1275,7 @@
     // --------------------------------------------------- NOTIFICATION ------------------------------------------------------
     const defaultVideoDict = {{ default_video_dict | tojson }};
     const pendingRevisions = {{ pending_revisions | tojson }};
+    const pendingSeo = {{ pending_seo | tojson }};
 
     function closeAllNotificationDropdowns() {
         const revisionDropdown = document.getElementById('revision-projects-dropdown');
@@ -1417,10 +1512,47 @@
             newParagraph.onclick = () => displayTask(task[0]);
             revisionDropdown.appendChild(newParagraph);
         }
+        const seoDropdown = document.getElementById('seo-projects-dropdown');
+        const seoCount = document.getElementById('seo-count');
+        seoCount.innerHTML = `(${pendingSeo.length})`;
+        seoDropdown.replaceChildren();
+        for (const task of pendingSeo) {
+            const newParagraph = document.createElement('p');
+            newParagraph.classList.add('notification-dropdown-task');
+            newParagraph.innerHTML = `${task[1]}-(${task[2]})-${task[0]}`;
+            newParagraph.onclick = () => displaySeoTask(task[0]);
+            seoDropdown.appendChild(newParagraph);
+        }
     }
     
     initialLoad();
-
+    // -------------------------------------------- SHOW VIDEO BY STAGE --------------------------------------------------------
+    function showProjectByStage() {
+        const selectedStage = document.getElementById('stage-selector').value;
+        const endpointUrl = "{{ url_for('youtube.project_stage_operations') }}";
+        fetch(endpointUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                'stage': selectedStage,
+                'type': 'show_project_by_stage'
+            })
+        }).then(response => response.json()).then(data => {
+            const parentContainer = document.getElementById('project-selection-container');
+            parentContainer.replaceChildren();
+            for (const project of data) {
+                const myButton = document.createElement('button');
+                myButton.innerHTML = project[1];
+                myButton.classList.add('project-btn');
+                myButton.onclick = () => displayVideoDetails(project[0]);
+                parentContainer.appendChild(myButton);
+            }
+        }).catch(error => {
+            alert(error);
+        });
+    }
     // -------------------------------------------- NOTIFICATIONS OPERATIONS -------------------------------------------------------
     function displayTask(task_uuid) {
         const endpointUrl = "{{ url_for('youtube.home') }}";
@@ -1474,6 +1606,33 @@
         }).catch(error => {
             console.error('Error:', error);
         });
+    }
+    function displaySeoTask(task_uuid) {
+        const seoTaskParentContainer = document.getElementById('seo-task-parent-container');
+        const endpointUrl = "{{ url_for('youtube.home') }}";
+        fetch(endpointUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                'task_uuid': task_uuid,
+                'type': 'get_seo_task_details'
+            })
+        }).then(response => response.json()).then(data => {
+            document.getElementById('seo-temp-title').innerHTML = data.seo_task_dict.temp_title;
+            document.getElementById('seo-task-uuid').value = data.seo_task_dict.uuid;
+            document.getElementById('seo-task-yt-title-input').value = data.seo_task_dict.yt_title;
+            document.getElementById('seo-task-yt-description').value = data.seo_task_dict.yt_description;
+            document.getElementById('seo-task-yt-tags').value = data.seo_task_dict.yt_tags;
+            seoTaskParentContainer.style.display = 'flex';
+            document.getElementById('temp_title').style.display = 'none';
+            document.getElementById('display-inner-container').style.display = 'none';
+            
+        }).catch(error => {
+            console.error('Error:', error);
+        });
+        
     }
     function closePopup() {
         document.getElementById("image-popup").style.display = "none";
@@ -1568,6 +1727,51 @@
         link.download = 'displaying_image.jpg';
         link.click();
     }
+    const seoTaskForm = document.getElementById('seo-task-form');
+    seoTaskForm.addEventListener('submit', (event) => {
+        event.preventDefault(); // Prevent the form from submitting normally
+        const saveSeoTaskEndpointUrl = "{{ url_for('youtube.add_title_description_tags') }}";
+        const seoSubmitBtn = document.getElementById('add-seo-task-btn');
+        seoSubmitBtn.textContent = 'Saving...';
+        seoSubmitBtn.disabled = true;
+
+        const uuid = document.getElementById('seo-task-uuid').value;
+        const yt_title = document.getElementById('seo-task-yt-title-input').value;
+        const yt_description = document.getElementById('seo-task-yt-description').value;
+        const yt_tags = document.getElementById('seo-task-yt-tags').value;
+        data = {
+            'uuid': uuid,
+            'yt_title': yt_title,
+            'yt_description': yt_description,
+            'yt_tags': yt_tags,
+            'type': 'save_seo_tasks'
+        }
+
+        fetch(saveSeoTaskEndpointUrl, { 
+            method: 'POST', 
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data) })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Task saved successfully.');
+                    window.location.reload();
+                } else {
+                    alert('Failed to save task.');
+                }
+            })
+            .catch(error => {
+                console.error('Error saving task:', error);
+                alert('Failed to save task.');
+            });
+    });
+    document.getElementById('close-seo-task-operation').addEventListener('click', () => {
+        document.getElementById('seo-task-parent-container').style.display = 'none';
+        document.getElementById('temp_title').style.display = 'flex';
+        document.getElementById('display-inner-container').style.display = 'flex';
+    })
     // -------------------------------------------- SELECT CHANNEL ---------------------------------------------------------------
     function selectChannel(channel_uuid) {
         const endpointUrl = "{{ url_for('youtube.home') }}";

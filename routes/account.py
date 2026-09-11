@@ -193,6 +193,7 @@ def main_dashboard():
     artist = db.session.query(Role).filter_by(name='artist').scalar()
     instructor = db.session.query(Role).filter_by(name='instructor').scalar()
     youtube_img_creator = db.session.query(Role).filter_by(name='youtube_img_creator').scalar()
+    youtube_seo_manager = db.session.query(Role).filter_by(name='youtube_seo_manager').scalar()
     youtube_admin = db.session.query(Role).filter_by(name='youtube_admin').scalar()
 
     roles = current_user.role
@@ -202,7 +203,7 @@ def main_dashboard():
             return redirect(url_for('account.student_dashboard', logged_in=current_user.is_authenticated, current_year=current_year))
 
     return render_template('main_dashboard.html', logged_in=current_user.is_authenticated, current_year=current_year, admin=admin,
-                           artist=artist, instructor=instructor, student=student, youtube_img_creator=youtube_img_creator, youtube_admin=youtube_admin)
+                           artist=artist, instructor=instructor, student=student, youtube_img_creator=youtube_img_creator, youtube_admin=youtube_admin, youtube_seo_manager=youtube_seo_manager)
 
 
 

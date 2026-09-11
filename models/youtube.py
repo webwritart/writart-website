@@ -85,7 +85,7 @@ class YoutubeVideoComponentRevision(db.Model):
 class YoutubeVideoStage(db.Model):
     __tablename__ = 'youtube_video_stage'
     id = db.Column(db.Integer, primary_key=True)
-    stage = db.Column(db.String(50)) # all stages are: dialogue_&_narration, voice_recording, creative_instruction, creatives, thumbnail, yt_card, yt_title, yt_description, yt_tags, scheduled, released etc.
+    stage = db.Column(db.String(50)) # all stages are: dialogue_&_narration, voice_recording, creative_instruction, creatives, video, thumbnail, yt_card, yt_title, yt_description, yt_tags, scheduled, released etc.
     description = db.Column(db.String(100))
     
     def __repr__(self):
