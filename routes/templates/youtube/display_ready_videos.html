@@ -66,6 +66,8 @@
         border-radius: .3rem;
     }
     .shorts-iframe {
+        aspect-ratio: 9/16;
+        height: 90% !important;
     }
     .project-view-btn {
         font-size: .9rem;
@@ -90,7 +92,7 @@
         <div class="figure-container">
             {% for v in all_video_ready_projects_shorts %}
             <figure class="figure shorts-figure">
-                <iframe class="responsive-iframe shorts-iframe" width="560" height="315" src="https://www.youtube.com/embed/{{ v[2] }}?controls=1&si=2BVYS-0QHsxcX4f5&fs=1"
+                <iframe class="responsive-iframe shorts-iframe" src="https://www.youtube.com/embed/{{ v[2] }}?controls=1&si=2BVYS-0QHsxcX4f5&fs=1"
                 title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write;
                 encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen;" referrerpolicy="strict-origin-when-cross-origin"
                 allowfullscreen></iframe>
