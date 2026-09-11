@@ -56,6 +56,33 @@
         width: 100%;
         justify-content: center;
     }
+    #notification-btn-container-left {
+        display: flex;
+        width:100%;
+        justify-content: flex-end;
+        align-items: center;
+        padding: .5% 0%;
+        margin-right: 1%;
+    }
+    #notification-btn-container-right {
+        display: flex;
+        width:100%;
+        justify-content: flex-start;
+    }
+    .notification-bar-btn {
+        font-size: .9rem;
+        padding: 0% 2%;
+        margin: 0%;
+        border: none;
+        cursor: pointer;
+        border-radius: .2rem;
+        background: rgb(191, 231, 135);
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.7);
+        transition: all .15s ease-in-out;
+    }
+    .notification-bar-btn:hover {
+        background: rgb(180, 220, 125);
+    }
     .notification-container {
         position: relative;
         display: inline-block;
@@ -972,6 +999,9 @@
         <div id="display">
             <!-- -----------------------------------NOTIFICATION CONTAINER -------------------------------------------- -->
             <div id="parent-notification-container">
+                <div id="notification-btn-container-left">
+                    <button id="display-ready-videos" class="notification-bar-btn" onclick="displayReadyVideos()">Ready Videos</button>
+                </div>
                 <div id="revision-container" class="notification-container">
                     <button id="revision-notification-btn" class="notification-btn">Revisions<span id="revision-count" class="notification-count"></span></button>
                     
@@ -983,6 +1013,9 @@
                     <button id="seo-notification-btn" class="notification-btn">SEO<span id="seo-count" class="notification-count"></span></button>
                     <div id="seo-projects-dropdown" class="notification-dropdown">
                     </div>
+                </div>
+                <div id="notification-btn-container-right">
+                    <!-- <button class="notification-bar-btn">Prepared Videos</button> -->
                 </div>
             </div>
             <!-- -----------------------------------IMAGE FEEDBACK TABLE -------------------------------------------- -->
@@ -1276,6 +1309,7 @@
     const defaultVideoDict = {{ default_video_dict | tojson }};
     const pendingRevisions = {{ pending_revisions | tojson }};
     const pendingSeo = {{ pending_seo | tojson }};
+    let currentProjectUuid;
 
     function closeAllNotificationDropdowns() {
         const revisionDropdown = document.getElementById('revision-projects-dropdown');
@@ -1311,7 +1345,10 @@
             seoDropdown.style.display = 'block';
         }
     });
-
+    function displayReadyVideos() {
+        const endpointUrl = "{{ url_for('youtube.display_ready_videos') }}";
+        window.location.href = endpointUrl + '?' + 'video_uuid=' + currentProjectUuid;
+    }
     // ---------------------------------------------------- TOGGLE SIDE BARS DISPLAY -----------------------------------------------------
     function openRightSidebar() {
         const rightSidebar = document.getElementById('project-selection-section');
@@ -1339,6 +1376,7 @@
     }
     
     function initialLoad() {
+        currentProjectUuid = defaultVideoDict['video_uuid'];
         const dialogueNarration = document.getElementById('dialogue_narration');
         const imgVidInstruction = document.getElementById('img_vid_instruction');
         const voiceRecording = document.getElementById('voice_recording_container');
@@ -1802,6 +1840,7 @@
         });
     }
     function displayVideoDetails(video_uuid) {
+        currentProjectUuid = video_uuid;
         const endpointUrl = "{{ url_for('youtube.home') }}";
         fetch(endpointUrl, {
             method: 'POST',

@@ -49,7 +49,11 @@ def home():
                 channel_list_with_pending_videos_and_componenets = [a for a in db.session.query(YoutubeChannel).all() if len([b for b in a.videos if (b.status=='pending' or b.status=='in-progress')]) > 0]
 
                 try:
-                    current_video_uuid = [a.value for a in current_user.tools if a.key == 'current_video_uuid'][0]
+                    if request.args.get('project_uuid'):
+                        current_video_uuid = request.args.get('project_uuid')
+                    else:
+                        current_video_uuid = [a.value for a in current_user.tools if a.key == 'current_video_uuid'][0]
+                        
                     if current_video_uuid:
                         current_video_exists = True
                 except Exception as e:
@@ -1175,3 +1179,10 @@ def project_stage_operations():
                     if 'archived' in video_stage_list:
                         selected_video_uuid_name_tuple_list.append((v.uuid, v.temp_title))
             return jsonify(selected_video_uuid_name_tuple_list)
+
+
+@youtube.route('/display-ready-videos', methods=['GET', 'POST'])
+def display_ready_videos():
+    video_uuid = request.args.get('video_uuid')
+    all_video_ready_projects = [(a.uuid, a.temp_title, [c.text for c in a.components if c.component_type == 'video_id'][0]) for a in db.session.query(YoutubeVideo).all() if len([b for b in a.components if b.component_type == 'video_id']) > 0]
+    return render_template('display_ready_videos.html', all_video_ready_projects=all_video_ready_projects, video_uuid=video_uuid)
