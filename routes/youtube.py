@@ -436,7 +436,7 @@ def home():
                 pending_revisions = []
 
             pending_seo = []
-            if youtube_seo_manager in current_user.role:
+            if youtube_seo_manager in current_user.role or youtube_admin in current_user.role:
                 for v in all_videos:
                     if len([a for a in v.components if a.component_type == 'yt_title']) == 0 or len([a for a in v.components if a.component_type == 'yt_description']) == 0 or len([a for a in v.components if a.component_type == 'yt_tags']) == 0:
                         pending_seo.append((v.uuid, v.temp_title))
