@@ -671,7 +671,8 @@ def course():
             for m in course_enrolled_months:
                 videos = m.assignment_assessment_videos
                 for v in videos:
-                    all_assessed_videos.append(v)
+                    if v.yt_vid_id:
+                        all_assessed_videos.append(v)
                     
             for v in all_assessed_videos:
                 assessment_vid_dict[v.vid_caption] = {
