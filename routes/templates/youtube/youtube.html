@@ -1550,17 +1550,17 @@
         const currentUserRoles = {{ current_user_roles | tojson }};
 
         if (currentUserRoles.includes('youtube_admin') || currentUserRoles.includes('youtube_seo_manager')) {
-            pendingSeoContainer.style.display = 'flex';
+            pendingSeoContainer.style.display = 'inline-block';
         } else {
             pendingSeoContainer.style.display = 'none';
         }
         if (currentUserRoles.includes('youtube_admin')) {
-            pendingReviewsContainer.style.display = 'flex';
+            pendingReviewsContainer.style.display = 'inline-block';
         } else {
             pendingReviewsContainer.style.display = 'none';
         }
         if (currentUserRoles.includes('youtube_img_creator')) {
-            pendingRevisionsContainer.style.display = 'flex';
+            pendingRevisionsContainer.style.display = 'inline-block';
         } else {
             pendingRevisionsContainer.style.display = 'none';
         }
