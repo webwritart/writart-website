@@ -440,9 +440,11 @@ def home():
                 for v in all_videos:
                     if len([a for a in v.components if a.component_type == 'yt_title']) == 0 or len([a for a in v.components if a.component_type == 'yt_description']) == 0 or len([a for a in v.components if a.component_type == 'yt_tags']) == 0:
                         pending_seo.append((v.uuid, v.temp_title))
+
+            current_user_roles = [a.name for a in current_user.role]
                     
             return render_template('youtube.html', current_year=current_year, channels=channels, default_video_dict=default_video_dict, logged_in=current_user.is_authenticated, admin=admin, first_channel=first_channel,
-                                current_video_option_list=current_video_option_list, pending_revisions=pending_revisions, pending_seo=pending_seo)
+                                current_video_option_list=current_video_option_list, pending_revisions=pending_revisions, pending_seo=pending_seo, youtube_img_creator=youtube_img_creator, youtube_seo_manager=youtube_seo_manager, youtube_admin=youtube_admin, current_user_roles=current_user_roles)
         else:
             return render_template('admin_area.html')
 

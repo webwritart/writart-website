@@ -969,7 +969,7 @@
         }
     }
 </style>
-
+<p id="current_user_roles" style="display: none;" data-role_list="{{current_user.role}}"></p>
 <div id="root-container">
     <div id="main-section">
         <div id="left-sidebar">
@@ -1002,12 +1002,17 @@
                 <div id="notification-btn-container-left">
                     <button id="display-ready-videos" class="notification-bar-btn" onclick="displayReadyVideos()">Ready Videos</button>
                 </div>
+                <div id="reviews-container" class="notification-container">
+                    <button id="reviews-notification-btn" class="notification-btn">Reviews<span id="reviews-count" class="notification-count"></span></button>
+                    
+                    <div id="reviews-projects-dropdown" class="notification-dropdown">
+                    </div>
+                </div>
                 <div id="revision-container" class="notification-container">
                     <button id="revision-notification-btn" class="notification-btn">Revisions<span id="revision-count" class="notification-count"></span></button>
                     
                     <div id="revision-projects-dropdown" class="notification-dropdown">
                     </div>
-                    
                 </div>
                 <div id="seo-container" class="notification-container">
                     <button id="seo-notification-btn" class="notification-btn">SEO<span id="seo-count" class="notification-count"></span></button>
@@ -1302,7 +1307,8 @@
         </div>
     </div>
 </div>
-
+<script>
+</script>
 <script>
 
     // --------------------------------------------------- NOTIFICATION ------------------------------------------------------
@@ -1537,8 +1543,27 @@
         } else {
             document.getElementById('published').style.color = 'rgba(0, 0, 0, .4)';
         }
-
         // ------------------------------------------ NOTIFICATION --------------------------------------------------
+        const pendingReviewsContainer = document.getElementById('reviews-container');
+        const pendingRevisionsContainer = document.getElementById('revision-container');
+        const pendingSeoContainer = document.getElementById('seo-container');
+        const currentUserRoles = {{ current_user_roles | tojson }};
+
+        if (currentUserRoles.includes('youtube_admin') || currentUserRoles.includes('youtube_seo_manager')) {
+            pendingSeoContainer.style.display = 'flex';
+        } else {
+            pendingSeoContainer.style.display = 'none';
+        }
+        if (currentUserRoles.includes('youtube_admin')) {
+            pendingReviewsContainer.style.display = 'flex';
+        } else {
+            pendingReviewsContainer.style.display = 'none';
+        }
+        if (currentUserRoles.includes('youtube_img_creator')) {
+            pendingRevisionsContainer.style.display = 'flex';
+        } else {
+            pendingRevisionsContainer.style.display = 'none';
+        }
         const revisionDropdown = document.getElementById('revision-projects-dropdown');
         const revisionCount = document.getElementById('revision-count');
         revisionCount.innerHTML = `(${pendingRevisions.length})`;
@@ -1561,6 +1586,7 @@
             newParagraph.onclick = () => displaySeoTask(task[0]);
             seoDropdown.appendChild(newParagraph);
         }
+
     }
     
     initialLoad();
