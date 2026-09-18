@@ -1165,7 +1165,8 @@ def project_stage_operations():
             elif selected_stage == 'seo-done':
                 for v in all_videos:
                     video_stage_list = [a.stage for a in v.stages]
-                    if 'yt_tags' in video_stage_list and 'yt_description' in video_stage_list and 'yt_title' in video_stage_list:
+                    p(video_stage_list)
+                    if 'yt_video_tags' in video_stage_list and 'yt_description' in video_stage_list and 'yt_title' in video_stage_list:
                         selected_video_uuid_name_tuple_list.append((v.uuid, v.temp_title))
 
             elif selected_stage == 'scheduled':
