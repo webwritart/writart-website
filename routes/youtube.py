@@ -429,6 +429,11 @@ def home():
                     return jsonify(success='success')
             # ----------------------------------------------------- NOTIFICATION ---------------------------------------------------------------
             all_videos = db.session.query(YoutubeVideo).all()
+
+            if youtube_admin in current_user.role:
+                pending_reviews = [(a.uuid, a.youtube_video.temp_title, a.component_type) for a in db.session.query(YoutubeVideoComponent).all() if a.approval_status == 'pending']
+            else:
+                pending_reviews = []
             
             if youtube_img_creator in current_user.role:
                 pending_revisions = [(a.uuid, a.youtube_video.temp_title, a.component_type) for a in db.session.query(YoutubeVideoComponent).filter_by(assigned_to_uuid=str(current_user.uuid)).all() if a.approval_status == 'revision-required']
@@ -439,12 +444,12 @@ def home():
             if youtube_seo_manager in current_user.role or youtube_admin in current_user.role:
                 for v in all_videos:
                     if len([a for a in v.components if a.component_type == 'yt_title']) == 0 or len([a for a in v.components if a.component_type == 'yt_description']) == 0 or len([a for a in v.components if a.component_type == 'yt_tags']) == 0:
-                        pending_seo.append((v.uuid, v.temp_title))
+                        pending_seo.append((v.uuid, v.category, v.temp_title))
 
             current_user_roles = [a.name for a in current_user.role]
                     
             return render_template('youtube.html', current_year=current_year, channels=channels, default_video_dict=default_video_dict, logged_in=current_user.is_authenticated, admin=admin, first_channel=first_channel,
-                                current_video_option_list=current_video_option_list, pending_revisions=pending_revisions, pending_seo=pending_seo, youtube_img_creator=youtube_img_creator, youtube_seo_manager=youtube_seo_manager, youtube_admin=youtube_admin, current_user_roles=current_user_roles)
+                                current_video_option_list=current_video_option_list, pending_revisions=pending_revisions, pending_reviews=pending_reviews, pending_seo=pending_seo, youtube_img_creator=youtube_img_creator, youtube_seo_manager=youtube_seo_manager, youtube_admin=youtube_admin, current_user_roles=current_user_roles)
         else:
             return render_template('admin_area.html')
 
@@ -1139,6 +1144,11 @@ def project_stage_operations():
             selected_stage = data['stage']
             all_videos = db.session.query(YoutubeVideo).all()
             selected_video_uuid_name_tuple_list = []
+            if selected_stage == 'all-active':
+                for v in all_videos:
+                    video_stage_list = [a.stage for a in v.stages]
+                    if 'archived' not in video_stage_list and 'published' not in video_stage_list:
+                        selected_video_uuid_name_tuple_list.append((v.uuid, v.temp_title))
             if selected_stage == 'pre-production':
                 for v in all_videos:
                     video_stage_list = [a.stage for a in v.stages]
@@ -1155,7 +1165,7 @@ def project_stage_operations():
             elif selected_stage == 'seo-done':
                 for v in all_videos:
                     video_stage_list = [a.stage for a in v.stages]
-                    if 'yt_tags' in video_stage_list and 'yt_description' in video_stage_list and 'yt_title' in video_stage_list and 'yt_card' in video_stage_list:
+                    if 'yt_tags' in video_stage_list and 'yt_description' in video_stage_list and 'yt_title' in video_stage_list:
                         selected_video_uuid_name_tuple_list.append((v.uuid, v.temp_title))
 
             elif selected_stage == 'scheduled':

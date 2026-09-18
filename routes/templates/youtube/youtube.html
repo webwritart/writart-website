@@ -981,6 +981,7 @@
                 <p class="selection-header" id="project-selection-header">Projects</p>
                 <select name="stage_selector" id="stage-selector" onchange="showProjectByStage()">
                     <option value="">Select stage</option>
+                    <option value="all-active">All Active</option>
                     <option value="pre-production">Pre-Production</option>
                     <option value="video-done">Video done</option>
                     <option value="seo-done">SEO done</option>
@@ -1320,6 +1321,10 @@
     function closeAllNotificationDropdowns() {
         const revisionDropdown = document.getElementById('revision-projects-dropdown');
         const seoDropdown = document.getElementById('seo-projects-dropdown');
+        const reviewsDropdown = document.getElementById('reviews-projects-dropdown');
+        if (reviewsDropdown) {
+            reviewsDropdown.style.display = 'none';
+        }
         if (revisionDropdown) {
             revisionDropdown.style.display = 'none';
         }
@@ -1327,6 +1332,18 @@
             seoDropdown.style.display = 'none';
         }
     }
+
+    const reviewsNotificationBtn = document.getElementById('reviews-notification-btn');
+    reviewsNotificationBtn.addEventListener('click', () => {
+        const reviewsDropdown = document.getElementById('reviews-projects-dropdown');
+        const isOpen = reviewsDropdown.style.display === 'block';
+
+        closeAllNotificationDropdowns();
+
+        if (!isOpen) {
+            reviewsDropdown.style.display = 'block';
+        }
+    });
 
     const revisionNotificationBtn = document.getElementById('revision-notification-btn');
     revisionNotificationBtn.addEventListener('click', () => {
@@ -1576,17 +1593,28 @@
             revisionDropdown.appendChild(newParagraph);
         }
         const seoDropdown = document.getElementById('seo-projects-dropdown');
+        const pendingReviews = {{ pending_reviews | tojson }};
         const seoCount = document.getElementById('seo-count');
         seoCount.innerHTML = `(${pendingSeo.length})`;
         seoDropdown.replaceChildren();
-        for (const task of pendingSeo) {
+        for (const task of pendingReviews) {
             const newParagraph = document.createElement('p');
             newParagraph.classList.add('notification-dropdown-task');
-            newParagraph.innerHTML = `${task[1]}-(${task[2]})-${task[0]}`;
+            newParagraph.innerHTML = `${task[2]}-(${task[1]})-${task[0]}`;
             newParagraph.onclick = () => displaySeoTask(task[0]);
             seoDropdown.appendChild(newParagraph);
         }
-
+        const reviewsDropdown = document.getElementById('reviews-projects-dropdown');
+        const reviewsCount = document.getElementById('reviews-count');
+        reviewsCount.innerHTML = `(${pendingSeo.length})`;
+        reviewsDropdown.replaceChildren();
+        for (const task of pendingSeo) {
+            const newParagraph = document.createElement('p');
+            newParagraph.classList.add('notification-dropdown-task');
+            newParagraph.innerHTML = `${task[2]}-(${task[1]})-${task[0]}`;
+            newParagraph.onclick = () => displayReviewTask(task[0]);
+            reviewsDropdown.appendChild(newParagraph);
+        }
     }
     
     initialLoad();
@@ -1618,6 +1646,26 @@
         });
     }
     // -------------------------------------------- NOTIFICATIONS OPERATIONS -------------------------------------------------------
+    function displayReviewTask(task_uuid) {
+        const endpointUrl = "{{ url_for('youtube.home') }}";
+        fetch(endpointUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                'task_uuid': task_uuid,
+                'type': 'get_review_task_details'
+            })
+        }).then(response => response.json()).then(data => {
+            const tableContainer = document.getElementById('table-container');
+            tableContainer.replaceChildren();
+            const table = createTable(data.task_dict);
+            tableContainer.appendChild(table);
+        }).catch(error => {
+            alert(error);
+        });
+    }
     function displayTask(task_uuid) {
         const endpointUrl = "{{ url_for('youtube.home') }}";
         fetch(endpointUrl, {
