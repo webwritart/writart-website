@@ -1590,7 +1590,7 @@ def youtube_manager():
                     stage = data['stage']
                     stage_object = db.session.query(YoutubeVideoStage).filter_by(stage=stage).scalar()
                     video = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar()
-                    if stage not in video.stages:
+                    if stage_object not in video.stages:
                         video.stages.append(stage_object)
                     db.session.commit()
                     return jsonify(status="success", message= "Stage updated successfully!")
