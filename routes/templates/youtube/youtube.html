@@ -1593,11 +1593,10 @@
             revisionDropdown.appendChild(newParagraph);
         }
         const seoDropdown = document.getElementById('seo-projects-dropdown');
-        const pendingReviews = {{ pending_reviews | tojson }};
         const seoCount = document.getElementById('seo-count');
         seoCount.innerHTML = `(${pendingSeo.length})`;
         seoDropdown.replaceChildren();
-        for (const task of pendingReviews) {
+        for (const task of pendingSeo) {
             const newParagraph = document.createElement('p');
             newParagraph.classList.add('notification-dropdown-task');
             newParagraph.innerHTML = `${task[2]}-(${task[1]})-${task[0]}`;
