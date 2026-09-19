@@ -26,6 +26,7 @@ def home():
     youtube_img_creator = db.session.query(Role).filter_by(name='youtube_img_creator').one_or_none()
     youtube_seo_manager = db.session.query(Role).filter_by(name='youtube_seo_manager').one_or_none()
     youtube_admin = db.session.query(Role).filter_by(name='youtube_admin').one_or_none()
+    project_dict = {}
     if not current_user.is_authenticated:
         return redirect(url_for('account.login'))
     else:
@@ -96,10 +97,13 @@ def home():
                         default_video_dict['image_list'] = [a.file_path for a in current_video.components if a.component_type == 'image']
                         default_video_dict['video_list'] = [a.file_path for a in current_video.components if a.component_type == 'video']
                         default_video_dict['stages'] = [a.stage for a in current_video.stages]
+                        default_video_dict['scenes'] = [a.scene for a in current_video.storyboard_scenes]
+                        project_dict = current_video.to_dict()
                     else:
                         default_video_dict['image_list'] = [a.file_path for a in first_video.components if a.component_type == 'image']
                         default_video_dict['video_list'] = [a.file_path for a in first_video.components if a.component_type == 'video'] 
                         default_video_dict['stages'] = [a.stage for a in first_video.stages]
+                        project_dict = first_video.to_dict()
                     if current_video_exists:
                         default_video_dict['temp_title'] = current_video.temp_title
                         try:
@@ -230,68 +234,69 @@ def home():
                     file_path = ''
                     file_text = ''
                     feedback = ''
-                    if task_type == 'image':
-                        if len(task.revisions) > 0:
-                            last_revision_no = max([float(a.version) for a in task.revisions])
-                            file_path = [a.file_path for a in task.revisions if a.version == str(last_revision_no)][0]
-                            all_revision_no_descending_order = sorted([float(a.version) for a in task.revisions], reverse=True)
-                            run = True
-                            count = 0
-                            version_count = len(all_revision_no_descending_order)
-                            while run:
-                                for i in all_revision_no_descending_order:
-                                    count += 1
-                                    version_text = [a.text for a in task.revisions if a.version == str(i)][0]
-                                    if version_text:
-                                        file_text = version_text
-                                        run = False
-                                        break
-                                    else:
-                                        if count == version_count:
-                                            run = False                                
-                            if not file_text:
-                                file_text = task.text
-
-                            feedback_run = True
-                            feedback_count = 0
-                            while feedback_run:
-                                for i in all_revision_no_descending_order:
-                                    feedback_count += 1
-                                    feedback_text = [a.feedback for a in task.revisions if a.version == str(i)][0]
-                                    if feedback_text:
-                                        feedback = feedback_text
-                                        feedback_run = False
-                                        break
-                                    else:
-                                        if feedback_count == version_count:
-                                            feedback_run = False
-                            if not feedback:
-                                feedback = task.feedback
-                        else:
-                            file_path = task.file_path
-                            file_name = Path(file_path).name
+                    # if task_type == 'image':
+                    if len(task.revisions) > 0:
+                        p('Revisions found')
+                        last_revision_no = max([float(a.version) for a in task.revisions])
+                        file_path = [a.file_path for a in task.revisions if a.version == str(last_revision_no)][0]
+                        p(file_path)
+                        all_revision_no_descending_order = sorted([float(a.version) for a in task.revisions], reverse=True)
+                        run = True
+                        count = 0
+                        version_count = len(all_revision_no_descending_order)
+                        while run:
+                            for i in all_revision_no_descending_order:
+                                count += 1
+                                version_text = [a.text for a in task.revisions if a.version == str(i)][0]
+                                if version_text:
+                                    file_text = version_text
+                                    run = False
+                                    break
+                                else:
+                                    if count == version_count:
+                                        run = False                                
+                        if not file_text:
                             file_text = task.text
+
+                        feedback_run = True
+                        feedback_count = 0
+                        while feedback_run:
+                            for i in all_revision_no_descending_order:
+                                feedback_count += 1
+                                feedback_text = [a.feedback for a in task.revisions if a.version == str(i)][0]
+                                if feedback_text:
+                                    feedback = feedback_text
+                                    feedback_run = False
+                                    break
+                                else:
+                                    if feedback_count == version_count:
+                                        feedback_run = False
+                        if not feedback:
                             feedback = task.feedback
-                        task_dict = {
-                            'uuid': task.uuid,
-                            'component_type': task_type,
-                            'temp_title': task.youtube_video.temp_title,
-                            'file_path': file_path,
-                            'file_name': file_name,
-                            'text': file_text,
-                            'feedback': feedback,
-                            'assigned_to_name': assigned_to_name,
-                            'last_assigned': last_assigned,
-                        }
-                        return jsonify(task_dict=task_dict)
+                    else:
+                        file_path = task.file_path
+                        p(file_path)
+                        file_text = task.text
+                        feedback = task.feedback
+                    task_dict = {
+                        'uuid': task.uuid,
+                        'component_type': task_type,
+                        'temp_title': task.youtube_video.temp_title,
+                        'file_path': file_path,
+                        'text': file_text,
+                        'feedback': feedback,
+                        'assigned_to_name': assigned_to_name,
+                        'last_assigned': last_assigned,
+                    }
+                    return jsonify(task_dict=task_dict)
                     
-                    elif task_type == 'video':
-                        task_dict = {
-                            'uuid': task.uuid,
-                            'component_type': task_type,
-                            'temp_title': task.temp_title,
-                        }
-                        return jsonify('success')
+                    # elif task_type == 'video':
+                    #     task_dict = {
+                    #         'uuid': task.uuid,
+                    #         'component_type': task_type,
+                    #         'temp_title': task.temp_title,
+                    #     }
+                    #     return jsonify('success')
                 if data['type'] == 'get_seo_task_details':
                     task_uuid = data['task_uuid']
                     task = db.session.query(YoutubeVideo).filter_by(uuid=task_uuid).scalar()
@@ -446,10 +451,15 @@ def home():
                     if len([a for a in v.components if a.component_type == 'yt_title']) == 0 or len([a for a in v.components if a.component_type == 'yt_description']) == 0 or len([a for a in v.components if a.component_type == 'yt_tags']) == 0:
                         pending_seo.append((v.uuid, v.category, v.temp_title))
 
+            # ---------------------------------------------------- STORYBOARD INITIAL LOAD -------------------------------------------------------------------------------------------------------------
+
+            # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             current_user_roles = [a.name for a in current_user.role]
+            p(pending_reviews)
                     
             return render_template('youtube.html', current_year=current_year, channels=channels, default_video_dict=default_video_dict, logged_in=current_user.is_authenticated, admin=admin, first_channel=first_channel,
-                                current_video_option_list=current_video_option_list, pending_revisions=pending_revisions, pending_reviews=pending_reviews, pending_seo=pending_seo, youtube_img_creator=youtube_img_creator, youtube_seo_manager=youtube_seo_manager, youtube_admin=youtube_admin, current_user_roles=current_user_roles)
+                                current_video_option_list=current_video_option_list, pending_revisions=pending_revisions, pending_reviews=pending_reviews, pending_seo=pending_seo, youtube_img_creator=youtube_img_creator, youtube_seo_manager=youtube_seo_manager, youtube_admin=youtube_admin, current_user_roles=current_user_roles,
+                                project_dict=project_dict)
         else:
             return render_template('admin_area.html')
 
@@ -1016,7 +1026,6 @@ def assign_mate():
             subject = f'New image assigned to you - {image.youtube_video.temp_title}'
             video_name = make_unicode_bold(image.youtube_video.temp_title)
             body = f"Hi {mate_name},\nYou have been assigned an image for revision.\nVideo name: {video_name}\nHope you'll begin ASAP!" 
-            send_email_studio(subject, [mate_email], body, '', {})
             return jsonify(success='success')
 
     elif request.method == 'POST' and request.form.get('type') == 'assign_mate_video':
@@ -1038,7 +1047,6 @@ def assign_mate():
             subject = f'New video-clip assigned to you - {video.youtube_video.temp_title}'
             video_name = make_unicode_bold(video.youtube_video.temp_title)
             body = f"Hi {mate_name},\nYou have been assigned a video-clip for revision.\nVideo name: {video_name}\nHope you'll begin ASAP!" 
-            send_email_studio(subject, [mate_email], body, '', {})
             return jsonify(success='success')
 
 

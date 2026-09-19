@@ -744,6 +744,13 @@
         min-height: 20vh;
         width: 100%;
     }
+    #create-storyboard-section {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        min-height: 20vh;
+        width: 100%;
+    }
     #add-title-section {
         display: none;
         flex-direction: column;
@@ -816,6 +823,17 @@
     }
     #go-back:hover {
         background: rgb(37, 40, 26);
+    }
+    /* -------------------------------------------------- CREATE STORYBOARD SECTION ---------------------------------------------------- */
+
+    .inline-inputs {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+    .inline-inputs label, p, input, textarea {
+        width: 100%;
     }
     /* --------------------------------------------------IMAGES DISPLAY---------------------------------------------------- */
     #images-container {
@@ -1063,6 +1081,7 @@
                     </tbody>
                 </table>
             </div>
+            <!-- -----------------------------------VIDEO FEEDBACK TABLE -------------------------------------------- -->
             <!-- --------------------------------------- SEO TASK CONTAINER -------------------------------------------- -->
              <div id="seo-task-parent-container">
                 <p id="seo-temp-title" class="task-project-title"></p>
@@ -1170,6 +1189,7 @@
                 <hr>
                 <button id="upload-img" class="operation-btn" onclick="uploadImages()">Upload images</button>
                 <button id="upload-video-btn" class="operation-btn" onclick="uploadVideo()">Upload video</button>
+                <button id="create-storyboard-btn" class="operation-btn" onclick="openCreateStoryboard()">Storyboard</button>
                 <hr>
                 <p class="operations-sub-header">Youtube SEO</p>
                 <button id="add-title-btn" class="operation-btn" data-video_uuid="{{default_video_dict['video_uuid']}}" onclick="addTitle(this.dataset.video_uuid)">Add/edit title</button>
@@ -1218,6 +1238,20 @@
             <div id="video-status-message"></div>
         </form>
         <button class="go-back" onclick="goBack()">Go back</button>
+    </div>
+    <div id="create-storyboard-section">
+        <form id="create-storyboard-form" class="upload-form">
+            <p class="operations-form-header">Create storyboard</p>
+            <p id="create-storyboard-scene-shot"></p>
+            <input type="text" id="create-storyboard-camera-direction">
+            <label>Narration/dialogue</label>
+            <textarea id="create-storyboard-narration-dialogue"></textarea>
+            <label>Direction</label>
+            <textarea id="create-storyboard-direction"></textarea>
+            <input type="hidden" name="video_uuid" id="create-storyboard-video-uuid" value="{{ default_video_dict['video_uuid'] }}">
+            <button type="submit" name="submit" value="create_storyboard" id="create-storyboard-btn" class="form-button upload-button">Create storyboard</button>
+            <div id="storyboard-status-message"></div>
+        </form>
     </div>
     <div id="add-title-section">
         <form id="add-title-form" class="upload-form">
@@ -1316,7 +1350,17 @@
     const defaultVideoDict = {{ default_video_dict | tojson }};
     const pendingRevisions = {{ pending_revisions | tojson }};
     const pendingSeo = {{ pending_seo | tojson }};
+    const currentUserRoles = {{ current_user_roles | tojson }};
+    const pendingReviews = {{ pending_reviews | tojson }};
+    let projectDict = {{ project_dict | tojson }};
     let currentProjectUuid;
+    let currentStoryboardScene;
+    let currentStoryboardShot;
+
+    function nextLetter(char) {
+        let code = char.charCodeAt(0) + 1;
+        return String.fromCharCode(code);
+    }
 
     function closeAllNotificationDropdowns() {
         const revisionDropdown = document.getElementById('revision-projects-dropdown');
@@ -1560,11 +1604,16 @@
         } else {
             document.getElementById('published').style.color = 'rgba(0, 0, 0, .4)';
         }
+        // ------------------------------------------ OPERATIONS ----------------------------------------------------
+        if (currentUserRoles.includes('youtube_storyboard_artist')) {
+            document.getElementById('create-storyboard-btn').style.display = 'block';
+        } else {
+            document.getElementById('create-storyboard-btn').style.display = 'none';
+        }
         // ------------------------------------------ NOTIFICATION --------------------------------------------------
         const pendingReviewsContainer = document.getElementById('reviews-container');
         const pendingRevisionsContainer = document.getElementById('revision-container');
         const pendingSeoContainer = document.getElementById('seo-container');
-        const currentUserRoles = {{ current_user_roles | tojson }};
 
         if (currentUserRoles.includes('youtube_admin') || currentUserRoles.includes('youtube_seo_manager')) {
             pendingSeoContainer.style.display = 'inline-block';
@@ -1605,7 +1654,7 @@
         }
         const reviewsDropdown = document.getElementById('reviews-projects-dropdown');
         const reviewsCount = document.getElementById('reviews-count');
-        reviewsCount.innerHTML = `(${pendingSeo.length})`;
+        reviewsCount.innerHTML = `(${pendingReviews.length})`;
         reviewsDropdown.replaceChildren();
         for (const task of pendingSeo) {
             const newParagraph = document.createElement('p');
@@ -1614,7 +1663,14 @@
             newParagraph.onclick = () => displayReviewTask(task[0]);
             reviewsDropdown.appendChild(newParagraph);
         }
+        // -------------------------------------- STORYBOARD INITIAL LOAD -----------------------------------------------------------------
+        if (projectDict['storyboard_scenes'].length > 0) {
+            const storyboardScenesList = Object.keys(projectDict[0]['storyboard_scenes']['scenes']);
+            const scenesIntegerList = storyboardScenesList.map(Number);
+            currentstoryboardScene = Math.max(...scenesIntegerList);
+            const shots = projectDict['storyboard_scenes'][currentstoryboardScene];
     }
+}
     
     initialLoad();
     // -------------------------------------------- SHOW VIDEO BY STAGE --------------------------------------------------------
@@ -1709,6 +1765,10 @@
                 }
                 revisionBtn.onclick = () => uploadRevisionPopup(data.task_dict.uuid, data.task_dict.file_path);
                 imagesTable.style.display = 'block';
+            }
+            if (data.task_dict.component_type == 'video') {
+                closeAllNotificationDropdowns();
+
             }
             tableContainer.style.padding = "0% 2% 2% 2%";
             tableContainer.style.display = 'flex';
@@ -2181,6 +2241,12 @@
         uploadVideoSection.style.display = 'flex';
     }
 
+    function openCreateStoryboard() {
+        const mainSection = document.getElementById('main-section');
+        mainSection.style.display = 'none';
+        const createStoryboardSection = document.getElementById('create-storyboard-section');
+        createStoryboardSection.style.display = 'flex';
+    }
     // ---------------------------------------------- YOUTUBE SEO OPERATIONS ----------------------------------------------
     
     function addTitle(video_uuid) {

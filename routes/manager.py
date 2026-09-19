@@ -965,6 +965,7 @@ def role_management():
     youtube_img_creator = db.session.query(Role).filter_by(name='youtube_img_creator').one_or_none()
     youtube_seo_manager = db.session.query(Role).filter_by(name='youtube_seo_manager').one_or_none()
     youtube_admin = db.session.query(Role).filter_by(name='youtube_admin').one_or_none()
+    youtube_storyboard_artist = db.session.query(Role).filter_by(name='youtube_storyboard_artist').one_or_none()
 
     roles = [(a.name, a.name.capitalize()) for a in db.session.query(Role).all()]
     matching_member_dict = {}
@@ -972,6 +973,8 @@ def role_management():
         email = request.form.get('email')
         user = db.session.query(Member).filter_by(email=email).one_or_none()
         if request.form.get('role'):
+            if request.form.get('role') == 'youtube_storyboard_artist' and youtube_storyboard_artist not in user.role:\
+                user.role.append(youtube_storyboard_artist)
             if request.form.get('role') == 'student' and student not in user.role:
                 user.role.append(student)
                 flash(f"{email} has been assigned student role", "success")
@@ -1012,6 +1015,8 @@ def role_management():
                 flash(f"{email} already has this role!!""success")
             db.session.commit()
         if request.form.get('role_remove'):
+            if  request.form.get('role_remove') == 'youtube_storyboard_artist' and youtube_storyboard_artist in user.role:
+                user.role.remove(youtube_storyboard_artist)
             if request.form.get('role_remove') == 'student' and student in user.role:
                 user.role.remove(student)
                 flash(f"{email} has been removed from student role", "success")
@@ -1549,7 +1554,9 @@ def youtube_manager():
                     video = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar()
                     image_file_path_list = []
                     video_main_images_file_path_list = [(a, a.file_path, a.approval_status) for a in db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar().components if a.component_type == 'image']
+
                     for v in video_main_images_file_path_list:
+                        file_name = v[0].text
                         if v[2] == status:
                             if len(v[0].revisions) > 0:
                                 revision_version_list = []
@@ -1558,12 +1565,14 @@ def youtube_manager():
                                 latest_revision = max(revision_version_list)
                                 latest_revision = [a for a in v[0].revisions if a.version == str(latest_revision)][0]
                                 file_path = latest_revision.file_path
-                                image_file_path_list.append('.'+file_path)
                             else:
                                 file_path = v[1]
-                                image_file_path_list.append('.'+file_path)
+                            save_path = '.' + Path(file_path).with_name(file_name + file_path.suffix)
+                            image_file_path_list.append(save_path)
+
                     if status == 'all':
                         for v in video_main_images_file_path_list:
+                            file_name = v[0].text
                             if len(v[0].revisions) > 0:
                                 revision_version_list = []
                                 for r in v[0].revisions:
@@ -1571,11 +1580,11 @@ def youtube_manager():
                                 latest_revision = max(revision_version_list)
                                 latest_revision = [a for a in v[0].revisions if a.version == str(latest_revision)][0]
                                 file_path = latest_revision.file_path
-                                image_file_path_list.append('.'+file_path)
                             else:
                                 file_path = v[1]
-                                image_file_path_list.append('.'+file_path)
-
+                            save_path = '.' + Path(file_path).with_name(file_name + file_path.suffix)
+                            image_file_path_list.append(save_path)
+                            
                     memory_file = io.BytesIO()
                     with zipfile.ZipFile(memory_file, 'w', zipfile.ZIP_DEFLATED) as zf:
                         for f in image_file_path_list:
@@ -1583,7 +1592,6 @@ def youtube_manager():
                     memory_file.seek(0)
                     if memory_file.getbuffer().nbytes == 0:
                         return {"error": "No files were added"}, 404
-                    p(memory_file.getbuffer().nbytes)
                     return send_file(memory_file, mimetype='application/zip', as_attachment=True, download_name=f"{video.temp_title}-{status}.zip")
                 if data['type'] == 'stage-update':
                     video_uuid = data['video_uuid']

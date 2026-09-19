@@ -71,7 +71,9 @@ class Member(UserMixin, db.Model):
     taken_coas = db.relationship('Coa', foreign_keys='Coa.client_id', back_populates='client')
     testimonials = db.relationship('Testimonial', backref='member')
     youtube_video_component = db.relationship('YoutubeVideoComponent', backref='member')
+    youtube_video_creative = db.relationship('YoutubeVideoCreative', backref='member')
     youtube_video_component_revision = db.relationship('YoutubeVideoComponentRevision', backref='member')
+    youtube_video_creative_revision = db.relationship('YoutubeVideoCreativeRevision', backref='member')
     tools = db.relationship('MemberTools', backref='member')
 
 
