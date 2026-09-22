@@ -119,13 +119,16 @@ def home():
                         default_video_dict['stages'] = [a.stage for a in current_video.stages]
                         default_video_dict['scenes'] = [a.scene for a in current_video.storyboard_scenes]
                         project_dict = current_video.to_dict()
-                        current_scene_no = max([int(a.scene) for a in current_video.storyboard_scenes])
-                        all_shot_no_list = [a.shot for a in db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=str(current_scene_no)).scalar().shots]
-                        if len(all_shot_no_list) > 0:
-                            current_shot_no = chr(ord(max(all_shot_no_list)) + 1)
-                        else:
-                            current_shot_no = 'A'
-                        current_scene_shot_tuple = (current_scene_no, current_shot_no)
+                        try:
+                            current_scene_no = max([int(a.scene) for a in current_video.storyboard_scenes])
+                            all_shot_no_list = [a.shot for a in db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=str(current_scene_no)).scalar().shots]
+                            if len(all_shot_no_list) > 0:
+                                current_shot_no = chr(ord(max(all_shot_no_list)) + 1)
+                            else:
+                                current_shot_no = 'A'
+                            current_scene_shot_tuple = (current_scene_no, current_shot_no)
+                        except Exception as e:
+                            p(e)
 
                         def find_missing_creative(current_video):
                             scene_no_list = [int(a.scene) for a in current_video.storyboard_scenes]
@@ -149,32 +152,18 @@ def home():
                         default_video_dict['video_list'] = [a.file_path for a in first_video.components if a.component_type == 'video'] 
                         default_video_dict['stages'] = [a.stage for a in first_video.stages]
                         project_dict = first_video.to_dict()
-                        current_scene_no = max([int(a.scene) for a in first_video.storyboard_scenes])
-                        all_shot_no_list = [a.shot for a in db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=str(current_scene_no)).scalar().shots]
-                        if len(all_shot_no_list) > 0:
-                            current_shot_no = chr(ord(max(all_shot_no_list)) + 1)
-                        else:
-                            current_shot_no = 'A'
-                        current_scene_shot_tuple = (current_scene_no, current_shot_no)
-                        creatives_upload_scene_no = None;
-                        creatives_upload_shot_no = None;
-                        scene_no_list = [int(a.scene) for a in first_video.storyboard_scenes]
-                        if len(scene_no_list) > 0:
-                            scene_no_list.sort()
-                            for scene in scene_no_list:
-                                scene_obj = db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=str(scene)).scalar()
-                                shot_no_list = [a.shot for a in db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=str(scene)).scalar().shots]
-                                if len(shot_no_list) > 0:
-                                    sorted_shot_no_list = sorted(shot_no_list)
-                                    for shot in sorted_shot_no_list:
-                                        creative_uploads = [a for a in scene_obj.shots if a.shot == shot]
-                                        if len(creative_uploads) > 0:
-                                            pass
-                                        else:
-                                            creatives_upload_scene_no = scene
-                                            creatives_upload_shot_no = shot
-                                            break
-                            current_creatives_upload_scene_shot_tuple = (creatives_upload_scene_no, creatives_upload_shot_no)
+                        try:
+                            current_scene_no = max([int(a.scene) for a in first_video.storyboard_scenes])
+                            all_shot_no_list = [a.shot for a in db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=str(current_scene_no)).scalar().shots]
+                            if len(all_shot_no_list) > 0:
+                                current_shot_no = chr(ord(max(all_shot_no_list)) + 1)
+                            else:
+                                current_shot_no = 'A'
+                            current_scene_shot_tuple = (current_scene_no, current_shot_no)
+                        except Exception as e:
+                            p(e)
+                        current_creatives_upload_scene_shot_tuple = find_missing_creative(first_video)
+                        
                     if current_video_exists:
                         default_video_dict['temp_title'] = current_video.temp_title
                         try:
