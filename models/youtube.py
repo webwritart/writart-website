@@ -112,7 +112,7 @@ class YoutubeVideoStoryboardScene(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     uuid = db.Column(db.Integer, unique=True)
-    scene = db.Column(db.String(50), unique=True)
+    scene = db.Column(db.String(50))
     description = db.Column(db.String(500))
     youtube_video_id = db.Column(db.Integer, db.ForeignKey('youtube_video.id'))
     shots = db.relationship('YoutubeVideoStoryboardShot', backref='scene', lazy=True)
@@ -135,7 +135,7 @@ class YoutubeVideoStoryboardShot(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     uuid = db.Column(db.Integer, unique=True)
-    shot = db.Column(db.String(50), unique=True)
+    shot = db.Column(db.String(50))
     storyboard_img_path = db.Column(db.String(200))
     dialogue_narration = db.Column(db.String(500))
     frame_direction = db.Column(db.String(200))
@@ -181,7 +181,7 @@ class YoutubeVideoCreative(db.Model):
     youtube_video_shot_id = db.Column(db.Integer, db.ForeignKey('youtube_video_storyboard_shot.id'))
 
     def __repr__(self):
-        return f"Media type: {self.media_type}, Video ID: {self.youtube_video_id}"
+        return f"Media type: {self.media_type}, Shot ID: {self.youtube_video_shot_id}"
 
     def to_dict(self):
         return {

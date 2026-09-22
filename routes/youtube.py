@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, flash, send_file, session, url_for, jsonify
 from flask_login import current_user
-from extensions import db, current_year,p
+from extensions import *
 from models.youtube import *
 from models.member import *
 import pprint as pp
@@ -27,6 +27,25 @@ def home():
     youtube_seo_manager = db.session.query(Role).filter_by(name='youtube_seo_manager').one_or_none()
     youtube_admin = db.session.query(Role).filter_by(name='youtube_admin').one_or_none()
     project_dict = {}
+    current_scene_shot_tuple = ()
+    creatives_upload_scene_no = ''
+    creatives_upload_shot_no = ''
+    current_creatives_upload_scene_shot_tuple = ()
+    current_creatives_upload_scene_shot_data_tuple = ()
+
+    def get_project_dict_data(data, key, scene_no, shot_no):
+        return next(
+            (
+                shot.get(key)
+                for scene in data.get("storyboard_scenes", [])
+                if scene.get("scene") == str(scene_no)
+                for shot in scene.get("shots", [])
+                if shot.get("shot") == shot_no
+            ),
+            None
+        )
+
+    
     if not current_user.is_authenticated:
         return redirect(url_for('account.login'))
     else:
@@ -93,17 +112,69 @@ def home():
                         first_youtube_card_instruction = ''
 
                     default_video_dict['vid_uuid_name_list'] = default_vid_uuid_name_list
+
                     if current_video_exists:
                         default_video_dict['image_list'] = [a.file_path for a in current_video.components if a.component_type == 'image']
                         default_video_dict['video_list'] = [a.file_path for a in current_video.components if a.component_type == 'video']
                         default_video_dict['stages'] = [a.stage for a in current_video.stages]
                         default_video_dict['scenes'] = [a.scene for a in current_video.storyboard_scenes]
                         project_dict = current_video.to_dict()
+                        current_scene_no = max([int(a.scene) for a in current_video.storyboard_scenes])
+                        all_shot_no_list = [a.shot for a in db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=str(current_scene_no)).scalar().shots]
+                        if len(all_shot_no_list) > 0:
+                            current_shot_no = chr(ord(max(all_shot_no_list)) + 1)
+                        else:
+                            current_shot_no = 'A'
+                        current_scene_shot_tuple = (current_scene_no, current_shot_no)
+
+                        def find_missing_creative(current_video):
+                            scene_no_list = [int(a.scene) for a in current_video.storyboard_scenes]
+                            if len(scene_no_list) > 0:
+                                scene_no_list.sort()
+                                for scene in scene_no_list:
+                                    scene_obj = db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=str(scene)).scalar()
+                                    shot_no_list = [a.shot for a in db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=str(scene)).scalar().shots]
+                                    if len(shot_no_list) > 0:
+                                        sorted_shot_no_list = sorted(shot_no_list)
+                                        for shot in sorted_shot_no_list:
+                                            shot_obj = [a for a in scene_obj.shots if a.shot == shot][0]
+                                            creative_uploads = [a for a in shot_obj.creatives]
+
+                                            if not creative_uploads:
+                                                return (scene, shot)
+                        current_creatives_upload_scene_shot_tuple = find_missing_creative(current_video)
+                            
                     else:
                         default_video_dict['image_list'] = [a.file_path for a in first_video.components if a.component_type == 'image']
                         default_video_dict['video_list'] = [a.file_path for a in first_video.components if a.component_type == 'video'] 
                         default_video_dict['stages'] = [a.stage for a in first_video.stages]
                         project_dict = first_video.to_dict()
+                        current_scene_no = max([int(a.scene) for a in first_video.storyboard_scenes])
+                        all_shot_no_list = [a.shot for a in db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=str(current_scene_no)).scalar().shots]
+                        if len(all_shot_no_list) > 0:
+                            current_shot_no = chr(ord(max(all_shot_no_list)) + 1)
+                        else:
+                            current_shot_no = 'A'
+                        current_scene_shot_tuple = (current_scene_no, current_shot_no)
+                        creatives_upload_scene_no = None;
+                        creatives_upload_shot_no = None;
+                        scene_no_list = [int(a.scene) for a in first_video.storyboard_scenes]
+                        if len(scene_no_list) > 0:
+                            scene_no_list.sort()
+                            for scene in scene_no_list:
+                                scene_obj = db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=str(scene)).scalar()
+                                shot_no_list = [a.shot for a in db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=str(scene)).scalar().shots]
+                                if len(shot_no_list) > 0:
+                                    sorted_shot_no_list = sorted(shot_no_list)
+                                    for shot in sorted_shot_no_list:
+                                        creative_uploads = [a for a in scene_obj.shots if a.shot == shot]
+                                        if len(creative_uploads) > 0:
+                                            pass
+                                        else:
+                                            creatives_upload_scene_no = scene
+                                            creatives_upload_shot_no = shot
+                                            break
+                            current_creatives_upload_scene_shot_tuple = (creatives_upload_scene_no, creatives_upload_shot_no)
                     if current_video_exists:
                         default_video_dict['temp_title'] = current_video.temp_title
                         try:
@@ -218,10 +289,167 @@ def home():
                             default_video_dict['youtube_card_instruction'] = markdown.markdown(first_youtube_card_instruction).replace('\n', '<br>')
                         except:
                             default_video_dict['youtube_card_instruction'] = first_youtube_card_instruction
+                    if current_creatives_upload_scene_shot_tuple:
+                        current_creatives_shot_obj = [a for a in db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=current_creatives_upload_scene_shot_tuple[0]).one_or_none().shots if a.shot == current_creatives_upload_scene_shot_tuple[1]][0]
+                        current_creatives_shot_img = current_creatives_shot_obj.storyboard_img_path
+                        current_creatives_shot_camera_direction = current_creatives_shot_obj.frame_direction
+                        current_creatives_shot_direction = current_creatives_shot_obj.creative_direction
+                        current_creatives_shot_narration_dialogue = current_creatives_shot_obj.dialogue_narration
+                        current_creatives_shot_type = current_creatives_shot_obj.shot_type
+                        creatives_list = [(a.media_type, a.media_path) for a in current_creatives_shot_obj.creatives]
+                        current_creatives_upload_scene_shot_data_tuple = (current_creatives_upload_scene_shot_tuple[0], 
+                                                                          current_creatives_upload_scene_shot_tuple[1], 
+                                                                          current_creatives_shot_img, 
+                                                                          current_creatives_shot_camera_direction, 
+                                                                          current_creatives_shot_direction, 
+                                                                          current_creatives_shot_narration_dialogue, 
+                                                                          current_creatives_shot_type, 
+                                                                          current_creatives_shot_obj.uuid, 
+                                                                          creatives_list)
+                    else:
+                        current_creatives_upload_scene_shot_data_tuple = ()
                 else:
                     default_video_dict = {}
             if request.method == 'POST' and request.is_json:
                 data = request.get_json()
+                if data['type'] == 'get_img_upload_shot_data':
+                    video_uuid = data['video_uuid']
+                    current_scene = data['current_scene']
+                    current_shot = data['current_shot']
+                    subtype = data['subtype']
+                    scene = None
+                    shot = None
+                    shot_uuid = None
+
+                    video_obj = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar()
+                    scene_list = [int(a.scene) for a in video_obj.storyboard_scenes]
+                    current_scene_obj = db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=current_scene).scalar()
+                    current_scene_shot_list = [a.shot for a in current_scene_obj.shots]
+
+                    if subtype == 'next':
+                        if chr(ord(current_shot) + 1) in current_scene_shot_list:
+                            scene = current_scene
+                            shot = chr(ord(current_shot) + 1)
+                            try:
+                                shot_uuid = [b for b in [a for a in video_obj.storyboard_scenes if a.scene == scene][0].shots if b.shot == shot][0].uuid
+                            except Exception as e:
+                                p(e)
+
+                        else:
+                            if int(current_scene) + 1 in scene_list:
+                                scene = str(int(current_scene) + 1)
+                                shot = 'A'
+                                try:
+                                    shot_uuid = [b for b in [a for a in video_obj.storyboard_scenes if a.scene == scene][0].shots if b.shot == 'A'][0].uuid
+                                except Exception as e:
+                                    p(e)
+                            else:
+                                return jsonify(message='No more shots')
+                                
+
+                    elif subtype == 'previous':
+                        if chr(ord(current_shot) - 1) in current_scene_shot_list:
+                            scene = current_scene
+                            shot = chr(ord(current_shot) - 1)
+                            try:
+                                shot_uuid = [b for b in [a for a in video_obj.storyboard_scenes if a.scene == scene][0].shots if b.shot == shot][0].uuid
+                            except Exception as e:
+                                p(e)
+
+                        else:
+                            if int(current_scene) - 1 in scene_list:
+                                scene = str(int(current_scene) - 1)
+                                shot = max([a.shot for a in [a for a in video_obj.storyboard_scenes if a.scene == scene][0].shots])
+                                try:
+                                    shot_uuid = [b for b in [a for a in video_obj.storyboard_scenes if a.scene == scene][0].shots if b.shot == 'A'][0].uuid
+                                except Exception as e:
+                                    p(e)
+                            else:
+                                return jsonify(message='This is the first shot')
+
+                    shot_creatives_list = [(a.media_type, a.media_path) for a in [b for b in [s for s in video_obj.storyboard_scenes if s.scene == scene][0].shots if b.shot == shot][0].creatives]
+
+                    upload_media_next_shot_data_dict = {
+                        'video_uuid': video_uuid,
+                        'shot_uuid': shot_uuid,
+                        'scene': scene,
+                        'shot': shot,
+                        'shot_storyboard_img': get_project_dict_data(project_dict, "storyboard_img_path", scene, shot),
+                        'shot_type': get_project_dict_data(project_dict, "shot_type", scene, shot),
+                        'camera_direction': get_project_dict_data(project_dict, "frame_direction", scene, shot),
+                        'direction': get_project_dict_data(project_dict, "creative_direction", scene, shot),
+                        'narration_dialogue': get_project_dict_data(project_dict, "dialogue_narration", scene, shot),
+                        'creatives_list': shot_creatives_list
+                    }
+                    return jsonify(upload_media_next_shot_data_dict)
+                
+                if data['type'] == 'save_storyboard_shot':
+                    video_uuid = data['video_uuid']
+                    video = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar()
+                    channel_id = video.channel_id
+                    video_id = video.id
+                    scene = data['scene']
+                    shot = data['shot']
+                    shot_type = data['shot_type']
+                    camera_direction = data['camera_direction']
+                    narration_dialogue = data['narration_dialogue']
+                    direction = data['direction']
+                    drawing_data = data['drawing_data']
+
+                    if narration_dialogue[-1] == '.':
+                        narration_dialogue = '. . . ' + narration_dialogue
+                    else:
+                        narration_dialogue = '. . . ' + narration_dialogue + '. . .'
+
+                    drawing_data = drawing_data.split(',', 1)[1]
+                    drawing_bytes = base64.b64decode(drawing_data)
+
+                    save_base_path = f"./static/files/youtube/{channel_id}/{video_id}/storyboard_images/"
+                    os.makedirs(save_base_path, exist_ok=True)
+                    file_name = f"{scene}-{shot}.png"
+                    file_path = os.path.join(save_base_path, file_name)
+
+                    with open(file_path, 'wb') as f:
+                        f.write(drawing_bytes)
+
+                    existing_scene = [a for a in video.storyboard_scenes if a.scene == scene]
+                    if len(existing_scene) > 0:
+                        existing_scene_object = existing_scene[0]
+                    else:
+                        scene_uuid = ''
+                        existing_scene_uuid = [a.uuid for a in db.session.query(YoutubeVideoStoryboardScene).all()]
+                        scene_uuid = create_uuid(existing_scene_uuid, 10)
+                        p('created scene uuid')
+                        entry = YoutubeVideoStoryboardScene (
+                            uuid=scene_uuid,
+                            scene=scene,
+                            youtube_video_id=video_id
+                        )
+                        db.session.add(entry)
+                        db.session.commit()
+
+                        existing_scene_object = db.session.query(YoutubeVideoStoryboardScene).filter_by(uuid=scene_uuid).scalar()
+                    
+                    # Save Shot to database
+                    shot_uuid = ''
+                    existing_shot_uuid_list = [a.uuid for a in db.session.query(YoutubeVideoStoryboardShot).all()]
+                    shot_uuid = create_uuid(existing_shot_uuid_list, 10)
+
+                    entry = YoutubeVideoStoryboardShot (
+                        uuid=shot_uuid,
+                        shot=shot,
+                        storyboard_img_path=file_path[1:],
+                        dialogue_narration=narration_dialogue,
+                        frame_direction=camera_direction,
+                        creative_direction=direction,
+                        shot_type=shot_type,
+                        youtube_video_storyboard_scene_id=existing_scene_object.id
+                    )
+                    db.session.add(entry)
+                    db.session.commit()
+                    
+                    return jsonify(f"{scene}-{shot} saved successfully!")
+                
                 if data['type'] == 'get_task_details':
                     task_uuid = data['task_uuid']
                     task = db.session.query(YoutubeVideoComponent).filter_by(uuid=task_uuid).scalar()
@@ -236,10 +464,8 @@ def home():
                     feedback = ''
                     # if task_type == 'image':
                     if len(task.revisions) > 0:
-                        p('Revisions found')
                         last_revision_no = max([float(a.version) for a in task.revisions])
                         file_path = [a.file_path for a in task.revisions if a.version == str(last_revision_no)][0]
-                        p(file_path)
                         all_revision_no_descending_order = sorted([float(a.version) for a in task.revisions], reverse=True)
                         run = True
                         count = 0
@@ -329,6 +555,12 @@ def home():
                         video_list.append((c.uuid, c.temp_title))
                     return jsonify(video_list=video_list)
                 if data['type'] == 'select_video':
+                    current_scene_shot_tuple = ()
+                    creatives_upload_scene_no = ''
+                    creatives_upload_shot_no = ''
+                    current_creatives_upload_scene_shot_tuple = ()
+                    current_creatives_upload_scene_shot_data_tuple = ()
+
                     video_uuid = data['video_uuid']
                     video = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar()
                     video_temp_title = video.temp_title
@@ -347,6 +579,42 @@ def home():
                     yt_description = ''
                     yt_tags = ''
                     video_yt_id = ''
+# -------------------------------------------------------- CREATIVES --------------------------------------------------
+                    def find_missing_creative(video):
+                        scene_no_list = [int(a.scene) for a in video.storyboard_scenes]
+                        if len(scene_no_list) > 0:
+                            scene_no_list.sort()
+                            for scene in scene_no_list:
+                                scene_obj = db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=str(scene)).scalar()
+                                shot_no_list = [a.shot for a in db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=str(scene)).scalar().shots]
+                                if len(shot_no_list) > 0:
+                                    sorted_shot_no_list = sorted(shot_no_list)
+                                    for shot in sorted_shot_no_list:
+                                        shot_obj = [a for a in scene_obj.shots if a.shot == shot][0]
+                                        creative_uploads = [a for a in shot_obj.creatives]
+
+                                        if not creative_uploads:
+                                            return (scene, shot)
+                    current_creatives_upload_scene_shot_tuple = find_missing_creative(video)
+                    if current_creatives_upload_scene_shot_tuple:
+                        current_creatives_shot_obj = [a for a in db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=current_creatives_upload_scene_shot_tuple[0]).one_or_none().shots if a.shot == current_creatives_upload_scene_shot_tuple[1]][0]
+                        current_creatives_shot_img = current_creatives_shot_obj.storyboard_img_path
+                        current_creatives_shot_camera_direction = current_creatives_shot_obj.frame_direction
+                        current_creatives_shot_direction = current_creatives_shot_obj.creative_direction
+                        current_creatives_shot_narration_dialogue = current_creatives_shot_obj.dialogue_narration
+                        current_creatives_shot_type = current_creatives_shot_obj.shot_type
+                        creatives_list = [(a.media_type, a.media_path) for a in current_creatives_shot_obj.creatives]
+                        current_creatives_upload_scene_shot_data_tuple = (current_creatives_upload_scene_shot_tuple[0], 
+                                                                            current_creatives_upload_scene_shot_tuple[1], 
+                                                                            current_creatives_shot_img, 
+                                                                            current_creatives_shot_camera_direction, 
+                                                                            current_creatives_shot_direction, 
+                                                                            current_creatives_shot_narration_dialogue, 
+                                                                            current_creatives_shot_type, 
+                                                                            current_creatives_shot_obj.uuid, 
+                                                                            creatives_list)
+                    else:
+                        current_creatives_upload_scene_shot_data_tuple = ()
                     for c in video_components:
                         if c.component_type == 'dialogue_&_narration':
                             dialogue_narration = c.text
@@ -390,6 +658,7 @@ def home():
                     vid_dict['video_yt_id'] = video_yt_id
                     vid_dict['temp_title'] = video_temp_title
                     vid_dict['video_uuid'] = video_uuid
+                    vid_dict['currentCreativesUploadSceneShotTuple'] = current_creatives_upload_scene_shot_data_tuple
                     try:
                         vid_dict['dialogue_narration'] = markdown.markdown(dialogue_narration).replace('\n', '<br>')
                     except:
@@ -451,66 +720,71 @@ def home():
                     if len([a for a in v.components if a.component_type == 'yt_title']) == 0 or len([a for a in v.components if a.component_type == 'yt_description']) == 0 or len([a for a in v.components if a.component_type == 'yt_tags']) == 0:
                         pending_seo.append((v.uuid, v.category, v.temp_title))
 
-            # ---------------------------------------------------- STORYBOARD INITIAL LOAD -------------------------------------------------------------------------------------------------------------
-
+            req_scene = [a for a in project_dict['storyboard_scenes'] if a['scene'] == '1']
             # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             current_user_roles = [a.name for a in current_user.role]
-            p(pending_reviews)
-                    
             return render_template('youtube.html', current_year=current_year, channels=channels, default_video_dict=default_video_dict, logged_in=current_user.is_authenticated, admin=admin, first_channel=first_channel,
                                 current_video_option_list=current_video_option_list, pending_revisions=pending_revisions, pending_reviews=pending_reviews, pending_seo=pending_seo, youtube_img_creator=youtube_img_creator, youtube_seo_manager=youtube_seo_manager, youtube_admin=youtube_admin, current_user_roles=current_user_roles,
-                                project_dict=project_dict)
+                                project_dict=project_dict, current_scene_shot_tuple=current_scene_shot_tuple, current_creatives_upload_scene_shot_data_tuple=current_creatives_upload_scene_shot_data_tuple)
         else:
             return render_template('admin_area.html')
 
 
-@youtube.route('/upload-images', methods=['GET', 'POST'])
-def upload_images():
+@youtube.route('/upload-images-videos', methods=['GET', 'POST'])
+def upload_images_videos():
     youtube_admin = db.session.query(Role).filter_by(name='youtube_admin').scalar()
     youtube_img_creator = db.session.query(Role).filter_by(name='youtube_img_creator').scalar()
     youtube_seo_manager = db.session.query(Role).filter_by(name='youtube_seo_manager').scalar()
     if youtube_admin in current_user.role or youtube_img_creator in current_user.role or youtube_seo_manager in current_user.role:
-        if request.method == 'POST' and request.form.get('type') == 'upload_images':
+        if request.method == 'POST' and request.form.get('type') == 'upload_images_videos':
+            uploaded_creatives_path_list = []
             p('upload images')
             files = request.files.getlist('files')
+            shot_uuid = request.form.get('shot_uuid')
+            text = request.form.get('image_text')
             video_uuid = request.form.get('video_uuid')
-            image_text = request.form.get('image_text')
+            scene = request.form.get('scene')
+            shot = request.form.get('shot')
             video = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar()
-            video_temp_title = video.temp_title
             channel_id = video.youtube_channel.id
-            channel_name = db.session.query(YoutubeChannel).filter_by(id=channel_id).scalar().channel_name
             video_id = video.id
-            member_name = current_user.name
-            base_path = f"./static/files/youtube/{channel_id}/{video_id}/images/"
+            shot_id = db.session.query(YoutubeVideoStoryboardShot).filter_by(uuid=shot_uuid).scalar().id
+
+            base_path = f"./static/files/youtube/{channel_id}/{video_id}/creatives/"
             if not os.path.exists(base_path):
                 os.makedirs(base_path)
+
             for f in files:
                 if f.filename == '':
                     flash('No selected file', 'error')
                     return redirect(request.url)
+                mimetype = f.content_type
+                if mimetype.startswith('image/'):
+                    media_type = 'image'
+                elif mimetype.startswith('video/'):
+                    media_type = 'video'
                 filename_base = secure_filename(f.filename)
-                save_path = base_path + filename_base
+                extension = Path(filename_base).suffix.lower()
+                file_name = f"{scene}-{shot}.{extension}"
+                save_path = base_path + file_name
                 f.save(save_path)
-                existing_uuid_list = [a.uuid for a in db.session.query(YoutubeVideoComponent) if a.component_type == 'image']
-                uuid = create_uuid(existing_uuid_list, 9)
-                entry = YoutubeVideoComponent(
+                uploaded_creatives_path_list.append((media_type, save_path[1:]))
+                existing_uuid_list = [a.uuid for a in db.session.query(YoutubeVideoCreative).all()]
+                uuid = create_uuid(existing_uuid_list, 10)
+                entry = YoutubeVideoCreative(
                     uuid=uuid,
-                    component_type='image',
-                    file_path=save_path[1:],
-                    approval_status='pending',
-                    date_time=date_time_now,
-                    youtube_video_id=video_id,
-                    text=image_text,
-                    member_id=current_user.id
+                    media_type=media_type,
+                    media_path=save_path[1:],
+                    text=text,
+                    status='pending',
+                    date_time=datetime.now().replace(microsecond=0),
+                    member_id=current_user.id,
+                    youtube_video_shot_id=shot_id
                 )
                 db.session.add(entry)
                 db.session.commit()
 
-                # send email to Leader -----------------------------------------------------
-                subject = f"Image uploaded - {date_time_now}"
-                body = f"New image uploaded\n\nVideo: {video_temp_title}\nMember: {member_name}\nChannel: {channel_name}"
-                send_email_studio(subject, ['shwetabhartist@gmail.com'], body, '', {})
-            return jsonify('success')
+            return jsonify(uploaded_creatives_path_list)
     else:
         return render_template('admin_area.html')
 
