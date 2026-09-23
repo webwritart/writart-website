@@ -310,7 +310,10 @@ def home():
                                                                           current_creatives_shot_obj.uuid, 
                                                                           creatives_list)
                     else:
-                        current_creatives_upload_scene_shot_data_tuple = ()
+                        if len(video.storyboard_scenes) > 0:
+                            last_scene = [a.scene for a in video.storyboard_scenes if a.scene == str(max([int(a.scene) for a in video.storyboard_scenes]))][0]
+                            last_shot = [a.shot for a in db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=last_scene).one_or_none().shots if a.shot == str(max([int(a.shot) for a in db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=last_scene).one_or_none().shots]))][0]
+                            current_creatives_upload_scene_shot_data_tuple = (last_scene, last_shot)
                 else:
                     default_video_dict = {}
             if request.method == 'POST' and request.is_json:
