@@ -743,7 +743,7 @@ def upload_images_videos():
         if request.method == 'POST' and request.form.get('type') == 'upload_images_videos':
             files = request.files.getlist('files')
             shot_uuid = request.form.get('shot_uuid')
-            text = request.form.get('image_text')
+            text = request.form.get('text')
             video_uuid = request.form.get('video_uuid')
             scene = request.form.get('scene')
             shot = request.form.get('shot')
