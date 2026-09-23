@@ -3288,7 +3288,7 @@
                 document.getElementById('image-text').value = '';
                 const creativesDisplayContainer = document.getElementById('upload-images-creatives-display-container');
                 creativesDisplayContainer.replaceChildren();
-                for (const item of data) {
+                for (const item of data.creatives_list) {
                     if (item[0] == 'image') {
                         const img = document.createElement('img');
                         img.src = item[1];
@@ -3300,6 +3300,10 @@
                         creativesDisplayContainer.appendChild(video);
                     }
                 }
+                document.getElementById('total-scenes').innerHTML = data.upload_images_form_top_bar_data_tuple[0];
+                document.getElementById('total-shots').innerHTML = data.upload_images_form_top_bar_data_tuple[1];
+                document.getElementById('shots-done').innerHTML = data.upload_images_form_top_bar_data_tuple[2];
+                document.getElementById('last-shot').innerHTML = data.upload_images_form_top_bar_data_tuple[3];
                 creativesDisplayContainer.style.display = 'flex';
                 statusMessage.textContent = "Media uploaded successfully.";
             } else {

@@ -9,7 +9,7 @@ from flask_login import current_user
 from operations.miscellaneous import log
 from models.artist_data import *
 from operations.artist_tools import delete_watermarked_images
-from operations.miscellaneous import image_resize_and_compress_single
+from operations.miscellaneous import *
 
 main = Blueprint('main', __name__, static_folder='static', template_folder='templates')
 

@@ -752,6 +752,8 @@ def upload_images_videos():
             video_id = video.id
             shot_id = db.session.query(YoutubeVideoStoryboardShot).filter_by(uuid=shot_uuid).scalar().id
 
+            
+
             base_path = f"./static/files/youtube/{channel_id}/{video_id}/creatives/"
 
             for f in files:
@@ -780,8 +782,20 @@ def upload_images_videos():
                 )
                 db.session.add(entry)
                 db.session.commit()
+            total_shots = 0
+            shots_done = 0
+            total_scenes = 0
+            last_scene_shot = ''
+            for a in video.storyboard_scenes:
+                total_scenes += 1
+                for b in a.shots:
+                    total_shots += 1
+                    if len(b.creatives) != 0:
+                        shots_done += 1
+                    last_scene_shot = f"{a.scene}-{b.shot}"
+            upload_images_form_top_bar_data_tuple = (total_scenes, total_shots, shots_done, last_scene_shot)
             creatives_list = [(a.media_type, a.media_path) for a in db.session.query(YoutubeVideoCreative).filter_by(youtube_video_shot_id=shot_id).all()]
-            return jsonify(creatives_list)
+            return jsonify({"creatives_list": creatives_list, "upload_images_form_top_bar_data_tuple": upload_images_form_top_bar_data_tuple})
     else:
         return render_template('admin_area.html')
 
