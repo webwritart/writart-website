@@ -31,17 +31,5 @@ current_year = datetime.now().year
 #
 #     return decorated_function
 
-def list_files_in_directory(directory_path):
-    p = Path(directory_path)
-    # Use a list comprehension to filter for files only
-    files = [item for item in p.iterdir() if item.is_file()]
-    return files
-
-def list_folders_in_directory(path_string):
-    p = Path(path_string)
-    # Filter for entries that are directories and return their Path objects
-    folders = [item for item in p.iterdir() if item.is_dir()]
-    return folders
-
 def p(text):
     print(f"\033[37m{text}\033[0m")

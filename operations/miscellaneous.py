@@ -14,6 +14,7 @@ from models.tool import Tools
 from pathlib import Path
 import qrcode
 import re
+from werkzeug.utils import secure_filename
 
 
 
@@ -773,3 +774,32 @@ def make_unicode_bold(text):
         else:
             bold_chars += char
     return bold_chars
+
+
+def list_files_in_directory(directory_path):
+    p = Path(directory_path)
+    # Use a list comprehension to filter for files only
+    files = [item for item in p.iterdir() if item.is_file()]
+    return files
+
+def list_folders_in_directory(path_string):
+    p = Path(path_string)
+    # Filter for entries that are directories and return their Path objects
+    folders = [item for item in p.iterdir() if item.is_dir()]
+    return folders
+
+def add_suffix_if_file_exists(directory, file_name, extension):
+    filepath = os.path.join(directory, file_name+extension)
+    suffix = 1
+    while os.path.isfile(filepath):
+        filepath = os.path.join(directory, f"{file_name}_{suffix}{extension}")
+        suffix += 1
+    return filepath
+
+def save_with_filename_suffix_if_already_exists(directory, file_name_without_extension, file):
+    os.makedirs(directory, exist_ok=True)
+    filename_base = secure_filename(file.filename)
+    extension = Path(filename_base).suffix.lower()
+    filepath = add_suffix_if_file_exists(directory, file_name_without_extension, extension)
+    file.save(filepath)
+    return filepath

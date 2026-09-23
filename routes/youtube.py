@@ -369,8 +369,9 @@ def home():
                                     p(e)
                             else:
                                 return jsonify(message='This is the first shot')
-
-                    shot_creatives_list = [(a.media_type, a.media_path) for a in [b for b in [s for s in video_obj.storyboard_scenes if s.scene == scene][0].shots if b.shot == shot][0].creatives]
+                    shot_id = db.session.query(YoutubeVideoStoryboardShot).filter_by(uuid=shot_uuid).scalar().id
+                    shot_creatives_list = [(a.media_type, a.media_path) for a in db.session.query(YoutubeVideoCreative).filter_by(youtube_video_shot_id=shot_id).all()]
+                    p(shot_creatives_list)
 
                     upload_media_next_shot_data_dict = {
                         'video_uuid': video_uuid,
@@ -740,8 +741,6 @@ def upload_images_videos():
     youtube_seo_manager = db.session.query(Role).filter_by(name='youtube_seo_manager').scalar()
     if youtube_admin in current_user.role or youtube_img_creator in current_user.role or youtube_seo_manager in current_user.role:
         if request.method == 'POST' and request.form.get('type') == 'upload_images_videos':
-            uploaded_creatives_path_list = []
-            p('upload images')
             files = request.files.getlist('files')
             shot_uuid = request.form.get('shot_uuid')
             text = request.form.get('image_text')
@@ -754,8 +753,6 @@ def upload_images_videos():
             shot_id = db.session.query(YoutubeVideoStoryboardShot).filter_by(uuid=shot_uuid).scalar().id
 
             base_path = f"./static/files/youtube/{channel_id}/{video_id}/creatives/"
-            if not os.path.exists(base_path):
-                os.makedirs(base_path)
 
             for f in files:
                 if f.filename == '':
@@ -766,18 +763,15 @@ def upload_images_videos():
                     media_type = 'image'
                 elif mimetype.startswith('video/'):
                     media_type = 'video'
-                filename_base = secure_filename(f.filename)
-                extension = Path(filename_base).suffix.lower()
-                file_name = f"{scene}-{shot}.{extension}"
-                save_path = base_path + file_name
-                f.save(save_path)
-                uploaded_creatives_path_list.append((media_type, save_path[1:]))
+                
+                file_name_without_extension = f"{scene}-{shot}"
+                file_path = save_with_filename_suffix_if_already_exists(base_path, file_name_without_extension, f)[1:]
                 existing_uuid_list = [a.uuid for a in db.session.query(YoutubeVideoCreative).all()]
                 uuid = create_uuid(existing_uuid_list, 9)
                 entry = YoutubeVideoCreative(
                     uuid=uuid,
                     media_type=media_type,
-                    media_path=save_path[1:],
+                    media_path=file_path,
                     text=text,
                     status='pending',
                     date_time=datetime.now().replace(microsecond=0),
@@ -786,8 +780,8 @@ def upload_images_videos():
                 )
                 db.session.add(entry)
                 db.session.commit()
-
-            return jsonify(uploaded_creatives_path_list)
+            creatives_list = [(a.media_type, a.media_path) for a in db.session.query(YoutubeVideoCreative).filter_by(youtube_video_shot_id=shot_id).all()]
+            return jsonify(creatives_list)
     else:
         return render_template('admin_area.html')
 

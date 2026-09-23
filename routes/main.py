@@ -1,7 +1,7 @@
 from pathlib import PureWindowsPath
 import random
 from flask import Blueprint, render_template, request, flash, session, url_for
-from extensions import login_manager, db, current_year, list_files_in_directory, p
+from extensions import *
 from models.member import Member, Workshop, Role, Certificate
 from models.query import Query
 from models.tool import Tools, ArtworkPriceTime

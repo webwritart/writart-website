@@ -921,7 +921,7 @@
         padding: 1%;
         box-sizing: border-box;
     }
-    #upload-images-creatives-display-container img {
+    #upload-images-creatives-display-container img, #upload-images-creatives-display-container video {
         height: 100%;
         width: auto;
         max-width: none;
@@ -1561,7 +1561,7 @@
                     <p id="upload-media-scene"></p><p>-</p>
                     <p id="upload-media-shot"></p><p id="upload-images-storyboard-type" style="text-transform: uppercase"></p>
                 </div>
-                <input type="file" id="image-files" name="image-files" class="file-upload-input" accept=".jpg, .jpeg, .png, image/jpeg, image/png" multiple>
+                <input type="file" id="image-files" name="image-files" class="file-upload-input" accept=".jpg, .jpeg, .png, image/*, video/*" multiple>
                 <input type="text" id="image-text" name="image-text" placeholder="Anything you want to say?">
                 <input type="hidden" name="video_uuid" id="img-upload-video-uuid" value="{{ default_video_dict['video_uuid'] }}">
                 <input type="hidden" name="shot_uuid" id="img-upload-shot-uuid" value="">
@@ -3245,8 +3245,8 @@
         event.preventDefault();
         const endpointUrl = "{{ url_for('youtube.upload_images_videos') }}";
         const shotUuid = document.getElementById('img-upload-shot-uuid').value;
-        const scene = document.getElementById('upload-media-scene').value;
-        const shot = document.getElementById('upload-media-shot').value;
+        const scene = document.getElementById('upload-media-scene').textContent;
+        const shot = document.getElementById('upload-media-shot').textContent;
         const videoUuid = document.getElementById('img-upload-video-uuid').value;
         const text = document.getElementById('image-text').value;
         const fileInput = document.getElementById('image-files');

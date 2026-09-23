@@ -4,7 +4,7 @@ import os
 import random
 from flask_login import current_user
 from werkzeug.utils import secure_filename
-from extensions import db, current_year, list_files_in_directory, list_folders_in_directory, p
+from extensions import *
 from models.member import Member, Portrait, Role
 from operations.miscellaneous import allowed_file, text_match
 from operations.artist_tools import add_watermark, delete_single_watermarked_image, delete_all_from_user

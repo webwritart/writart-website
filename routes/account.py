@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, request, flash, send_file, redirec
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from operations.artist_tools import add_watermark
-from extensions import db, image_dict, current_year, p
+from extensions import *
 from operations.messenger import *
 from models.workshop_details import WorkshopDetails
 from models.member import *
