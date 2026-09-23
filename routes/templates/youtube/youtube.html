@@ -2256,6 +2256,7 @@
 
         // -------------------------------------- CREATIVE INITIAL LOAD -----------------------------------------------------------------
         if (uploadImagesFormTopBarDataTuple[0] == 0) {
+            alert(uploadImagesFormTopBarDataTuple[0]);
             document.getElementById('upload-img').disabled = true;
             document.getElementById('upload-img').style.background = 'gray';
             
@@ -2824,13 +2825,14 @@
             } else {
                 document.getElementById('published').style.color = 'rgba(0, 0, 0, .4)';
             }
-
             document.getElementById('img-upload-video-uuid').value = data.video_uuid;
             document.getElementById('add-yt-title-video-uuid').value = data.video_uuid;
             document.getElementById('add-yt-description-video-uuid').value = data.video_uuid;
             document.getElementById('add-yt-tags-video-uuid').value = data.video_uuid;
 
 // -------------------------------------- CREATIVES UPLOAD LOAD ---------------------------------------------------------------
+            alert(data.uploadImagesFormTopBarDataTuple[0]);
+
             if (data.uploadImagesFormTopBarDataTuple[0] == 0) {
                 document.getElementById('upload-img').disabled = true;
                 document.getElementById('upload-img').style.background = 'gray';
