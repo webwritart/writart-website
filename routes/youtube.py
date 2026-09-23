@@ -407,7 +407,7 @@ def home():
                     else:
                         scene_uuid = ''
                         existing_scene_uuid = [a.uuid for a in db.session.query(YoutubeVideoStoryboardScene).all()]
-                        scene_uuid = create_uuid(existing_scene_uuid, 10)
+                        scene_uuid = create_uuid(existing_scene_uuid, 9)
                         p('created scene uuid')
                         entry = YoutubeVideoStoryboardScene (
                             uuid=scene_uuid,
@@ -422,7 +422,7 @@ def home():
                     # Save Shot to database
                     shot_uuid = ''
                     existing_shot_uuid_list = [a.uuid for a in db.session.query(YoutubeVideoStoryboardShot).all()]
-                    shot_uuid = create_uuid(existing_shot_uuid_list, 10)
+                    shot_uuid = create_uuid(existing_shot_uuid_list, 9)
 
                     entry = YoutubeVideoStoryboardShot (
                         uuid=shot_uuid,
@@ -759,7 +759,7 @@ def upload_images_videos():
                 f.save(save_path)
                 uploaded_creatives_path_list.append((media_type, save_path[1:]))
                 existing_uuid_list = [a.uuid for a in db.session.query(YoutubeVideoCreative).all()]
-                uuid = create_uuid(existing_uuid_list, 10)
+                uuid = create_uuid(existing_uuid_list, 9)
                 entry = YoutubeVideoCreative(
                     uuid=uuid,
                     media_type=media_type,
