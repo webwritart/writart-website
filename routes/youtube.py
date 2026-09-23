@@ -371,7 +371,6 @@ def home():
                                 return jsonify(message='This is the first shot')
                     shot_id = db.session.query(YoutubeVideoStoryboardShot).filter_by(uuid=shot_uuid).scalar().id
                     shot_creatives_list = [(a.media_type, a.media_path) for a in db.session.query(YoutubeVideoCreative).filter_by(youtube_video_shot_id=shot_id).all()]
-                    p(shot_creatives_list)
 
                     upload_media_next_shot_data_dict = {
                         'video_uuid': video_uuid,
@@ -729,7 +728,7 @@ def home():
             current_user_roles = [a.name for a in current_user.role]
             return render_template('youtube.html', current_year=current_year, channels=channels, default_video_dict=default_video_dict, logged_in=current_user.is_authenticated, admin=admin, first_channel=first_channel,
                                 current_video_option_list=current_video_option_list, pending_revisions=pending_revisions, pending_reviews=pending_reviews, pending_seo=pending_seo, youtube_img_creator=youtube_img_creator, youtube_seo_manager=youtube_seo_manager, youtube_admin=youtube_admin, current_user_roles=current_user_roles,
-                                project_dict=project_dict, current_scene_shot_tuple=current_scene_shot_tuple, current_creatives_upload_scene_shot_data_tuple=current_creatives_upload_scene_shot_data_tuple, upload_images_form_top_bar_data_tuple=upload_images_form_top_bar_data_tuple)
+                                project_dict=project_dict, current_scene_shot_tuple=current_scene_shot_tuple, current_creatives_upload_scene_shot_data_tuple=current_creatives_upload_scene_shot_data_tuple, upload_images_form_top_bar_data_tuple=upload_images_form_top_bar_data_tuple, current_creatives_upload_scene_shot_tuple=current_creatives_upload_scene_shot_tuple)
         else:
             return render_template('admin_area.html')
 
