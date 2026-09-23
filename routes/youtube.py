@@ -292,7 +292,7 @@ def home():
                             default_video_dict['youtube_card_instruction'] = markdown.markdown(first_youtube_card_instruction).replace('\n', '<br>')
                         except:
                             default_video_dict['youtube_card_instruction'] = first_youtube_card_instruction
-                    if upload_images_form_top_bar_data_tuple[0] != 0:
+                    if current_creatives_upload_scene_shot_tuple:
                         current_creatives_shot_obj = [a for a in db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=str(current_creatives_upload_scene_shot_tuple[0])).one_or_none().shots if a.shot == current_creatives_upload_scene_shot_tuple[1]][0]
                         current_creatives_shot_img = current_creatives_shot_obj.storyboard_img_path
                         current_creatives_shot_camera_direction = current_creatives_shot_obj.frame_direction
@@ -599,7 +599,7 @@ def home():
                                         if not creative_uploads:
                                             return (scene, shot)
                     current_creatives_upload_scene_shot_tuple = find_missing_creative(video)
-                    if upload_images_form_top_bar_data_tuple[0] != 0:
+                    if current_creatives_upload_scene_shot_tuple:
                         current_creatives_shot_obj = [a for a in db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=current_creatives_upload_scene_shot_tuple[0]).one_or_none().shots if a.shot == current_creatives_upload_scene_shot_tuple[1]][0]
                         current_creatives_shot_img = current_creatives_shot_obj.storyboard_img_path
                         current_creatives_shot_camera_direction = current_creatives_shot_obj.frame_direction
