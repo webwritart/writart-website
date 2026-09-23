@@ -732,6 +732,41 @@
         margin: 0%;
     }
     /* ------------------------------------------ UPLOAD IMAGES -------------------------------------------------- */
+    #upload-images-form-top-bar {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        width: 100%;
+        margin-bottom: 2%;
+    }
+    #upload-images-form-top-bar-text-column-left {
+        display: flex;
+        flex-direction: column;
+        align-items: left;
+        text-align: left;
+    }
+    #upload-images-form-top-bar-text-column-left p {
+        font-size: .9rem;
+        font-weight: 600;
+        color: rgba(0, 0, 0, 0.4);
+        line-height: 1;
+    }
+    #upload-images-form-top-bar-text-column-right {
+        display: flex;
+        flex-direction: column;
+        align-items: right;
+        text-align: right;
+        font-size: .8rem;
+    }
+    #upload-images-form-top-bar-text-column-right p {
+        font-size: .9rem;
+        font-weight: 600;
+        color: rgba(0, 0, 0, 0.4);
+        line-height: 1;
+    }
+    .upload-images-form-top-bar-text {
+        color: rgb(109, 151, 19);
+    }
     #upload-images-section {
         display: none;
         flex-direction: column;
@@ -1511,6 +1546,16 @@
                 <div id="upload-images-storyboard-narration-dialogue" class="upload-images-storyboard-data"></div>
             </div>
             <form id="upload-images-form" class="upload-form">
+                <div id="upload-images-form-top-bar">
+                    <div id="upload-images-form-top-bar-text-column-left">
+                        <p>Total shots: <span id="total-shots" class="upload-images-form-top-bar-text"></span></p>
+                        <p>Shots done: <span id="shots-done" class="upload-images-form-top-bar-text"></span></p>
+                    </div>
+                    <div id="upload-images-form-top-bar-text-column-right">
+                        <p>Total scenes: <span id="total-scenes" class="upload-images-form-top-bar-text"></span></p>
+                        <p>Last shot: <span id="last-shot" class="upload-images-form-top-bar-text"></span></p>
+                    </div>
+                </div>
                 <p class="operations-form-header">Upload images/videos</p>
                 <div id="upload-images-scene-shot-container">
                     <p id="upload-media-scene"></p><p>-</p>
@@ -1854,6 +1899,7 @@
     const pendingReviews = {{ pending_reviews | tojson }};
     const currentSceneShotTuple = {{ current_scene_shot_tuple | tojson }};
     const currentCreativesUploadSceneShotTuple = {{ current_creatives_upload_scene_shot_data_tuple | tojson }};
+    const uploadImagesFormTopBarDataTuple = {{ upload_images_form_top_bar_data_tuple | tojson }};
     let projectDict = {{ project_dict | tojson }};
     let currentProjectUuid;
     let currentStoryboardScene;
@@ -2224,6 +2270,10 @@
             document.getElementById('upload-images-storyboard-narration-dialogue').innerHTML = currentCreativesUploadSceneShotTuple[5];
             document.getElementById('upload-images-storyboard-type').innerHTML = `&ensp;(${currentCreativesUploadSceneShotTuple[6]})`;
             document.getElementById('img-upload-shot-uuid').value = currentCreativesUploadSceneShotTuple[7];
+            document.getElementById('total-scenes').innerHTML = uploadImagesFormTopBarDataTuple[0];
+            document.getElementById('total-shots').innerHTML = uploadImagesFormTopBarDataTuple[1];
+            document.getElementById('shots-done').innerHTML = uploadImagesFormTopBarDataTuple[2];
+            document.getElementById('last-shot').innerHTML = uploadImagesFormTopBarDataTuple[3];
             const creativesDisplayContainer = document.getElementById('upload-images-creatives-display-container');
 
             if (currentCreativesUploadSceneShotTuple[8].length == 0) {

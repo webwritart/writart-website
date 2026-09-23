@@ -32,6 +32,7 @@ def home():
     creatives_upload_shot_no = ''
     current_creatives_upload_scene_shot_tuple = ()
     current_creatives_upload_scene_shot_data_tuple = ()
+    upload_images_form_top_bar_data_tuple = ()
 
     def get_project_dict_data(data, key, scene_no, shot_no):
         return next(
@@ -129,6 +130,19 @@ def home():
                             current_scene_shot_tuple = (current_scene_no, current_shot_no)
                         except Exception as e:
                             p(e)
+
+                        total_shots = 0
+                        shots_done = 0
+                        total_scenes = 0
+                        last_scene_shot = ''
+                        for a in current_video.storyboard_scenes:
+                            total_scenes += 1
+                            for b in a.shots:
+                                total_shots += 1
+                                if len(b.creatives) != 0:
+                                    shots_done += 1
+                                last_scene_shot = f"{a.scene}-{b.shot}"
+                        upload_images_form_top_bar_data_tuple = (total_scenes, total_shots, shots_done, last_scene_shot)
 
                         def find_missing_creative(current_video):
                             scene_no_list = [int(a.scene) for a in current_video.storyboard_scenes]
@@ -714,7 +728,7 @@ def home():
             current_user_roles = [a.name for a in current_user.role]
             return render_template('youtube.html', current_year=current_year, channels=channels, default_video_dict=default_video_dict, logged_in=current_user.is_authenticated, admin=admin, first_channel=first_channel,
                                 current_video_option_list=current_video_option_list, pending_revisions=pending_revisions, pending_reviews=pending_reviews, pending_seo=pending_seo, youtube_img_creator=youtube_img_creator, youtube_seo_manager=youtube_seo_manager, youtube_admin=youtube_admin, current_user_roles=current_user_roles,
-                                project_dict=project_dict, current_scene_shot_tuple=current_scene_shot_tuple, current_creatives_upload_scene_shot_data_tuple=current_creatives_upload_scene_shot_data_tuple)
+                                project_dict=project_dict, current_scene_shot_tuple=current_scene_shot_tuple, current_creatives_upload_scene_shot_data_tuple=current_creatives_upload_scene_shot_data_tuple, upload_images_form_top_bar_data_tuple=upload_images_form_top_bar_data_tuple)
         else:
             return render_template('admin_area.html')
 
