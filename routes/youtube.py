@@ -665,6 +665,19 @@ def home():
                     vid_dict['temp_title'] = video_temp_title
                     vid_dict['video_uuid'] = video_uuid
                     vid_dict['currentCreativesUploadSceneShotTuple'] = current_creatives_upload_scene_shot_data_tuple
+                    total_shots = 0
+                    shots_done = 0
+                    total_scenes = 0
+                    last_scene_shot = ''
+                    for a in current_video.storyboard_scenes:
+                        total_scenes += 1
+                        for b in a.shots:
+                            total_shots += 1
+                            if len(b.creatives) != 0:
+                                shots_done += 1
+                            last_scene_shot = f"{a.scene}-{b.shot}"
+                    upload_images_form_top_bar_data_tuple = (total_scenes, total_shots, shots_done, last_scene_shot)
+                    vid_dict['uploadImageFormTopBarDataTuple'] = upload_images_form_top_bar_data_tuple
                     try:
                         vid_dict['dialogue_narration'] = markdown.markdown(dialogue_narration).replace('\n', '<br>')
                     except:
