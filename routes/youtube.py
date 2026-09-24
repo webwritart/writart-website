@@ -120,9 +120,12 @@ def home():
                         default_video_dict['stages'] = [a.stage for a in current_video.stages]
                         default_video_dict['scenes'] = [a.scene for a in current_video.storyboard_scenes]
                         project_dict = current_video.to_dict()
+
                         try:
                             current_scene_no = max([int(a.scene) for a in current_video.storyboard_scenes])
-                            all_shot_no_list = [a.shot for a in db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=str(current_scene_no)).scalar().shots]
+                            p(current_scene_no)
+                            current_scene_obj = [a for a in current_video.storyboard_scenes if a.scene == str(current_scene_no)][0]
+                            all_shot_no_list = [a.shot for a in current_scene_obj.shots]
                             if len(all_shot_no_list) > 0:
                                 current_shot_no = chr(ord(max(all_shot_no_list)) + 1)
                             else:
@@ -165,7 +168,7 @@ def home():
                                 last_scene = [a.scene for a in current_video.storyboard_scenes if a.scene == str(max([int(a.scene) for a in current_video.storyboard_scenes]))][0]
                                 last_shot = [a.shot for a in db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=(last_scene)).one_or_none().shots if a.shot == str(max([a.shot for a in db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=last_scene).one_or_none().shots]))][0]
                                 current_creatives_upload_scene_shot_tuple = (last_scene, last_shot)
-                            
+                    
                     else:
                         default_video_dict['image_list'] = [a.file_path for a in first_video.components if a.component_type == 'image']
                         default_video_dict['video_list'] = [a.file_path for a in first_video.components if a.component_type == 'video'] 
@@ -187,7 +190,7 @@ def home():
                                 last_scene = [a.scene for a in first_video.storyboard_scenes if a.scene == str(max([int(a.scene) for a in first_video.storyboard_scenes]))][0]
                                 last_shot = [a.shot for a in db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=last_scene).one_or_none().shots if a.shot == str(max([a.shot for a in db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=last_scene).one_or_none().shots]))][0]
                                 current_creatives_upload_scene_shot_data_tuple = (last_scene, last_shot)
-                        
+                    
                     if current_video_exists:
                         default_video_dict['temp_title'] = current_video.temp_title
                         try:
@@ -323,6 +326,7 @@ def home():
                         current_creatives_upload_scene_shot_data_tuple = (None, None, None, None, None, None, None, None, None)
                 else:
                     default_video_dict = {}
+            
             if request.method == 'POST' and request.is_json:
                 data = request.get_json()
                 if data['type'] == 'get_img_upload_shot_data':
@@ -598,8 +602,8 @@ def home():
                         if len(scene_no_list) > 0:
                             scene_no_list.sort()
                             for scene in scene_no_list:
-                                scene_obj = db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=str(scene)).scalar()
-                                shot_no_list = [a.shot for a in db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=str(scene)).scalar().shots]
+                                scene_obj = [a for a in video.storyboard_scenes if a.scene == str(scene)][0]
+                                shot_no_list = [a.shot for a in scene_obj.shots]
                                 if len(shot_no_list) > 0:
                                     sorted_shot_no_list = sorted(shot_no_list)
                                     for shot in sorted_shot_no_list:
@@ -610,7 +614,8 @@ def home():
                                             return (scene, shot)
                     current_creatives_upload_scene_shot_tuple = find_missing_creative(video)
                     if current_creatives_upload_scene_shot_tuple:
-                        current_creatives_shot_obj = [a for a in db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=current_creatives_upload_scene_shot_tuple[0]).one_or_none().shots if a.shot == current_creatives_upload_scene_shot_tuple[1]][0]
+                        current_creatives_scene_obj = [a for a in video.storyboard_scenes if a.scene == str(current_creatives_upload_scene_shot_tuple[0])][0]
+                        current_creatives_shot_obj = [s for s in current_creatives_scene_obj.shots if s.shot == current_creatives_upload_scene_shot_tuple[1]][0]
                         current_creatives_shot_img = current_creatives_shot_obj.storyboard_img_path
                         current_creatives_shot_camera_direction = current_creatives_shot_obj.frame_direction
                         current_creatives_shot_direction = current_creatives_shot_obj.creative_direction
@@ -630,7 +635,7 @@ def home():
                         if len(video.storyboard_scenes) > 0:
                             last_scene = [a.scene for a in video.storyboard_scenes if a.scene == str(max([int(a.scene) for a in video.storyboard_scenes]))][0]
                             last_shot = [a.shot for a in db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=last_scene).one_or_none().shots if a.shot == str(max([int(a.shot) for a in db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=last_scene).one_or_none().shots]))][0]
-                            current_creatives_upload_scene_shot_data_tuple = (last_scene, last_shot)
+                            current_creatives_upload_scene_shot_tuple = (last_scene, last_shot)
                     for c in video_components:
                         if c.component_type == 'dialogue_&_narration':
                             dialogue_narration = c.text
@@ -679,7 +684,7 @@ def home():
                     shots_done = 0
                     total_scenes = 0
                     last_scene_shot = ''
-                    for a in current_video.storyboard_scenes:
+                    for a in video.storyboard_scenes:
                         total_scenes += 1
                         for b in a.shots:
                             total_shots += 1
@@ -688,6 +693,7 @@ def home():
                             last_scene_shot = f"{a.scene}-{b.shot}"
                     upload_images_form_top_bar_data_tuple = (total_scenes, total_shots, shots_done, last_scene_shot)
                     vid_dict['uploadImageFormTopBarDataTuple'] = upload_images_form_top_bar_data_tuple
+                    p(vid_dict['uploadImageFormTopBarDataTuple'])
                     try:
                         vid_dict['dialogue_narration'] = markdown.markdown(dialogue_narration).replace('\n', '<br>')
                     except:
