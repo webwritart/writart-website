@@ -812,3 +812,28 @@ def excel_sort(values):
         return number
 
     return sorted(values, key=column_number)
+
+def excel_column_number(value):
+    n = 0
+    for char in value.upper():
+        n = n * 26 + (ord(char) - ord('A') + 1)
+    return n
+
+
+def number_to_excel_column(n):
+    result = ""
+
+    while n > 0:
+        n, remainder = divmod(n - 1, 26)
+        result = chr(65 + remainder) + result
+
+    return result
+
+
+def next_shot_number(shot_numbers):
+    if not shot_numbers:
+        return 'A'
+
+    max_number = max(excel_column_number(x) for x in shot_numbers)
+
+    return number_to_excel_column(max_number + 1)

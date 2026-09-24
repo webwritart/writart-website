@@ -126,11 +126,12 @@ def home():
                                 current_scene_no = max([int(a.scene) for a in current_video.storyboard_scenes])
                                 current_scene_obj = [a for a in current_video.storyboard_scenes if a.scene == str(current_scene_no)][0]
                                 all_shot_no_list = [a.shot for a in current_scene_obj.shots]
-                                current_shot_no = chr(ord(max(all_shot_no_list)) + 1)
+                                current_shot_no = next_shot_number(all_shot_no_list)
                             else:
                                 current_scene_no = '1'
                                 current_shot_no = 'A'
                             current_scene_shot_tuple = (current_scene_no, current_shot_no)
+
                         except Exception as e:
                             p(e)
 
@@ -179,7 +180,7 @@ def home():
                                 current_scene_no = max([int(a.scene) for a in first_video.storyboard_scenes])
                                 current_scene_obj = [a for a in first_video.storyboard_scenes if a.scene == str(current_scene_no)][0]
                                 all_shot_no_list = [a.shot for a in current_scene_obj.shots]
-                                current_shot_no = chr(ord(max(all_shot_no_list)) + 1)
+                                current_shot_no = next_shot_number(all_shot_no_list)
                             else:
                                 current_scene_no = '1'
                                 current_shot_no = 'A'
@@ -606,7 +607,7 @@ def home():
                             current_scene_no = max([int(a.scene) for a in video.storyboard_scenes])
                             current_scene_obj = [a for a in video.storyboard_scenes if a.scene == str(current_scene_no)][0]
                             all_shot_no_list = [a.shot for a in current_scene_obj.shots]
-                            current_shot_no = chr(ord(max(all_shot_no_list)) + 1)
+                            current_shot_no = next_shot_number(all_shot_no_list)
                         else:
                             current_scene_no = '1'
                             current_shot_no = 'A'
@@ -698,7 +699,6 @@ def home():
                     vid_dict['temp_title'] = video_temp_title
                     vid_dict['video_uuid'] = video_uuid
                     vid_dict['current_scene_shot_tuple'] = current_scene_shot_tuple
-                    p(current_scene_shot_tuple)
                     vid_dict['currentCreativesUploadSceneShotTuple'] = current_creatives_upload_scene_shot_data_tuple
                     total_shots = 0
                     shots_done = 0
