@@ -156,7 +156,7 @@ def home():
                                     scene_obj = db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=str(scene)).scalar()
                                     shot_no_list = [a.shot for a in db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=str(scene)).scalar().shots]
                                     if len(shot_no_list) > 0:
-                                        sorted_shot_no_list = sorted(shot_no_list)
+                                        sorted_shot_no_list = excel_sort(shot_no_list)
                                         for shot in sorted_shot_no_list:
                                             shot_obj = [a for a in scene_obj.shots if a.shot == shot][0]
                                             creative_uploads = [a for a in shot_obj.creatives]
@@ -192,7 +192,7 @@ def home():
                             if len(first_video.storyboard_scenes) > 0:
                                 last_scene = [a.scene for a in first_video.storyboard_scenes if a.scene == str(max([int(a.scene) for a in first_video.storyboard_scenes]))][0]
                                 last_shot = [a.shot for a in db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=last_scene).one_or_none().shots if a.shot == str(max([a.shot for a in db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=last_scene).one_or_none().shots]))][0]
-                                current_creatives_upload_scene_shot_data_tuple = (last_scene, last_shot)
+                                current_creatives_upload_scene_shot_tuple = (last_scene, last_shot)
                     
                     if current_video_exists:
                         default_video_dict['temp_title'] = current_video.temp_title
