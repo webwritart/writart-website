@@ -126,7 +126,7 @@ def home():
                                 current_scene_no = max([int(a.scene) for a in current_video.storyboard_scenes])
                                 current_scene_obj = [a for a in current_video.storyboard_scenes if a.scene == str(current_scene_no)][0]
                                 all_shot_no_list = [a.shot for a in current_scene_obj.shots]
-                                current_shot_no = next_shot_number(all_shot_no_list)
+                                current_shot_no = next_shot_number_from_list(all_shot_no_list)
                             else:
                                 current_scene_no = '1'
                                 current_shot_no = 'A'
@@ -167,8 +167,7 @@ def home():
                         if not current_creatives_upload_scene_shot_tuple:
                             if len(current_video.storyboard_scenes) > 0:
                                 last_scene = [a.scene for a in current_video.storyboard_scenes if a.scene == str(max([int(a.scene) for a in current_video.storyboard_scenes]))][0]
-                                last_shot = [a.shot for a in db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=(last_scene)).one_or_none().shots if a.shot == str(max([a.shot for a in db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=last_scene).one_or_none().shots]))][0]
-                                current_creatives_upload_scene_shot_tuple = (last_scene, last_shot)
+                                last_shot = [a.shot for a in last_scene.shots if a.shot == str(max([int(a.shot) for a in last_scene.shots]))][0]
                     
                     else:
                         default_video_dict['image_list'] = [a.file_path for a in first_video.components if a.component_type == 'image']
@@ -180,7 +179,7 @@ def home():
                                 current_scene_no = max([int(a.scene) for a in first_video.storyboard_scenes])
                                 current_scene_obj = [a for a in first_video.storyboard_scenes if a.scene == str(current_scene_no)][0]
                                 all_shot_no_list = [a.shot for a in current_scene_obj.shots]
-                                current_shot_no = next_shot_number(all_shot_no_list)
+                                current_shot_no = next_shot_number_from_list(all_shot_no_list)
                             else:
                                 current_scene_no = '1'
                                 current_shot_no = 'A'
@@ -347,9 +346,9 @@ def home():
                     current_scene_shot_list = [a.shot for a in current_scene_obj.shots]
 
                     if subtype == 'next':
-                        if next_shot_number(current_scene_shot_list) in current_scene_shot_list:
+                        if next_shot_number_single_shot_input(current_shot) in current_scene_shot_list:
                             scene = current_scene
-                            shot = next_shot_number(current_scene_shot_list)
+                            shot = next_shot_number_single_shot_input(current_shot)
                             try:
                                 shot_uuid = [b for b in [a for a in video_obj.storyboard_scenes if a.scene == scene][0].shots if b.shot == shot][0].uuid
                             except Exception as e:
@@ -368,9 +367,9 @@ def home():
                                 
 
                     elif subtype == 'previous':
-                        if previous_shot_number(current_scene_shot_list) in current_scene_shot_list:
+                        if previous_shot_number_single_shot_input(current_shot) in current_scene_shot_list:
                             scene = current_scene
-                            shot = previous_shot_number(current_scene_shot_list)
+                            shot = previous_shot_number_single_shot_input(current_shot)
                             try:
                                 shot_uuid = [b for b in [a for a in video_obj.storyboard_scenes if a.scene == scene][0].shots if b.shot == shot][0].uuid
                             except Exception as e:
@@ -607,7 +606,7 @@ def home():
                             current_scene_no = max([int(a.scene) for a in video.storyboard_scenes])
                             current_scene_obj = [a for a in video.storyboard_scenes if a.scene == str(current_scene_no)][0]
                             all_shot_no_list = [a.shot for a in current_scene_obj.shots]
-                            current_shot_no = next_shot_number(all_shot_no_list)
+                            current_shot_no = next_shot_number_from_list(all_shot_no_list)
                         else:
                             current_scene_no = '1'
                             current_shot_no = 'A'

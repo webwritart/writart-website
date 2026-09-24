@@ -830,7 +830,7 @@ def number_to_excel_column(n):
     return result
 
 
-def next_shot_number(shot_numbers):
+def next_shot_number_from_list(shot_numbers):
     if not shot_numbers:
         return 'A'
 
@@ -838,11 +838,28 @@ def next_shot_number(shot_numbers):
 
     return number_to_excel_column(max_number + 1)
 
+def next_shot_number_single_shot_input(current_shot):
+    number = excel_column_number(current_shot)
+    return number_to_excel_column(number + 1)
 
-def previous_shot_number(shot_number):
+def previous_shot_number_single_shot_input(shot_number):
     number = excel_column_number(shot_number)
 
     if number <= 1:
         return None
 
     return number_to_excel_column(number - 1)
+
+def previous_shot_from_list(shot_numbers):
+    if not shot_numbers:
+        return None
+
+    max_number = max(
+        excel_column_number(x)
+        for x in shot_numbers
+    )
+
+    if max_number <= 1:
+        return None
+
+    return number_to_excel_column(max_number - 1)
