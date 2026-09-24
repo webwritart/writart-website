@@ -803,3 +803,12 @@ def save_with_filename_suffix_if_already_exists(directory, file_name_without_ext
     filepath = add_suffix_if_file_exists(directory, file_name_without_extension, extension)
     file.save(filepath)
     return filepath
+
+def excel_sort(values):
+    def column_number(value):
+        number = 0
+        for char in value.upper():
+            number = number * 26 + (ord(char) - ord('A') + 1)
+        return number
+
+    return sorted(values, key=column_number)

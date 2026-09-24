@@ -605,7 +605,8 @@ def home():
                                 scene_obj = [a for a in video.storyboard_scenes if a.scene == str(scene)][0]
                                 shot_no_list = [a.shot for a in scene_obj.shots]
                                 if len(shot_no_list) > 0:
-                                    sorted_shot_no_list = sorted(shot_no_list)
+                                    sorted_shot_no_list = excel_sort(shot_no_list)
+                                    p(sorted_shot_no_list)
                                     for shot in sorted_shot_no_list:
                                         shot_obj = [a for a in scene_obj.shots if a.shot == shot][0]
                                         creative_uploads = [a for a in shot_obj.creatives]
