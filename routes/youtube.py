@@ -347,9 +347,9 @@ def home():
                     current_scene_shot_list = [a.shot for a in current_scene_obj.shots]
 
                     if subtype == 'next':
-                        if chr(ord(current_shot) + 1) in current_scene_shot_list:
+                        if next_shot_number(current_scene_shot_list) in current_scene_shot_list:
                             scene = current_scene
-                            shot = chr(ord(current_shot) + 1)
+                            shot = next_shot_number(current_scene_shot_list)
                             try:
                                 shot_uuid = [b for b in [a for a in video_obj.storyboard_scenes if a.scene == scene][0].shots if b.shot == shot][0].uuid
                             except Exception as e:
@@ -368,9 +368,9 @@ def home():
                                 
 
                     elif subtype == 'previous':
-                        if chr(ord(current_shot) - 1) in current_scene_shot_list:
+                        if previous_shot_number(current_scene_shot_list) in current_scene_shot_list:
                             scene = current_scene
-                            shot = chr(ord(current_shot) - 1)
+                            shot = previous_shot_number(current_scene_shot_list)
                             try:
                                 shot_uuid = [b for b in [a for a in video_obj.storyboard_scenes if a.scene == scene][0].shots if b.shot == shot][0].uuid
                             except Exception as e:
@@ -386,7 +386,7 @@ def home():
                                     p(e)
                             else:
                                 return jsonify(message='This is the first shot')
-                    shot_id = db.session.query(YoutubeVideoStoryboardShot).filter_by(uuid=shot_uuid).scalar().id
+                    shot_id = [b for b in [a for a in video_obj.storyboard_scenes if a.scene == scene][0].shots if b.shot == shot][0].id
                     shot_creatives_list = [(a.media_type, a.media_path) for a in db.session.query(YoutubeVideoCreative).filter_by(youtube_video_shot_id=shot_id).all()]
 
                     upload_media_next_shot_data_dict = {
