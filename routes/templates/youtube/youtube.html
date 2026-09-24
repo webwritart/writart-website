@@ -2830,6 +2830,12 @@
             document.getElementById('add-yt-title-video-uuid').value = data.video_uuid;
             document.getElementById('add-yt-description-video-uuid').value = data.video_uuid;
             document.getElementById('add-yt-tags-video-uuid').value = data.video_uuid;
+// ------------------------------------- LOAD STORYBOARD DATA --------------------------------------------------------
+            
+            currentStoryboardScene = data.current_scene_shot_tuple[0];
+            currentStoryboardShot = data.current_scene_shot_tuple[1];
+            
+
 
 // -------------------------------------- CREATIVES UPLOAD LOAD ---------------------------------------------------------------
             if (data.uploadImageFormTopBarDataTuple[0] == 0) {
