@@ -1,4 +1,5 @@
 from extensions import db
+from operations.miscellaneous import *
 
 
 video_stage = db.Table('video_stage',
@@ -126,7 +127,7 @@ class YoutubeVideoStoryboardScene(db.Model):
             'uuid': self.uuid,
             'scene': self.scene,
             'description': self.description,
-            'shots': [shot.to_dict() for shot in self.shots]
+            'shots': [shot.to_dict() for shot in excel_sort(self.shots)]
         }
 
 
