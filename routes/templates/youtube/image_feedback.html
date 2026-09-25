@@ -1067,7 +1067,6 @@
         }
     }
     // ---------------------------------------- SHOW OPTIONS POPUP ON HOVER | CREATIVE FEEDBACK ALL MEDIA IN A SHOT ------------------------------------
-    let dismissedMediaDiv = null;
     const creativeFeedbackShotAllCreativeContainer =
         document.getElementById('creative-feedback-shot-all-creative-container');
 
@@ -1084,7 +1083,7 @@
             '.creative-feedback-shot-all-creative-option-container'
         );
 
-        if (optionDiv && dismissedMediaDiv !== mediaDiv) {
+        if (optionDiv) {
             optionDiv.classList.add('is-visible');
         }
     }, true);
@@ -1105,16 +1104,17 @@
         if (optionDiv) {
             optionDiv.classList.remove('is-visible');
         }
-        if (dismissedMediaDiv === mediaDiv) {
-            dismissedMediaDiv = null;
-        }
     }, true);
 
     /* -----------------------------
     RIGHT CLICK
     ----------------------------- */
 
-    creativeFeedbackShotAllCreativeContainer.addEventListener('contextmenu', (event) => {
+    creativeFeedbackShotAllCreativeContainer.addEventListener('mousedown', (event) => {
+
+        if (event.button !== 2) {
+            return;
+        }
 
         const mediaDiv = event.target.closest(
             '.creative-feedback-shot-all-creative-container-inner'
@@ -1132,10 +1132,7 @@
             optionDiv.classList.remove('is-visible');
         }
 
-        dismissedMediaDiv = mediaDiv;
-
         event.preventDefault();
-        event.stopPropagation();
     });
 
     /* -----------------------------
@@ -1154,7 +1151,6 @@
 
         if (visibleOption) {
             visibleOption.classList.remove('is-visible');
-            optionsPopupDismissed = true;
         }
 
     });
