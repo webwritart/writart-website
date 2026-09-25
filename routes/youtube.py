@@ -165,9 +165,11 @@ def home():
                         current_creatives_upload_scene_shot_tuple = find_missing_creative(current_video)
                         if not current_creatives_upload_scene_shot_tuple:
                             if len(current_video.storyboard_scenes) > 0:
-                                last_scene = [(a.scene, a) for a in current_video.storyboard_scenes if a.scene == str(max([int(a.scene) for a in current_video.storyboard_scenes]))][0]
-                                last_scene_obj = last_scene[1]
+                                last_scene_obj_tuple = [(a.scene, a) for a in current_video.storyboard_scenes if a.scene == str(max([int(a.scene) for a in current_video.storyboard_scenes]))][0]
+                                last_scene = last_scene_obj_tuple[0]
+                                last_scene_obj = last_scene_obj_tuple[1]
                                 last_shot = [a.shot for a in last_scene_obj.shots if a.shot == max([a.shot for a in last_scene_obj.shots])][0]
+                                current_creatives_upload_scene_shot_tuple = (last_scene, last_shot)
                     
                     else:
                         default_video_dict['stages'] = [a.stage for a in first_video.stages]
@@ -187,8 +189,10 @@ def home():
                         current_creatives_upload_scene_shot_tuple = find_missing_creative(first_video)
                         if not current_creatives_upload_scene_shot_tuple:
                             if len(first_video.storyboard_scenes) > 0:
-                                last_scene = [a.scene for a in first_video.storyboard_scenes if a.scene == str(max([int(a.scene) for a in first_video.storyboard_scenes]))][0]
-                                last_shot = [a.shot for a in db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=last_scene).one_or_none().shots if a.shot == str(max([a.shot for a in db.session.query(YoutubeVideoStoryboardScene).filter_by(scene=last_scene).one_or_none().shots]))][0]
+                                last_scene_obj_tuple = [(a.scene, a) for a in first_video.storyboard_scenes if a.scene == str(max([int(a.scene) for a in first_video.storyboard_scenes]))][0]
+                                last_scene = last_scene_obj_tuple[0]
+                                last_scene_obj = last_scene_obj_tuple[1]
+                                last_shot = [a.shot for a in last_scene_obj.shots if a.shot == max([a.shot for a in last_scene_obj.shots])][0]
                                 current_creatives_upload_scene_shot_tuple = (last_scene, last_shot)
                     
                     if current_video_exists:
