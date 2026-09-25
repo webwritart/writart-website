@@ -275,6 +275,7 @@
         background: black;
         opacity: 1;
         padding: 1%;
+        z-index: 11000;
     }
     .close:hover {
         color: rgb(226, 103, 36);
@@ -1115,6 +1116,7 @@
         if (event.button !== 2) {
             return;
         }
+        event.preventDefault();
 
         const mediaDiv = event.target.closest(
             '.creative-feedback-shot-all-creative-container-inner'
@@ -1132,7 +1134,11 @@
             optionDiv.classList.remove('is-visible');
         }
 
+    });
+
+    creativeFeedbackShotAllCreativeContainer.addEventListener('contextmenu', (event) => {
         event.preventDefault();
+        event.stopPropagation();
     });
 
     /* -----------------------------
