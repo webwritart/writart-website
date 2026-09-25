@@ -168,7 +168,7 @@ def home():
                                 last_scene_obj_tuple = [(a.scene, a) for a in current_video.storyboard_scenes if a.scene == str(max([int(a.scene) for a in current_video.storyboard_scenes]))][0]
                                 last_scene = last_scene_obj_tuple[0]
                                 last_scene_obj = last_scene_obj_tuple[1]
-                                last_shot = [a.shot for a in last_scene_obj.shots if a.shot == max([a.shot for a in last_scene_obj.shots])][0]
+                                last_shot = [a.shot for a in last_scene_obj.shots if a.shot == excel_sort([a.shot for a in last_scene_obj.shots])[-1]][0]
                                 current_creatives_upload_scene_shot_tuple = (last_scene, last_shot)
                     
                     else:
@@ -192,7 +192,7 @@ def home():
                                 last_scene_obj_tuple = [(a.scene, a) for a in first_video.storyboard_scenes if a.scene == str(max([int(a.scene) for a in first_video.storyboard_scenes]))][0]
                                 last_scene = last_scene_obj_tuple[0]
                                 last_scene_obj = last_scene_obj_tuple[1]
-                                last_shot = [a.shot for a in last_scene_obj.shots if a.shot == max([a.shot for a in last_scene_obj.shots])][0]
+                                last_shot = [a.shot for a in last_scene_obj.shots if a.shot == excel_sort([a.shot for a in last_scene_obj.shots])[-1]][0]
                                 current_creatives_upload_scene_shot_tuple = (last_scene, last_shot)
                     
                     if current_video_exists:
@@ -633,7 +633,7 @@ def home():
                             last_scene_no_obj_tuple = [(a.scene, a) for a in video.storyboard_scenes if a.scene == str(max([int(a.scene) for a in video.storyboard_scenes]))][0]
                             last_scene_no = last_scene_no_obj_tuple[0]
                             last_scene_obj = last_scene_no_obj_tuple[1]
-                            last_shot = [a.shot for a in last_scene_obj.shots if a.shot == max([a.shot for a in last_scene_obj.shots])][0]
+                            last_shot = [a.shot for a in last_scene_obj.shots if a.shot == excel_sort([a.shot for a in last_scene_obj.shots])[-1]][0]
                             current_creatives_upload_scene_shot_tuple = (last_scene_no, last_shot)
                     if current_creatives_upload_scene_shot_tuple:
                         current_creatives_scene_obj = [a for a in video.storyboard_scenes if a.scene == str(current_creatives_upload_scene_shot_tuple[0])][0]
