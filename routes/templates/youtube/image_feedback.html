@@ -1515,7 +1515,7 @@ document.addEventListener('keydown', (event) => {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('Updated approval status.');
+                    console.log('Status updated successfully.');
                 } else {
                     alert('Failed to update approval status.');
                 }
