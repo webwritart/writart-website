@@ -50,6 +50,27 @@
         overflow: hidden;
         min-height: 75vh;
     }
+    #project-btn-container-main {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+        padding: .5% 2%;
+    }
+    .section-action-button {
+        background: rgb(148, 76, 12);
+        border-radius: 1.5rem;
+        border: none;
+        margin: 0% .5%;
+        color: white;
+        padding: 0% 2%;
+        text-decoration: none;
+    }
+    .section-action-button:hover {
+        background: rgb(90, 46, 7);
+        text-decoration: none;
+        color: white;
+    }
     /* ------------------------------------------ NOTIFICATIONS -------------------------------------------------- */
     #parent-notification-container {
         display: flex;
@@ -669,16 +690,8 @@
         display: block;
         margin: 1%;
     }
-    #storyboard-section-header {
-        display: none;
-    }
-    #selected_storyboard_container {
-        display: none;
-    }
-    .storyboard_container {
-        height: 50vh;
-        overflow-y: auto;
-    }
+    
+    
     .video {
         margin:0% .5%;
     }
@@ -1158,57 +1171,7 @@
     }
     
     /* --------------------------------------------------IMAGES DISPLAY---------------------------------------------------- */
-    #images-container {
-        display: flex;
-        flex-direction: row !important;
-        background: rgb(35, 43, 3) !important;
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        height: 30vh;
-        margin-bottom: 0%;
-    }
-    #videos-container {
-        display: flex;
-        flex-direction: row !important;
-        background: rgb(35, 43, 3) !important;
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        height: 30vh;
-        margin-bottom: 0%;
-    }
-    .image {
-        height: 100%;
-        width: auto;
-        margin: 0% .5%;
-    }
-    .section-action-button-container {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        width: 100%;
-        margin-top: 0%;
-        padding-top:0.5%;
-        padding-bottom: .5%;
-        background: rgb(131, 138, 120);
-        border-radius: 1.5rem;
-        border: 2px solid rgb(37, 40, 26);
-        margin-bottom: 2%;
-    }
-    .section-action-button {
-        background: rgb(127, 55, 4);
-        border-radius: 1.5rem;
-        border: none;
-        margin: 0%;
-        color: white;
-        padding: 0% 2%;
-        text-decoration: none;
-        border: 1px solid rgb(0, 0, 0);
-    }
-    .section-action-button:hover {
-        background: rgb(90, 46, 7);
-        text-decoration: none;
-        color: white;
-    }
+    
     /* ------------------------------------------ MEDIA QUERIES -------------------------------------------------- */
 
     @media(max-width: 1200px) {
@@ -1364,13 +1327,14 @@
                     <!-- <button class="notification-bar-btn">Prepared Videos</button> -->
                 </div>
             </div>
-            <!-- -----------------------------------IMAGE FEEDBACK TABLE -------------------------------------------- -->
+            <!-- -----------------------------------IMAGE/VIDEO FEEDBACK TABLE -------------------------------------------- -->
             <div id="table-container">
                 <p id="feedback-temp-title" class="task-project-title"></p>
                 <table id="images-table">
                     <thead>
                         <tr>
-                            <th class="col_1">Images (click to enlarge)</th>
+                            <th class="col_1">SS</th>
+                            <th class="col_1">Image/Video</th>
                             <th class="col_5">Image text</th>
                             <th class="col_2">Feedback</th>
                             <th class="col_6">Assigned to</th>
@@ -1379,6 +1343,9 @@
                     </thead>
                     <tbody>
                         <tr>
+                            <td>
+
+                            </td>
                             <td>
                                 <img class="image" id="feedback-table-image" src="" onclick="openImageLargeSize(this.src)">
                                 <button class="download-displaying-img-btn" id="download-displaying-img-btn">Download</button>
@@ -1403,7 +1370,6 @@
                     </tbody>
                 </table>
             </div>
-            <!-- -----------------------------------VIDEO FEEDBACK TABLE -------------------------------------------- -->
             <!-- --------------------------------------- SEO TASK CONTAINER -------------------------------------------- -->
              <div id="seo-task-parent-container">
                 <p id="seo-temp-title" class="task-project-title"></p>
@@ -1438,34 +1404,10 @@
                     <audio id="voice_recording" class="voice_recording" src="{{ audio }}" controls volume="0.5" loop></audio>
                     {% endfor %}
                 </div>
-                <p id="storyboard-section-header" class="vid-detail-section-header">Storyboard</p>
-                <div id="selected_storyboard_container" class="vid-detail-section storyboard_container">
-                    <iframe id="storyboard" src="" width="100%" height="1200px" style="border: none;" title="Embedded PDF"></iframe>
-                </div>
-                <p id="image-video-instruction-section-header" class="vid-detail-section-header">Image/Video instruction</p>
-                <div id="img_vid_instruction" class="vid-detail-section">
-                    {{ default_video_dict['img_vid_instruction'] }}
-                </div>
-                <p id="images-section-header" class="vid-detail-section-header">Images</p>
-                <div id="images-container" class="vid-detail-section">
-                {% for img in default_video_dict['image_list'] %}
-                    <img class="image" src="{{ img }}" alt="image">
-                {% endfor %}
-                </div>
-                <div id="images-action-button-container" class="section-action-button-container">
-                    <button class="section-action-button" id="image-feedback-btn" onclick="openImageFeedback({{ default_video_dict['video_uuid']}})">Feedbacks</button>
-                </div>
-
-                <p id="videos-section-header" class="vid-detail-section-header">Videos</p>
-                <div id="videos-container" class="vid-detail-section">
-                    {% for video in default_video_dict['video_list'] %}
-                    <video class="video" src="{{ video }}" controls height="200"></video>
-                    {% endfor %}
-                </div>
-                <div id="videos-action-button-container" class="section-action-button-container">
-                    <button class="section-action-button" id="video-feedback-btn" onclick="openImageFeedback({{ default_video_dict['video_uuid']}})">Feedbacks</button>
-                </div>
-                
+               <div id="project-btn-container-main">
+                    <button id="img-vid-feedbacks" class="section-action-button" onclick="openImageFeedback({{default_video_dict['video_uuid']}})">Feedbacks</button>
+                    <button id="view-storyboard" class="section-action-button">Storyboard</button>
+               </div>
                 <p id="thumbnail-instruction-section-header" class="vid-detail-section-header">Thumbnail instruction</p>
                 <div id="thumbnail_instruction" class="vid-detail-section">
                     {{ default_video_dict['thumbnail_instruction'] }}
@@ -1702,27 +1644,7 @@
             </div>
         </div>
     </div>
-    <div id="upload-video-revision-popup" class="popup">
-        <div class="popup-content">
-            <div id="upload-video-revision-form-container">
-                <span class="close" onclick="closePopup()">&times;</span>
-                <p id="upload-video-revision-scene-shot"></p>
-                <div id="upload-video-revision-video-container">
-                    <video class="upload-video-revision-video" src="" controls></video>
-                    <p class="upload-video-revision-version"></p>
-                </div>
-                <p id="upload-video-revision-video-version"></p>
-                <form id="upload-video-revision-form" enctype="multipart/form-data">
-                    <p id="upload-video-revision-header">Upload revised video</p>
-                    <input type="hidden" id="parent-video-uuid" name="parent-video-uuid">
-                    <input type="file" id="video-revision-file" name="video-revision-file" class="file-upload-input" accept=".mp4, .avi, .mov, video/mp4, video/avi, video/mov" required>
-                    <input type="text" id="video-revision-text-input" name="video-revision-text-input" placeholder="Anything you want to say?">
-                    <button type="submit" name="submit" value="upload_video_revision" id="upload-video-revision-btn" class="form-button">Upload revised video</button>
-                    <div id="upload-video-revision-status-message"></div>
-                </form>
-            </div>
-        </div>
-    </div>
+    
 </div>
 <script>
     // --------------------------------------------------- STORYBOARD CAVAS OPERATIONS ------------------------------------------------------
@@ -2026,16 +1948,13 @@
     function initialLoad() {
         currentProjectUuid = defaultVideoDict['video_uuid'];
         const dialogueNarration = document.getElementById('dialogue_narration');
-        const imgVidInstruction = document.getElementById('img_vid_instruction');
         const voiceRecording = document.getElementById('voice_recording_container');
-        const imagesContainer = document.getElementById('images-container');
         const thumbnailInstruction = document.getElementById('thumbnail_instruction');
         const youtubeCardInstruction = document.getElementById('youtube_card_instruction');
         const ytTitle = document.getElementById('yt_title');
         const ytDescription = document.getElementById('yt_description');
         const ytTags = document.getElementById('yt_tags');
         dialogueNarration.innerHTML = defaultVideoDict['dialogue_narration'];
-        imgVidInstruction.innerHTML = defaultVideoDict['img_vid_instruction'];
         thumbnailInstruction.innerHTML = defaultVideoDict['thumbnail_instruction'];
         youtubeCardInstruction.innerHTML = defaultVideoDict['youtube_card_instruction'];
         ytTitle.innerHTML = defaultVideoDict['yt_title'];
@@ -2057,40 +1976,7 @@
             voiceRecording.style.display = 'none';
             document.getElementById('voice-recording-section-header').style.display = 'none';
         }
-        if (defaultVideoDict['storyboard'].length > 0) {
-            document.getElementById('storyboard-section-header').style.display = 'block';
-            document.getElementById('selected_storyboard_container').style.display = 'flex';
-            document.getElementById('storyboard').src = defaultVideoDict['storyboard'][0];
-        } else {
-            document.getElementById('storyboard-section-header').style.display = 'none';
-            document.getElementById('selected_storyboard_container').style.display = 'none';
-        }
 
-        if (defaultVideoDict['image_list'].length > 0) {
-            imagesContainer.style.display = 'flex';
-            document.getElementById('images-section-header').style.display = 'block';
-            document.getElementById('images-action-button-container').style.display = 'flex';
-        } else {
-            imagesContainer.style.display = 'none';
-            document.getElementById('images-section-header').style.display = 'none';
-            document.getElementById('images-action-button-container').style.display = 'none';
-        }
-        if (defaultVideoDict['video_list'].length > 0) {
-            document.getElementById('videos-section-header').style.display = 'block';
-            document.getElementById('videos-container').style.display = 'flex';
-            document.getElementById('videos-action-button-container').style.display = 'flex';
-        } else {
-            document.getElementById('videos-section-header').style.display = 'none';
-            document.getElementById('videos-container').style.display = 'none';
-            document.getElementById('videos-action-button-container').style.display = 'none';
-        }
-        if (defaultVideoDict['img_vid_instruction'] != '' && defaultVideoDict['img_vid_instruction'] != null) {
-            imgVidInstruction.style.display = 'flex';
-            document.getElementById('image-video-instruction-section-header').style.display = 'block';
-        } else {
-            imgVidInstruction.style.display = 'none';
-            document.getElementById('image-video-instruction-section-header').style.display = 'none';
-        }
         if (defaultVideoDict['thumbnail_instruction'] != '' && defaultVideoDict['thumbnail_instruction'] != null) {
             thumbnailInstruction.style.display = 'flex';
             document.getElementById('thumbnail-instruction-section-header').style.display = 'block';
@@ -2293,11 +2179,9 @@
                 creativesDisplayContainer.style.display = 'flex';
             }
         }
-        
     }       
     
     initialLoad();
-    
     // -------------------------------------------- SHOW VIDEO BY STAGE --------------------------------------------------------
     function showProjectByStage() {
         const selectedStage = document.getElementById('stage-selector').value;
@@ -2484,39 +2368,7 @@
                 alert('Failed to upload revision.');
             });
     });
-    const videoRevisionForm = document.getElementById('upload-video-revision-form');
-    videoRevisionForm.addEventListener('submit', (event) => {
-        event.preventDefault(); // Prevent the form from submitting normally
-        const saveRevisionVideoEndpointUrl = "{{ url_for('youtube.save_revision_video') }}";
-        const statusMessage = document.getElementById('upload-video-revision-status-message');
-        const fileInput = document.getElementById("video-revision-file");
-        const parentVideoUuid = document.getElementById("parent-video-uuid").value;
-        const revisionVideoText = document.getElementById("video-revision-text-input").value;
-        const submitBtn = document.getElementById("upload-video-revision-btn");
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Uploading...';
-
-        const formData = new FormData();
-        formData.append('parent_video_uuid', parentVideoUuid);
-        formData.append('video_revision_file', fileInput.files[0]);
-        formData.append('type', 'upload_revision_video');
-        formData.append('revision_video_text', revisionVideoText);
-
-        fetch(saveRevisionVideoEndpointUrl, { method: 'POST', body: formData })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Revision uploaded successfully.');
-                    window.location.reload();
-                } else {
-                    alert('Failed to upload revision.');
-                }
-            })
-            .catch(error => {
-                console.error('Error uploading revision:', error);
-                alert('Failed to upload revision.');
-            });
-    });
+    
     function downloadDisplayingImage(file_path) {
         const link = document.createElement('a');
         link.href = file_path;
@@ -2570,6 +2422,7 @@
     })
     // -------------------------------------------- SELECT CHANNEL ---------------------------------------------------------------
     function selectChannel(channel_uuid) {
+
         const endpointUrl = "{{ url_for('youtube.home') }}";
         fetch(endpointUrl, {
             method: 'POST',
@@ -2581,10 +2434,10 @@
                 'type': 'select_channel'
             })
         }).then(response => response.json()).then(data => {
-            const videoList = data.video_list;
             const projectSelectionHeader = document.getElementById('project-selection-header');
             document.getElementById('project-selection-container').replaceChildren();
-            for (const vid of videoList) {
+
+            for (const vid of data.video_list) {
                 const myButton = document.createElement('button');
                 myButton.innerHTML = vid[1];
                 myButton.classList.add('project-btn');
@@ -2618,17 +2471,9 @@
             const voiceRecordingContainer = document.getElementById('voice_recording_container');
             const tempTitle = document.getElementById('temp_title');
             const dialogueNarration = document.getElementById('dialogue_narration');
-            const imgVidInstruction = document.getElementById('img_vid_instruction');
             const thumbnailInstruction = document.getElementById('thumbnail_instruction');
             const youtubeCardInstruction = document.getElementById('youtube_card_instruction');
-            const imagesContainer = document.getElementById('images-container');
-            const videoContainer = document.getElementById('videos-container');
-            const storyboard = document.getElementById('storyboard');
-            const storyboardSectionHeader = document.getElementById('storyboard-section-header');
-            const selectedStoryboardContainer = document.getElementById('selected_storyboard_container');
-            const imageList = data.image_list;
-            document.getElementById('image-feedback-btn').onclick = () => openImageFeedback(data.video_uuid);
-            document.getElementById('video-feedback-btn').onclick = () => openImageFeedback(data.video_uuid);
+            
             document.getElementById('add-title-btn').onclick = () => addTitle(data.video_uuid);
             document.getElementById('add-description-btn').onclick = () => addDescription(data.video_uuid);
             document.getElementById('add-tags-btn').onclick = () => addTags(data.video_uuid);
@@ -2638,22 +2483,7 @@
 
             // -----------------------------------------------------------------------------------------------------
             
-            imagesContainer.replaceChildren();
-            for (const im of imageList) {
-                const imageTag = document.createElement('img');
-                imageTag.src = im;
-                imageTag.classList.add('image');
-                imagesContainer.appendChild(imageTag);
-            }
-            videoContainer.replaceChildren();
-            for (const vid of data.video_list) {
-                const videoTag = document.createElement('video');
-                videoTag.src = vid;
-                videoTag.classList.add('video');
-                videoTag.controls = true;
-                videoTag.height = 200;
-                videoContainer.appendChild(videoTag);
-            }
+            
             vidDetailSection[0].style.display = 'flex';
             vidDetailSectionHeader[0].style.display = 'block';
             const voiceRecordingList = data.voice_recordings;
@@ -2669,14 +2499,12 @@
             }
             tempTitle.innerHTML = data.temp_title;
             dialogueNarration.innerHTML = data.dialogue_narration;
-            imgVidInstruction.innerHTML = data.img_vid_instruction;
             thumbnailInstruction.innerHTML = data.thumbnail_instruction;
             youtubeCardInstruction.innerHTML = data.youtube_card_instruction;
             document.getElementById('yt_title').innerHTML = data.yt_title;
             document.getElementById('yt_description').innerHTML = data.yt_description;
             document.getElementById('yt_tags').innerHTML = data.yt_tags;
 
-            storyboard.src = data.storyboard;
             if (data.dialogue_narration != '' && data.dialogue_narration != null) {
                 dialogueNarration.style.display = 'flex';
                 document.getElementById('dialogue-narration-section-header').style.display = 'block';
@@ -2691,38 +2519,7 @@
                 voiceRecordingContainer.style.display = 'none';
                 document.getElementById('voice-recording-section-header').style.display = 'none';
             }
-            if (data.img_vid_instruction != '' && data.img_vid_instruction != null) {
-                imgVidInstruction.style.display = 'flex';
-                document.getElementById('image-video-instruction-section-header').style.display = 'block';
-            } else {
-                imgVidInstruction.style.display = 'none';
-                document.getElementById('image-video-instruction-section-header').style.display = 'none';
-            }
-            if (data.storyboard != null && data.storyboard != "") {
-                storyboardSectionHeader.style.display = 'block';
-                selectedStoryboardContainer.style.display = 'block';
-            } else {
-                storyboardSectionHeader.style.display = 'none';
-                selectedStoryboardContainer.style.display = 'none';
-            }
-            if (data.video_list.length == 0) {
-                document.getElementById('videos-section-header').style.display = 'none';
-                videoContainer.style.display = 'none';
-                document.getElementById('videos-action-button-container').style.display = 'none';
-            } else {
-                document.getElementById('videos-section-header').style.display = 'block';
-                videoContainer.style.display = 'flex';
-                document.getElementById('videos-action-button-container').style.display = 'flex';
-            }
-            if (data.image_list.length == 0) {
-                document.getElementById('images-section-header').style.display = 'none';
-                imagesContainer.style.display = 'none';
-                document.getElementById('images-action-button-container').style.display = 'none';
-            } else {
-                document.getElementById('images-section-header').style.display = 'block';
-                imagesContainer.style.display = 'flex';
-                document.getElementById('images-action-button-container').style.display = 'flex';
-            }
+            
             if (data.thumbnail_instruction != '' && data.thumbnail_instruction != null) {
                 thumbnailInstruction.style.display = 'flex';
                 document.getElementById('thumbnail-instruction-section-header').style.display = 'block';
@@ -2825,6 +2622,7 @@
             document.getElementById('add-yt-title-video-uuid').value = data.video_uuid;
             document.getElementById('add-yt-description-video-uuid').value = data.video_uuid;
             document.getElementById('add-yt-tags-video-uuid').value = data.video_uuid;
+            document.getElementById('img-vid-feedbacks').onclick = () => openImageFeedback(data.video_uuid);
 // ------------------------------------- LOAD STORYBOARD DATA --------------------------------------------------------
             
             currentStoryboardScene = data.current_scene_shot_tuple[0];

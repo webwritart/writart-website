@@ -9,26 +9,12 @@
         min-height: 90vh;
         background: rgb(160, 175, 129);
     }
-
-    .table-main-header {
-        font-weight: 900;
-        font-size: 1.8rem;
-        color: white;
-        background: black;
+    #main-section {
         width: 100%;
-        text-align: center;
-        padding: 1% 0%;
-    }
-    #images-section {
         display: flex;
         flex-direction: column;
         align-items: center;
-        width: 90%;
-        min-height: 80vh;
-        background: rgb(216, 228, 187);
-        margin-bottom: 2%;
-        margin-top: 1%;
-        border-radius: 2rem;
+        padding: 0% 2% 2% 2%;
     }
     #table-container {
         width: 100%;
@@ -156,7 +142,22 @@
         height: 100%;
         width: 100%;
     }
-
+    .revision-required {
+        background: rgb(192, 25, 25);
+        color: white;
+    }
+    .pending {
+        background: rgb(184, 133, 22);
+        color: white;
+    }
+    .approved {
+        background: green;
+        color: white;
+    }
+    .rejected {
+        background: rgb(102, 102, 102);
+        color: white;
+    }
     /* ------------------------------------------------- VIDEO TABLE ---------------------------------------------------- */
     
     .videos-table td {
@@ -221,7 +222,16 @@
         height: 100%;
         background: rgba(0, 0, 0, 0.8);
     }
-
+    .secondary-popup {
+        display: none;
+        position: fixed;
+        z-index: 10000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+    }
     .popup-content {
         position: relative;
         width: 80%;
@@ -231,7 +241,20 @@
         justify-content: center;
         align-items: center;
     }
-    
+    #media-popup-container-inner {
+        background: rgb(56, 56, 56);
+        height: 100vh;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2%;
+        border-radius: 1.5rem;
+    }
+    .image-large-size, .video-large-size {
+        max-width: 100%;
+        max-height: 100%;
+    }
     .popup-content img {
         max-width: 100%;
         max-height: 100%;
@@ -295,48 +318,62 @@
         cursor: not-allowed;
     }
     
-    #video-feedback-recording-popup-content-inner {
+    #creative-feedback-recording-popup-content-inner {
         background: rgb(201, 213, 152);
         height: 70vh;
         width: 100%;
         display: flex;
         flex-direction: column;
-        justify-content: center;
         align-items: center;
         padding: 2%;
         border-radius: 1.5rem;
     }
-    #video-feedback-video-container {
-        height: 100%;
+    #creative-feedback-media-container {
+        height: 30vh;
         width: 100%;
         display: flex;
         flex-wrap: nowrap;
-        align-items: center;
         overflow-x: auto;
         overflow-y: hidden;
-        background: rgb(224, 238, 195);
-        padding: 2% 0%;
+        background: rgb(116, 133, 84);
+        padding: 1% 1%;
         border-radius: 1.5rem;
     }
-    .video-feedback-video-container-inner {
+    .creative-feedback-media-container-inner {
+        height: 25vh;
+        display: flex;
+        flex-direction: column;
+        margin: 0% .5%;
+    }
+    /* .creative-feedback-media-container-inner {
         height: 100%;
         flex: 0 0 auto;
         margin: 0% .5%;
-    }
-    .video-feedback-video {
+    } */
+    .creative-feedback-video {
         height: 100%;
         width: auto;
         max-height: 100%;
         object-fit: contain;
     }
-    .video-feedback-version-text {
+    .creative-feedback-image {
+        height: 100%;
+        width: auto;
+        max-height: 100%;
+        object-fit: contain;
+    }
+    .creative-feedback-version-text {
         width: 100%;
         text-align: center;
         font-weight: 900;
         font-size: 1.2rem;
-        color: rgb(15, 137, 15);
+        color: rgb(204, 212, 90);
     }
-    #video-feedback-recording-popup-btn-container {
+    .creative-feedback-version-text:hover {
+        color: white;
+        cursor: pointer;
+    }
+    #creative-feedback-recording-popup-btn-container {
         display: flex;
         width: 100%;
         justify-content: center;
@@ -344,7 +381,7 @@
         background: black;
         padding: 1%;
     }
-    #video-startBtn, #video-stopBtn, #save-video-feedback-recording {
+    #creative-startBtn, #creative-stopBtn, #save-creative-feedback-recording {
         border: none;
         background: #b6e372;
         color: black;
@@ -354,12 +391,12 @@
         font-size: .8rem;
         margin: .5%
     }
-    #video-startBtn:disabled, #video-stopBtn:disabled, #save-video-feedback-recording:disabled {
+    #creative-startBtn:disabled, #creative-stopBtn:disabled, #save-creative-feedback-recording:disabled {
         background: #838383;
         color: black;
         cursor: not-allowed;
     }
-    #video-feedback-scene-shot {
+    #creative-feedback-scene-shot {
         margin: 0%;
         font-weight: 900;
         font-size: 1.5rem;
@@ -380,48 +417,89 @@
     .form-button:hover {
         background: #4a6a1d;
     }
-    #upload-revision-header {
+    
+    #upload-creative-revision-header {
         width: 100%;
         text-align: center;
         font-weight: 600;
         margin: 0% 0% 2% 0% !important;
     }
-    #upload-video-revision-header {
-        width: 100%;
-        text-align: center;
-        font-weight: 600;
-        margin: 0% 0% 2% 0% !important;
-    }
-    #upload-revision-form-container {
+    
+
+    #upload-creative-revision-form-container {
         background: rgb(237, 244, 206);
-        width: 60%;
+        width: 100%;
         padding: 3%;
         border-radius: 1.5rem;
         display: flex;
         flex-direction: column;
         align-items: center;
     }
-    #upload-video-revision-form-container {
-        background: rgb(237, 244, 206);
+    #upload-creative-revision-media-container {
+        height: 30vh;
         width: 100%;
-        padding: 3%;
-        border-radius: 1.5rem;
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        background: rgb(74, 79, 50);
+        padding: 1% 1%;
+        border-radius: .5rem;
+    }
+    #upload-creative-revision-form-storyboard-container {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+        padding-top: 1.5%;
+        height: 100%;
+    }
+    #upload-creative-revision-storyboard {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 55%;
+        background: rgb(133, 147, 108);
+        color: white;
+        padding: 1%;
+        border-radius: .5rem;
+        margin-right: 2%;
+        height: auto;
+        border: 2px solid rgb(48, 61, 25);
+    }
+    #upload-revision-storyboard-header {
+        font-weight: 600;
+        color: black;
+    }
+    .upload-creative-revision-storyboard-item {
+        width: 100%;
+        background: rgb(196, 199, 140);
+        color: black;
+        margin: 1% 0%;
+        padding: .5% 1% .5% 1%;
+        border-radius: .5rem;
+        font-size: .9rem;
+    }
+    #upload-revision-direction {
+        background: rgb(235, 238, 181);
+        color: black;
+        width: 100%;
+        padding: 1% 1% 1% 1%;
+        border-radius: .5rem;
+        font-size: .9rem;
+        margin: 1% 0%;
+    }
+    #upload-creative-revision-form {
+        width: 45%;
+        height: auto;
+        border: 2px solid rgb(133, 147, 108);
+        padding: 1% 2% 2% 2%;
+        border-radius: .5rem;
         display: flex;
         flex-direction: column;
         align-items: center;
     }
     
-    #upload-revision-previous-image-container {
-        width: 30%;
-        height: 30vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    #upload-revision-previous-image {
-        max-width: 100%;
-        max-height: 100%;
-    }
     input {
         border-radius: 1.5rem;
         color: black;
@@ -442,24 +520,23 @@
         box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.6);
         padding: 0.5% 1% .5% 2%;
     }
-    #upload-video-revision-scene-shot {
+    #upload-creative-revision-scene-shot {
         font-weight: 900;
         font-size: 1.5rem;
 
     }
-    #upload-video-revision-video-container {
+    .upload-creative-revision-version {
         width: 100%;
-        height: 50vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    #upload-video-revision-video-version {
+        text-align: center;
         font-weight: 900;
         font-size: 1.2rem;
-        color: rgb(15, 137, 15);
+        color: rgb(204, 212, 90);
     }
-    .upload-video-revision-video {
+    .upload-creative-revision-version:hover {
+        color: white;
+        cursor: pointer;
+    }
+    .upload-creative-revision-media {
         max-width: 100%;
         max-height: 100%;
         object-fit: contain;
@@ -467,22 +544,21 @@
 
 </style>
 <div id="root-container">
-    <div id="images-section">
+    <div id="main-section">
         <div id="table-container">
-            <p id="video-temp-title">{{ temp_title }}</p>
-            {% if video_dict %}
-            <p class="table-main-header">--------------- VIDEOS ---------------</p>
-            {% for scene in video_dict %}
+            <p id="video-temp-title">{{ creatives_dict['temp_title'] }}</p>
+            {% for scene in creatives_dict['storyboard_scenes'] %}
             <div class="scene-container">
-                <p class="scene-header">Scene {{ scene }}</p>
+                <p class="scene-header">Scene {{ scene['scene'] }}</p>
                 <div class="scene-inner-container">
-                    {% for shot in video_dict[scene] %}
-                    <p class="shot-header">Shot {{ shot }}</p>
+                    {% for shot in scene['shots'] %}
+                    {% if shot['creatives']|length != 0 %}
+                    <p class="shot-header">Shot {{ shot['shot'] }}</p>
                     <table class="videos-table">
                         <thead>
                             <tr>
                                 <th class="vid-col_1">SS</th>
-                                <th class="vid-col_2">Video (click for details)</th>
+                                <th class="vid-col_2">Creatives</th>
                                 <th class="vid-col-6">Revisions</th>
                                 <th class="vid-col_5">Text</th>
                                 <th class="vid-col_3">Feedback</th>
@@ -492,37 +568,70 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for video in video_dict[scene][shot] %}
+                            {% for creative in shot['creatives'] %}
                             <tr>
-                                <td><b>{{ scene }}-{{ shot }}</b></td>
+                                <td><b>{{ scene.scene }}-{{ shot.shot }}</b></td>
                                 <td>
-                                    {% if video_dict[scene][shot][video]['last_revision'] != [] %}
-                                    <video class="video" src="{{video_dict[scene][shot][video]['last_revision'][0][2]}}" controls></video>
-                                    <button class ="download-displaying-img-btn" data-video_path="{{video_dict[scene][shot][video]['last_revision'][0][2]}}" onclick="downloadDisplayingImage(this.dataset.video_path)">Download</button>
+                                    {% if creative['revisions'] != [] %}
+                                        {% if creative['revisions'][-1].media_type == 'image' %}
+                                        <img class="image" data-creative_media_type="{{creative['media_type']}}" src="{{creative['revisions'][-1]['file_path']}}" onclick="openMediaLargeSize(this.dataset.creative_media_type, this.src)">
+                                        {% elif creative['revisions'][-1].media_type == 'video' %}
+                                        <video class="video" src="{{creative['revisions'][-1]['file_path']}}" controls></video>
+                                        {% endif %}
+                                    <button class ="download-displaying-img-btn" data-video_path="{{creative['revisions'][-1]['file_path']}}" onclick="downloadDisplayingImage(this.dataset.video_path)">Download</button>
                                     {% else %}
-                                    <video class="video" src="{{video_dict[scene][shot][video]['file_path']}}" controls></video>
-                                    <button class ="download-displaying-img-btn" data-video_path="{{video_dict[scene][shot][video]['file_path']}}" onclick="downloadDisplayingImage(this.dataset.video_path)">Download</button>
+                                    {% if creative['media_type'] == 'image' %}
+                                    <img class="image" src="{{creative['media_path']}}" data-creative_media_type="{{creative['media_type']}}" onclick="openMediaLargeSize(this.dataset.creative_media_type, this.src)">
+                                    {% elif creative['media_type'] == 'video' %}
+                                    <video class="video" src="{{creative['media_path']}}" controls></video>
+                                    {% endif %}
+                                    <button class ="download-displaying-img-btn" data-video_path="{{creative['media_path']}}" onclick="downloadDisplayingImage(this.dataset.video_path)">Download</button>
                                     {% endif %}
                                 </td>
                                 <td>
-                                    <p>{{ video_dict[scene][shot][video]['revisions'] }}</p>
+                                    <p>{{ creative['revisions']|length }}</p>
                                 </td>
                                 <td>
-                                    {{video_dict[scene][shot][video]['text']}}
+                                    {% set ns = namespace(found=false, match=none) %}
+                                    {% for revision in creative['revisions']|reverse %}
+                                        {% if not ns.found and revision['text'] %}
+                                            {% set ns.found = true %}
+                                            {% set ns.match = revision %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if ns.match and ns.match['text'] %}
+                                        {{ ns.match['text'] }}
+                                    {% elif creative['text'] %}
+                                    {{ creative['text'] }}
+                                    {% endif %}
                                 </td>
                                 <td>
                                     {% if youtube_admin in current_user.role %}
-                                    <button class="image-feedback-recording-btn" data-video_uuid="{{video}}" onclick="openVideoFeedbackRecordingPopup(this.dataset.video_uuid)">Record Feedback</button>
+                                    <button class="image-feedback-recording-btn" 
+                                    data-scene_shot="{{scene.scene}}-{{shot.shot}}" 
+                                    data-creative_uuid="{{creative['uuid']}}" 
+                                    data-creative_media_type="{{creative['media_type']}}"
+                                    data-creative_media_path="{{creative['media_path']}}"
+                                    data-creative_revisions='{{ creative["revisions"] | tojson}}'
+                                    onclick="openCreativeFeedbackRecordingPopup(this.dataset.creative_uuid, this.dataset.scene_shot, this.dataset.creative_media_type, this.dataset.creative_media_path, this.dataset.creative_revisions)">
+                                    Record Feedback</button>
                                     {% endif %}
-                                    {% if video_dict[scene][shot][video]['last_revision'] != [] and video_dict[scene][shot][video]['last_revision'][0][4] %}
-                                    <audio class="feedback-audio" src="{{ video_dict[scene][shot][video]['last_revision'][0][4] }}" controls></audio>
-                                    {% elif video_dict[scene][shot][video]['feedback'] %}
-                                    <audio class="feedback-audio" src="{{ video_dict[scene][shot][video]['feedback'] }}" controls></audio>
+                                    {% set ns = namespace(found=false, match=none) %}
+                                    {% for revision in creative['revisions']|reverse %}
+                                        {% if not ns.found and revision['feedback'] %}
+                                            {% set ns.found = true %}
+                                            {% set ns.match = revision %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if ns.match and ns.match['feedback'] %}
+                                    <audio class="feedback-audio" src="{{ ns.match['feedback'] }}" controls></audio>
+                                    {% elif creative['feedback'] %}
+                                    <audio class="feedback-audio" src="{{ creative['feedback'] }}" controls></audio>
                                     {% endif %}
                                 </td>
                                 <td class="assigned-to-name">
                                     {% if youtube_admin in current_user.role %}
-                                    <select class="assigned-to-mate" id="assign-mate-video-{{video}}" data-video_uuid="{{video}}" oninput="assignMateVideo(this.dataset.video_uuid)">
+                                    <select class="assigned-to-mate" id="assign-mate-creative-{{creative['uuid']}}" data-creative_uuid="{{creative['uuid']}}" oninput="assignMate(this.dataset.creative_uuid)">
                                         <option>Select mate</option>
                                         <option value="remove-mate">Remove Mate</option>
                                         {% for mate in mates %}
@@ -530,20 +639,41 @@
                                         {% endfor %}
                                     </select>
                                     {% endif %}
-                                    {{video_dict[scene][shot][video]['assigned_to_name']}}
-                                    {% if not video_dict[scene][shot][video]['assigned_to_name'] %}
-                                    <p style="color: black; font-weight: 500;">Last assigned: {{video_dict[scene][shot][video]['last_assigned']}}</p>
+                                    {% if creative.assigned_member %}
+                                    {{creative.assigned_member}}
+                                    {% else %}
+                                    {% if creative.last_assigned_member %}
+                                    <p style="color: black; font-weight: 500;">Last assigned: {{ creative.last_assigned_member}}</p>
+                                    {% endif %}
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {% if video_dict[scene][shot][video]['assigned_to_uuid'] == current_user.uuid %}
-                                    <button class="revision-btn" data-video_uuid="{{video}}" onclick="uploadVideoRevisionPopup(this.dataset.video_uuid)">Upload Revision</button>
+                                    {% if creative['assigned_to_uuid'] == current_user.uuid|string %}
+                                    
+                                    <button class="revision-btn" 
+                                    data-creative_uuid="{{creative['uuid']}}" 
+                                    data-scene_shot="{{scene.scene}}-{{shot.shot}}"
+                                    data-creative_media_type="{{creative['media_type']}}"
+                                    data-creative_media_path="{{creative['media_path']}}"
+                                    data-creative_revisions='{{ creative["revisions"] | tojson }}'
+                                    data-camera_direction="{{shot['frame_direction']}}"
+                                    data-direction="{{shot['creative_direction']}}"
+                                    data-dialogue_narration="{{shot['dialogue_narration'] | tojson}}"
+                                    onclick="uploadCreativeRevisionPopup(this.dataset.creative_uuid,
+                                    this.dataset.scene_shot,
+                                    this.dataset.creative_media_type,
+                                    this.dataset.creative_media_path,
+                                    this.dataset.creative_revisions,
+                                    this.dataset.camera_direction,
+                                    this.dataset.direction,
+                                    this.dataset.dialogue_narration
+                                    )">Upload Revision</button>
                                     {% endif %}
                                 </td>
-                                <td style="background: {{video_dict[scene][shot][video]['approval_status'][1]}}; color: white;">
+                                <td class="{{creative['status']}}">
                                     <div>
                                         {% if youtube_admin in current_user.role %}
-                                        <select id="approval-{{video}}" class="approval-status-select" data-video_uuid="{{video}}" oninput="submitVideoStatus(this.dataset.video_uuid)">
+                                        <select id="approval-{{creative['uuid']}}" class="approval-status-select" data-creative_uuid="{{creative['uuid']}}" oninput="submitCreativeStatus(this.dataset.creative_uuid)">
                                             <option>Select</option>
                                             <option value="revision-required">Revision Required</option>
                                             <option value="approved">Approved</option>
@@ -551,100 +681,29 @@
                                             <option value="pending">Pending</option>
                                         </select>
                                         {% endif %}
-                                    {{video_dict[scene][shot][video]['approval_status'][0]}}
+                                    {{creative['status']}}
                                     </div>
                                 </td>
                             </tr>
                             {% endfor %}
                         </tbody>
                     </table>
+                    {% endif %}
                     {% endfor %}
                 </div>
             </div>
             {% endfor %}
-            {% endif %}
-            {% if image_dict %}
-            <p class="table-main-header">--------------- IMAGES ---------------</p>
-            <table id="images-table">
-                <thead>
-                    <tr>
-                        <th class="col_1">Images (click to enlarge)</th>
-                        <th class="col_5">Image text</th>
-                        <th class="col_2">Feedback</th>
-                        <th class="col_6">Assigned to</th>
-                        <th class="col_3">Upload Revision</th>
-                        <th class="col_4">Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for image in image_dict %}
-                    <tr>
-                        <td>
-                            <img class="image" src="{{image_dict[image]['file_path']}}" data-image-path="{{image_dict[image]['file_path']}}" onclick="openImageLargeSize(this.dataset.imagePath)">
-                            <button class="download-displaying-img-btn" data-img_path="{{image_dict[image]['file_path']}}" onclick="downloadDisplayingImage(this.dataset.img_path)">Download</button>
-                        </td>
-                        <td>
-                            <div class="image-text-container">
-                                {{image_dict[image]['text']}}</td>
-                            </div>
-                        <td>
-                            <div class="img-feedback-recording-container">
-                                {% if youtube_admin in current_user.role %}
-                                <button class="image-feedback-recording-btn" data-img_path="{{image_dict[image]['file_path']}}" data-image_uuid="{{image}}" data-revision_uuid="{{image_dict[image]['revision_uuid']}}" onclick="openImageFeedbackRecordingPopup(this.dataset.revision_uuid, this.dataset.image_uuid, this.dataset.img_path)">Record Feedback</button>
-                                {% endif %}
-                                {% if image_dict[image]['feedback'] %}
-                                <audio class="feedback-audio" src="{{image_dict[image]['feedback']}}" controls></audio>
-                                {% endif %}
-                            </div>
-                        </td>
-                        <td class="assigned-to-name">
-                            {% if youtube_admin in current_user.role %}
-                            <select class="assigned-to-mate" id="assign-mate-{{image}}" data-img_uuid="{{image}}" oninput="assignMate(this.dataset.img_uuid)">
-                                <option>Select mate</option>
-                                <option value="remove-mate">Remove Mate</option>
-                                {% for mate in mates %}
-                                <option value="{{mate[0]}}">{{mate[1]}}</option>
-                                {% endfor %}
-                            </select>
-                            {% endif %}
-                            {{image_dict[image]['assigned_to_name']}}
-                            {% if not image_dict[image]['assigned_to_name'] %}
-                            <p style="color: black; font-weight: 500;">Last assigned: {{image_dict[image]['last_assigned_name']}}</p>
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if image_dict[image]['assigned_to_uuid'] == current_user.uuid %}
-                            <button class="revision-btn" data-img_uuid="{{image}}" data-img_path="{{image_dict[image]['file_path']}}" onclick="uploadRevisionPopup(this.dataset.img_uuid, this.dataset.img_path)">Upload Revision</button>
-                            {% endif %}
-                            
-                        </td>
-                        <td style="background: {{image_dict[image]['approval_status'][1]}}; color: white;">
-                            <div>
-                                {% if youtube_admin in current_user.role %}
-                                <select id="approval-{{image}}" class="approval-status-select" data-img_uuid="{{image}}" oninput="submitStatus(this.dataset.img_uuid)">
-                                    <option>Select</option>
-                                    <option value="revision-required">Revision Required</option>
-                                    <option value="approved">Approved</option>
-                                    <option value="rejected">Rejected</option>
-                                    <option value="pending">Pending</option>
-                                </select>
-                                {% endif %}
-                            {{image_dict[image]['approval_status'][0]}}
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            {% endif %}
             
         </div>
     </div>
 </div>
-<div id="image-popup" class="popup">
+<div id="media-popup" class="secondary-popup">
     <div class="popup-content">
-        <span class="close" onclick="closePopup()">&times;</span>
-        <img id="image-large-size" src="" alt="Large image">
+        <span class="close" onclick="closeMediaPopup()">&times;</span>
+        <div id="media-popup-container-inner">
+            <img class="image-large-size" src="" alt="Large image">
+            <video class="video-large-size" src="" controls></video>
+        </div>
     </div>
 </div>
 <div id="audio-recording-popup" class="popup">
@@ -662,209 +721,161 @@
     </div>
 </div>
 
-<div id="video-feedback-recording-popup" class="popup">
+<div id="creative-feedback-recording-popup" class="popup">
     <div class="popup-content">
-        <div id="video-feedback-recording-popup-content-inner">
+        <div id="creative-feedback-recording-popup-content-inner">
             <span class="close" onclick="closePopup()">&times;</span>
-            <p id="video-feedback-scene-shot"></p>
-            <div id="video-feedback-video-container"></div>
-            <div id="video-feedback-recording-popup-btn-container">
-                <button id="video-startBtn">Start Recording</button>
-                <button id="video-stopBtn" disabled>Stop Recording</button>
-                <audio id="videoAudioPlayback" controls></audio>
-                <button id="save-video-feedback-recording">Save Audio</button>
+            <p id="creative-feedback-scene-shot"></p>
+            <div id="creative-feedback-media-container"></div>
+            <div id="creative-feedback-recording-popup-btn-container">
+                <p id="creative-feedback-creative-uuid" style="display: none;"></p>
+                <button id="creative-startBtn">Start Recording</button>
+                <button id="creative-stopBtn" disabled>Stop Recording</button>
+                <audio id="creativeAudioPlayback" controls></audio>
+                <button id="save-creative-feedback-recording">Save Audio</button>
             </div>
         </div>
     </div>
 </div>
 
-<div id="upload-revision-popup" class="popup">
+<div id="upload-creative-revision-popup" class="popup">
     <div class="popup-content">
-        <div id="upload-revision-form-container">
+        <div id="upload-creative-revision-form-container">
             <span class="close" onclick="closePopup()">&times;</span>
-            <div id="upload-revision-previous-image-container">
-                <img id="upload-revision-previous-image" src="/static/files/youtube/2/2/images/kristofer-loffan-labedzki-all-characters-siluette-lineup.jpg">
+            <p id="upload-creative-revision-scene-shot"></p>
+            <div id="upload-creative-revision-media-container"></div>
+            <div id="upload-creative-revision-form-storyboard-container">
+                <div id="upload-creative-revision-storyboard">
+                    <p id="upload-revision-storyboard-header">Storyboard</p>
+                    <div id="upload-revision-camera-direction" class="upload-creative-revision-storyboard-item">Camera direction</div>
+                    <div id="upload-revision-direction" class="upload-creative-revision-storyboard-item">Direction</div>
+                    <div id="upload-revision-dialogue-narration" class="upload-creative-revision-storyboard-item">Narration/Dialogue</div>
+                </div>
+                <form id="upload-creative-revision-form" enctype="multipart/form-data">
+                    <p id="upload-creative-revision-header">Upload revised video</p>
+                    <input type="hidden" id="creative-uuid" name="creative-uuid">
+                    <input type="file" id="creative-revision-file" name="creative-revision-file" class="file-upload-input" accept=".mp4, .avi, .mov, video/*, image/*" required>
+                    <input type="text" id="creative-revision-text-input" name="creative-revision-text-input" placeholder="Anything you want to say?">
+                    <button type="submit" name="submit" value="upload_creative_revision" id="upload-creative-revision-btn" class="form-button">Upload revision</button>
+                    <div id="upload-creative-revision-status-message"></div>
+                </form>
             </div>
-            <form id="upload-revision-form" enctype="multipart/form-data">
-                <p id="upload-revision-header">Upload revision</p>
-                <input type="hidden" id="parent-img-uuid" name="parent-img-uuid">
-                <input type="file" id="revision-image-files" name="revision_image_files" class="file-upload-input" accept=".jpg, .jpeg, .png, image/jpeg, image/png" required>
-                <input type="text" id="revision-image-text" name="revision-image-text" placeholder="Anything you want to say?">
-                <button type="submit" name="submit" value="upload_revision" id="upload-revision-btn" class="form-button">Upload revised image</button>
-                <div id="upload-image-status-message"></div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<div id="upload-video-revision-popup" class="popup">
-    <div class="popup-content">
-        <div id="upload-video-revision-form-container">
-            <span class="close" onclick="closePopup()">&times;</span>
-            <p id="upload-video-revision-scene-shot"></p>
-            <div id="upload-video-revision-video-container">
-                <video class="upload-video-revision-video" src="" controls></video>
-                <p class="upload-video-revision-version"></p>
-            </div>
-            <p id="upload-video-revision-video-version"></p>
-            <form id="upload-video-revision-form" enctype="multipart/form-data">
-                <p id="upload-video-revision-header">Upload revised video</p>
-                <input type="hidden" id="parent-video-uuid" name="parent-video-uuid">
-                <input type="file" id="video-revision-file" name="video-revision-file" class="file-upload-input" accept=".mp4, .avi, .mov, video/mp4, video/avi, video/mov" required>
-                <input type="text" id="video-revision-text-input" name="video-revision-text-input" placeholder="Anything you want to say?">
-                <button type="submit" name="submit" value="upload_video_revision" id="upload-video-revision-btn" class="form-button">Upload revised video</button>
-                <div id="upload-video-revision-status-message"></div>
-            </form>
         </div>
     </div>
 </div>
 <script>
-    function openPopup() {
-        document.getElementById("image-popup").style.display = "block";
+    function openMediaPopup() {
+        document.getElementById("media-popup").style.display = "block";
+    }
+    function closeMediaPopup() {
+        document.getElementById("media-popup").style.display = "none";
     }
     function closePopup() {
-        document.getElementById("image-popup").style.display = "none";
         document.getElementById("audio-recording-popup").style.display = "none";
-        document.getElementById("upload-revision-popup").style.display = "none";
-        document.getElementById("upload-video-revision-popup").style.display = "none";
-        document.getElementById("video-feedback-recording-popup").style.display = "none";
+        document.getElementById("upload-creative-revision-popup").style.display = "none";
+        document.getElementById("creative-feedback-recording-popup").style.display = "none";
         window.location.reload();
     }
 
-    function openImageLargeSize(imagePath) {
-        const image = document.getElementById("image-large-size");
-        image.src = imagePath;
-        openPopup();
+    function openMediaLargeSize(media_type, media_path) {
+        const mediaPopupContainerInner = document.getElementById("media-popup-container-inner");
+        mediaPopupContainerInner.replaceChildren();
+        if (media_type == 'image') {
+            const newImage = document.createElement('img');
+            newImage.src = media_path;
+            newImage.classList.add('image-large-size');
+            mediaPopupContainerInner.appendChild(newImage);
+        } else if (media_type == 'video') {
+            const newVideo = document.createElement('video');
+            newVideo.src = media_path;
+            newVideo.classList.add('video-large-size');
+            newVideo.controls = true;
+            mediaPopupContainerInner.appendChild(newVideo);
+        }
+        openMediaPopup();
     }
     
-    function openImageFeedbackRecordingPopup(revision_uuid, image_uuid, img_path) {
-        document.getElementById("audio-recording-popup").style.display = "block";
-        document.getElementById("save-image-feedback-recording").onclick = () => saveAudio(revision_uuid, image_uuid);
-        document.getElementById("feedback-recording-popup-img").src = img_path;
-    }
 
-    function openVideoFeedbackRecordingPopup(video_uuid) {
-        document.getElementById("video-feedback-recording-popup").style.display = "block";
-        document.getElementById("save-video-feedback-recording").onclick = () => saveVideoAudio(video_uuid);
-        const endpointUrl = "{{ url_for('youtube.save_audio') }}";
-        fetch(endpointUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                'video_uuid': video_uuid,
-                'type': 'get_all_videos_details',
-            })
-        }).then(response => response.json()).then(data => {
+    function openCreativeFeedbackRecordingPopup(creative_uuid, scene_shot, main_media_type, main_media_path, creative_revisions) {
+        document.getElementById("creative-feedback-recording-popup").style.display = "block";
+        document.getElementById("save-creative-feedback-recording").onclick = () => saveCreativeAudio(creative_uuid);
+        document.getElementById('creative-feedback-scene-shot').innerHTML = scene_shot;
+        document.getElementById('creative-feedback-creative-uuid').innerHTML = creative_uuid;
 
-            const videoContainer = document.getElementById("video-feedback-video-container");
-            videoContainer.replaceChildren();
-            for (const item of data.video_list) {
-                const newDiv = document.createElement('div');
-                const newVideo = document.createElement('video');
+        const creativeContainer = document.getElementById("creative-feedback-media-container");
+        creativeContainer.replaceChildren();
+        const newDiv = document.createElement('div');
+        newDiv.classList.add('creative-feedback-media-container-inner');
+        if (main_media_type == 'image') {
+            const newImage = document.createElement('img');
+            newImage.src = main_media_path;
+            newImage.classList.add('creative-feedback-image');
+            newDiv.appendChild(newImage);
+            const newVersion = document.createElement('p');
+            newVersion.classList.add('creative-feedback-version-text');
+            newVersion.textContent = 'Main';
+            newVersion.onclick = () => openMediaLargeSize(main_media_type, main_media_path);
+            newVersion.style.cursor = 'pointer';
+            newDiv.appendChild(newVersion);
+        } else if (main_media_type == 'video') {
+            const newVideo = document.createElement('video');
+            newVideo.src = main_media_path;
+            newVideo.classList.add('creative-feedback-video');
+            newVideo.controls = true;
+            newDiv.appendChild(newVideo);
+            const newVersion = document.createElement('p');
+            newVersion.classList.add('creative-feedback-version-text');
+            newVersion.textContent = 'Main';
+            newVersion.style.cursor = 'pointer';
+            newVersion.onclick = () => openMediaLargeSize(main_media_type, main_media_path);
+            newDiv.appendChild(newVersion);
+        }
+        creativeContainer.append(newDiv);
+
+        const creativeRevisionsList = JSON.parse(creative_revisions);
+        if (creativeRevisionsList.length > 0) {
+            for (const item of creativeRevisionsList) {
+                const revisionDiv = document.createElement('div');
+                revisionDiv.classList.add('creative-feedback-media-container-inner');
+                if (item['media_type'] == 'image') {
+                    const newImage = document.createElement('img');
+                    newImage.src = item['file_path'];
+                    newImage.classList.add('creative-feedback-image');
+                    revisionDiv.appendChild(newImage);
+                } else if (item['media_type'] == 'video') {
+                    const newVideo = document.createElement('video');
+                    newVideo.src = item['file_path'];
+                    newVideo.classList.add('creative-feedback-video');
+                    newVideo.controls = true;
+                    revisionDiv.appendChild(newVideo);
+                }
                 const newVersion = document.createElement('p');
-                newVideo.src = item[0];
-                newVideo.classList.add('video-feedback-video');
-                newVideo.controls = true;
-
-                newVersion.classList.add('video-feedback-version-text');
-                newVersion.textContent = item[1];
-                newDiv.appendChild(newVideo);
-                newDiv.appendChild(newVersion);
-                newDiv.classList.add('video-feedback-video-container-inner');
-
-                videoContainer.appendChild(newDiv);
+                newVersion.classList.add('creative-feedback-version-text');
+                newVersion.textContent = item['version'];
+                newVersion.onclick = () => openMediaLargeSize(item['media_type'], item['file_path']);
+                revisionDiv.appendChild(newVersion);
+                creativeContainer.appendChild(revisionDiv);
             }
-            document.getElementById('video-feedback-scene-shot').innerHTML = data.scene_shot;
-        }).catch(error => {
-            console.error('Error:', error);
-        });
-        
+        }
     }
-
-    
     // ----------------------------------------------- IMAGE FEEDBACK RECORDING ------------------------------------------------
     // Keep track of the recorder instance and raw audio data
     let mediaRecorder;
     let audioChunks = [];
     let audioBlob;
 
-    const startBtn = document.getElementById('startBtn');
-    const stopBtn = document.getElementById('stopBtn');
-    const saveAudioBtn = document.getElementById('save-image-feedback-recording');
-    const audioPlayback = document.getElementById('audioPlayback');
-
-    saveAudioBtn.disabled = true;
-
-    // 1. Start Recording
-    startBtn.addEventListener('click', async () => {
-        audioChunks = []; // Clear previous data
-        
-        try {
-            // Request microphone permission from the browser
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            
-            // Initialize MediaRecorder with the hardware audio stream
-            mediaRecorder = new MediaRecorder(stream);
-            
-            // Collect audio data fragments as they become available
-            mediaRecorder.ondataavailable = (event) => {
-                if (event.data.size > 0) {
-                    audioChunks.push(event.data);
-                }
-            };
-            
-            // Process the final recording once the stream stops
-            mediaRecorder.onstop = () => {
-                // Combine chunks into a single audio Blob file
-                audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                
-                // Create a local URL pointing to the file and set it to the player
-                const audioUrl = URL.createObjectURL(audioBlob);
-                audioPlayback.src = audioUrl;
-                
-                // Stop all hardware mic tracks to turn off the recording indicator
-                stream.getTracks().forEach(track => track.stop());
-            };
-            
-            // Begin recording
-            mediaRecorder.start();
-            
-            // Adjust UI button states
-            startBtn.disabled = true;
-            stopBtn.disabled = false;
-            
-        } catch (error) {
-            console.error('Error accessing microphone:', error);
-            alert('Could not access microphone. Please check permissions.');
-        }
-    });
-
-    // 2. Stop Recording
-    stopBtn.addEventListener('click', () => {
-        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-            mediaRecorder.stop(); // Triggers the onstop event handler above
-            
-            // Reset UI button states
-            startBtn.disabled = false;
-            stopBtn.disabled = true;
-            saveAudioBtn.disabled = false;
-        }
-    });
-
     // ----------------------------------------------- VIDEO FEEDBACK RECORDING ------------------------------------------------
     // Keep track of the recorder instance and raw audio data
 
-    const videoStartBtn = document.getElementById('video-startBtn');
-    const videoStopBtn = document.getElementById('video-stopBtn');
-    const saveVideoAudioBtn = document.getElementById('save-video-feedback-recording');
-    const videoAudioPlayback = document.getElementById('videoAudioPlayback');
+    const creativeStartBtn = document.getElementById('creative-startBtn');
+    const creativeStopBtn = document.getElementById('creative-stopBtn');
+    const saveCreativeAudioBtn = document.getElementById('save-creative-feedback-recording');
+    const CreativeAudioPlayback = document.getElementById('creativeAudioPlayback');
 
-    saveVideoAudioBtn.disabled = true;
+    saveCreativeAudioBtn.disabled = true;
 
     // 1. Start Recording
-    videoStartBtn.addEventListener('click', async () => {
+    creativeStartBtn.addEventListener('click', async () => {
         audioChunks = []; // Clear previous data
         
         try {
@@ -888,7 +899,7 @@
                 
                 // Create a local URL pointing to the file and set it to the player
                 const audioUrl = URL.createObjectURL(audioBlob);
-                videoAudioPlayback.src = audioUrl;
+                CreativeAudioPlayback.src = audioUrl;
                 
                 // Stop all hardware mic tracks to turn off the recording indicator
                 stream.getTracks().forEach(track => track.stop());
@@ -898,38 +909,45 @@
             mediaRecorder.start();
             
             // Adjust UI button states
-            videoStartBtn.disabled = true;
-            videoStopBtn.disabled = false;
+            creativeStartBtn.disabled = true;
+            creativeStopBtn.disabled = false;
             
         } catch (error) {
-            console.error('Error accessing microphone:', error);
-            alert('Could not access microphone. Please check permissions.');
+            console.error('Error:', error);
+            console.error('Error name:', error.name);
+            console.error('Error message:', error.message);
+
+            alert(`Error: ${error.name}\n${error.message}`);
         }
     });
 
     // 2. Stop Recording
-    videoStopBtn.addEventListener('click', () => {
+    creativeStopBtn.addEventListener('click', () => {
         if (mediaRecorder && mediaRecorder.state !== 'inactive') {
             mediaRecorder.stop(); // Triggers the onstop event handler above
             
             // Reset UI button states
-            videoStartBtn.disabled = false;
-            videoStopBtn.disabled = true;
-            saveVideoAudioBtn.disabled = false;
+            creativeStartBtn.disabled = false;
+            creativeStopBtn.disabled = true;
+            saveCreativeAudioBtn.disabled = false;
         }
     });
-    function saveVideoAudio(video_uuid) {
+    function saveCreativeAudio(creative_uuid) {
+        const saveBtn = document.getElementById('save-creative-feedback-recording');
+        saveBtn.disabled = true;
         const endpointUrl = "{{ url_for('youtube.save_audio') }}";
+        const sceneShot = document.getElementById('creative-feedback-scene-shot').textContent.trim();
         if (audioBlob) {
             const formData = new FormData();
             formData.append('audio', audioBlob, 'audio.webm');
-            formData.append('video_uuid', video_uuid);
-            formData.append('type', 'save_video_audio');
+            formData.append('scene_shot', sceneShot);
+            formData.append('creative_uuid', creative_uuid);
+            formData.append('type', 'save_creative_audio');
             fetch(endpointUrl, { method: 'POST', body: formData })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.success) {
-                        window.location.reload();
+                    if (data) {
+                        console.log('success');
                     } else {
                         alert('Failed to save audio.');
                     }
@@ -942,130 +960,95 @@
             alert('No audio data available.');
         }
     }
-    // --------------------------------------------------------------------------------------------------------------------------
-    function saveAudio(revision_uuid, image_uuid) {
-        const endpointUrl = "{{ url_for('youtube.save_audio') }}";
-        if (audioBlob) {
-            const formData = new FormData();
-            formData.append('audio', audioBlob, 'audio.webm');
-            formData.append('image_uuid', image_uuid);
-            formData.append('revision_uuid', revision_uuid);
-            formData.append('type', 'save_audio');
-            fetch(endpointUrl, { method: 'POST', body: formData })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Audio saved successfully.');
-                        window.location.reload();
-                    } else {
-                        alert('Failed to save audio.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error saving audio:', error);
-                    alert('Failed to save audio.');
-                });
-        } else {
-            alert('No audio data available.');
-        }
-    }
+    
     // --------------------------------------------------- REVISION POPUP -----------------------------------------------
-    function uploadRevisionPopup(img_uuid, img_path) {
-        document.getElementById("upload-revision-popup").style.display = "block";
-        document.getElementById("parent-img-uuid").value = img_uuid;
-        document.getElementById("upload-revision-previous-image").src = img_path;
-    }
-    function uploadVideoRevisionPopup(video_uuid) {
-        document.getElementById("upload-video-revision-popup").style.display = "block";
-        document.getElementById("parent-video-uuid").value = video_uuid;
-        const endpointUrl = "{{ url_for('youtube.save_revision_video') }}";
-        data = {
-            'video_uuid': video_uuid,
-            'type': 'get_video_and_revisions_details'
-        };
-        fetch(endpointUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        }).then(response => response.json()).then(data => {
-            if (data.last_version) {
-                const uploadVideoRevisionVideoContainer = document.getElementById("upload-video-revision-video-container");
-                uploadVideoRevisionVideoContainer.replaceChildren();
-                const video = document.createElement('video');
-                video.src = data.last_version.file_path;
-                video.controls = true;
-                video.classList.add('upload-video-revision-video');
-                uploadVideoRevisionVideoContainer.appendChild(video);
-                document.getElementById('upload-video-revision-scene-shot').innerHTML = data.scene_shot;
-                document.getElementById('upload-video-revision-video-version').innerHTML = `Version: ${data.last_version.version}`;
-            } else {
-                alert('Failed to fetch video details.');
-            }
-        }).catch(error => {
-            console.error('Error:', error);
-        })
-    }
-    const revisionForm = document.getElementById('upload-revision-form');
-    revisionForm.addEventListener('submit', (event) => {
-        event.preventDefault(); // Prevent the form from submitting normally
-        const saveRevisionImageEndpointUrl = "{{ url_for('youtube.save_revision_img') }}";
-        const statusMessage = document.getElementById('upload-revision-status-message');
-        const fileInput = document.getElementById("revision-image-files");
-        const parentImgUuid = document.getElementById("parent-img-uuid").value;
-        const revisionImageText = document.getElementById("revision-image-text").value;
-        const submitBtn = document.getElementById('upload-revision-btn');
-        submitBtn.textContent = 'Uploading.....';
-        submitBtn.disabled = true;
-
-        files = fileInput.files;
-        if (files.length === 0) {
-            statusMessage.textContent = 'Please select at least one image file.';
-            return;
+    function uploadCreativeRevisionPopup(creative_uuid, scene_shot, main_media_type, main_media_path, creative_revisions, camera_direction, direction, dialogue_narration) {
+        document.getElementById("upload-creative-revision-popup").style.display = "block";
+        document.getElementById("creative-uuid").value = creative_uuid;
+        document.getElementById('upload-creative-revision-scene-shot').innerHTML = scene_shot;
+        document.getElementById('upload-revision-camera-direction').innerHTML = camera_direction;
+        document.getElementById('upload-revision-direction').innerHTML = direction;
+        document.getElementById('upload-revision-dialogue-narration').innerHTML = dialogue_narration;
+        
+        const creativeContainer = document.getElementById("upload-creative-revision-media-container");
+        creativeContainer.replaceChildren();
+        const newDiv = document.createElement('div');
+        newDiv.classList.add('creative-feedback-media-container-inner');
+        if (main_media_type == 'image') {
+            const newImage = document.createElement('img');
+            newImage.src = main_media_path;
+            newImage.classList.add('creative-feedback-image');
+            newDiv.appendChild(newImage);
+            const newVersion = document.createElement('p');
+            newVersion.classList.add('upload-creative-revision-version');
+            newVersion.textContent = 'Main';
+            newVersion.onclick = () => openMediaLargeSize(main_media_type, main_media_path);
+            newVersion.style.cursor = 'pointer';
+            newDiv.appendChild(newVersion);
+        } else if (main_media_type == 'video') {
+            const newVideo = document.createElement('video');
+            newVideo.src = main_media_path;
+            newVideo.classList.add('creative-feedback-video');
+            newVideo.controls = true;
+            newDiv.appendChild(newVideo);
+            const newVersion = document.createElement('p');
+            newVersion.classList.add('upload-creative-revision-version');
+            newVersion.textContent = 'Main';
+            newVersion.style.cursor = 'pointer';
+            newVersion.onclick = () => openMediaLargeSize(main_media_type, main_media_path);
+            newDiv.appendChild(newVersion);
         }
-        const formData = new FormData();
-        formData.append('parent_img_uuid', parentImgUuid);
-        for (let i = 0; i < files.length; i++) {
-            formData.append('revised_images[]', files[i]);
-        }
-        formData.append('type', 'upload_revision_img');
-        formData.append('revision_image_text', revisionImageText);
+        creativeContainer.append(newDiv);
 
-        fetch(saveRevisionImageEndpointUrl, { method: 'POST', body: formData })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Revision uploaded successfully.');
-                    window.location.reload();
-                } else {
-                    alert('Failed to upload revision.');
+        const creativeRevisionsList = JSON.parse(creative_revisions);
+        if (creativeRevisionsList.length > 0) {
+            for (const item of creativeRevisionsList) {
+                const revisionDiv = document.createElement('div');
+                revisionDiv.classList.add('creative-feedback-media-container-inner');
+                if (item['media_type'] == 'image') {
+                    const newImage = document.createElement('img');
+                    newImage.src = item['file_path'];
+                    newImage.classList.add('creative-feedback-image');
+                    revisionDiv.appendChild(newImage);
+                } else if (item['media_type'] == 'video') {
+                    const newVideo = document.createElement('video');
+                    newVideo.src = item['file_path'];
+                    newVideo.classList.add('creative-feedback-video');
+                    newVideo.controls = true;
+                    revisionDiv.appendChild(newVideo);
                 }
-            })
-            .catch(error => {
-                console.error('Error uploading revision:', error);
-                alert('Failed to upload revision.');
-            });
-    });
-    const videoRevisionForm = document.getElementById('upload-video-revision-form');
-    videoRevisionForm.addEventListener('submit', (event) => {
+                const newVersion = document.createElement('p');
+                newVersion.classList.add('upload-creative-revision-version');
+                newVersion.textContent = item['version'];
+                newVersion.style.cursor = 'pointer';
+                newVersion.onclick = () => openMediaLargeSize(item['media_type'], item['file_path']);
+                revisionDiv.appendChild(newVersion);
+                creativeContainer.append(revisionDiv);
+            }
+        }
+    }
+    
+    const creativeRevisionForm = document.getElementById('upload-creative-revision-form');
+    creativeRevisionForm.addEventListener('submit', (event) => {
         event.preventDefault(); // Prevent the form from submitting normally
-        const saveRevisionVideoEndpointUrl = "{{ url_for('youtube.save_revision_video') }}";
-        const statusMessage = document.getElementById('upload-video-revision-status-message');
-        const fileInput = document.getElementById("video-revision-file");
-        const parentVideoUuid = document.getElementById("parent-video-uuid").value;
-        const revisionVideoText = document.getElementById("video-revision-text-input").value;
-        const submitBtn = document.getElementById("upload-video-revision-btn");
+        const saveRevisionEndpointUrl = "{{ url_for('youtube.save_revision') }}";
+        const statusMessage = document.getElementById('upload-creative-revision-status-message');
+        const sceneShot = document.getElementById('upload-creative-revision-scene-shot').textContent;
+        const fileInput = document.getElementById("creative-revision-file");
+        const creativeUuid = document.getElementById("creative-uuid").value;
+        const revisionText = document.getElementById("creative-revision-text-input").value;
+        const submitBtn = document.getElementById("upload-creative-revision-btn");
         submitBtn.disabled = true;
         submitBtn.textContent = 'Uploading...';
 
         const formData = new FormData();
-        formData.append('parent_video_uuid', parentVideoUuid);
-        formData.append('video_revision_file', fileInput.files[0]);
-        formData.append('type', 'upload_revision_video');
-        formData.append('revision_video_text', revisionVideoText);
+        formData.append('scene_shot', sceneShot);
+        formData.append('creative_uuid', creativeUuid);
+        formData.append('file', fileInput.files[0]);
+        formData.append('type', 'upload_revision');
+        formData.append('revision_text', revisionText);
 
-        fetch(saveRevisionVideoEndpointUrl, { method: 'POST', body: formData })
+        fetch(saveRevisionEndpointUrl, { method: 'POST', body: formData })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
@@ -1104,13 +1087,13 @@
             });
     }
 
-    function submitVideoStatus(video_uuid) {
-        const approvalStatus = document.getElementById('approval-'+video_uuid).value;
+    function submitCreativeStatus(creative_uuid) {
+        const approvalStatus = document.getElementById('approval-'+creative_uuid).value;
         const endpointUrl = "{{ url_for('youtube.submit_status') }}";
         const formData = new FormData();
-        formData.append('video_uuid', video_uuid);
+        formData.append('creative_uuid', creative_uuid);
         formData.append('approval_status', approvalStatus);
-        formData.append('type', 'submit_video_approval_status');
+        formData.append('type', 'submit_creative_approval_status');
         fetch(endpointUrl, { method: 'POST', body: formData })
             .then(response => response.json())
             .then(data => {
@@ -1126,36 +1109,13 @@
             });
     }
 // ------------------------------------------- ASSIGN MATE -----------------------------------------------------
-    function assignMate(image_uuid) {
-        const mateUuid = document.getElementById('assign-mate-'+image_uuid).value;
+    function assignMate(creative_uuid) {
+        const mateUuid = document.getElementById('assign-mate-creative-'+creative_uuid).value;
         const endpointUrl = "{{ url_for('youtube.assign_mate') }}";
         const formData = new FormData();
-        formData.append('image_uuid', image_uuid);
+        formData.append('creative_uuid', creative_uuid);
         formData.append('mate_uuid', mateUuid);
-        formData.append('type', 'assign_mate');
-
-        fetch(endpointUrl, { method: 'POST', body: formData })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    window.location.reload();
-                } else {
-                    alert('Failed to assign mate.');
-                }
-            })
-            .catch(error => {
-                console.error('Error assigning mate:', error);
-                alert('Failed to assign mate.');
-            });
-    }
-
-    function assignMateVideo(video_uuid) {
-        const mateUuid = document.getElementById('assign-mate-video-'+video_uuid).value;
-        const endpointUrl = "{{ url_for('youtube.assign_mate') }}";
-        const formData = new FormData();
-        formData.append('video_uuid', video_uuid);
-        formData.append('mate_uuid', mateUuid);
-        formData.append('type', 'assign_mate_video');
+        formData.append('type', 'assign_mate_creative');
 
         fetch(endpointUrl, { method: 'POST', body: formData })
             .then(response => response.json())

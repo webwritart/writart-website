@@ -177,8 +177,10 @@ class YoutubeVideoCreative(db.Model):
     assigned_to_uuid = db.Column(db.String(500))  # uuid of the team member the task is assigned to
     last_assigned = db.Column(db.String(50)) # uuid of the team member who was last assigned this iteration
     member_id = db.Column(db.Integer, db.ForeignKey('member.id'))
-    revisions = db.relationship('YoutubeVideoCreativeRevision', backref='youtube_video_creative')
+    revisions = db.relationship('YoutubeVideoCreativeRevision', backref='youtube_video_creative', order_by='YoutubeVideoCreativeRevision.date_time.asc()', lazy=True)
     youtube_video_shot_id = db.Column(db.Integer, db.ForeignKey('youtube_video_storyboard_shot.id'))
+    assigned_member = db.relationship('Member', primaryjoin='YoutubeVideoCreative.assigned_to_uuid == foreign(Member.uuid)', viewonly=True, uselist=False)
+    last_assigned_member = db.relationship('Member', primaryjoin='YoutubeVideoCreative.last_assigned == foreign(Member.uuid)', viewonly=True, uselist=False)
 
     def __repr__(self):
         return f"Media type: {self.media_type}, Shot ID: {self.youtube_video_shot_id}"
@@ -196,6 +198,16 @@ class YoutubeVideoCreative(db.Model):
             'assigned_to_uuid': self.assigned_to_uuid,
             'last_assigned': self.last_assigned,
             'member_id': self.member_id,
+            'assigned_member': (
+                self.assigned_member.name
+                if self.assigned_member
+                else None
+            ),
+            'last_assigned_member': (
+                self.last_assigned_member.name
+                if self.last_assigned_member
+                else None
+            ),
             'revisions': [revision.to_dict() for revision in self.revisions]
         }
 
@@ -207,6 +219,7 @@ class YoutubeVideoCreativeRevision(db.Model):
     uuid = db.Column(db.Integer, unique=True)
     version = db.Column(db.String(50))
     text = db.Column(db.Text) # applicable in case of revisions.
+    media_type = db.Column(db.String(50))
     file_path = db.Column(db.String(200)) # applicable in case of revisions.
     feedback = db.Column(db.String(1000)) # applicable in case of revisions.
     date_time = db.Column(db.String(50))
@@ -215,3 +228,17 @@ class YoutubeVideoCreativeRevision(db.Model):
 
     def __repr__(self):
         return f"Version: {self.version}, date_time: {self.date_time}"
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'uuid': self.uuid,
+            'version': self.version,
+            'text': self.text,
+            'media_type': self.media_type,
+            'file_path': self.file_path,
+            'feedback': self.feedback,
+            'date_time': self.date_time,
+            'member_id': self.member_id,
+            'youtube_video_creative_id': self.youtube_video_creative_id
+        }
