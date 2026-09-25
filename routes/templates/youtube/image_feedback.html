@@ -335,7 +335,7 @@
         flex-wrap: nowrap;
         overflow-x: auto;
         overflow-y: hidden;
-        background: rgb(116, 133, 84);
+        background: rgb(65, 65, 41);
         padding: 1% 1%;
         border-radius: 1.5rem;
     }
@@ -367,7 +367,7 @@
         text-align: center;
         font-weight: 900;
         font-size: 1.2rem;
-        color: rgb(204, 212, 90);
+        color: rgb(189, 191, 163);
     }
     .creative-feedback-version-text:hover {
         color: white;
@@ -402,7 +402,39 @@
         font-size: 1.5rem;
         color: rgb(15, 137, 15);
     }
-    
+    #creative-feedback-recording-popup-storyboard-container {
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        margin: 1% 0%;
+        background: rgb(110, 124, 76);
+        border-radius: .5rem;
+        padding: 1%;
+    }
+    #creative-feedback-storyboard-header {
+        font-weight: 600;
+        color: black;
+    }
+    #creative-feedback-storyboard-container {
+        display: flex;
+        justify-content: center;
+        height: 100%;
+        width: 100%;
+    }
+    .creative-feedback-popup-storyboard-item {
+        height: 100%;
+        background: rgb(206, 213, 162);
+        margin: 0% .5%;
+        padding: .5%;
+        font-size: .9rem;
+        border-radius: .5rem;
+        width: 100%;
+        border: 1px solid rgb(71, 83, 30);
+    }
+    #creative-feedback-camera-direction, #creative-feedback-dialogue-narration {
+        background:rgb(180, 187, 137);
+    }
     /* ------------------------------------------------- UPLOAD REVISION IMAGE ------------------------------------------------ */
     .form-button {
         border: none;
@@ -530,7 +562,7 @@
         text-align: center;
         font-weight: 900;
         font-size: 1.2rem;
-        color: rgb(204, 212, 90);
+        color: rgb(189, 191, 163);
     }
     .upload-creative-revision-version:hover {
         color: white;
@@ -613,8 +645,18 @@
                                     data-creative_media_type="{{creative['media_type']}}"
                                     data-creative_media_path="{{creative['media_path']}}"
                                     data-creative_revisions='{{ creative["revisions"] | tojson}}'
-                                    onclick="openCreativeFeedbackRecordingPopup(this.dataset.creative_uuid, this.dataset.scene_shot, this.dataset.creative_media_type, this.dataset.creative_media_path, this.dataset.creative_revisions)">
-                                    Record Feedback</button>
+                                    data-camera_direction="{{shot['frame_direction']}}"
+                                    data-direction="{{shot['creative_direction']}}"
+                                    data-dialogue_narration="{{shot['dialogue_narration']}}"
+                                    onclick="openCreativeFeedbackRecordingPopup(this.dataset.creative_uuid, 
+                                    this.dataset.scene_shot, 
+                                    this.dataset.creative_media_type, 
+                                    this.dataset.creative_media_path, 
+                                    this.dataset.creative_revisions,
+                                    this.dataset.camera_direction,
+                                    this.dataset.direction,
+                                    this.dataset.dialogue_narration
+                                    )">Record Feedback</button>
                                     {% endif %}
                                     {% set ns = namespace(found=false, match=none) %}
                                     {% for revision in creative['revisions']|reverse %}
@@ -658,7 +700,7 @@
                                     data-creative_revisions='{{ creative["revisions"] | tojson }}'
                                     data-camera_direction="{{shot['frame_direction']}}"
                                     data-direction="{{shot['creative_direction']}}"
-                                    data-dialogue_narration="{{shot['dialogue_narration'] | tojson}}"
+                                    data-dialogue_narration="{{shot['dialogue_narration']}}"
                                     onclick="uploadCreativeRevisionPopup(this.dataset.creative_uuid,
                                     this.dataset.scene_shot,
                                     this.dataset.creative_media_type,
@@ -727,6 +769,14 @@
             <span class="close" onclick="closePopup()">&times;</span>
             <p id="creative-feedback-scene-shot"></p>
             <div id="creative-feedback-media-container"></div>
+            <div id="creative-feedback-recording-popup-storyboard-container">
+                <p id="creative-feedback-storyboard-header">Storyboard</p>
+                <div id="creative-feedback-storyboard-container">
+                    <div id="creative-feedback-camera-direction" class="creative-feedback-popup-storyboard-item">Camera direction</div>
+                    <div id="creative-feedback-direction" class="creative-feedback-popup-storyboard-item">Direction</div>
+                    <div id="creative-feedback-dialogue-narration" class="creative-feedback-popup-storyboard-item">Narration/Dialogue</div>
+                </div>
+            </div>
             <div id="creative-feedback-recording-popup-btn-container">
                 <p id="creative-feedback-creative-uuid" style="display: none;"></p>
                 <button id="creative-startBtn">Start Recording</button>
@@ -796,11 +846,14 @@
     }
     
 
-    function openCreativeFeedbackRecordingPopup(creative_uuid, scene_shot, main_media_type, main_media_path, creative_revisions) {
+    function openCreativeFeedbackRecordingPopup(creative_uuid, scene_shot, main_media_type, main_media_path, creative_revisions, camera_direction, direction, dialogue_narration) {
         document.getElementById("creative-feedback-recording-popup").style.display = "block";
         document.getElementById("save-creative-feedback-recording").onclick = () => saveCreativeAudio(creative_uuid);
         document.getElementById('creative-feedback-scene-shot').innerHTML = scene_shot;
         document.getElementById('creative-feedback-creative-uuid').innerHTML = creative_uuid;
+        document.getElementById('creative-feedback-camera-direction').innerHTML = camera_direction;
+        document.getElementById('creative-feedback-direction').innerHTML = direction;
+        document.getElementById('creative-feedback-dialogue-narration').innerHTML = dialogue_narration;
 
         const creativeContainer = document.getElementById("creative-feedback-media-container");
         creativeContainer.replaceChildren();
