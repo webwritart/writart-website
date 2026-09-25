@@ -1121,6 +1121,7 @@
         if (!mediaDiv) {
             return;
         }
+        optionsPopupDismissed = true;
 
         const optionDiv = mediaDiv.querySelector(
             '.creative-feedback-shot-all-creative-option-container'
@@ -1128,7 +1129,6 @@
 
         if (optionDiv) {
             optionDiv.classList.remove('is-visible');
-            optionsPopupDismissed = true;
         }
 
         // Optional: prevent browser right-click menu
