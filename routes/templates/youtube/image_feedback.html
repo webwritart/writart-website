@@ -1077,18 +1077,35 @@ const creativeFeedbackShotAllCreativeContainer =
 HOVER
 ----------------------------- */
 
-creativeFeedbackShotAllCreativeContainer.addEventListener('mouseenter', (event) => {
+creativeFeedbackShotAllCreativeContainer.addEventListener('mouseover', (event) => {
 
     const mediaDiv = event.target.closest(
         '.creative-feedback-shot-all-creative-container-inner'
     );
 
-    if (!mediaDiv || !creativeFeedbackShotAllCreativeContainer.contains(mediaDiv)) {
+    if (
+        !mediaDiv ||
+        !creativeFeedbackShotAllCreativeContainer.contains(mediaDiv)
+    ) {
         return;
     }
 
-    // If right-click already dismissed the popup during
-    // this hover session, don't show it again.
+    /*
+    If the mouse is only moving between elements
+    INSIDE the same mediaDiv, do nothing.
+
+    This prevents the popup state from being
+    repeatedly triggered while moving around
+    inside the media.
+    */
+    if (event.relatedTarget && mediaDiv.contains(event.relatedTarget)) {
+        return;
+    }
+
+    /*
+    Right-click has already dismissed this popup
+    during this hover session.
+    */
     if (mediaDiv.dataset.popupDismissed === 'true') {
         return;
     }
@@ -1101,16 +1118,32 @@ creativeFeedbackShotAllCreativeContainer.addEventListener('mouseenter', (event) 
         optionDiv.classList.add('is-visible');
     }
 
-}, true);
+});
 
 
-creativeFeedbackShotAllCreativeContainer.addEventListener('mouseleave', (event) => {
+/* -----------------------------
+MOUSE LEAVE MEDIA DIV
+----------------------------- */
+
+creativeFeedbackShotAllCreativeContainer.addEventListener('mouseout', (event) => {
 
     const mediaDiv = event.target.closest(
         '.creative-feedback-shot-all-creative-container-inner'
     );
 
-    if (!mediaDiv || !creativeFeedbackShotAllCreativeContainer.contains(mediaDiv)) {
+    if (
+        !mediaDiv ||
+        !creativeFeedbackShotAllCreativeContainer.contains(mediaDiv)
+    ) {
+        return;
+    }
+
+    /*
+    If the mouse is moving from one child element
+    to another child element INSIDE the same mediaDiv,
+    do NOT treat it as leaving the mediaDiv.
+    */
+    if (event.relatedTarget && mediaDiv.contains(event.relatedTarget)) {
         return;
     }
 
@@ -1122,12 +1155,14 @@ creativeFeedbackShotAllCreativeContainer.addEventListener('mouseleave', (event) 
         optionDiv.classList.remove('is-visible');
     }
 
-    // IMPORTANT:
-    // Once the cursor leaves this mediaDiv, allow the popup
-    // to appear again the next time the cursor enters.
+    /*
+    NOW the cursor has genuinely left the mediaDiv.
+
+    Therefore a future entry can activate the popup again.
+    */
     mediaDiv.dataset.popupDismissed = 'false';
 
-}, true);
+});
 
 
 /* -----------------------------
@@ -1146,7 +1181,10 @@ creativeFeedbackShotAllCreativeContainer.addEventListener('mousedown', (event) =
         '.creative-feedback-shot-all-creative-container-inner'
     );
 
-    if (!mediaDiv || !creativeFeedbackShotAllCreativeContainer.contains(mediaDiv)) {
+    if (
+        !mediaDiv ||
+        !creativeFeedbackShotAllCreativeContainer.contains(mediaDiv)
+    ) {
         return;
     }
 
@@ -1158,17 +1196,28 @@ creativeFeedbackShotAllCreativeContainer.addEventListener('mousedown', (event) =
         optionDiv.classList.remove('is-visible');
     }
 
-    // IMPORTANT:
-    // Remember that this particular mediaDiv has been dismissed.
-    // This remains true even after right-click is released.
+    /*
+    IMPORTANT:
+
+    Right-click permanently dismisses the popup
+    for the CURRENT hover session.
+
+    mouseup does NOT change this.
+    */
     mediaDiv.dataset.popupDismissed = 'true';
 
 });
 
 
+/* -----------------------------
+PREVENT BROWSER RIGHT-CLICK MENU
+----------------------------- */
+
 creativeFeedbackShotAllCreativeContainer.addEventListener('contextmenu', (event) => {
+
     event.preventDefault();
     event.stopPropagation();
+
 });
 
 
