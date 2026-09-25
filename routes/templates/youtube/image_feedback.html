@@ -1105,6 +1105,53 @@
             optionDiv.classList.remove('is-visible');
         }
     }, true);
+
+    /* -----------------------------
+    RIGHT CLICK
+    ----------------------------- */
+
+    creativeFeedbackShotAllCreativeContainer.addEventListener('contextmenu', (event) => {
+
+        const mediaDiv = event.target.closest(
+            '.creative-feedback-shot-all-creative-container-inner'
+        );
+
+        if (!mediaDiv) {
+            return;
+        }
+
+        const optionDiv = mediaDiv.querySelector(
+            '.creative-feedback-shot-all-creative-option-container'
+        );
+
+        if (optionDiv) {
+            optionDiv.classList.remove('is-visible');
+        }
+
+        // Optional: prevent browser right-click menu
+        event.preventDefault();
+
+    });
+
+    /* -----------------------------
+    ESCAPE KEY
+    ----------------------------- */
+
+    document.addEventListener('keydown', (event) => {
+
+        if (event.key !== 'Escape') {
+            return;
+        }
+
+        const visibleOption = creativeFeedbackShotAllCreativeContainer.querySelector(
+            '.creative-feedback-shot-all-creative-option-container.is-visible'
+        );
+
+        if (visibleOption) {
+            visibleOption.classList.remove('is-visible');
+        }
+
+    });
     // ----------------------------------------------- IMAGE FEEDBACK RECORDING ------------------------------------------------
     // Keep track of the recorder instance and raw audio data
     let mediaRecorder;
