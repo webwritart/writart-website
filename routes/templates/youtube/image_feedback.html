@@ -1068,98 +1068,130 @@
         }
     }
     // ---------------------------------------- SHOW OPTIONS POPUP ON HOVER | CREATIVE FEEDBACK ALL MEDIA IN A SHOT ------------------------------------
-    const creativeFeedbackShotAllCreativeContainer =
-        document.getElementById('creative-feedback-shot-all-creative-container');
+    // ---------------------------------------- SHOW OPTIONS POPUP ON HOVER | CREATIVE FEEDBACK ALL MEDIA IN A SHOT ------------------------------------
+const creativeFeedbackShotAllCreativeContainer =
+    document.getElementById('creative-feedback-shot-all-creative-container');
 
-    creativeFeedbackShotAllCreativeContainer.addEventListener('mouseenter', (event) => {
-        const mediaDiv = event.target.closest(
-            '.creative-feedback-shot-all-creative-container-inner'
-        );
 
-        if (!mediaDiv || !creativeFeedbackShotAllCreativeContainer.contains(mediaDiv)) {
-            return;
-        }
+/* -----------------------------
+HOVER
+----------------------------- */
 
-        const optionDiv = mediaDiv.querySelector(
-            '.creative-feedback-shot-all-creative-option-container'
-        );
+creativeFeedbackShotAllCreativeContainer.addEventListener('mouseenter', (event) => {
 
-        if (optionDiv) {
-            optionDiv.classList.add('is-visible');
-        }
-    }, true);
+    const mediaDiv = event.target.closest(
+        '.creative-feedback-shot-all-creative-container-inner'
+    );
 
-    creativeFeedbackShotAllCreativeContainer.addEventListener('mouseleave', (event) => {
-        const mediaDiv = event.target.closest(
-            '.creative-feedback-shot-all-creative-container-inner'
-        );
+    if (!mediaDiv || !creativeFeedbackShotAllCreativeContainer.contains(mediaDiv)) {
+        return;
+    }
 
-        if (!mediaDiv || !creativeFeedbackShotAllCreativeContainer.contains(mediaDiv)) {
-            return;
-        }
+    // If right-click already dismissed the popup during
+    // this hover session, don't show it again.
+    if (mediaDiv.dataset.popupDismissed === 'true') {
+        return;
+    }
 
-        const optionDiv = mediaDiv.querySelector(
-            '.creative-feedback-shot-all-creative-option-container'
-        );
+    const optionDiv = mediaDiv.querySelector(
+        '.creative-feedback-shot-all-creative-option-container'
+    );
 
-        if (optionDiv) {
-            optionDiv.classList.remove('is-visible');
-        }
-    }, true);
+    if (optionDiv) {
+        optionDiv.classList.add('is-visible');
+    }
 
-    /* -----------------------------
-    RIGHT CLICK
-    ----------------------------- */
+}, true);
 
-    creativeFeedbackShotAllCreativeContainer.addEventListener('mousedown', (event) => {
 
-        if (event.button !== 2) {
-            return;
-        }
-        event.preventDefault();
+creativeFeedbackShotAllCreativeContainer.addEventListener('mouseleave', (event) => {
 
-        const mediaDiv = event.target.closest(
-            '.creative-feedback-shot-all-creative-container-inner'
-        );
+    const mediaDiv = event.target.closest(
+        '.creative-feedback-shot-all-creative-container-inner'
+    );
 
-        if (!mediaDiv) {
-            return;
-        }
+    if (!mediaDiv || !creativeFeedbackShotAllCreativeContainer.contains(mediaDiv)) {
+        return;
+    }
 
-        const optionDiv = mediaDiv.querySelector(
-            '.creative-feedback-shot-all-creative-option-container'
-        );
+    const optionDiv = mediaDiv.querySelector(
+        '.creative-feedback-shot-all-creative-option-container'
+    );
 
-        if (optionDiv) {
-            optionDiv.classList.remove('is-visible');
-        }
+    if (optionDiv) {
+        optionDiv.classList.remove('is-visible');
+    }
 
-    });
+    // IMPORTANT:
+    // Once the cursor leaves this mediaDiv, allow the popup
+    // to appear again the next time the cursor enters.
+    mediaDiv.dataset.popupDismissed = 'false';
 
-    creativeFeedbackShotAllCreativeContainer.addEventListener('contextmenu', (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-    });
+}, true);
 
-    /* -----------------------------
-    ESCAPE KEY
-    ----------------------------- */
 
-    document.addEventListener('keydown', (event) => {
+/* -----------------------------
+RIGHT CLICK
+----------------------------- */
 
-        if (event.key !== 'Escape') {
-            return;
-        }
+creativeFeedbackShotAllCreativeContainer.addEventListener('mousedown', (event) => {
 
-        const visibleOption = creativeFeedbackShotAllCreativeContainer.querySelector(
+    if (event.button !== 2) {
+        return;
+    }
+
+    event.preventDefault();
+
+    const mediaDiv = event.target.closest(
+        '.creative-feedback-shot-all-creative-container-inner'
+    );
+
+    if (!mediaDiv || !creativeFeedbackShotAllCreativeContainer.contains(mediaDiv)) {
+        return;
+    }
+
+    const optionDiv = mediaDiv.querySelector(
+        '.creative-feedback-shot-all-creative-option-container'
+    );
+
+    if (optionDiv) {
+        optionDiv.classList.remove('is-visible');
+    }
+
+    // IMPORTANT:
+    // Remember that this particular mediaDiv has been dismissed.
+    // This remains true even after right-click is released.
+    mediaDiv.dataset.popupDismissed = 'true';
+
+});
+
+
+creativeFeedbackShotAllCreativeContainer.addEventListener('contextmenu', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+});
+
+
+/* -----------------------------
+ESCAPE KEY
+----------------------------- */
+
+document.addEventListener('keydown', (event) => {
+
+    if (event.key !== 'Escape') {
+        return;
+    }
+
+    const visibleOption =
+        creativeFeedbackShotAllCreativeContainer.querySelector(
             '.creative-feedback-shot-all-creative-option-container.is-visible'
         );
 
-        if (visibleOption) {
-            visibleOption.classList.remove('is-visible');
-        }
+    if (visibleOption) {
+        visibleOption.classList.remove('is-visible');
+    }
 
-    });
+});
     // ----------------------------------------------- IMAGE FEEDBACK RECORDING ------------------------------------------------
     // Keep track of the recorder instance and raw audio data
     let mediaRecorder;
