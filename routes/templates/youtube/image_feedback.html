@@ -616,16 +616,16 @@
                                 <td>
                                     {% if creative['revisions'] != [] %}
                                         {% if creative['revisions'][-1].media_type == 'image' %}
-                                        <img class="image" data-creative_media_type="{{creative['media_type']}}" src="{{creative['revisions'][-1]['file_path']}}" onclick="openMediaLargeSize(this.dataset.creative_media_type, this.src)">
+                                        <img class="image" loading="lazy" data-creative_media_type="{{creative['media_type']}}" src="{{creative['revisions'][-1]['file_path']}}" onclick="openMediaLargeSize(this.dataset.creative_media_type, this.src)">
                                         {% elif creative['revisions'][-1].media_type == 'video' %}
-                                        <video class="video" src="{{creative['revisions'][-1]['file_path']}}" controls></video>
+                                        <video class="video" loading="lazy" src="{{creative['revisions'][-1]['file_path']}}" controls></video>
                                         {% endif %}
                                     <button class ="download-displaying-img-btn" data-video_path="{{creative['revisions'][-1]['file_path']}}" onclick="downloadDisplayingImage(this.dataset.video_path)">Download</button>
                                     {% else %}
                                     {% if creative['media_type'] == 'image' %}
-                                    <img class="image" src="{{creative['media_path']}}" data-creative_media_type="{{creative['media_type']}}" onclick="openMediaLargeSize(this.dataset.creative_media_type, this.src)">
+                                    <img class="image" loading="lazy" src="{{creative['media_path']}}" data-creative_media_type="{{creative['media_type']}}" onclick="openMediaLargeSize(this.dataset.creative_media_type, this.src)">
                                     {% elif creative['media_type'] == 'video' %}
-                                    <video class="video" src="{{creative['media_path']}}" controls></video>
+                                    <video class="video" loading="lazy" src="{{creative['media_path']}}" controls></video>
                                     {% endif %}
                                     <button class ="download-displaying-img-btn" data-video_path="{{creative['media_path']}}" onclick="downloadDisplayingImage(this.dataset.video_path)">Download</button>
                                     {% endif %}
