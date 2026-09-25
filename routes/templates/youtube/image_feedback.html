@@ -456,7 +456,17 @@
         font-weight: 600;
         margin: 0% 0% 2% 0% !important;
     }
-    
+    #upload-creative-revision-feedback-audio-container {
+        display: flex;
+        padding: .5%;
+        justify-content: center;
+        width: 100%;
+        background: rgb(57, 61, 45);
+        border-radius: .5rem;
+    }
+    #upload-creative-revision-feedback-audio-container audio {
+        padding: .5%;
+    }
 
     #upload-creative-revision-form-container {
         background: rgb(237, 244, 206);
@@ -532,7 +542,6 @@
         flex-direction: column;
         align-items: center;
     }
-    
     input {
         border-radius: 1.5rem;
         color: black;
@@ -702,6 +711,7 @@
                                     data-camera_direction="{{shot['frame_direction']}}"
                                     data-direction="{{shot['creative_direction']}}"
                                     data-dialogue_narration="{{shot['dialogue_narration']}}"
+                                    data-feedback_audio="{{creative['revisions'][-1]['feedback']}}"
                                     onclick="uploadCreativeRevisionPopup(this.dataset.creative_uuid,
                                     this.dataset.scene_shot,
                                     this.dataset.creative_media_type,
@@ -709,7 +719,8 @@
                                     this.dataset.creative_revisions,
                                     this.dataset.camera_direction,
                                     this.dataset.direction,
-                                    this.dataset.dialogue_narration
+                                    this.dataset.dialogue_narration,
+                                    this.dataset.feedback_audio
                                     )">Upload Revision</button>
                                     {% endif %}
                                 </td>
@@ -795,6 +806,7 @@
             <span class="close" onclick="closePopup()">&times;</span>
             <p id="upload-creative-revision-scene-shot"></p>
             <div id="upload-creative-revision-media-container"></div>
+            <div id="upload-creative-revision-feedback-audio-container"></div>
             <div id="upload-creative-revision-form-storyboard-container">
                 <div id="upload-creative-revision-storyboard">
                     <p id="upload-revision-storyboard-header">Storyboard</p>
@@ -803,11 +815,11 @@
                     <div id="upload-revision-dialogue-narration" class="upload-creative-revision-storyboard-item">Narration/Dialogue</div>
                 </div>
                 <form id="upload-creative-revision-form" enctype="multipart/form-data">
-                    <p id="upload-creative-revision-header">Upload revised video</p>
+                    <p id="upload-creative-revision-header">Upload revision</p>
                     <input type="hidden" id="creative-uuid" name="creative-uuid">
                     <input type="file" id="creative-revision-file" name="creative-revision-file" class="file-upload-input" accept=".mp4, .avi, .mov, video/*, image/*" required>
                     <input type="text" id="creative-revision-text-input" name="creative-revision-text-input" placeholder="Anything you want to say?">
-                    <button type="submit" name="submit" value="upload_creative_revision" id="upload-creative-revision-btn" class="form-button">Upload revision</button>
+                    <button type="submit" name="submit" value="upload_creative_revision" id="upload-creative-revision-btn" class="form-button">Upload</button>
                     <div id="upload-creative-revision-status-message"></div>
                 </form>
             </div>
@@ -1016,13 +1028,20 @@
     }
     
     // --------------------------------------------------- REVISION POPUP -----------------------------------------------
-    function uploadCreativeRevisionPopup(creative_uuid, scene_shot, main_media_type, main_media_path, creative_revisions, camera_direction, direction, dialogue_narration) {
+    function uploadCreativeRevisionPopup(creative_uuid, scene_shot, main_media_type, main_media_path, creative_revisions, camera_direction, direction, dialogue_narration, feedback_audio_path) {
         document.getElementById("upload-creative-revision-popup").style.display = "block";
         document.getElementById("creative-uuid").value = creative_uuid;
         document.getElementById('upload-creative-revision-scene-shot').innerHTML = scene_shot;
         document.getElementById('upload-revision-camera-direction').innerHTML = camera_direction;
         document.getElementById('upload-revision-direction').innerHTML = direction;
         document.getElementById('upload-revision-dialogue-narration').innerHTML = dialogue_narration;
+
+        const audioContainer = document.getElementById("upload-creative-revision-feedback-audio-container");
+        const audioElement = document.createElement('audio');
+        audioElement.src = feedback_audio_path;
+        audioElement.controls = true;
+        audioContainer.replaceChildren();
+        audioContainer.appendChild(audioElement);
         
         const creativeContainer = document.getElementById("upload-creative-revision-media-container");
         creativeContainer.replaceChildren();
