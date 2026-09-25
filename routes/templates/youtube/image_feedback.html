@@ -1067,6 +1067,7 @@
         }
     }
     // ---------------------------------------- SHOW OPTIONS POPUP ON HOVER | CREATIVE FEEDBACK ALL MEDIA IN A SHOT ------------------------------------
+    let optionsPopupDismissed = false;
     const creativeFeedbackShotAllCreativeContainer =
         document.getElementById('creative-feedback-shot-all-creative-container');
 
@@ -1083,7 +1084,7 @@
             '.creative-feedback-shot-all-creative-option-container'
         );
 
-        if (optionDiv) {
+        if (optionDiv && !optionsPopupDismissed) {
             optionDiv.classList.add('is-visible');
         }
     }, true);
@@ -1103,6 +1104,7 @@
 
         if (optionDiv) {
             optionDiv.classList.remove('is-visible');
+            optionsPopupDismissed = false;
         }
     }, true);
 
@@ -1126,10 +1128,12 @@
 
         if (optionDiv) {
             optionDiv.classList.remove('is-visible');
+            optionsPopupDismissed = true;
         }
 
         // Optional: prevent browser right-click menu
         event.preventDefault();
+
 
     });
 
@@ -1149,6 +1153,7 @@
 
         if (visibleOption) {
             visibleOption.classList.remove('is-visible');
+            optionsPopupDismissed = true;
         }
 
     });
