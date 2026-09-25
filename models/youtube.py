@@ -127,7 +127,7 @@ class YoutubeVideoStoryboardScene(db.Model):
             'uuid': self.uuid,
             'scene': self.scene,
             'description': self.description,
-            'shots': [shot.to_dict() for shot in excel_sort(self.shots)]
+            'shots': [shot.to_dict() for shot in excel_sort_shots(self.shots)]
         }
 
 

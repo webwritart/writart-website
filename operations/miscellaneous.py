@@ -804,6 +804,15 @@ def save_with_filename_suffix_if_already_exists(directory, file_name_without_ext
     file.save(filepath)
     return filepath
 
+def excel_sort_shots(shots):
+    def column_number(shot):
+        number = 0
+        for char in shot.shot.upper():
+            number = number * 26 + (ord(char) - ord('A') + 1)
+        return number
+
+    return sorted(shots, key=column_number)
+
 def excel_sort(values):
     def column_number(value):
         number = 0
