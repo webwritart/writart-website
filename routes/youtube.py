@@ -167,7 +167,7 @@ def home():
                             if len(current_video.storyboard_scenes) > 0:
                                 last_scene = [(a.scene, a) for a in current_video.storyboard_scenes if a.scene == str(max([int(a.scene) for a in current_video.storyboard_scenes]))][0]
                                 last_scene_obj = last_scene[1]
-                                last_shot = [a.shot for a in last_scene_obj.shots if a.shot == str(max([int(a.shot) for a in last_scene_obj.shots]))][0]
+                                last_shot = [a.shot for a in last_scene_obj.shots if a.shot == max([a.shot for a in last_scene_obj.shots])][0]
                     
                     else:
                         default_video_dict['stages'] = [a.stage for a in first_video.stages]
