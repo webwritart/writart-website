@@ -1217,7 +1217,6 @@ def save_revision():
 @youtube.route('/assign-mate', methods=['POST'])
 def assign_mate():
     if request.method == 'POST' and request.form.get('type') == 'assign_mate_creative':
-        p('posted assign mate')
         creative_uuid = request.form.get('creative_uuid')
         mate_uuid = request.form.get('mate_uuid')
         creative = db.session.query(YoutubeVideoCreative).filter_by(uuid=creative_uuid).scalar()
@@ -1232,11 +1231,34 @@ def assign_mate():
             creative.status = 'revision-required'
             db.session.commit()
             return jsonify(success='success')
+        
+    if request.method == 'POST' and request.form.get('type') == 'assign_creative_mate_feedback_popup':
+        creative_uuid = request.form.get('creative_uuid')
+        mate_uuid = request.form.get('mate_uuid')
+        creative = db.session.query(YoutubeVideoCreative).filter_by(uuid=creative_uuid).scalar()
+
+        if mate_uuid == 'remove-mate':
+            creative.assigned_to_uuid = None
+            creative.status = 'pending'
+            db.session.commit()
+            return jsonify(success='success', creative_uuid=creative_uuid, status='pending')
+        else:
+            creative.assigned_to_uuid = mate_uuid
+            creative.status = 'revision-required'
+            db.session.commit()
+            return jsonify(success='success', creative_uuid=creative_uuid, status='revision-required')
 
 
 @youtube.route('/submit-status', methods=['POST'])
 def submit_status():
     if request.method == 'POST' and request.form.get('type') == 'submit_creative_approval_status':
+        creative_uuid = request.form.get('creative_uuid')
+        approval_status = request.form.get('approval_status')
+        creative = db.session.query(YoutubeVideoCreative).filter_by(uuid=creative_uuid).scalar()
+        creative.status = approval_status
+        db.session.commit()
+        return jsonify(success='success')
+    if request.method== 'POST' and request.form.get('type') == 'update_creative_status_feedback_popup':
         creative_uuid = request.form.get('creative_uuid')
         approval_status = request.form.get('approval_status')
         creative = db.session.query(YoutubeVideoCreative).filter_by(uuid=creative_uuid).scalar()
