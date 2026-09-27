@@ -66,7 +66,7 @@ def home():
                                 creative_uploads = [a for a in shot_obj.creatives]
 
                                 if not creative_uploads:
-                                    return (scene, shot)
+                                    return (scene, shot, scene_obj)
             global first_channel, first_video
             channels = []
             default_video_dict = {}
@@ -169,7 +169,7 @@ def home():
                                 last_scene = last_scene_obj_tuple[0]
                                 last_scene_obj = last_scene_obj_tuple[1]
                                 last_shot = [a.shot for a in last_scene_obj.shots if a.shot == excel_sort([a.shot for a in last_scene_obj.shots])[-1]][0]
-                                current_creatives_upload_scene_shot_tuple = (last_scene, last_shot)
+                                current_creatives_upload_scene_shot_tuple = (last_scene, last_shot, last_scene_obj)
                     
                     else:
                         default_video_dict['stages'] = [a.stage for a in first_video.stages]
@@ -193,7 +193,7 @@ def home():
                                 last_scene = last_scene_obj_tuple[0]
                                 last_scene_obj = last_scene_obj_tuple[1]
                                 last_shot = [a.shot for a in last_scene_obj.shots if a.shot == excel_sort([a.shot for a in last_scene_obj.shots])[-1]][0]
-                                current_creatives_upload_scene_shot_tuple = (last_scene, last_shot)
+                                current_creatives_upload_scene_shot_tuple = (last_scene, last_shot, last_scene_obj)
                     
                     if current_video_exists:
                         default_video_dict['temp_title'] = current_video.temp_title
@@ -308,7 +308,7 @@ def home():
                         except:
                             default_video_dict['youtube_card_instruction'] = first_youtube_card_instruction
                     if current_creatives_upload_scene_shot_tuple:
-                        current_creatives_scene_obj = [a for a in display_video.storyboard_scenes if a.scene == str(current_creatives_upload_scene_shot_tuple[0])][0]
+                        current_creatives_scene_obj = current_creatives_upload_scene_shot_tuple[2]
                         current_creatives_shot_obj = [a for a in current_creatives_scene_obj.shots if a.shot == current_creatives_upload_scene_shot_tuple[1]][0]
                         current_creatives_shot_img = current_creatives_shot_obj.storyboard_img_path
                         current_creatives_shot_camera_direction = current_creatives_shot_obj.frame_direction
