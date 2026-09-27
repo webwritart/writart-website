@@ -760,7 +760,7 @@ def home():
             req_scene = [a for a in project_dict['storyboard_scenes'] if a['scene'] == '1']
             # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             current_user_roles = [a.name for a in current_user.role]
-            return render_template('youtube.html', current_year=current_year, channels=channels, default_video_dict=default_video_dict, logged_in=current_user.is_authenticated, admin=admin, first_channel=first_channel,
+            return render_template('youtube.html', current_year=current_year, channels=channels, default_video_dict=default_video_dict, logged_in=current_user.is_authenticated, admin=admin, first_channel=default_channel,
                                 current_video_option_list=current_video_option_list, pending_revisions=pending_revisions, pending_reviews=pending_reviews, pending_seo=pending_seo, youtube_img_creator=youtube_img_creator, youtube_seo_manager=youtube_seo_manager, youtube_admin=youtube_admin, current_user_roles=current_user_roles,
                                 project_dict=project_dict, current_scene_shot_tuple=current_scene_shot_tuple, current_creatives_upload_scene_shot_data_tuple=current_creatives_upload_scene_shot_data_tuple, upload_images_form_top_bar_data_tuple=upload_images_form_top_bar_data_tuple, current_creatives_upload_scene_shot_tuple=current_creatives_upload_scene_shot_tuple)
         else:
