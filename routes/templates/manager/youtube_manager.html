@@ -239,6 +239,7 @@
                         <option value="paranormal-short">Paranormal short</option>
                         <option value="paranormal-long">Paranormal long</option>
                         <option value="paranormal-story">Paranormal story</option>
+                        <option value="advertisement">Advertisement</option>
                     </select>
                     <input type="text" name="temp_title" placeholder="Temporary title" required>
                     <input id="scheduled-date-time" type="datetime-local" name="scheduled_date_time" placeholder="Upload scheduled date-time">
@@ -358,7 +359,6 @@
 
 <script>
     const addChannelForm = document.getElementById("add-channel-form");
-    const addVideoForm = document.getElementById("add-video-form");
     const addVideoComponentForm = document.getElementById("add-video-component-form");
     const sendEmailNotificationForm = document.getElementById("send-email-notification-form");
     const downloadVideoImagesForm = document.getElementById("download-video-images-form");
@@ -478,7 +478,7 @@
         });
     });
 
-
+    const addVideoForm = document.getElementById("add-video-form");
     addVideoForm.addEventListener('submit', function(e) {
         const endpointUrl = "{{ url_for('manager.youtube_manager') }}";
         const channelUuid = addVideoForm.channel_uuid.value;
