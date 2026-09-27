@@ -56,7 +56,7 @@ def home():
                 if len(scene_no_list) > 0:
                     scene_no_list.sort()
                     for scene in scene_no_list:
-                        scene_obj = current_video.storyboard_scenes
+                        scene_obj = [a for a in current_video.storyboard_scenes if a.scene == scene][0] 
                         shot_no_list = [a.shot for a in scene_obj.shots]
                         if len(shot_no_list) > 0:
                             sorted_shot_no_list = excel_sort(shot_no_list)
