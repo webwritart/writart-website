@@ -29,7 +29,6 @@ def home():
     project_dict = {}
     current_scene_shot_tuple = ()
     display_video = None
-    first_video = None
     creatives_upload_scene_no = ''
     creatives_upload_shot_no = ''
     current_creatives_upload_scene_shot_tuple = ()
