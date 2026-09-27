@@ -308,7 +308,7 @@ def home():
                         except:
                             default_video_dict['youtube_card_instruction'] = first_youtube_card_instruction
                     if current_creatives_upload_scene_shot_tuple:
-                        current_creatives_scene_obj = [a for a in first_video.storyboard_scenes if a.scene == str(current_creatives_upload_scene_shot_tuple[0])][0]
+                        current_creatives_scene_obj = [a for a in display_video.storyboard_scenes if a.scene == str(current_creatives_upload_scene_shot_tuple[0])][0]
                         current_creatives_shot_obj = [a for a in current_creatives_scene_obj.shots if a.shot == current_creatives_upload_scene_shot_tuple[1]][0]
                         current_creatives_shot_img = current_creatives_shot_obj.storyboard_img_path
                         current_creatives_shot_camera_direction = current_creatives_shot_obj.frame_direction
