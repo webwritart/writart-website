@@ -57,7 +57,7 @@ def home():
                     scene_no_list.sort()
                     for scene in scene_no_list:
                         scene_obj = current_video.storyboard_scenes
-                        shot_no_list = [a.shot for a in db.session.query(YoutubeVideoStoryboardScene).shots]
+                        shot_no_list = [a.shot for a in scene_obj.shots]
                         if len(shot_no_list) > 0:
                             sorted_shot_no_list = excel_sort(shot_no_list)
                             for shot in sorted_shot_no_list:
