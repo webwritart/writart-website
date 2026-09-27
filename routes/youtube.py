@@ -28,6 +28,8 @@ def home():
     youtube_admin = db.session.query(Role).filter_by(name='youtube_admin').one_or_none()
     project_dict = {}
     current_scene_shot_tuple = ()
+    display_video = None
+    first_video = None
     creatives_upload_scene_no = ''
     creatives_upload_shot_no = ''
     current_creatives_upload_scene_shot_tuple = ()
@@ -96,35 +98,38 @@ def home():
                     p(f"finding current video exist status error : {e}")  # print(e)
                 if current_video_exists:
                     current_video = db.session.query(YoutubeVideo).filter_by(uuid=current_video_uuid).scalar()
+                    display_video = current_video
+                else:
 
-                if len(channel_list_with_pending_videos_and_componenets) > 0:
-                    for c in channel_list_with_pending_videos_and_componenets:
-                        videos = c.videos
-                    default_channel = db.session.query(YoutubeChannel).filter_by(id=int(db.session.query(Tools).filter_by(keyword='default_channel_id').scalar().data)).scalar()
-                    for v in default_channel.videos:
-                        if len([a for a in v.components if a.component_type == 'video_id']) == 0:
-                            if v.status == 'pending' or v.status == 'in-progress':
-                                if len(v.components) > 0:
-                                    default_vid_uuid_name_list.append((v.uuid, v.temp_title))
-                    default_vid_uuid_name_list.reverse()
-                    try:
-                        first_dialogue_narration = [a.text for a in first_video.components if a.component_type == 'dialogue_&_narration'][0]
-                    except:
-                        first_dialogue_narration = ''
-                    try:
-                        first_img_vid_instruction = [a.text for a in first_video.components if a.component_type == 'img_vid_instruction'][0]
-                    except:
-                        first_img_vid_instruction = ''
-                    try:
-                        first_thumbnail_instruction = [a.text for a in first_video.components if a.component_type == 'thumbnail_instruction'][0]
-                    except:
-                        first_thumbnail_instruction = ''
-                    try:
-                        first_youtube_card_instruction = [a.text for a in first_video.components if a.component_type == 'youtube_card_instruction'][0]
-                    except:
-                        first_youtube_card_instruction = ''
+                    if len(channel_list_with_pending_videos_and_componenets) > 0:
+                        default_channel = db.session.query(YoutubeChannel).filter_by(id=int(db.session.query(Tools).filter_by(keyword='default_channel_id').scalar().data)).scalar()
+                        for v in default_channel.videos:
+                            if len([a for a in v.components if a.component_type == 'video_id']) == 0:
+                                if v.status == 'pending' or v.status == 'in-progress':
+                                    if len(v.components) > 0:
+                                        default_vid_uuid_name_list.append((v.uuid, v.temp_title))
+                        default_vid_uuid_name_list.reverse()
+                        if len(default_channel.videos) > 0:
+                            first_video = default_channel.videos[0]
+                            display_video = first_video
+                        try:
+                            first_dialogue_narration = [a.text for a in first_video.components if a.component_type == 'dialogue_&_narration'][0]
+                        except:
+                            first_dialogue_narration = ''
+                        try:
+                            first_img_vid_instruction = [a.text for a in first_video.components if a.component_type == 'img_vid_instruction'][0]
+                        except:
+                            first_img_vid_instruction = ''
+                        try:
+                            first_thumbnail_instruction = [a.text for a in first_video.components if a.component_type == 'thumbnail_instruction'][0]
+                        except:
+                            first_thumbnail_instruction = ''
+                        try:
+                            first_youtube_card_instruction = [a.text for a in first_video.components if a.component_type == 'youtube_card_instruction'][0]
+                        except:
+                            first_youtube_card_instruction = ''
 
-                    default_video_dict['vid_uuid_name_list'] = default_vid_uuid_name_list
+                        default_video_dict['vid_uuid_name_list'] = default_vid_uuid_name_list
 
                     if current_video_exists:
                         default_video_dict['stages'] = [a.stage for a in current_video.stages]
