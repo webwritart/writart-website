@@ -100,11 +100,8 @@ def home():
                 if len(channel_list_with_pending_videos_and_componenets) > 0:
                     for c in channel_list_with_pending_videos_and_componenets:
                         videos = c.videos
-                        for v in videos:
-                            if len(v.components) > 0:
-                                first_video = v
-                                first_channel = c
-                    for v in first_channel.videos:
+                    default_channel = db.session.query(YoutubeChannel).filter_by(id=int(db.session.query(Tools).filter_by(keyword='default_channel_id').scalar().data)).scalar()
+                    for v in default_channel.videos:
                         if len([a for a in v.components if a.component_type == 'video_id']) == 0:
                             if v.status == 'pending' or v.status == 'in-progress':
                                 if len(v.components) > 0:
