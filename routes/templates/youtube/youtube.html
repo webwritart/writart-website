@@ -2132,7 +2132,7 @@
             reviewsDropdown.appendChild(newParagraph);
         }
         // -------------------------------------- STORYBOARD INITIAL LOAD -----------------------------------------------------------------
-            currentStoryboardScene = currentSceneShotTuple[0];
+            currentStoryboardScene = parseInt(currentSceneShotTuple[0], 10);
             currentStoryboardShot = currentSceneShotTuple[1];
 
         // -------------------------------------- CREATIVE INITIAL LOAD -----------------------------------------------------------------
@@ -2625,7 +2625,7 @@
             document.getElementById('img-vid-feedbacks').onclick = () => openImageFeedback(data.video_uuid);
 // ------------------------------------- LOAD STORYBOARD DATA --------------------------------------------------------
             
-            currentStoryboardScene = data.current_scene_shot_tuple[0];
+            currentStoryboardScene = parseInt(data.current_scene_shot_tuple[0], 10);
             currentStoryboardShot = data.current_scene_shot_tuple[1];
             
 

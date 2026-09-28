@@ -220,6 +220,7 @@ class YoutubeVideoCreativeRevision(db.Model):
     uuid = db.Column(db.Integer, unique=True)
     version = db.Column(db.String(50))
     text = db.Column(db.Text) # applicable in case of revisions.
+    status = db.Column(db.String(50)) # eg. pending, approved, rejected, revision-required
     media_type = db.Column(db.String(50))
     file_path = db.Column(db.String(200)) # applicable in case of revisions.
     feedback = db.Column(db.String(1000)) # applicable in case of revisions.
@@ -240,6 +241,7 @@ class YoutubeVideoCreativeRevision(db.Model):
             'file_path': self.file_path,
             'feedback': self.feedback,
             'date_time': self.date_time,
+            'status': self.status,
             'member_id': self.member_id,
             'youtube_video_creative_id': self.youtube_video_creative_id
         }

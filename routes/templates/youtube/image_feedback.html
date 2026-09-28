@@ -78,6 +78,18 @@
     .download-displaying-img-btn:hover {
         background: rgb(130, 130, 130);
     }
+    .download-revision-displaying-img-btn {
+        background: rgb(166, 166, 166);
+        border: none;
+        border-radius: 1.5rem;
+        width: 100%;
+        font-size: .8rem;
+        transition: all .15s ease-in-out;
+        margin: 0%;
+    }
+    .download-revision-displaying-img-btn:hover {
+        background: rgb(130, 130, 130);
+    }
     .revision-btn {
         border: none;
         background: #293c0a;
@@ -281,8 +293,31 @@
         color: rgb(226, 103, 36);
         opacity: 1 !important;
     }
-    #
     /* ------------------------------------------------ AUDIO RECORDING POPUP --------------------------------------------- */
+    #revisions-shot-all-media-toggle {
+        border: none;
+        background: rgb(99, 123, 58);
+        padding: .3% 2%;
+        border-radius: 1.5rem;
+        color: white;
+        transition: all .15s ease-in-out;
+    }
+    #revisions-shot-all-media-toggle:hover {
+        background: rgb(71, 88, 34);
+    }
+    #scene-shot-toggle-btn-container {
+        display: flex;
+        justify-content: space-evenly;
+        width: 100%;
+        align-items: center;
+        margin: .5%;
+    }
+    #creative-feedback-recording-header {
+        font-weight: 900;
+        font-size: 1.5rem;
+        text-transform: uppercase;
+        color: rgb(47, 64, 7);
+    }
     #audio-recording-popup-content-inner {
         display: flex;
         flex-direction: column;
@@ -332,22 +367,22 @@
         border-radius: 1.5rem;
     }
     #creative-feedback-media-container {
-        height: 30vh;
+        height: 100vh;
         width: 100%;
         display: none;
         flex-wrap: nowrap;
         overflow-x: auto;
-        overflow-y: hidden;
         background: rgb(65, 65, 41);
         padding: 1% 1%;
         border-radius: 1.5rem;
     }
     
     .creative-feedback-media-container-inner {
-        height: 25vh;
-        display: flex;
-        flex-direction: column;
+        position: relative;
+        height: 94%;
+        flex: 0 0 auto;
         margin: 0% .5%;
+        display: inline-block; /* Fits tight around the image */
     }
     #creative-feedback-shot-all-creative-container {
         height: 100vh;
@@ -417,6 +452,7 @@
         font-weight: 900;
         font-size: 1.2rem;
         color: rgb(189, 191, 163);
+        margin: 0%;
     }
     .creative-feedback-version-text:hover {
         color: white;
@@ -731,6 +767,7 @@
                                     data-camera_direction="{{shot['frame_direction']}}"
                                     data-direction="{{shot['creative_direction']}}"
                                     data-dialogue_narration="{{shot['dialogue_narration']}}"
+                                    data-creative_assigned_to_uuid="{{creative['assigned_to_uuid']}}"
                                     onclick="openCreativeFeedbackRecordingPopup(this.dataset.creative_uuid, 
                                     this.dataset.scene_shot, 
                                     this.dataset.creative_media_type, 
@@ -738,7 +775,8 @@
                                     this.dataset.creative_revisions,
                                     this.dataset.camera_direction,
                                     this.dataset.direction,
-                                    this.dataset.dialogue_narration
+                                    this.dataset.dialogue_narration,
+                                    this.dataset.creative_assigned_to_uuid
                                     )">FEEDBACK & ASSIGNMENT</button>
                                     {% endif %}
                                     {% set ns = namespace(found=false, match=none) %}
@@ -850,8 +888,11 @@
     <div class="popup-content">
         <div id="creative-feedback-recording-popup-content-inner">
             <span class="close" onclick="closePopup()">&times;</span>
-            <button id="revisions-shot-all-media-toggle">Show Revisions</button>
-            <p id="creative-feedback-scene-shot"></p>
+            <div id="scene-shot-toggle-btn-container">
+                <div id="creative-feedback-recording-header">All Creatives</div>
+                <p id="creative-feedback-scene-shot"></p>
+                <button id="revisions-shot-all-media-toggle" onclick="showRevisionsCreativesToggle()">Show Revisions</button>
+            </div>
             <div id="creative-feedback-media-container"></div>
             <div id="creative-feedback-shot-all-creative-container"></div>
             <div id="creative-feedback-recording-popup-storyboard-container">
@@ -932,8 +973,25 @@
         openMediaPopup();
     }
     
+    function showRevisionsCreativesToggle() {
+        const revisionsContainer = document.getElementById("creative-feedback-media-container");
+        const allCreativesContainer = document.getElementById("creative-feedback-shot-all-creative-container");
+        const creativesRevisionsToggle = document.getElementById("revisions-shot-all-media-toggle");
+        const header = document.getElementById("creative-feedback-recording-header");
+        if (getComputedStyle(revisionsContainer).display == 'none') {   
+            revisionsContainer.style.display = "flex";
+            allCreativesContainer.style.display = "none";
+            creativesRevisionsToggle.textContent = "Show all creatives";
+            header.textContent = "Revisions";
+        } else {
+            revisionsContainer.style.display = "none";
+            allCreativesContainer.style.display = "flex";
+            creativesRevisionsToggle.textContent = "Show revisions";
+            header.textContent = "All creatives";
+        }
+    }
 
-    function openCreativeFeedbackRecordingPopup(creative_uuid, scene_shot, main_media_type, main_media_path, creative_revisions, camera_direction, direction, dialogue_narration) {
+    function openCreativeFeedbackRecordingPopup(creative_uuid, scene_shot, main_media_type, main_media_path, creative_revisions, camera_direction, direction, dialogue_narration,creative_assigned_to_uuid) {
         document.getElementById("creative-feedback-recording-popup").style.display = "block";
         document.getElementById("save-creative-feedback-recording").onclick = () => saveCreativeAudio(creative_uuid);
         document.getElementById('creative-feedback-scene-shot').innerHTML = scene_shot;
@@ -971,7 +1029,6 @@
             newDiv.appendChild(newVersion);
         }
         creativeContainer.append(newDiv);
-
         const creativeRevisionsList = JSON.parse(creative_revisions);
         if (creativeRevisionsList.length > 0) {
             for (const item of creativeRevisionsList) {
@@ -994,8 +1051,58 @@
                 newVersion.textContent = item['version'];
                 newVersion.onclick = () => openMediaLargeSize(item['media_type'], item['file_path']);
                 revisionDiv.appendChild(newVersion);
+                const downloadBtn = document.createElement('button');
+                downloadBtn.classList.add('download-revision-displaying-img-btn');
+                downloadBtn.textContent = 'Download';
+                downloadBtn.onclick = () => downloadDisplayingImage(item['file_path']);
+                revisionDiv.appendChild(downloadBtn);
+                creativeContainer.appendChild(revisionDiv);
+
+                const newOptionDiv = document.createElement('div');
+                newOptionDiv.classList.add('creative-feedback-shot-all-creative-option-container');
+                newOptionDiv.id =`feedback-option-${item['uuid']}`;
+
+                const newSelectMenuStatus = document.createElement('select');
+                newSelectMenuStatus.classList.add('creative-feedback-shot-all-creative-status-select-menu');
+                newSelectMenuStatus.id = `feedback-status-${item['uuid']}`
+                newSelectMenuStatus.oninput = () => updateCreativeRevisionStatusFeedbackPopup(item['uuid'], newSelectMenuStatus.value);
+                const statusItems = [
+                    { value: 'approved', text: 'Approved' },
+                    { value: 'rejected', text: 'Rejected' },
+                    { value: 'pending', text: 'Pending' },
+                    { value: 'revision-required', text: 'Revision Required' }
+                ]
+                statusItems.forEach(item => {
+                    const optionNode = new Option(item.text, item.value);
+                    newSelectMenuStatus.appendChild(optionNode);
+                })
+                newSelectMenuStatus.value = item['status'];
+                newOptionDiv.appendChild(newSelectMenuStatus);
+
+                const newSelectMenuMates = document.createElement('select');
+                newSelectMenuMates.classList.add('creative-feedback-shot-all-creative-mates-select-menu');
+                newSelectMenuMates.oninput = () => assignCreativeRevisionMateFeedbackPopup(item['uuid'], newSelectMenuMates.value);
+                newSelectMenuMates.appendChild(new Option('Select Mate', ''));
+                newSelectMenuMates.appendChild(new Option('Remove', 'remove-mate'));
+                for (const mate of matesList) {
+                    const optionNode = new Option(mate[1], mate[0]);
+                    newSelectMenuMates.appendChild(optionNode);
+                }
+                if (creative_assigned_to_uuid && creative_assigned_to_uuid !== "None" && creative_assigned_to_uuid.length > 0) {
+                    newSelectMenuMates.value = creative_assigned_to_uuid;
+                } 
+                newOptionDiv.appendChild(newSelectMenuMates);
+
+                const newAddFeedbackBtn = document.createElement('button');
+                newAddFeedbackBtn.classList.add('creative-feedback-shot-all-creative-add-feedback-button');
+                newAddFeedbackBtn.textContent = 'Add Feedback';
+                newAddFeedbackBtn.onclick = () => addCreativeFeedbackRevisionRecordingPopup(item['uuid']);
+                newOptionDiv.appendChild(newAddFeedbackBtn);
+
+                revisionDiv.appendChild(newOptionDiv);
                 creativeContainer.appendChild(revisionDiv);
             }
+            
         }
         const creativeFeedbackShotAllCreativeContainer = document.getElementById('creative-feedback-shot-all-creative-container');
         const sceneNo = scene_shot.split('-')[0];
@@ -1019,6 +1126,7 @@
                                 newVideo.classList.add('creative-feedback-shot-all-creative-video');
                                 newVideo.controls = true;
                                 newMediaDiv.appendChild(newVideo);
+                                alert(creative['media_path']);
                             }
                             const newOptionDiv = document.createElement('div');
                             newOptionDiv.classList.add('creative-feedback-shot-all-creative-option-container');
@@ -1061,7 +1169,7 @@
                             newAddFeedbackBtn.textContent = 'Add Feedback';
                             newAddFeedbackBtn.onclick = () => addCreativeFeedbackRecordingPopup(creative['uuid']);
                             newOptionDiv.appendChild(newAddFeedbackBtn);
-
+                            
                             creativeFeedbackShotAllCreativeContainer.appendChild(newMediaDiv);
                         }
                     }
@@ -1069,7 +1177,6 @@
             }
         }
     }
-    // ---------------------------------------- SHOW OPTIONS POPUP ON HOVER | CREATIVE FEEDBACK ALL MEDIA IN A SHOT ------------------------------------
     // ---------------------------------------- SHOW OPTIONS POPUP ON HOVER | CREATIVE FEEDBACK ALL MEDIA IN A SHOT ------------------------------------
 const creativeFeedbackShotAllCreativeContainer =
     document.getElementById('creative-feedback-shot-all-creative-container');
@@ -1243,6 +1350,180 @@ document.addEventListener('keydown', (event) => {
     }
 
 });
+// =================================================================================================================================================
+   // ---------------------------------------- SHOW OPTIONS POPUP ON HOVER | CREATIVE FEEDBACK Revisions  ------------------------------------
+const creativeFeedbackRevisionContainer =
+    document.getElementById('creative-feedback-media-container');
+
+
+/* -----------------------------
+HOVER
+----------------------------- */
+
+creativeFeedbackRevisionContainer.addEventListener('mouseover', (event) => {
+
+    const revisionDiv = event.target.closest(
+        '.creative-feedback-media-container-inner'
+    );
+
+    if (
+        !revisionDiv ||
+        !creativeFeedbackRevisionContainer.contains(revisionDiv)
+    ) {
+        return;
+    }
+
+    /*
+    If the mouse is only moving between elements
+    INSIDE the same mediaDiv, do nothing.
+
+    This prevents the popup state from being
+    repeatedly triggered while moving around
+    inside the media.
+    */
+    if (event.relatedTarget && revisionDiv.contains(event.relatedTarget)) {
+        return;
+    }
+
+    /*
+    Right-click has already dismissed this popup
+    during this hover session.
+    */
+    if (revisionDiv.dataset.popupDismissed === 'true') {
+        return;
+    }
+
+    const optionDiv = revisionDiv.querySelector(
+        '.creative-feedback-shot-all-creative-option-container'
+    );
+
+    if (optionDiv) {
+        optionDiv.classList.add('is-visible');
+    }
+
+});
+
+
+/* -----------------------------
+MOUSE LEAVE MEDIA DIV
+----------------------------- */
+
+creativeFeedbackRevisionContainer.addEventListener('mouseout', (event) => {
+
+    const revisionDiv = event.target.closest(
+        '.creative-feedback-media-container-inner'
+    );
+
+    if (
+        !revisionDiv ||
+        !creativeFeedbackRevisionContainer.contains(revisionDiv)
+    ) {
+        return;
+    }
+
+    /*
+    If the mouse is moving from one child element
+    to another child element INSIDE the same mediaDiv,
+    do NOT treat it as leaving the mediaDiv.
+    */
+    if (event.relatedTarget && revisionDiv.contains(event.relatedTarget)) {
+        return;
+    }
+
+    const optionDiv = revisionDiv.querySelector(
+        '.creative-feedback-shot-all-creative-option-container'
+    );
+
+    if (optionDiv) {
+        optionDiv.classList.remove('is-visible');
+    }
+
+    /*
+    NOW the cursor has genuinely left the mediaDiv.
+
+    Therefore a future entry can activate the popup again.
+    */
+    revisionDiv.dataset.popupDismissed = 'false';
+
+});
+
+
+/* -----------------------------
+RIGHT CLICK
+----------------------------- */
+
+creativeFeedbackRevisionContainer.addEventListener('mousedown', (event) => {
+
+    if (event.button !== 2) {
+        return;
+    }
+
+    event.preventDefault();
+
+    const revisionDiv = event.target.closest(
+        '.creative-feedback-media-container-inner'
+    );
+
+    if (
+        !revisionDiv ||
+        !creativeFeedbackRevisionContainer.contains(revisionDiv)
+    ) {
+        return;
+    }
+
+    const optionDiv = revisionDiv.querySelector(
+        '.creative-feedback-shot-all-creative-option-container'
+    );
+
+    if (optionDiv) {
+        optionDiv.classList.remove('is-visible');
+    }
+
+    /*
+    IMPORTANT:
+
+    Right-click permanently dismisses the popup
+    for the CURRENT hover session.
+
+    mouseup does NOT change this.
+    */
+    revisionDiv.dataset.popupDismissed = 'true';
+
+});
+
+
+/* -----------------------------
+PREVENT BROWSER RIGHT-CLICK MENU
+----------------------------- */
+
+creativeFeedbackRevisionContainer.addEventListener('contextmenu', (event) => {
+
+    event.preventDefault();
+    event.stopPropagation();
+
+});
+
+
+/* -----------------------------
+ESCAPE KEY
+----------------------------- */
+
+document.addEventListener('keydown', (event) => {
+
+    if (event.key !== 'Escape') {
+        return;
+    }
+
+    const visibleOption =
+        creativeFeedbackRevisionContainer.querySelector(
+            '.creative-feedback-shot-all-creative-option-container.is-visible'
+        );
+
+    if (visibleOption) {
+        visibleOption.classList.remove('is-visible');
+    }
+
+});
     // ----------------------------------------------- IMAGE FEEDBACK RECORDING ------------------------------------------------
     // Keep track of the recorder instance and raw audio data
     let mediaRecorder;
@@ -1347,9 +1628,43 @@ document.addEventListener('keydown', (event) => {
             alert('No audio data available.');
         }
     }
+    function saveCreativeRevisionAudio(revision_uuid) {
+        const saveBtn = document.getElementById('save-creative-feedback-recording');
+        saveBtn.disabled = true;
+        const endpointUrl = "{{ url_for('youtube.save_audio') }}";
+        const sceneShot = document.getElementById('creative-feedback-scene-shot').textContent.trim();
+        if (audioBlob) {
+            const formData = new FormData();
+            formData.append('audio', audioBlob, 'audio.webm');
+            formData.append('scene_shot', sceneShot);
+            formData.append('revision_uuid', revision_uuid);
+            formData.append('type', 'save_revision_audio');
+            fetch(endpointUrl, { method: 'POST', body: formData })
+                .then(response => response.json())
+                .then(data => {
+                    if (data) {
+                        console.log('success');
+                        alert('Audio saved successfully.');
+                        document.getElementById('creative-feedback-recording-popup-btn-container').style.display = 'none';
+                    } else {
+                        alert('Failed to save audio.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error saving audio:', error);
+                    alert('Failed to save audio.');
+                });
+        } else {
+            alert('No audio data available.');
+        }
+    }
     function addCreativeFeedbackRecordingPopup(creative_uuid) {
         document.getElementById('creative-feedback-recording-popup-btn-container').style.display = 'flex';
         document.getElementById('save-creative-feedback-recording').onclick = () => saveCreativeAudio(creative_uuid);
+    }
+    function addCreativeFeedbackRevisionRecordingPopup(revision_uuid) {
+        document.getElementById('creative-feedback-recording-popup-btn-container').style.display = 'flex';
+        document.getElementById('save-creative-feedback-recording').onclick = () => saveCreativeRevisionAudio(revision_uuid);
     }
     
     // --------------------------------------------------- REVISION POPUP -----------------------------------------------
@@ -1486,6 +1801,7 @@ document.addEventListener('keydown', (event) => {
     }
 
     function submitCreativeStatus(creative_uuid) {
+        alert('submitCreativeStatus');
         const approvalStatus = document.getElementById('approval-'+creative_uuid).value;
         const endpointUrl = "{{ url_for('youtube.submit_status') }}";
         const formData = new FormData();
@@ -1513,6 +1829,27 @@ document.addEventListener('keydown', (event) => {
         formData.append('creative_uuid', creative_uuid);
         formData.append('approval_status', status);
         formData.append('type', 'update_creative_status_feedback_popup');
+        fetch(endpointUrl, { method: 'POST', body: formData })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Status updated successfully.');
+                } else {
+                    alert('Failed to update approval status.');
+                }
+            })
+            .catch(error => {
+                console.error('Error updating approval status:', error);
+                alert('Failed to update approval status.');
+            });
+    }
+
+    function updateCreativeRevisionStatusFeedbackPopup(revision_uuid, status) {
+        const endpointUrl = "{{ url_for('youtube.submit_status') }}";
+        const formData = new FormData();
+        formData.append('revision_uuid', revision_uuid);
+        formData.append('approval_status', status);
+        formData.append('type', 'update_revision_status_feedback_popup');
         fetch(endpointUrl, { method: 'POST', body: formData })
             .then(response => response.json())
             .then(data => {
@@ -1561,6 +1898,27 @@ document.addEventListener('keydown', (event) => {
             .then(data => {
                 if (data.success) {
                     document.getElementById(`feedback-status-${data.creative_uuid}`).value = data.status;
+                } else {
+                    alert('Failed to assign mate.');
+                }
+            })
+            .catch(error => {
+                console.error('Error assigning mate:', error);
+                alert('Failed to assign mate.');
+            });
+    }
+
+    function assignCreativeRevisionMateFeedbackPopup(revision_uuid, mate_uuid) {
+        const endpointUrl = "{{ url_for('youtube.assign_mate') }}";
+        const formData = new FormData();
+        formData.append('revision_uuid', revision_uuid);
+        formData.append('mate_uuid', mate_uuid);
+        formData.append('type', 'assign_revision_mate_feedback_popup');
+        fetch(endpointUrl, { method: 'POST', body: formData })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById(`feedback-status-${data.revision_uuid}`).value = data.status;
                 } else {
                     alert('Failed to assign mate.');
                 }

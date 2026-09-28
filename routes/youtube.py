@@ -802,11 +802,11 @@ def upload_images_videos():
                     media_type = 'image'
                 elif mimetype.startswith('video/'):
                     media_type = 'video'
-                
-                file_name_without_extension = f"{scene}-{shot}"
-                file_path = save_with_filename_suffix_if_already_exists(base_path, file_name_without_extension, f)[1:]
+
                 existing_uuid_list = [a.uuid for a in db.session.query(YoutubeVideoCreative).all()]
                 uuid = create_uuid(existing_uuid_list, 9)
+                file_name_without_extension = f"{uuid}-{scene}-{shot}"
+                file_path = save_with_filename_suffix_if_already_exists(base_path, file_name_without_extension, f)[1:]
                 entry = YoutubeVideoCreative(
                     uuid=uuid,
                     media_type=media_type,
@@ -1203,7 +1203,8 @@ def save_revision():
             media_type=media_type,
             date_time=date_time_now,
             youtube_video_creative_id=creative_obj.id,
-            member_id=current_user.id
+            member_id=current_user.id,
+            status='pending'
         )
         db.session.add(entry)
         creative_obj.status = 'pending'
@@ -1249,7 +1250,25 @@ def assign_mate():
             db.session.commit()
             return jsonify(success='success', creative_uuid=creative_uuid, status='revision-required')
 
+    if request.method == 'POST' and request.form.get('type') == 'assign_revision_mate_feedback_popup':
+        revision_uuid = request.form.get('revision_uuid')
+        mate_uuid = request.form.get('mate_uuid')
+        revision_obj = db.session.query(YoutubeVideoCreativeRevision).filter_by(uuid=revision_uuid).scalar()
+        cretive_obj = revision_obj.youtube_video_creative
 
+        if mate_uuid == 'remove-mate':
+            cretive_obj.assigned_to_uuid = None
+            cretive_obj.status = 'pending'
+            db.session.commit()
+            return jsonify(success='success', revision_uuid=revision_uuid, status='pending')
+        else:
+            cretive_obj.assigned_to_uuid = mate_uuid
+            revision_obj.status = 'revision-required'
+            cretive_obj.status = 'revision-required'
+            db.session.commit()
+            return jsonify(success='success', revision_uuid=revision_uuid, status='revision-required')
+
+        
 @youtube.route('/submit-status', methods=['POST'])
 def submit_status():
     if request.method == 'POST' and request.form.get('type') == 'submit_creative_approval_status':
@@ -1266,11 +1285,27 @@ def submit_status():
         creative.status = approval_status
         db.session.commit()
         return jsonify(success='success')
+
+    if request.method == 'POST' and request.form.get('type') == 'update_revision_status_feedback_popup':
+        revision_uuid = request.form.get('revision_uuid')
+        approval_status = request.form.get('approval_status')
+        revision_obj = db.session.query(YoutubeVideoCreativeRevision).filter_by(uuid=revision_uuid).scalar()
+        creative_obj = revision_obj.youtube_video_creative
+        if approval_status == 'pending' or approval_status == 'rejected':
+            all_approved_revisions_count = len([a for a in creative_obj.revisions if a.status == 'approved'])
+            if all_approved_revisions_count < 2:
+                creative_obj.status = approval_status
+        else:
+            creative_obj.status = approval_status
+        revision_obj.status = approval_status
+        db.session.commit()
+        return jsonify(success='success')
     
     
 @youtube.route('/save_audio', methods=['POST'])
 def save_audio():
     if request.method == 'POST' and request.form.get('type') == 'save_creative_audio':
+        
         creative_uuid = request.form.get('creative_uuid')
         creative_obj = db.session.query(YoutubeVideoCreative).filter_by(uuid=creative_uuid).first()
         last_revision_obj = None
@@ -1279,27 +1314,34 @@ def save_audio():
         video_id = video.id
         channel_id = video.youtube_channel.id
         scene_shot = request.form.get('scene_shot')
-        media_uuid =''
-        file_name_suffix = ''
-        if len(creative_obj.revisions) == 0:
-            media_uuid = creative_uuid
-            file_name_suffix = media_uuid
-        else:
-            last_revision_version = max([float(a.version) for a in creative_obj.revisions])
-            last_revision_obj = [a for a in creative_obj.revisions if float(a.version) == last_revision_version][0]
-            media_uuid = last_revision_obj.uuid
-            file_name_suffix = media_uuid
 
         save_base_path = f"./static/files/youtube/{channel_id}/{video_id}/feedback/"
         os.makedirs(save_base_path, exist_ok=True)
-        file_name = f"{scene_shot}_{file_name_suffix}.webm"
+        file_name = f"{scene_shot}_{creative_uuid}.webm"
         save_path = os.path.join(save_base_path, file_name)
         audio.save(save_path)
 
-        if len(creative_obj.revisions) == 0:
-            creative_obj.feedback = save_path[1:]
-        else:
-            last_revision_obj.feedback = save_path[1:]
+        creative_obj.feedback = save_path[1:]
+        db.session.commit()
+
+        return jsonify('success')
+    
+    if request.method == 'POST' and request.form.get('type') == 'save_revision_audio':
+        revision_uuid = request.form.get('revision_uuid')
+        revision_obj = db.session.query(YoutubeVideoCreativeRevision).filter_by(uuid=revision_uuid).first()
+        audio = request.files['audio']
+        video = revision_obj.youtube_video_creative.shot.scene.video
+        video_id = video.id
+        channel_id = video.youtube_channel.id
+        scene_shot = request.form.get('scene_shot')
+
+        save_base_path = f"./static/files/youtube/{channel_id}/{video_id}/feedback/"
+        os.makedirs(save_base_path, exist_ok=True)
+        file_name = f"{scene_shot}_{revision_uuid}.webm"
+        save_path = os.path.join(save_base_path, file_name)
+        audio.save(save_path)
+
+        revision_obj.feedback = save_path[1:]
         db.session.commit()
 
         return jsonify('success')
