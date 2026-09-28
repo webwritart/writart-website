@@ -77,8 +77,7 @@ def home():
                 name = c.channel_name
                 channels.append((uuid, name))
             # ---------------------------------------------- SELECT CURRENT VIDEO ------------------------------------------------------
-            channels = db.session.query(YoutubeChannel).all()
-            all_channel_videos = [video for channel in channels for video in channel.videos]
+            all_channel_videos = [video for channel in all_channels for video in channel.videos]
             current_video_option_list = [(v.uuid, v.temp_title) for v in all_channel_videos]
 
             # ----------------------------------------------------------------------------------------------------------------------------
