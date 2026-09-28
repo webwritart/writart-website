@@ -323,7 +323,7 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        height: 100%;
+        height: 96%;
         width: 100%;
     }
     #audio-recording-container {
@@ -1127,6 +1127,13 @@
                                 newVideo.controls = true;
                                 newMediaDiv.appendChild(newVideo);
                             }
+                            const downloadBtn = document.createElement('button');
+                            downloadBtn.classList.add('download-revision-displaying-img-btn');
+                            downloadBtn.textContent = 'Download';
+                            downloadBtn.onclick = () => downloadDisplayingImage(cretive['media_path']);
+                            newMediaDiv.appendChild(downloadBtn);
+                            creativeContainer.appendChild(revisionDiv);
+
                             const newOptionDiv = document.createElement('div');
                             newOptionDiv.classList.add('creative-feedback-shot-all-creative-option-container');
                             newOptionDiv.id =`feedback-option-${creative['uuid']}`;
