@@ -138,9 +138,9 @@ class YoutubeVideoStoryboardShot(db.Model):
     uuid = db.Column(db.Integer, unique=True)
     shot = db.Column(db.String(50))
     storyboard_img_path = db.Column(db.String(200))
-    dialogue_narration = db.Column(db.Text)
+    dialogue_narration = db.Column(db.String(500))
     frame_direction = db.Column(db.String(200))
-    creative_direction = db.Column(db.String(500))
+    creative_direction = db.Column(db.Text)
     timing = db.Column(db.String(50))
     shot_type = db.Column(db.String(50))  # eg. image, video
     youtube_video_storyboard_scene_id = db.Column(db.Integer, db.ForeignKey('youtube_video_storyboard_scene.id'))
