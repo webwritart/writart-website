@@ -805,7 +805,7 @@ def upload_images_videos():
 
                 existing_uuid_list = [a.uuid for a in db.session.query(YoutubeVideoCreative).all()]
                 uuid = create_uuid(existing_uuid_list, 9)
-                file_name_without_extension = f"{uuid}-{scene}-{shot}"
+                file_name_without_extension = f"{scene}-{shot}_{uuid}"
                 file_path = save_with_filename_suffix_if_already_exists(base_path, file_name_without_extension, f)[1:]
                 entry = YoutubeVideoCreative(
                     uuid=uuid,
@@ -1182,7 +1182,7 @@ def save_revision():
         file = request.files['file']
         filename_base, extension = os.path.splitext(file.filename)
         revision_text = request.form.get('revision_text')
-        file_name = f"{uuid}_{scene_shot}{extension}"
+        file_name = f"{scene_shot}_{uuid}{extension}"
         media_type = file.content_type.split('/')[0]
 
         save_base_path = f"./static/files/youtube/{channel_id}/{video_id}/revisions/"
