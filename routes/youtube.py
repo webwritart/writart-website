@@ -1182,7 +1182,7 @@ def save_revision():
         file = request.files['file']
         filename_base, extension = os.path.splitext(file.filename)
         revision_text = request.form.get('revision_text')
-        file_name = f"{scene_shot}_{uuid}{extension}"
+        file_name = f"{uuid}_{scene_shot}{extension}"
         media_type = file.content_type.split('/')[0]
 
         save_base_path = f"./static/files/youtube/{channel_id}/{video_id}/revisions/"
