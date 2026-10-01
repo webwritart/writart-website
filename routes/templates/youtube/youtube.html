@@ -47,7 +47,7 @@
         margin: 1% 1% 2% 1%;
         background: rgb(227, 238, 205);
         border-radius: 1.5rem;
-        overflow: hidden;
+        overflow: visible;
         min-height: 75vh;
     }
     #project-btn-container-main {
@@ -1333,7 +1333,14 @@
                     <div id="seo-projects-dropdown" class="notification-dropdown">
                     </div>
                 </div>
+                <div id="edit-seo-notification-container" class="notification-container">
+                    <button id="edit-seo-notification-btn" class="notification-btn">Edit_SEO</button>
+                    <div id="edit-seo-projects-dropdown" class="notification-dropdown">
+                    </div>
+                </div>
+                
                 <div id="notification-btn-container-right">
+                    
                     <!-- <button class="notification-bar-btn">Prepared Videos</button> -->
                 </div>
             </div>
@@ -1393,7 +1400,7 @@
                         <textarea id="seo-task-yt-description" name="seo_task_yt_description"></textarea>
                         <label for="seo-task-yt-tags">Tags</label>
                         <textarea id="seo-task-yt-tags" name="seo_task_yt_tags"></textarea>
-                        <button type="submit" name="submit" value="add-seo-task" id="add-seo-task-btn" class="form-button">Add/edit task</button>
+                        <button type="submit" name="submit" value="add-seo-task" id="add-seo-task-btn" class="form-button">Update SEO</button>
                         <div id="seo-task-status-message"></div>
                     </form>
                     <button id="close-seo-task-operation" class="close-task-operation">Close</button>
@@ -1827,6 +1834,7 @@
     const defaultVideoDict = {{ default_video_dict | tojson }};
     const pendingRevisions = {{ pending_revisions | tojson }};
     const pendingSeo = {{ pending_seo | tojson }};
+    const editSeo = {{ edit_seo | tojson }};
     const currentUserRoles = {{ current_user_roles | tojson }};
     const pendingReviews = {{ pending_reviews | tojson }};
     const currentSceneShotTuple = {{ current_scene_shot_tuple | tojson }};
@@ -1878,6 +1886,7 @@
     function closeAllNotificationDropdowns() {
         const revisionDropdown = document.getElementById('revision-projects-dropdown');
         const seoDropdown = document.getElementById('seo-projects-dropdown');
+        const editSeoDropdown = document.getElementById('edit-seo-projects-dropdown');
         const reviewsDropdown = document.getElementById('reviews-projects-dropdown');
         if (reviewsDropdown) {
             reviewsDropdown.style.display = 'none';
@@ -1887,6 +1896,9 @@
         }
         if (seoDropdown) {
             seoDropdown.style.display = 'none';
+        }
+        if (editSeoDropdown) {
+            editSeoDropdown.style.display = 'none';
         }
     }
 
@@ -1923,6 +1935,17 @@
 
         if (!isOpen) {
             seoDropdown.style.display = 'block';
+        }
+    });
+    const editSeoNotificationBtn = document.getElementById('edit-seo-notification-btn');
+    editSeoNotificationBtn.addEventListener('click', () => {
+        const editSeoDropdown = document.getElementById('edit-seo-projects-dropdown');
+        const isOpen = editSeoDropdown.style.display === 'block';
+
+        closeAllNotificationDropdowns();
+
+        if (!isOpen) {
+            editSeoDropdown.style.display = 'block';
         }
     });
     function displayReadyVideos() {
@@ -2134,12 +2157,21 @@
         const reviewsCount = document.getElementById('reviews-count');
         reviewsCount.innerHTML = `(${pendingReviews.length})`;
         reviewsDropdown.replaceChildren();
-        for (const task of pendingSeo) {
+        for (const task of pendingReviews) {
             const newParagraph = document.createElement('p');
             newParagraph.classList.add('notification-dropdown-task');
             newParagraph.innerHTML = `${task[2]}-(${task[1]})-${task[0]}`;
             newParagraph.onclick = () => displayReviewTask(task[0]);
             reviewsDropdown.appendChild(newParagraph);
+        }
+        const editSeoDropdown = document.getElementById('edit-seo-projects-dropdown');
+        editSeoDropdown.replaceChildren();
+        for (const task of editSeo) {
+            const newParagraph = document.createElement('p');
+            newParagraph.classList.add('notification-dropdown-task');
+            newParagraph.innerHTML = `${task[2]}-(${task[1]})-${task[0]}`;
+            newParagraph.onclick = () => displaySeoTask(task[0]);
+            editSeoDropdown.appendChild(newParagraph);
         }
         // -------------------------------------- STORYBOARD INITIAL LOAD -----------------------------------------------------------------
             currentStoryboardScene = parseInt(currentSceneShotTuple[0], 10);
@@ -2431,9 +2463,8 @@
             .then(data => {
                 if (data) {
                     alert('Task saved successfully.');
-                    window.location.reload();
                 } else {
-                    alert('Failed to save task ---- Rambo.');
+                    alert('Failed to save task.');
                 }
             })
             .catch(error => {

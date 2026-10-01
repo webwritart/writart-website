@@ -553,7 +553,7 @@ def home():
                     except:
                         yt_title = ''
                     try:
-                        yt_description = [a.text for a in task.components if a.comonent_type == 'yt_description'][0]
+                        yt_description = [a.text for a in task.components if a.component_type == 'yt_description'][0]
                     except:
                         yt_description = ''
                     try:
@@ -567,6 +567,7 @@ def home():
                         'yt_description': yt_description,
                         'yt_tags': yt_tags
                     }
+                    pp.pprint(seo_task_dict)
                     return jsonify(seo_task_dict=seo_task_dict)
                 
                 if data['type'] == 'select_channel':
@@ -760,12 +761,26 @@ def home():
                 for v in all_videos:
                     if len([a for a in v.components if a.component_type == 'yt_title']) == 0 or len([a for a in v.components if a.component_type == 'yt_description']) == 0 or len([a for a in v.components if a.component_type == 'yt_tags']) == 0:
                         pending_seo.append((v.uuid, v.category, v.temp_title))
+            else:
+                pending_seo = []
+
+            edit_seo = []
+            if youtube_seo_manager in current_user.role or youtube_admin in current_user.role:
+                for v in all_videos:
+                    if len([a for a in v.components if a.component_type == 'yt_title']) != 0 and len([a for a in v.components if a.component_type == 'yt_description']) != 0 and len([a for a in v.components if a.component_type == 'yt_tags']) != 0:
+                        if len([a.text for a in v.components if a.component_type == 'yt_title'][0]) != 0 and len([a.text for a in v.components if a.component_type == 'yt_description'][0]) != 0 and len([a.text for a in v.components if a.component_type == 'yt_tags'][0]) != 0:
+                            p(len([a.text for a in v.components if a.component_type == 'yt_title'][0]))
+                            p(f"Description text length: {len([a.text for a in v.components if a.component_type == 'yt_description'][0])} Description: {[a.text for a in v.components if a.component_type == 'yt_description'][0]} Title: {v.temp_title}")
+                            edit_seo.append((v.uuid, v.category, v.temp_title))
+            else:
+                edit_seo = []
+            # ----------------------------------------------------- PROJECT DICT ---------------------------------------------------------------
 
             req_scene = [a for a in project_dict['storyboard_scenes'] if a['scene'] == '1']
             # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             current_user_roles = [a.name for a in current_user.role]
             return render_template('youtube.html', current_year=current_year, channels=channels, default_video_dict=default_video_dict, logged_in=current_user.is_authenticated, admin=admin, first_channel=default_channel,
-                                current_video_option_list=current_video_option_list, pending_revisions=pending_revisions, pending_reviews=pending_reviews, pending_seo=pending_seo, youtube_img_creator=youtube_img_creator, youtube_seo_manager=youtube_seo_manager, youtube_admin=youtube_admin, current_user_roles=current_user_roles,
+                                current_video_option_list=current_video_option_list, pending_revisions=pending_revisions, pending_reviews=pending_reviews, pending_seo=pending_seo, edit_seo=edit_seo, youtube_img_creator=youtube_img_creator, youtube_seo_manager=youtube_seo_manager, youtube_admin=youtube_admin, current_user_roles=current_user_roles,
                                 project_dict=project_dict, current_scene_shot_tuple=current_scene_shot_tuple, current_creatives_upload_scene_shot_data_tuple=current_creatives_upload_scene_shot_data_tuple, upload_images_form_top_bar_data_tuple=upload_images_form_top_bar_data_tuple, current_creatives_upload_scene_shot_tuple=current_creatives_upload_scene_shot_tuple)
         else:
             return render_template('admin_area.html')
