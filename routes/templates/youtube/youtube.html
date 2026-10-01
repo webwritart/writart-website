@@ -2350,6 +2350,19 @@
             seoTaskParentContainer.style.display = 'flex';
             document.getElementById('temp_title').style.display = 'none';
             document.getElementById('display-inner-container').style.display = 'none';
+            document.addEventListener("input", function (e) {
+                if (e.target.tagName !== "TEXTAREA") return;
+
+                e.target.style.height = "auto";
+
+                const minHeight =
+                    (e.target.id === "seo-task-yt-description" ||
+                    e.target.id === "seo-task-yt-tags")
+                    ? window.innerHeight * 0.07
+                    : window.innerHeight * 0.03;
+
+                e.target.style.height = Math.max(e.target.scrollHeight, minHeight) + "px";
+            });
             
         }).catch(error => {
             console.error('Error:', error);
