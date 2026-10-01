@@ -2329,6 +2329,17 @@
             console.error('Error:', error);
         });
     }
+    function resizeTextarea(textarea) {
+        textarea.style.height = "auto";
+
+        const minHeight =
+            (textarea.id === "seo-task-yt-description" ||
+            textarea.id === "seo-task-yt-tags")
+            ? window.innerHeight * 0.07
+            : window.innerHeight * 0.03;
+
+        textarea.style.height = Math.max(textarea.scrollHeight, minHeight) + "px";
+    }
     function displaySeoTask(task_uuid) {
         const seoTaskParentContainer = document.getElementById('seo-task-parent-container');
         const endpointUrl = "{{ url_for('youtube.home') }}";
@@ -2351,17 +2362,9 @@
             document.getElementById('temp_title').style.display = 'none';
             document.getElementById('display-inner-container').style.display = 'none';
             document.addEventListener("input", function (e) {
-                if (e.target.tagName !== "TEXTAREA") return;
-
-                e.target.style.height = "auto";
-
-                const minHeight =
-                    (e.target.id === "seo-task-yt-description" ||
-                    e.target.id === "seo-task-yt-tags")
-                    ? window.innerHeight * 0.07
-                    : window.innerHeight * 0.03;
-
-                e.target.style.height = Math.max(e.target.scrollHeight, minHeight) + "px";
+            resizeTextarea(document.getElementById("seo-task-yt-title-input"));
+            resizeTextarea(document.getElementById("seo-task-yt-description"));
+            resizeTextarea(document.getElementById("seo-task-yt-tags"));
             });
             
         }).catch(error => {
