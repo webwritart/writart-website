@@ -445,11 +445,21 @@
     #seo-task-form textarea {
         width: 100%;
         border-radius: 1rem;
-        padding-left: 1%;
+        padding: 0.5% 1% 0.5% 2%;
         color: black;
         border: none;
         box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.6);
-        padding: 0.5% 1% .5% 2%;
+        min-height: 3vh;
+        height: 3vh;
+        resize: none;
+        overflow-y: hidden;
+        box-sizing: border-box;
+    }
+
+    #seo-task-form #seo-task-yt-description,
+    #seo-task-form #seo-task-yt-tags {
+        min-height: 7vh;
+        height: 7vh;
     }
     #seo-task-form label {
         width: 100%;
@@ -1378,7 +1388,7 @@
                         <p>Update SEO</p>
                         <input type="hidden" id="seo-task-uuid" value="">
                         <label for="seo-task-yt-title">Title</label>
-                        <input type="text" id="seo-task-yt-title-input" name="seo_task_yt_title_input">
+                        <textarea id="seo-task-yt-title-input" name="seo_task_yt_title_input"></textarea>
                         <label for="seo-task-yt-description">Description</label>
                         <textarea id="seo-task-yt-description" name="seo_task_yt_description"></textarea>
                         <label for="seo-task-yt-tags">Tags</label>
@@ -2368,6 +2378,22 @@
                 alert('Failed to upload revision.');
             });
     });
+
+    document.addEventListener("input", function (e) {
+        if (e.target.tagName !== "TEXTAREA") return;
+
+        e.target.style.height = "auto";
+
+        const minHeight =
+            (e.target.id === "seo-task-yt-description" ||
+            e.target.id === "seo-task-yt-tags")
+            ? window.innerHeight * 0.07
+            : window.innerHeight * 0.03;
+
+        e.target.style.height = Math.max(e.target.scrollHeight, minHeight) + "px";
+    });
+
+    // ------------------------------------------------------------------------------------------------------------------------------------------------
     
     function downloadDisplayingImage(file_path) {
         const link = document.createElement('a');
