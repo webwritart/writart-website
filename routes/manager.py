@@ -1618,8 +1618,6 @@ def youtube_manager():
                 video = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar()
 
                 if 'storyboard' in request.files:
-                    p("storyboard posted")
-
                     storyboard = request.files.get('storyboard')
                     if storyboard.filename != '':
                         base_save_path = f'./static/files/youtube/{channel_id}/{video_id}/storyboard/'
@@ -1726,7 +1724,7 @@ def youtube_manager():
                             video_id_row = c
                             exits = True
                     if exits:
-                        video_id_row.text = video_id
+                        video_id_row.text = yt_video_id
                         if video_stage not in video.stages:
                             video.stages.append(video_stage)
                     else:
