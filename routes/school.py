@@ -24,7 +24,21 @@ school = Blueprint('school', __name__, static_folder='static', template_folder='
 
 @school.route('/', methods=['GET', 'POST'])
 def home():
-   return render_template('school.html', logged_in=current_user.is_authenticated)
+   admin = db.session.query(Role).filter_by(name='admin').one_or_none()
+   active_course_data_list = [(a.uuid, a.topic, a.reg_close, a.brief, a.cta_photo_path_desktop, a.cta_photo_path_mobile, a.registration_status) for a in db.session.query(Workshop).all() if a.registration_status != 'closed']
+   return render_template('school.html', logged_in=current_user.is_authenticated, admin=admin, active_course_data_list=active_course_data_list)
+
+
+@school.route('/course_registration_template', methods=['GET', 'POST'])
+def course_registration_template():
+    course_uuid = request.args.get('course_uuid')
+    session['course_uuid'] = course_uuid
+
+    course_obj = db.session.query(Workshop).filter_by(uuid=course_uuid).first()
+    course_data_dict = course_obj.to_dict()
+    pprint(course_data_dict)
+
+    return render_template('course_registration_template.html', course_data=course_data_dict)
 
 @school.route('/workshops', methods=['GET', 'POST'])
 def workshops():
@@ -400,30 +414,32 @@ def classroom():
     workshops = db.session.query(Workshop).all()
     q_a_ws_list = []
     for workshop in workshops:
-        if workshop.details.category == 'Q&A':
-            q_a_ws_list.append(workshop)
+        try:
+            if workshop.details.category == 'Q&A':
+                q_a_ws_list.append(workshop)
 
-        # if workshop.details.category == 'Q&A':
-        #     print('Got the details category qa')
-        #     q_a_ws_list.append(workshop)
-        # else:
-        #     print('skipped category verification')
-    q_a_ws_list.reverse()
-    all_qa = q_a_ws_list
-    for i in all_qa:
-        nm = i.name
-        topic = i.topic
-        vid_list = [i.yt_p1_id, i.yt_p2_id, i.yt_p3_id, i.yt_p4_id]
-        for n in range(len(vid_list)):
-            if vid_list[n]:
-                part = f"Part-{n + 1}"
-                caption = f'{nm}-{topic} | {part}'
-                qa_recorded_video_urls.append(vid_list[n])
-                qa_vid_caption_list.append(caption)
+            # if workshop.details.category == 'Q&A':
+            #     print('Got the details category qa')
+            #     q_a_ws_list.append(workshop)
+            # else:
+            #     print('skipped category verification')
+            q_a_ws_list.reverse()
+            all_qa = q_a_ws_list
+            for i in all_qa:
+                nm = i.name
+                topic = i.topic
+                vid_list = [i.yt_p1_id, i.yt_p2_id, i.yt_p3_id, i.yt_p4_id]
+                for n in range(len(vid_list)):
+                    if vid_list[n]:
+                        part = f"Part-{n + 1}"
+                        caption = f'{nm}-{topic} | {part}'
+                        qa_recorded_video_urls.append(vid_list[n])
+                        qa_vid_caption_list.append(caption)
+        except Exception as e:
+            p(e)
 
-
-    video_count = len(all_recorded_video_urls)
     q_a_video_count = len(qa_recorded_video_urls)
+    video_count = len(all_recorded_video_urls)
 
     all_demo_url_list = []
     demo_caption_list = []
@@ -487,12 +503,15 @@ def classroom():
     for workshop in workshop_list:
         uuid = workshop.uuid
         name = workshop.name
-        category = workshop.details.category
-        if category != 'Q&A':
-            thumbnail = f'{ws_thumbnail_base_url}{uuid}/thumbnail.jpg'
-            workshop_name_thumbnail_dict[name] = {'name':name,
-                                                  'uuid':uuid,
-                                                  'thumbnail_url':thumbnail}
+        try:
+            category = workshop.details.category
+            if category != 'Q&A':
+                thumbnail = f'{ws_thumbnail_base_url}{uuid}/thumbnail.jpg'
+                workshop_name_thumbnail_dict[name] = {'name':name,
+                                                    'uuid':uuid,
+                                                    'thumbnail_url':thumbnail}
+        except Exception as e:
+            p(e)
     workshop_count = len(workshop_name_thumbnail_dict)
     workshop_name_thumbnail_dict = dict(reversed(workshop_name_thumbnail_dict.items()))
 

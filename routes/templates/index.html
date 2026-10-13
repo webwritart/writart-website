@@ -121,14 +121,17 @@ img {vertical-align: middle;}
     display: flex;
     justify-content: center;
     align-items: center;
-    background:#ac0000;
     color: white;
     padding: 0% 0%;
+    width: 100%;
 }
 .discount_advertisement p {
-    font-size: .9rem;
+    width: 100%;
+    background:#ac0000;
+    font-size: .5rem;
     padding: 0%;
     margin: 0%;
+    text-align: center;
 }
 
 @media (min-width: 600px) {
@@ -161,7 +164,7 @@ img {vertical-align: middle;}
         justify-content: left;
     }
     .discount_advertisement p {
-        font-size: 1.3rem;
+        font-size: .7rem;
     }
 }
 
@@ -176,7 +179,7 @@ img {vertical-align: middle;}
         font-size: .9rem;
     }
     .discount_advertisement p {
-        font-size: 1.5rem;
+        font-size: .8rem;
     }
 }
 
@@ -191,7 +194,7 @@ img {vertical-align: middle;}
         font-size: 1.1rem;
     }
     .discount_advertisement p {
-        font-size: 1.8rem;
+        font-size: 1rem;
     }
 }
 
@@ -206,10 +209,32 @@ img {vertical-align: middle;}
 }
 
 </style>
-
-<div class="discount_advertisement">
-  <p><span style="color:#dedede;">Upto </span><b>{{ maximum_discount }}%</b> discount on Portraits.<span style="color:#dedede;"> Hurry!</span></p>
+<div id="active-courses-section">
+    {% for course in active_course_data_list %}
+    <div id="{{course[0]}}" class="active-course-card" data-url="{{ url_for('school.course_registration_template', course_uuid='PLACEHOLDER') }}" onclick="openCourseInfoPage(this.dataset.url,{{course[0]}})">
+        <p class="active-course-card-header">ART COURSE</p>
+        <div class="active-course-card-inner" style='background-image: url("../{{ active_course_data_list[0][4] }}");'>
+            <div class="active-course-card-inner-content-container">
+                {% if course[6] == 'open' %}
+                <div class="active-course-card-inner-label">Registration Open!!</div>
+                {% elif course[6] == 'closed' %}
+                <div class="active-course-card-inner-label">Registration Closed!!</div>
+                {% else %}
+                <div class="active-course-card-inner-label">Coming Soon!!</div>
+                {% endif %}
+                <div class="active-course-card-inner-content">
+                    <div class="active-course-card-inner-topic">{{ course[1]}}</div>
+                    <div class="active-course-card-inner-brief">{{ course[3] }}</div>
+                    <button class="active-course-card-inner-view-btn" data-course_uuid="{{ course[0]}}" onclick="openCourseInfoPage(this.dataset.course_uuid)">VIEW</button>
+                    <div class="active-course-card-inner-reg-close"> Last date: {{ course[2] }}</div>
+                </div>
+            </div>
+            <div class="active-course-card-inner-blank"></div>
+        </div>
+    </div>
+    {% endfor %}
 </div>
+
 <div class="slideshow-container">
     {% for portrait in portrait_list %}
     <a href="{{ url_for('studio.portraits') }}">
@@ -224,21 +249,14 @@ img {vertical-align: middle;}
     <div class="studio-btn-two">
         <a style="color:white;" href="{{ url_for('studio.artwork_pricing') }}">PRICING & CHARGES</a>
     </div>
-</div>
-<div class="course-cta">
-    <div class="course-cta-text">
-        <p class="course-cta-text-category">Art Course</p>
-        <p class="course-cta-text-title">PORTRAITURE (BEGINNERS)</p>
-        <p class="course-cta-text-detail">Learn drawing portraits, anatomy, form, eyes, nose, ears, mouth shapes, filling
-            life, lighting, emotions, expressions and much more.</p>
-        <div class="course-cta-text-btn-container">
-            <a class="course-cta-text-btn" href="{{url_for('school.home')}}">VIEW COURSE</a>
-        </div>
+    <div class="discount_advertisement">
+        <p><span style="color:#dedede;">Upto </span><b>{{ maximum_discount }}%</b> discount on Portraits.<span style="color:#dedede;"> Hurry!</span></p>
     </div>
 </div>
+<hr>
 
 
-
+<script src="../static/js/school.js"></script>
 
 <script>
 let slideIndex = 0;

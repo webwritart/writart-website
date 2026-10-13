@@ -35,8 +35,10 @@ def home():
         discount_list.append(discount.discount_percentage)
     maximum_discount = max(discount_list)
 
+    active_course_data_list = [(a.uuid, a.topic, a.reg_close, a.brief, a.cta_photo_path_desktop, a.cta_photo_path_mobile, a.registration_status) for a in db.session.query(Workshop).all() if a.registration_status != 'closed']
+
     return render_template('index.html', logged_in=current_user.is_authenticated, admin=admin, client=client,
-                           animation_admin=animation_admin, portrait_list=portrait_list, maximum_discount=maximum_discount)
+                           animation_admin=animation_admin, portrait_list=portrait_list, maximum_discount=maximum_discount, active_course_data_list=active_course_data_list)
 
 
 @main.route('/privacy_policy')

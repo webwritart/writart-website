@@ -69,6 +69,13 @@ input::placeholder {
     background-color: rgb(172, 174, 139);
     border: solid 1px rgb(136, 155, 94);
 }
+label {
+    line-height: 1;
+    padding: 0%;
+    margin: 0%;
+    margin-top: 1%;
+    font-size: .9rem;
+}
 
 @media (max-width: 1200px) {
     .form-heading {
@@ -186,7 +193,7 @@ input::placeholder {
             <input type="number" name="month-count" placeholder="Total months" required>
             <button type="submit" name="submit" id="workshop-month" value="workshop-month" class="btn btn-primary btn-block btn-large form-button">Add Months</button>
         </form>
-        <form id="new-course-form" action="{{ url_for('account.instructor_dashboard')}}" method="post">
+        <form id="new-course-form" action="{{ url_for('account.instructor_dashboard')}}" method="post" enctype="multipart/form-data">
             <p class="form-heading">Add New Course</p>
             <input name="topic" placeholder="Topic" type="text" required>
             <select name="category">
@@ -194,7 +201,37 @@ input::placeholder {
                 <option value="course">Course</option>
                 <option value="qa">Question-Answer</option>
             </select>
+            <label>Registration-start</label>
+            <input type="date" name="reg-start" placeholder="Reg start">
+            <label>Registration-end</label>
+            <input type="date" name="reg-end" placeholder="Reg end">
+            <label>Class commencement date</label>
+            <input type="date" name="class-commencement-date" placeholder="Class commencement date">
+            <input type="text" name="class-timing" placeholder="Class timing" >
+            <input type="text" name="brief" placeholder="Brief">
+            <input type="number" name="total-weeks" placeholder="Total weeks">
+            <label>Header cover image desktop</label>
+            <input type="file" name="header-cover-desktop" accept="image/*">
+            <label>Header cover image mobile</label>
+            <input type="file" name="header-cover-mobile" accept="image/*">
+            <label>CTA photo desktop</label>
+            <input type="file" name="cta-photo-desktop" accept="image/*">
+            <label>CTA photo mobile</label>
+            <input type="file" name="cta-photo-mobile" accept="image/*">
+            <input type="number" name="monthly-fee" placeholder="Monthly fee">
+            <input type="number" name="full-course-fee" placeholder="Full course fee">
             <button type="submit" name="submit" id="new-course" value="new-course" class="btn btn-primary btn-block btn-large form-button">Add New Course</button>
+        </form>
+        <form id="add-course-syllabus-form" action="{{ url_for('account.instructor_dashboard')}}" method="post">
+            <input type="hidden" name="total_weeks" id="total-weeks-hidden">
+            <select id="course-syllabus-course-select" name="course_uuid" oninput="showSyllabusWeekInputs()">
+                <option value="default">Choose Course/Workshop</option>
+                {% for uuid in course_dict %}
+                <option value="{{uuid}}">{{course_dict[uuid]['course_topic']}}</option>
+                {% endfor %}
+            </select>
+            <div id="syllabus-week-topic-input-container"></div>
+            <button type="submit" name="submit" id="add-course-syllabus" value="add-course-syllabus" class="btn btn-primary btn-block btn-large form-button">Add Syllabus</button>
         </form>
         <form id="images-to-pdf-form" action="{{url_for('tools.image_to_pdf')}}" method="post" enctype="multipart/form-data">
             <p class="form-heading">Multiple/Single Image to PDF</p>
@@ -431,6 +468,115 @@ document.getElementById('images-to-pdf-form').addEventListener('submit', functio
     // submitBtn.disabled = true; 
     submitBtn.innerText = 'Processing...';
 });
+// ------------------------------------------ADD SYLLABUS -----------------------------------------------------------------------
+function showSyllabusWeekInputs() {
+    const courseUuid = document.getElementById('course-syllabus-course-select').value;
+    const endpointUrl = "{{ url_for('account.instructor_dashboard') }}";
+    if (courseUuid !== 'default') {
+        fetch(endpointUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                'course_uuid': courseUuid,
+                'type': 'show_syllabus_week_inputs'
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            const weekTopicInputContainer = document.getElementById('syllabus-week-topic-input-container');
+
+            if (data) {
+                document.getElementById('total-weeks-hidden').value = data;
+                weekTopicInputContainer.replaceChildren();
+                for (let i = 0; i < Number(data); i++) {
+                    const newLabel = document.createElement('label');
+                    newLabel.textContent = `Week ${i + 1}`;
+                    weekTopicInputContainer.appendChild(newLabel);
+                    const weekTitleInput = document.createElement('input');
+                    weekTitleInput.type = 'text';
+                    weekTitleInput.name = `week_title_${i + 1}`;
+                    weekTitleInput.placeholder = `Week ${i + 1} Title`;
+                    weekTitleInput.required = true;
+                    weekTitleInput.style.background = 'white';
+                    weekTopicInputContainer.appendChild(weekTitleInput);
+                    for (let t = 0; t < 5; t++) {
+                        const weekTopicInput = document.createElement('input');
+                        weekTopicInput.type = 'text';
+                        weekTopicInput.name = `week_${i + 1}_topic_${t + 1}`;
+                        weekTopicInput.placeholder = `Topic ${t + 1}`;
+                        weekTopicInputContainer.appendChild(weekTopicInput);
+                    }
+                }
+            } else {
+                weekTopicInputContainer.replaceChildren();
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+}
+
+
+const syllabusForm = document.getElementById('add-course-syllabus-form');
+
+syllabusForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const endpointUrl = "{{ url_for('account.instructor_dashboard') }}";
+    const submitBtn = document.getElementById('add-course-syllabus');
+
+    // Prevent duplicate submissions
+    if (syllabusForm.classList.contains('is-submitting')) {
+        return;
+    }
+
+    syllabusForm.classList.add('is-submitting');
+    submitBtn.innerText = 'Submitting...';
+    submitBtn.disabled = true;
+
+    
+    try {
+        const formData = new FormData(syllabusForm);
+
+        formData.append('type', 'add-course-syllabus');
+        const response = await fetch(endpointUrl, {
+            method: 'POST',
+            body: formData
+        });
+
+        const responseText = await response.text();
+
+        console.log('HTTP status:', response.status);
+        console.log('Response body:', responseText);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error: ${response.status}`);
+        }
+
+        const data = JSON.parse(responseText);
+
+        if (data === 'success') {
+            alert('Submitted successfully');
+            window.location.reload();
+        } else {
+            console.log('Unexpected response:', data);
+            alert('Unexpected server response.');
+        }
+
+    } catch (error) {
+        console.error('Submission error:', error);
+        alert('Submission failed. Check the console.');
+    } finally {
+        syllabusForm.classList.remove('is-submitting');
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Add Syllabus';
+    }
+
+});
+
 
 </script>
 {% endblock %}

@@ -1,3 +1,9 @@
+
+function openCourseInfoPage(url, course_uuid) {
+    const finalUrl = url.replace('PLACEHOLDER', course_uuid);
+    window.location.href = finalUrl;
+}
+
 function    openInterestedForm2(workshop) {
     document.getElementById("interested-form2").style.display = 'block';
     document.getElementById("interested-form-hidden-workshop2").value = workshop;

@@ -1,5 +1,5 @@
 import os
-from flask import Blueprint, render_template, request, flash, send_file, redirect, url_for, session
+from flask import Blueprint, render_template, request, flash, send_file, redirect, url_for, session, jsonify
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from operations.artist_tools import add_watermark
@@ -1501,24 +1501,82 @@ def instructor_dashboard():
         if request.form.get('submit') == 'new-course':
             topic = request.form.get('topic')
             category = request.form.get('category')
+            reg_start = request.form.get('reg-start')
+            reg_close = request.form.get('reg-end')
+            class_commencement_date = request.form.get('class-commencement-date')
+            class_timing = request.form.get('class-timing')
+            brief = request.form.get('brief')
+            total_weeks = request.form.get('total-weeks')
+            header_cover_desktop = request.files.get('header-cover-desktop')
+            header_cover_mobile = request.files.get('header-cover-mobile')
+            cta_photo_desktop = request.files.get('cta-photo-desktop')
+            cta_photo_mobile = request.files.get('cta-photo-mobile')
+            monthly_fee = request.form.get('monthly-fee')
+            full_course_fee = request.form.get('full-course-fee')
+
+            
             course_uuid_list = []
             for data in db.session.query(Workshop).all():
                 course_uuid_list.append(data.uuid)
-            course_uuid = create_uuid(course_uuid_list, 6)
+            course_uuid = create_uuid(course_uuid_list, 9)
+            base_dir = f'./static/images/courses/{course_uuid}/'
+            os.makedirs(base_dir, exist_ok=True)
+            header_cover_desktop_path = f'{base_dir}header-cover-desktop.jpg'
+            header_cover_mobile_path = f'{base_dir}header-cover-mobile.jpg'
+            cta_photo_desktop_path = f'{base_dir}cta-photo-desktop.jpg'
+            cta_photo_mobile_path = f'{base_dir}cta-photo-mobile.jpg'
+            header_desktop_path = header_cover_desktop_path[1:]
+            header_mobile_path = header_cover_mobile_path[1:]
+            cta_desktop_path = cta_photo_desktop_path[1:]
+            cta_mobile_path = cta_photo_mobile_path[1:]
+            p([header_desktop_path, header_mobile_path, cta_desktop_path, cta_mobile_path])
+            if header_cover_desktop:
+                header_cover_desktop.save(header_cover_desktop_path)
+            if header_cover_mobile:
+                header_cover_mobile.save(header_cover_mobile_path)
+            if cta_photo_desktop:
+                cta_photo_desktop.save(cta_photo_desktop_path)
+            if cta_photo_mobile:
+                cta_photo_mobile.save(cta_photo_mobile_path)
+                
+
             entry = Workshop(
                 uuid=course_uuid,
                 topic=topic,
-                instructor='Shwetabh Suman'
+                instructor='Shwetabh Suman',
+                category=category,
+                reg_start=reg_start,
+                reg_close=reg_close,
+                date=class_commencement_date,
+                time=class_timing,
+                brief=brief,
+                total_weeks=total_weeks,
+                monthly_fee=monthly_fee,
+                full_course_fee=full_course_fee,
+                header_cover_path_desktop=header_desktop_path,
+                header_cover_path_mobile=header_mobile_path[1:],
+                cta_photo_path_desktop=cta_desktop_path[1:],
+                cta_photo_path_mobile=cta_mobile_path[1:]
             )
             db.session.add(entry)
             db.session.commit()
+            workshop_month_existing_uuid = [a.uuid for a in db.session.query(WorkshopMonth).all()]
+            workshop_month_uuid = create_uuid(workshop_month_existing_uuid, 9)
             course_id = db.session.query(Workshop).filter_by(uuid=course_uuid).scalar().id
-            entry2 = WorkshopDetails(
-                category=category,
-                ws_id=course_id
-            )
-            db.session.add(entry2)
-            db.session.commit()
+            if total_weeks:
+                p('total_weeks found')
+                total_months = int(total_weeks) / 4
+
+                month_entry = WorkshopMonth(
+                    uuid=workshop_month_uuid,
+                    month=total_months,
+                    title='',
+                    detail='',
+                    workshop_id=course_id
+                )
+                db.session.add(month_entry)
+                db.session.commit()
+            
             flash('Course created!', 'success')
 
         if request.form.get('submit') == 'workshop-month':
@@ -1603,6 +1661,48 @@ def instructor_dashboard():
                 )
             else:
                 flash('Please select the Course first!', 'error')
+        if request.form.get('type') == 'add-course-syllabus':
+            total_weeks = request.form.get('total_weeks')
+            course_uuid = request.form.get('course_uuid')
+            course_obj = db.session.query(Workshop).filter_by(uuid=course_uuid).first()
+            for w in range(int(total_weeks)):
+                week_title = request.form.get(f'week_title_{w+1}')
+                existing_week_uuid = [a.uuid for a in db.session.query(WorkshopSyllabusWeek).all()]
+                new_week_uuid = create_uuid(existing_week_uuid, 9)
+                entry = WorkshopSyllabusWeek(
+                    uuid= new_week_uuid,
+                    week= w+1,
+                    title= week_title,
+                    workshop_id= course_obj.id
+                )
+                db.session.add(entry)
+                db.session.commit()
+                week_id = db.session.query(WorkshopSyllabusWeek).filter_by(uuid=new_week_uuid).scalar().id
+                for i in range(5):
+                    topic_name = f"week_{w+1}_topic_{i+1}"
+                    topic = request.form.get(topic_name)
+                    if topic:
+                        existing_topic_uuid = [a.uuid for a in db.session.query(WorkshopSyllabusTopic).all()]
+                        new_topic_uuid = create_uuid(existing_topic_uuid, 9)
+                        entry = WorkshopSyllabusTopic(
+                            uuid= new_topic_uuid,
+                            text= topic,
+                            week_id= week_id
+                        )
+                        db.session.add(entry)
+                        db.session.commit()
+                            
+            return jsonify('success')
+
+        if request.is_json:
+            data = request.get_json()
+            if data['type'] == 'show_syllabus_week_inputs':
+                course_uuid = data['course_uuid']
+                course_obj = db.session.query(Workshop).filter_by(uuid=course_uuid).first()
+                total_weeks = course_obj.total_weeks
+
+                return jsonify(total_weeks)
+            
 
     if current_user.is_authenticated:
         if instructor in current_user.role:

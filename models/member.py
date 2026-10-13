@@ -179,6 +179,8 @@ class Workshop(db.Model):
     uuid = db.Column(db.Integer, unique=True)
     name = db.Column(db.String(100))
     topic = db.Column(db.String(100))
+    brief = db.Column(db.String(200))
+    category = db.Column(db.String(100))
     date = db.Column(db.String(50))
     time = db.Column(db.String(50))
     instructor = db.Column(db.String(100))
@@ -200,13 +202,106 @@ class Workshop(db.Model):
     s3_time = db.Column(db.String(100))
     s4_date = db.Column(db.String(100))
     s4_time = db.Column(db.String(100))
+    registration_status = db.Column(db.String(50)) # pending, closed, open
+    total_weeks = db.Column(db.Integer)
+    header_cover_path_desktop = db.Column(db.String(200))
+    header_cover_path_mobile = db.Column(db.String(200))
+    cta_photo_path_desktop = db.Column(db.String(200))
+    cta_photo_path_mobile = db.Column(db.String(200))
+    monthly_fee = db.Column(db.Integer)
+    full_course_fee = db.Column(db.Integer)
+    requirements = db.Column(db.String(500))
+    schedule = db.Column(db.String(200))
     months = db.relationship('WorkshopMonth', backref='workshop')
     details = db.relationship('WorkshopDetails', backref='workshop', uselist=False)
     videos = db.relationship('WorkshopVideos', backref='workshop')
     assignment_assessment_videos = db.relationship('WorkshopAssignmentAssessmentVideos', backref='workshop')
+    syllabus_weeks = db.relationship('WorkshopSyllabusWeek', backref='workshop')
 
     def __repr__(self):
         return f'{self.name}, {self.topic}'
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'uuid': self.uuid,
+            'name': self.name,
+            'topic': self.topic,
+            'date': self.date,
+            'time': self.time,
+            'instructor': self.instructor,
+            'strength': self.strength,
+            'gross_revenue': self.gross_revenue,
+            'joining_link': self.joining_link,
+            'joining_link2': self.joining_link2,
+            'joining_link3': self.joining_link3,
+            'joining_link4': self.joining_link4,
+            'yt_p1_id': self.yt_p1_id,
+            'yt_p2_id': self.yt_p2_id,
+            'yt_p3_id': self.yt_p3_id,
+            'yt_p4_id': self.yt_p4_id,
+            'reg_start': self.reg_start,
+            'reg_close': self.reg_close,
+            's2_date': self.s2_date,
+            's2_time': self.s2_time,
+            's3_date': self.s3_date,
+            's3_time': self.s3_time,
+            's4_date': self.s4_date,
+            's4_time': self.s4_time,
+            'header_cover_path_desktop': self.header_cover_path_desktop,
+            'header_cover_path_mobile': self.header_cover_path_mobile,
+            'cta_photo_path_desktop': self.cta_photo_path_desktop,
+            'cta_photo_path_mobile': self.cta_photo_path_mobile,
+            'total_weeks': self.total_weeks,
+            'requirements': self.requirements,
+            'schedule': self.schedule,
+            'monthly_fee': self.monthly_fee,
+            'syllabus_weeks': [week.to_dict() for week in self.syllabus_weeks]
+        }
+
+
+class WorkshopSyllabusWeek(db.Model):
+    __tablename__ = 'workshop_syllabus_week'
+
+    id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.Integer, unique=True)
+    week = db.Column(db.Integer)
+    title = db.Column(db.String(50))
+    workshop_id = db.Column(db.Integer, db.ForeignKey('workshop.id'))
+    topics = db.relationship('WorkshopSyllabusTopic', backref='week')
+
+    def __repr__(self):
+        return f'{self.workshop_id} - {self.week} week'
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'uuid': self.uuid,
+            'week': self.week,
+            'title': self.title,
+            'topics': [topic.to_dict() for topic in self.topics]
+        }
+
+
+class WorkshopSyllabusTopic(db.Model):
+    __tablename__ = 'workshop_syllabus_topic'
+
+    id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.Integer, unique=True)
+    text = db.Column(db.Text)
+    week_id = db.Column(db.Integer, db.ForeignKey('workshop_syllabus_week.id'))
+
+    def __repr__(self):
+        return f'{self.week_id} - {self.text}'
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'uuid': self.uuid,
+            'text': self.text,
+        }
+
+
     
 
 class WorkshopMonth(db.Model):
