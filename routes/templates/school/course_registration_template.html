@@ -560,7 +560,11 @@
             <!--    </div>-->
         </div>
         <div style="display:flex; justify-content:left; align-items:center; color:white;">
+            {% if course_data['schedule'] %}
             <ul class="text" style="width:50%;">{{ course_data['schedule'] }}</ul>
+            {% else %}
+            <ul class="text" style="width:50%;">Updating Soon</ul>
+            {% endif %}
             <p class="text" style="width:50%;"><span style="color:red;"><s>₹3000</s></span> <b>₹ {{ course_data['monthly_fee'] }}</b> per month</p>
         </div>
     </div>
