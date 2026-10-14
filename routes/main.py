@@ -48,38 +48,31 @@ def privacy_policy():
 
 @main.route('/verification', methods=['GET', 'POST'])
 def verification():
-    if request.method == 'POST':
-        if request.form.get('submit') == 'verify-certificate':
-            certificate_id = request.form.get('certificate-id')
+    certificate_id = request.args.get('certificate_id')
 
-            student_dict = {}
+    student_dict = {}
+    certificate_list = [a for a in db.session.query(Certificate).all() if int(a.certificate_no) == int(certificate_id)]
 
-            certificate_no_list = []
-            all_certificates = db.session.query(Certificate).all()
-            for c in all_certificates:
-                certificate_no_list.append(c.certificate_no)
-            
-            if certificate_id in certificate_no_list:
-                certificate = db.session.query(Certificate).filter_by(certificate_no=int(certificate_id)).scalar()
-                course_topic = certificate.course_topic
-                course_period = certificate.course_period
-                session_type = certificate.session_type
-                instructor = certificate.instructor
-                issue_date = certificate.issue_date
-                awardee_name = certificate.awardee_name
+    if len(certificate_list) > 0:
+        certificate = certificate_list[0]
+        course_topic = certificate.course_topic
+        course_period = certificate.course_period
+        session_type = certificate.session_type
+        instructor = certificate.instructor
+        issue_date = certificate.issue_date
+        awardee_name = certificate.awardee_name
 
-                student_dict[certificate_id] = {
-                    'course_topic': course_topic,
-                    'course_period': course_period,
-                    'session_type': session_type,
-                    'instructor': instructor,
-                    'issue_date': issue_date,
-                    'awardee_name': awardee_name
-                }
-                return render_template('certificate_verification_details.html', current_year=current_year, dict=student_dict, status='success', logged_in=current_user.is_authenticated)
-            else:
-                return render_template('certificate_verification_details.html', current_year=current_year, status='failed', logged_in=current_user.is_authenticated)
-    return render_template('verification.html', logged_in=current_user.is_authenticated, current_year=current_year)
+        student_dict[certificate_id] = {
+            'course_topic': course_topic,
+            'course_period': course_period,
+            'session_type': session_type,
+            'instructor': instructor,
+            'issue_date': issue_date,
+            'awardee_name': awardee_name
+        }
+        return render_template('certificate_verification_details.html', current_year=current_year, dict=student_dict, status='success', logged_in=current_user.is_authenticated)
+    else:
+        return render_template('certificate_verification_details.html', current_year=current_year, status='failed', logged_in=current_user.is_authenticated)
 
 
 @main.route('/temp', methods=['GET', 'POST'])

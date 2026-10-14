@@ -108,11 +108,11 @@
             <td style="color: green; font-weight: bold;">Verification Successful!</td>
         </tr>
     </table>
+    <p style="margin-top: 1%; padding:0% 10%;">To whom it may concern, we hereby confirm and assure that <b>{{dict[i]['awardee_name']}}</b> has sincerely attended and completed the course - <b>{{dict[i]['course_topic']}}</b>.</p>
     {% endfor %}
     {% elif status == 'failed' %}
     <p class="heading" style="color:red;">No Record Found! Verification failed!</p>
     {% endif %}
-    <a class="btn btn-primary btn-block btn-large" id="btn" href="{{url_for('main.verification')}}">Back to Verification form</a>
     
 </div>
 

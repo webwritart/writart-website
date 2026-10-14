@@ -530,49 +530,60 @@ def home():
                 for c in certificates:
                     certificate_no_list.append(c.certificate_no)
 
-                process_continue = True
-                while process_continue:
-                    certificate_no = str(random.randint(10000000, 99999999))
-                    if certificate_no not in certificate_no_list:
-                        process_continue = False
+                
+                course_months = course.months
 
                 students = course.participants
                 for s in students:
-                    awardee_name_text = s.name
-                    user_name = s.name
-                    user_uuid = s.uuid
-                    member_id = s.id
+                    student_months = s.ws_months
+                    is_contained = all(item in student_months for item in course_months)
+                    if is_contained:
+                        awardee_name_text = s.name
+                        user_name = s.name
+                        user_uuid = s.uuid
+                        member_id = s.id
 
-                export_path = f"./static/files/users/{user_uuid}/certificates/"
+                        export_path_student = f"./static/files/users/{user_uuid}/certificates/"
+                        export_path_school_database = f"./static/files/courses/{ws_uuid}/certificates/"
 
-                try:
-                    prepare_certificate(awardee_name_text, course_topic, course_period, issuing_date, 
-                                    certificate_id=certificate_no, ws_uuid=ws_uuid, user_uuid=user_uuid,
-                                    user_name=user_name, export_path=export_path)
-                    flash("Certificates prepared", "success")
-                except Exception as e:
-                    flash("Couldn't preapre certificates!", "error")
+                        process_continue = True
+                        while process_continue:
+                            certificate_no = str(random.randint(100000000, 999999999))
+                            if certificate_no not in certificate_no_list:
+                                process_continue = False
+                                certificate_no_list.append(certificate_no)
 
-                try:
-                    entry = Certificate(
-                        certificate_no=certificate_no,
-                        awardee_name=awardee_name_text,
-                        course_topic=course_topic,
-                        course_uuid=ws_uuid,
-                        course_period=course_period,
-                        session_type=session_type,
-                        instructor=instructor,
-                        lead_instructor='Shwetabh Suman',
-                        issue_date=issuing_date,
-                        member_id=member_id
-                    )
+                        try:
+                            qr_data = url_for('main.verification', certificate_id=certificate_no, _external=True)
+                            # qr_data = f"https://127.0.0.1:5000/verification?certificate_id={certificate_no}"
+                            prepare_certificate(awardee_name_text, course_topic, course_period, issuing_date, 
+                                            certificate_id=certificate_no, ws_uuid=ws_uuid, user_uuid=user_uuid,
+                                            user_name=user_name, export_path_student=export_path_student, export_path_school_database=export_path_school_database,
+                                            qr_data=qr_data)
+                            flash("Certificates prepared", "success")
+                        except Exception as e:
+                            flash("Couldn't preapre certificates!", "error")
 
-                    db.session.add(entry)
-                    db.session.commit()
-                    flash("Certificates added to the Database", "success")
-                except Exception as e:
-                    p(e)
-                    flash("Couldn't add certificates to the database", "error")
+                        try:
+                            entry = Certificate(
+                                certificate_no=certificate_no,
+                                awardee_name=awardee_name_text,
+                                course_topic=course_topic,
+                                course_uuid=ws_uuid,
+                                course_period=course_period,
+                                session_type=session_type,
+                                instructor=instructor,
+                                lead_instructor='Shwetabh Suman',
+                                issue_date=issuing_date,
+                                member_id=member_id
+                            )
+
+                            db.session.add(entry)
+                            db.session.commit()
+                            flash("Certificates added to the Database", "success")
+                        except Exception as e:
+                            p(e)
+                            flash("Couldn't add certificates to the database", "error")
 
                 return redirect(url_for('manager.home'))
             
@@ -1253,9 +1264,8 @@ def manual_enroll():
                     email_list.append(email.strip())
                 for email in email_list:
                     student = db.session.query(Member).filter_by(email=email).scalar()
-                    if int(month) == 1:
-                        if workshop not in  student.participated:
-                            student.participated.append(workshop)
+                    if workshop not in  student.participated:
+                        student.participated.append(workshop)
                     if req_month not in student.ws_months:
                         student.ws_months.append(req_month)
                         if student_role not in student.role:

@@ -1,3 +1,4 @@
+
 function closeAll() {
     document.getElementById("manager-img").style.display = 'none';
     document.getElementById("add-recording-link").style.display = 'none';
@@ -13,11 +14,8 @@ function closeAll() {
     document.getElementById("overview-content").style.display = 'none';
     document.getElementById("open-demo").style.display = 'none';
     document.getElementById("send-email").style.display = 'none';
-    document.getElementById("add-ws-files").style.display = 'none';
-    document.getElementById("add-assignments").style.display = 'none';
     document.getElementById("add-quiz-data").style.display = 'none';
     document.getElementById("add-news").style.display = 'none';
-    document.getElementById("add-ws-demo").style.display = 'none';
 }
 
 function addNewWs() {
@@ -81,6 +79,7 @@ function addNews() {
 }
 
 function certificateDistribution() {
+    
     closeAll();
     document.getElementById("certificate-dist").style.display = 'block';
 }

@@ -151,7 +151,7 @@ def generate_captcha():
     return captcha_num, captcha_uri
 
 
-def prepare_certificate(awardee_name_text, course_topic, course_period, issuing_date, certificate_id, ws_uuid, user_uuid, user_name, export_path):
+def prepare_certificate(awardee_name_text, course_topic, course_period, issuing_date, certificate_id, ws_uuid, user_uuid, user_name, export_path_student, export_path_school_database, qr_data):
     image = Image.open("./static/images/miscellaneous/Participation-Certificate.jpg")
     draw = ImageDraw.Draw(image)
 
@@ -196,16 +196,28 @@ def prepare_certificate(awardee_name_text, course_topic, course_period, issuing_
     draw.text((1470, id_y), certificate_id, fill=secondary_text_color, font=certificate_id_font)
 
 
+    qr_path = create_qr_code(qr_data, 7, 1, (252, 255, 228), user_uuid)
+    qr_img_raw = Image.open(qr_path)
+    qr_img = qr_img_raw.resize((round(qr_img_raw.width*.3), round(qr_img_raw.height*.3)), Image.Resampling.LANCZOS)
+
+    qr_x = 145
+    qr_y = 1246
+    image.paste(qr_img, (qr_x, qr_y), qr_img)
+
     if image.mode != 'RGB':
         image = image.convert('RGB')
 
 
-    if not os.path.exists(export_path):
-            os.makedirs(export_path)
+    if not os.path.exists(export_path_student):
+            os.makedirs(export_path_student)
+    os.makedirs(export_path_school_database, exist_ok=True)
+
     file_name = f"certificate_{ws_uuid}_{user_uuid}_{user_name}.pdf"
-    file_path = export_path + file_name
+    file_path = export_path_student + file_name
+    course_database_file_path = export_path_school_database + file_name
     
     image.save(file_path, 'PDF', resolution=100.0)
+    image.save(course_database_file_path, 'PDF', resolution=100.0)
 
 
 def prepare_invoice(customer_name, customer_address, customer_phone_or_email, item_dict, tax_percent, date_, user_uuid):
