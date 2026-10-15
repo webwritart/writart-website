@@ -1529,7 +1529,6 @@ def instructor_dashboard():
             header_mobile_path = header_cover_mobile_path[1:]
             cta_desktop_path = cta_photo_desktop_path[1:]
             cta_mobile_path = cta_photo_mobile_path[1:]
-            p([header_desktop_path, header_mobile_path, cta_desktop_path, cta_mobile_path])
             if header_cover_desktop:
                 header_cover_desktop.save(header_cover_desktop_path)
             if header_cover_mobile:
@@ -1560,22 +1559,22 @@ def instructor_dashboard():
             )
             db.session.add(entry)
             db.session.commit()
-            workshop_month_existing_uuid = [a.uuid for a in db.session.query(WorkshopMonth).all()]
-            workshop_month_uuid = create_uuid(workshop_month_existing_uuid, 9)
+            
             course_id = db.session.query(Workshop).filter_by(uuid=course_uuid).scalar().id
             if total_weeks:
-                p('total_weeks found')
                 total_months = int(total_weeks) / 4
-
-                month_entry = WorkshopMonth(
-                    uuid=workshop_month_uuid,
-                    month=total_months,
-                    title='',
-                    detail='',
-                    workshop_id=course_id
-                )
-                db.session.add(month_entry)
-                db.session.commit()
+                for i in range(total_months):
+                    workshop_month_existing_uuid = [a.uuid for a in db.session.query(WorkshopMonth).all()]
+                    workshop_month_uuid = create_uuid(workshop_month_existing_uuid, 9)
+                    month_entry = WorkshopMonth(
+                        uuid=workshop_month_uuid,
+                        month=i+1,
+                        title='',
+                        detail='',
+                        workshop_id=course_id
+                    )
+                    db.session.add(month_entry)
+                    db.session.commit()
             
             flash('Course created!', 'success')
 
