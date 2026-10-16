@@ -6,12 +6,6 @@
 .mySlides {display: none;}
 img {vertical-align: middle;}
 
-/* Slideshow container */
-<!--.slideshow-container {-->
-<!--  max-width: 1000px;-->
-<!--  position: relative;-->
-<!--  margin: auto;-->
-<!--}-->
 
 .slideshow-container {
     display: flex;
@@ -359,7 +353,7 @@ img {vertical-align: middle;}
 
 <div class="slideshow-container">
     {% for portrait in portrait_list %}
-    <a href="{{ url_for('studio.portraits') }}">
+    <a href="{{ url_for('studio.portraits') }}" id="slideshow-container-inner">
         <div class="mySlides fade">
           <div class="slideshow_box">
             <img src="{{ portrait }}" style="max-height:100%; max-width: 100%;">
@@ -375,7 +369,6 @@ img {vertical-align: middle;}
         <p><span style="color:#dedede;">Upto </span><b>{{ maximum_discount }}%</b> discount on Portraits.<span style="color:#dedede;"> Hurry!</span></p>
     </div>
 </div>
-<hr>
 
 
 <script src="../static/js/school.js"></script>
