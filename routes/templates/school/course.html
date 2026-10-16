@@ -7,6 +7,83 @@
     .dark-canvas {
         background: rgb(170, 180, 162);
     }
+    #top-bar-btn-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        width: 100%;
+        background: rgb(28, 41, 11);
+        padding: .5% 0%;
+    }
+    #top-bar-btn-container button {
+        background: rgb(155, 188, 21);
+        border: none;
+        border-radius: .5rem;
+        padding: 0% 1%;
+        margin: 0% .5%;
+        transition: all .2s ease-in-out;
+        font-size: 1rem;
+    }
+    #top-bar-btn-container button:hover {
+        transform: scale(0.96);
+    }
+    /* Dark background overlay */
+    #overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 999;
+    }
+    .popup {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 20px;
+        border: 1px solid black;
+        box-shadow: 0 0 10px gray;
+        z-index: 9999;
+        border-radius: .5rem;
+    }
+    .popup-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+    .popup-content p {
+        font-size: .9rem;
+    }
+    .close-popup-btn-container {
+        display: flex;
+        justify-content: flex-end;
+        width: 100%;
+    }
+    .close-popup-btn {
+        background: none;
+        border: none;
+        text-align: right;
+        color: red;
+    }
+    .btn-style-1 {
+        border: none;
+        background: rgb(61, 111, 56);
+        color: white;
+        width: 80%;
+        border-radius: 5px;
+        margin-bottom: 1%;
+        transition: all .2s ease-in-out;
+        font-size: 1rem;
+    }
+    .btn-style-1:hover {
+        transform: scale(0.96);
+    }
     .root-container {
         padding: 0% 10% 2% 10%;
         display: flex;
@@ -441,9 +518,39 @@
         #assessed-assignment-video-container {
             flex-direction: column;
         }
+        #top-bar-btn-container {
+            padding: 1% 0%;
+        }
+        #top-bar-btn-container button {
+            font-size: .8rem;
+        }
+        .popup {
+            width: 90%;
+            font-size: .8rem;
+        }
+        .btn-style-1 {
+            font-size: .8rem;
+        }
     }
 </style>
 <div class="light-canvas">
+    <div id="top-bar-btn-container">
+        <button id="download-certificate" onclick="showCertificatePopup()">Download certificate</button>
+        <button id="talk-to-instructor" onclick="showTalkToInstructorPopup()">Talk to Instructor</button>
+        <button id="give-feedback" onclick="showGiveFeedbackPopup()">Give Feedback</button>
+    </div>
+    <div id="overlay" onclick="closePopup()"></div>
+    <div id="certificate-popup" class="popup">
+        <div class="popup-content">
+            <div class="close-popup-btn-container">
+                <button class="close-popup-btn" onclick="closePopup()">x</button>
+            </div>
+            <p style="margin: 0%;">Your certificate is ready to download</p>
+            <p style="margin: 0%;">Course: {{ws_topic}}</p>
+            <button class="btn-style-1" onclick="downloadCertificate({{ws_uuid}})">Download</button>
+            <button class="btn-style-1" onclick="emailCertificate()">Send by email</button>
+        </div>
+    </div>
     <div class="root-container">
         <p class="section-title">Recorded lessons</p>
         {% if enrolment_alert == 'on' %}
@@ -785,6 +892,86 @@ const lessonCaptionList = {{ vid_caption_list | tojson }};
 const endpointUrl = "{{ url_for('school.course') }}";
 const courseTopic = {{ ws_topic | tojson }};
 
+// ------------------------------------------ TOP BAR BUTTONS POPUPS -------------------------------------------------
+function closePopup() {
+    document.getElementById('certificate-popup').style.display = 'none';
+    document.getElementById("overlay").style.display = "none";
+}
+function showCertificatePopup() {
+    document.getElementById('certificate-popup').style.display = 'block';
+    document.getElementById("overlay").style.display = "block";
+}
+
+
+
+async function downloadCertificate(course_uuid) {
+    const endpointUrl = "{{ url_for('school.certificate_download') }}";
+
+    const data = {
+        course_uuid: course_uuid,
+        type: "download-course-certificate",
+    };
+
+    try {
+        const response = await fetch(endpointUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+
+        // Check whether Flask returned an error
+        if (!response.ok) {
+            const errorText = await response.text();
+
+            console.error("Flask error status:", response.status);
+            console.error("Flask error response:", errorText);
+
+            throw new Error(
+                `HTTP ${response.status}: ${errorText}`
+            );
+        }
+
+        // Convert response to a downloadable file
+        const blob = await response.blob();
+
+        console.log("File size:", blob.size);
+        console.log("Content type:", blob.type);
+
+        const disposition =
+            response.headers.get("Content-Disposition");
+
+        console.log("Content-Disposition:", disposition);
+
+        const match = disposition &&
+            disposition.match(/filename="?([^"]+)"?/);
+
+        const filename = match ? match[1] : "download";
+
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+
+        link.href = url;
+        link.download = filename;
+
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        // Delay cleanup to ensure the download can start
+        setTimeout(() => {
+            window.URL.revokeObjectURL(url);
+        }, 1000);
+
+    } catch (error) {
+        console.error("Certificate download error:", error);
+        alert("Download failed. Check the browser console (F12).");
+    }
+}
+
+
+// -------------------------------------------------------------------------------------------------------------------
 function showVideo() {
     const lessonListValue = lessonList.value;
     lessonIframe.src = "https://www.youtube.com/embed/"+lessonVidIdList[lessonListValue]+"?si=2BVYS-0QHsxcX4f5&;";

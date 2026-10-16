@@ -556,7 +556,7 @@ def home():
                         try:
                             qr_data = url_for('main.verification', certificate_id=certificate_no, _external=True)
                             # qr_data = f"https://127.0.0.1:5000/verification?certificate_id={certificate_no}"
-                            prepare_certificate(awardee_name_text, course_topic, course_period, issuing_date, 
+                            certificate_path = prepare_certificate(awardee_name_text, course_topic, course_period, issuing_date, 
                                             certificate_id=certificate_no, ws_uuid=ws_uuid, user_uuid=user_uuid,
                                             user_name=user_name, export_path_student=export_path_student, export_path_school_database=export_path_school_database,
                                             qr_data=qr_data)
@@ -575,7 +575,8 @@ def home():
                                 instructor=instructor,
                                 lead_instructor='Shwetabh Suman',
                                 issue_date=issuing_date,
-                                member_id=member_id
+                                member_id=member_id,
+                                path=certificate_path
                             )
 
                             db.session.add(entry)

@@ -106,6 +106,7 @@ class Certificate(db.Model):
     instructor = db.Column(db.String(100))
     lead_instructor = db.Column(db.String(100))
     issue_date = db.Column(db.String(50))
+    path = db.Column(db.String(200))
     member_id = db.Column(db.Integer, db.ForeignKey('member.id'))
 
     def __repr__(self):

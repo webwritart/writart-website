@@ -59,64 +59,6 @@ img {vertical-align: middle;}
   to {opacity: 1}
 }
 
-
-.course-cta {
-    background-image: linear-gradient(rgba(0, 0, 0, .5), rgba(0, 0, 0, .7)), url("static/images/courses/595911/cta_phone.jpg");
-    background-repeat: no-repeat;
-    background-size: 100% auto;
-    aspect-ratio: 9 / 5;
-    padding: 0% 10%;
-}
-.course-cta-text {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    color: white;
-    text-align: center;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-}
-.course-cta-text-category {
-    line-height: 0;
-    padding: 0;
-    color: white;
-    font-weight: bold;
-    opacity: .6;
-}
-.course-cta-text-title {
-    font-size: 1.1rem;
-    font-weight: bold;
-    padding: 0%;
-    margin: 0% 0% 1% 0%;
-}
-.course-cta-text-detail {
-    opacity: .6;
-    padding: 0%;
-    margin: 0%;
-    line-height: 1.2;
-    font-size: .85rem;
-}
-.course-cta-text-btn-container {
-    display:flex;
-    justify-content:center;
-    width: 100%;
-}
-.course-cta-text-btn {
-    width: 50%;
-    background: #68a205;
-    padding: 1%;
-    color: white;
-    margin: 4% 0% 0% 0%;
-    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
-    font-size: 1rem;
-    text-align: center;
-}
-.course-cta-text-btn:hover {
-    color: white;
-    text-decoration: none;
-    background: #287903;
-}
 .discount_advertisement {
     display: flex;
     justify-content: center;
@@ -126,113 +68,293 @@ img {vertical-align: middle;}
     width: 100%;
 }
 .discount_advertisement p {
-    width: 100%;
     background:#ac0000;
-    font-size: .5rem;
-    padding: 0%;
+    font-size: 1rem;
+    padding: 0% 1%;
     margin: 0%;
     text-align: center;
 }
 
-@media (min-width: 600px) {
-    .text {font-size: 15px;}
+/* ------------------------------------------------------ ACTIVE COURSE CARD ---------------------------------------------------------------- */
+#root-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    background: rgb(198, 210, 176);
+    padding: 1%;
+}
+#active-courses-section {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+#active-course-mobile {
+    display: none;
+}
+.active-course-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 1%;
+    background: white;
+    border-radius: .5rem;
+    overflow: hidden;
+    width: 60%;
+    height: fit-content;
 
-    .course-cta {
-        background-image: url("static/images/courses/595911/cta_pc.jpg");
-        background-repeat: no-repeat;
-        background-size: 100% auto;
-        aspect-ratio: 96 / 35;
-        padding-left: 5%;
+}
+.active-course-card-inner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    height: auto;
+    aspect-ratio: 1920/700;
+    width: 100%;
+    background-image: var(--desktop-bg);
+    background-size: contain;
+    background-position: center;
+}
+.active-course-card-inner-mobile {
+    width: 100%;
+    height: 100%;
+}
+
+.active-course-card-header {
+    font-size: 1rem;
+    font-weight: bold;
+    background: rgb(55, 108, 30);
+    width: 100%;
+    text-align: center;
+    color: white;
+    padding: .8%;
+    margin: 0%;
+}
+.active-course-card-inner-content-container {
+    width: 40%;
+    padding-left: 4%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    height: 100%;
+}
+.active-course-card-inner-label {
+    color: black;
+    background: rgb(255, 136, 32);
+    width: fit-content;
+    padding: 1% 2%;
+    border-radius: .5rem;
+    
+}
+.active-course-card-inner-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: white;
+    width: 100%;
+}
+.active-course-card-inner-blank {
+    width: 60%;
+}
+.active-course-card-inner-topic {
+    font-family: "Futura-light", sans-serif;
+    font-size: 2.5rem;
+    font-weight: normal;
+    text-transform: uppercase;
+
+}
+.active-course-card-inner-brief {
+    font-size: 1rem;
+    margin-top: 2%;
+    font-family: 'Roboto-regular', sans-serif;
+}
+.active-course-card-inner-view-btn {
+    border: 2px solid rgb(90, 169, 90);
+    border-radius: 1.5rem;
+    background: none;
+    padding: 2% 4%;
+    margin-top: 4%;
+    font-family: 'Roboto-medium', sans-serif;
+    color: rgb(90, 169, 90);
+    transition: all .3s ease;
+}
+.active-course-card-inner-view-btn:hover {
+    background: rgb(48, 107, 48);
+    color: white;
+}
+.active-course-card-inner-reg-close {
+    font-size: 1rem;
+    margin-top: 4%;
+    font-family: 'Roboto-medium', sans-serif;
+    color: red;
+}
+
+#active-course-mobile {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    margin: 1%;
+    border-radius: .5rem;
+    overflow: hidden;
+    width: 100%;
+    height: fit-content;
+}
+.active-course-card-inner-content-container-mobile {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 0% 3%;
+    margin-top: 2%;
+}
+.active-course-card-inner-content-container-mobile p {
+    width: 100%;
+    margin: 0%;
+}
+.active-course-card-inner-content-mobile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    color: black;
+}
+.active-course-card-inner-topic-mobile {
+    font-family: "Futura-light", sans-serif;
+    font-size: 2rem;
+    font-weight: normal;
+    text-transform: uppercase;
+    padding: 0%;
+    margin: 0%;
+
+}
+.active-course-card-inner-brief-mobile {
+    font-size: 1rem;
+    font-family: 'Roboto-regular', sans-serif;
+}
+.active-course-card-inner-view-btn-mobile {
+    border: 2px solid rgb(90, 169, 90);
+    border-radius: 1.5rem;
+    background: none;
+    padding: 2% 0%;
+    width: 60%;
+    margin-top: 4%;
+    font-family: 'Roboto-medium', sans-serif;
+    color: rgb(90, 169, 90);
+    transition: all .3s ease;
+}
+.active-course-card-inner-view-btn-mobile:hover {
+    transform: scale(0.96);
+}
+.active-course-card-inner-reg-close-mobile {
+    font-size: 1rem;
+    margin-top: 1%;
+    font-family: 'Roboto-medium', sans-serif;
+    color: red;
+}
+@media(max-width: 599px) {
+    #active-course-desktop {
+        display: none;
     }
-    .course-cta-text {
-        align-items: left;
-        justify-content: center;
-        width: 50%;
-        text-align: left;
+    #active-course-mobile {
+        display: flex;
     }
-    .course-cta-text-category {
+    .active-course-card-inner-label {
+        background: black;
+        border-radius: 0rem;
+        color: white;
+        font-weight:bold;
+    }
+
+}
+/* Laptop */
+@media (min-width: 900px) and (max-width: 1279px) {
+    .active-course-card {
+        width: 80%;
+    }
+}
+/* Laptop */
+@media (min-width: 600px) and (max-width: 899px) {
+    .active-course-card {
         width: 100%;
     }
-    .course-cta-text-title {
-        width: 100%;
-        font-size: 1.2rem;
-    }
-    .course-cta-text-detail {
-        width: 100%;
-    }
-    .course-cta-text-btn-container {
-        justify-content: left;
-    }
-    .discount_advertisement p {
-        font-size: .7rem;
-    }
 }
 
-@media (min-width: 768px) {
-    .course-cta-text {
-        width: 45%;
-    }
-    .course-cta-text-title {
-        font-size: 1.3rem;
-    }
-    .course-cta-text-detail {
-        font-size: .9rem;
-    }
-    .discount_advertisement p {
-        font-size: .8rem;
-    }
-}
-
-@media (min-width: 1200px) {
-    .course-cta-text {
-        width: 40%;
-    }
-    .course-cta-text-title {
-        font-size: 1.5rem;
-    }
-    .course-cta-text-detail {
-        font-size: 1.1rem;
-    }
-    .discount_advertisement p {
-        font-size: 1rem;
-    }
-}
-
-@media (min-width: 1900px) {
-    .course-cta-text-title {
-        font-size: 1.7rem;
-    }
-}
-
-@media (min-width: 2500px) {
-
-}
 
 </style>
-<div id="active-courses-section">
-    {% for course in active_course_data_list %}
-    <div id="{{course[0]}}" class="active-course-card" data-url="{{ url_for('school.course_registration_template', course_uuid='PLACEHOLDER') }}" onclick="openCourseInfoPage(this.dataset.url,{{course[0]}})">
-        <p class="active-course-card-header">ART COURSE</p>
-        <div class="active-course-card-inner" style='background-image: url("../{{ active_course_data_list[0][4] }}");'>
-            <div class="active-course-card-inner-content-container">
+<div id="root-container">
+    <div id="active-courses-section">
+        {% for course in active_course_data_list %}
+        <div id="active-course-desktop" class="active-course-card" data-url="{{ url_for('school.course_registration_template', course_uuid='PLACEHOLDER') }}" onclick="openCourseInfoPage(this.dataset.url,{{course[0]}})">
+            <p class="active-course-card-header">ART COURSE</p>
+            
+            <div class="active-course-card-inner"
+                style='background-image: url("../{{ course[4] }}");'>
+
+                <div class="active-course-card-inner-content-container">
+                    {% if course[6] == 'open' %}
+                    <div class="active-course-card-inner-label">Registration Open!!</div>
+                    {% elif course[6] == 'closed' %}
+                    <div class="active-course-card-inner-label">Registration Closed!!</div>
+                    {% else %}
+                    <div class="active-course-card-inner-label">Coming Soon!!</div>
+                    {% endif %}
+
+                    <div class="active-course-card-inner-content">
+                        <div class="active-course-card-inner-topic">{{ course[1] }}</div>
+                        <div class="active-course-card-inner-brief">{{ course[3] }}</div>
+
+                        <button class="active-course-card-inner-view-btn"
+                                data-course_uuid="{{ course[0] }}"
+                                onclick="openCourseInfoPage(this.dataset.course_uuid)">
+                            VIEW
+                        </button>
+
+                        <div class="active-course-card-inner-reg-close">
+                            Last date: {{ course[2] }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="active-course-card-inner-blank"></div>
+            </div>
+
+        </div>
+        <div id="active-course-mobile" class="active-course-card" data-url="{{ url_for('school.course_registration_template', course_uuid='PLACEHOLDER') }}" onclick="openCourseInfoPage(this.dataset.url,{{course[0]}})">
+            <p class="active-course-card-header">ART COURSE</p>
+            
+            <img class="active-course-card-inner-mobile" src="../{{ course[5] }}">
+            <div class="active-course-card-inner-content-container-mobile">
                 {% if course[6] == 'open' %}
-                <div class="active-course-card-inner-label">Registration Open!!</div>
+                <p class="active-course-card-inner-label">Registration Open!!</p>
                 {% elif course[6] == 'closed' %}
-                <div class="active-course-card-inner-label">Registration Closed!!</div>
+                <p class="active-course-card-inner-label">Registration Closed!!</p>
                 {% else %}
-                <div class="active-course-card-inner-label">Coming Soon!!</div>
+                <p class="active-course-card-inner-label">Coming Soon!!</p>
                 {% endif %}
-                <div class="active-course-card-inner-content">
-                    <div class="active-course-card-inner-topic">{{ course[1]}}</div>
-                    <div class="active-course-card-inner-brief">{{ course[3] }}</div>
-                    <button class="active-course-card-inner-view-btn" data-course_uuid="{{ course[0]}}" onclick="openCourseInfoPage(this.dataset.course_uuid)">VIEW</button>
-                    <div class="active-course-card-inner-reg-close"> Last date: {{ course[2] }}</div>
+
+                <div class="active-course-card-inner-content-mobile">
+                    <div class="active-course-card-inner-topic-mobile">{{ course[1] }}</div>
+                    <div class="active-course-card-inner-brief-mobile">{{ course[3] }}</div>
+
+                    <button class="active-course-card-inner-view-btn-mobile"
+                            data-course_uuid="{{ course[0] }}"
+                            onclick="openCourseInfoPage(this.dataset.course_uuid)">
+                        VIEW
+                    </button>
+
+                    <div class="active-course-card-inner-reg-close-mobile">
+                        Last date: {{ course[2] }}
+                    </div>
                 </div>
             </div>
-            <div class="active-course-card-inner-blank"></div>
+
         </div>
+        {% endfor %}
     </div>
-    {% endfor %}
 </div>
 
 <div class="slideshow-container">

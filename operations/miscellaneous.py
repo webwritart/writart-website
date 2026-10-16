@@ -219,6 +219,8 @@ def prepare_certificate(awardee_name_text, course_topic, course_period, issuing_
     image.save(file_path, 'PDF', resolution=100.0)
     image.save(course_database_file_path, 'PDF', resolution=100.0)
 
+    return file_path
+
 
 def prepare_invoice(customer_name, customer_address, customer_phone_or_email, item_dict, tax_percent, date_, user_uuid):
     image = Image.open("./static/images/miscellaneous/invoice_base_design.png")
