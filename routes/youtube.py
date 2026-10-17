@@ -197,6 +197,7 @@ def home():
                     
                     if current_video_exists:
                         default_video_dict['temp_title'] = current_video.temp_title
+                        default_video_dict['category'] = current_video.category
                         try:
                             current_video_yt_title_revisions = [a for a in current_video.components if a.component_type == 'yt_title'][0].revisions
                             if len(current_video_yt_title_revisions) > 0:
@@ -251,6 +252,7 @@ def home():
                         default_video_dict['video_uuid'] = current_video.uuid
                     else:
                         default_video_dict['temp_title'] = first_video.temp_title
+                        default_video_dict['category'] = first_video.category
                         try:
                             first_video_yt_title_revisions = [a for a in first_video.components if a.component_type == 'yt_title'][0].revisions
                             if len(first_video_yt_title_revisions) > 0:

@@ -1665,7 +1665,7 @@
 </div>
 <script>
     // --------------------------------------------------- STORYBOARD CAVAS OPERATIONS ------------------------------------------------------
-    let videoCategory = {{project_dict | tojson}}['video_category'];
+    let videoCategory = {{default_video_dict['category'] | tojson}};
     const canvas = document.getElementById('paintCanvas');
     canvas.addEventListener('pointerdown', e => {
         console.log("POINTER DOWN");
@@ -1676,14 +1676,15 @@
     });
     const ctx = canvas.getContext('2d');
 
+
     // Resize canvas to fill the viewport
     if (videoCategory.toLowerCase().includes('short')) {
         canvas.width = 270;
         canvas.height = 480;
-    } else if (videoCategorytoLowerCase().includes('long')) {
+    } else if (videoCategory.toLowerCase().includes('long')) {
         canvas.width = 480;
         canvas.height = 270;
-    }
+    };
 
     isEraser = false;
 
