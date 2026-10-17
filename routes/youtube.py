@@ -589,6 +589,7 @@ def home():
                     video_uuid = data['video_uuid']
                     video = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar()
                     video_temp_title = video.temp_title
+                    video_category = video.category
                     video_components = video.components
                     stages = [a.stage for a in video.stages]
                     vid_dict = {}
@@ -689,6 +690,7 @@ def home():
                             video_yt_id = c.file_path
                     vid_dict['video_yt_id'] = video_yt_id
                     vid_dict['temp_title'] = video_temp_title
+                    vid_dict['category'] = video_category
                     vid_dict['video_uuid'] = video_uuid
                     vid_dict['current_scene_shot_tuple'] = current_scene_shot_tuple
                     vid_dict['currentCreativesUploadSceneShotTuple'] = current_creatives_upload_scene_shot_data_tuple

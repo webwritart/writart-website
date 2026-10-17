@@ -1665,6 +1665,7 @@
 </div>
 <script>
     // --------------------------------------------------- STORYBOARD CAVAS OPERATIONS ------------------------------------------------------
+    let videoCategory = {{project_dict | tojson}}['video_category'];
     const canvas = document.getElementById('paintCanvas');
     canvas.addEventListener('pointerdown', e => {
         console.log("POINTER DOWN");
@@ -1676,8 +1677,13 @@
     const ctx = canvas.getContext('2d');
 
     // Resize canvas to fill the viewport
-    canvas.width = 270;
-    canvas.height = 480;
+    if (videoCategory.toLowerCase().includes('short')) {
+        canvas.width = 270;
+        canvas.height = 480;
+    } else if (videoCategorytoLowerCase().includes('long')) {
+        canvas.width = 480;
+        canvas.height = 270;
+    }
 
     isEraser = false;
 
@@ -2548,6 +2554,7 @@
             document.getElementById('add-title-btn').onclick = () => addTitle(data.video_uuid);
             document.getElementById('add-description-btn').onclick = () => addDescription(data.video_uuid);
             document.getElementById('add-tags-btn').onclick = () => addTags(data.video_uuid);
+            videoCategory = data.video_category;
 
             // ----------------------------------- UPDATE CREATE STORYBOARD SECTION --------------------------------
             document.getElementById('create-storyboard-form-video-uuid').value = data.video_uuid;
