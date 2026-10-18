@@ -1034,6 +1034,8 @@ def certificate_download():
                                      as_attachment=True,
                                      download_name=os.path.basename(c.path)
                                      )
+                else:
+                    return jsonify(status='error', message='Certificate not found!')
         if data['type'] == 'email-course-certificate':
             course_uuid = data['course_uuid']
             course_topic = db.session.query(Workshop).filter_by(uuid=course_uuid).scalar().topic
@@ -1043,7 +1045,6 @@ def certificate_download():
             for c in current_user_all_certificates:
                 if int(c.course_uuid) == int(course_uuid):
                     certificate_path = c.path[1:]
-                    certificate_name = os.path.basename(c.path)
             subject = f"Certificate for {course_topic} - WRITART STUDIO"
             reply_back_email = 'writartstudios@gmail.com'
             recipients_list = [current_user_email]

@@ -924,7 +924,8 @@ async function downloadCertificate(course_uuid) {
         // Check whether Flask returned an error
         if (!response.ok) {
             const errorText = await response.text();
-
+            const result = await response.json();
+            alert(result.message);
             console.error("Flask error status:", response.status);
             console.error("Flask error response:", errorText);
 
