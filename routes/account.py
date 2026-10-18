@@ -1513,6 +1513,7 @@ def instructor_dashboard():
             cta_photo_mobile = request.files.get('cta-photo-mobile')
             monthly_fee = request.form.get('monthly-fee')
             full_course_fee = request.form.get('full-course-fee')
+            promo_yt_url = request.form.get('promo-yt-url-id')
 
             
             course_uuid_list = []
@@ -1552,6 +1553,7 @@ def instructor_dashboard():
                 total_weeks=total_weeks,
                 monthly_fee=monthly_fee,
                 full_course_fee=full_course_fee,
+                promo_yt_id=promo_yt_url,
                 header_cover_path_desktop=header_desktop_path,
                 header_cover_path_mobile=header_mobile_path[1:],
                 cta_photo_path_desktop=cta_desktop_path[1:],

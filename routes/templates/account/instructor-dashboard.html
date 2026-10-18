@@ -220,6 +220,7 @@ label {
             <input type="file" name="cta-photo-mobile" accept="image/*">
             <input type="number" name="monthly-fee" placeholder="Monthly fee">
             <input type="number" name="full-course-fee" placeholder="Full course fee">
+            <input type="text" name="promo-yt-url-id" placeholder="Promo video Youtube ID">
             <button type="submit" name="submit" id="new-course" value="new-course" class="btn btn-primary btn-block btn-large form-button">Add New Course</button>
         </form>
         <form id="add-course-syllabus-form" action="{{ url_for('account.instructor_dashboard')}}" method="post">

@@ -278,6 +278,7 @@ class Workshop(db.Model):
     full_course_fee = db.Column(db.Integer)
     requirements = db.Column(db.String(500))
     schedule = db.Column(db.String(200))
+    promo_yt_id = db.Column(db.String(100))
     months = db.relationship('WorkshopMonth', backref='workshop')
     details = db.relationship('WorkshopDetails', backref='workshop', uselist=False)
     videos = db.relationship('WorkshopVideos', backref='workshop')
@@ -323,6 +324,8 @@ class Workshop(db.Model):
             'requirements': self.requirements,
             'schedule': self.schedule,
             'monthly_fee': self.monthly_fee,
+            'full_course_fee': self.full_course_fee,
+            'promo_yt_id': self.promo_yt_id,
             'interested': [interested.to_dict() for interested in self.interested],
             'syllabus_weeks': [week.to_dict() for week in self.syllabus_weeks]
         }
