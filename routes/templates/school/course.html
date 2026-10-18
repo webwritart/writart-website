@@ -1089,7 +1089,7 @@ async function sendTalkToTeacherMessage(course_uuid, sendMessageBtn) {
         const data = await response.json();
         if (data.status === "success") {
             alert(data.message);
-            window.location.reload();
+            closePopup();
         } else {
             alert(data.message || "Failed to send message.");
         }
