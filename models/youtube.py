@@ -125,7 +125,7 @@ class YoutubeVideoStoryboardScene(db.Model):
         return {
             'id': self.id,
             'uuid': self.uuid,
-            'scene': self.scene,
+            'scene': self.scene.scene if self.scene else None,
             'description': self.description,
             'shots': [shot.to_dict() for shot in excel_sort_shots(self.shots)]
         }
