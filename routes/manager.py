@@ -565,6 +565,7 @@ def home():
                             flash("Certificates prepared", "success")
                         except Exception as e:
                             db.session.rollback()
+                            app.logger.exception(f"Certificate generation failed for {user_name}")
                             p(e)
                             flash(f"Couldn't preapre certificate for {user_name}!", "error")
 
