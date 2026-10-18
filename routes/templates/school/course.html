@@ -1000,7 +1000,7 @@ async function emailCertificate(course_uuid, emailCertificateBtn) {
 
     } catch (error) {
         console.error("Error emailing certificate:", error);
-        alert("Something went wrong. Please try again.");
+        alert(error.message || "Something went wrong. Please try again.");
     } finally {
         emailCertificateBtn.disabled = false;
         emailCertificateBtn.textContent = "Send by email";
