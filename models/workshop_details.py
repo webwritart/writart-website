@@ -61,3 +61,36 @@ class Testimonial(db.Model):
 
     def __repr__(self):
         return f'Testimonial by: {self.author_name}'
+    
+
+class Interested(db.Model):
+    __tablename__ = 'interested'
+
+    id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.Integer, unique=True)
+    name = db.Column(db.String(100))
+    email = db.Column(db.String(100))
+    phone = db.Column(db.String(100))
+    whastsapp = db.Column(db.String(100))
+    message = db.Column(db.String(500))
+    member_id = db.Column(db.Integer, db.ForeignKey('member.id'))
+    course_id = db.Column(db.Integer, db.ForeignKey('workshop.id'))
+    date_time = db.Column(db.String(50))
+
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'uuid': self.uuid,
+            'name': self.name,
+            'email': self.email,
+            'phone': self.phone,
+            'whatsapp': self.whatsapp,
+            'message': self.message,
+            'member': self.member,
+            'course': self.course,
+            'date_time': self.date_time
+        }
+
+    def __repr__(self):
+        return f'name: {self.name}, course: {self.workshop_id}'

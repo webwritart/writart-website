@@ -160,6 +160,7 @@ class YoutubeVideoStoryboardShot(db.Model):
             'creative_direction': self.creative_direction,
             'timing': self.timing,
             'shot_type': self.shot_type,
+            'scene': self.scene,
             'creatives': [creative.to_dict() for creative in self.creatives]
         }
 

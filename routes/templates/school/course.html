@@ -548,7 +548,7 @@
             <p style="margin: 0%;">Your certificate is ready to download</p>
             <p style="margin: 0%;">Course: {{ws_topic}}</p>
             <button class="btn-style-1" onclick="downloadCertificate({{ws_uuid}})">Download</button>
-            <button class="btn-style-1" onclick="emailCertificate()">Send by email</button>
+            <button class="btn-style-1" onclick="emailCertificate({{ws_uuid}}, this)">Send by email</button>
         </div>
     </div>
     <div class="root-container">
@@ -905,7 +905,7 @@ function showCertificatePopup() {
 
 
 async function downloadCertificate(course_uuid) {
-    const endpointUrl = "{{ url_for('school.certificate_download') }}";
+    const certificateEndpointUrl = "{{ url_for('school.certificate_download') }}";
 
     const data = {
         course_uuid: course_uuid,
@@ -913,7 +913,7 @@ async function downloadCertificate(course_uuid) {
     };
 
     try {
-        const response = await fetch(endpointUrl, {
+        const response = await fetch(certificateEndpointUrl, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -970,6 +970,40 @@ async function downloadCertificate(course_uuid) {
     }
 }
 
+async function emailCertificate(course_uuid, emailCertificateBtn) {
+    const certificateEndpointUrl = "{{ url_for('school.certificate_download') }}";
+
+    emailCertificateBtn.disabled = true;
+    emailCertificateBtn.textContent = "Sending email...";
+
+    try {
+        const response = await fetch(certificateEndpointUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                course_uuid: course_uuid,
+                type: "email-course-certificate"
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.status === "success") {
+            alert(data.message);
+        } else {
+            alert(data.message || "Failed to email certificate.");
+        }
+
+    } catch (error) {
+        console.error("Error emailing certificate:", error);
+        alert("Something went wrong. Please try again.");
+    } finally {
+        emailCertificateBtn.disabled = false;
+        emailCertificateBtn.textContent = "Send by email";
+    }
+}
 
 // -------------------------------------------------------------------------------------------------------------------
 function showVideo() {
@@ -1006,6 +1040,7 @@ function showAssessedVideo(category) {
 async function downloadNotes() {
     const notesList = document.getElementById('notes-list');
     const notesListValue = notesList.value;
+    alert(notesListValue);
     const fileName = notesList.options[notesList.selectedIndex].text;
     if (notesListValue != '') {
         const notesData = {

@@ -75,7 +75,56 @@ class Member(UserMixin, db.Model):
     youtube_video_component_revision = db.relationship('YoutubeVideoComponentRevision', backref='member')
     youtube_video_creative_revision = db.relationship('YoutubeVideoCreativeRevision', backref='member')
     tools = db.relationship('MemberTools', backref='member')
+    interested = db.relationship('Interested', backref='member')
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'email': self.email,
+            'phone': self.phone,
+            'profession': self.profession,
+            'sex': self.sex,
+            'dob': self.dob,
+            'billing_address': self.billing_address,
+            'billing_district': self.billing_district,
+            'billing_state': self.billing_state,
+            'billing_country': self.billing_country,
+            'billing_pincode': self.billing_pincode,
+            'shipping_address': self.shipping_address,
+            'shipping_district': self.shipping_district,
+            'shipping_state': self.shipping_state,
+            'shipping_country': self.shipping_country,
+            'shipping_pincode': self.shipping_pincode,
+            'website': self.website,
+            'fb_url': self.fb_url,
+            'insta_url': self.insta_url,
+            'x': self.x,
+            'registration_date': self.registration_date,
+            'token': self.token,
+            'artworks': [artwork.to_dict() for artwork in self.artworks],
+            'participated': [workshop.to_dict() for workshop in self.participated],
+            'role': [role.to_dict() for role in self.role],
+            'ws_months': [month.to_dict() for month in self.ws_months],
+            'demo': [demo.to_dict() for demo in self.demo],
+            'artist_data': self.artist_data.to_dict() if self.artist_data else None,
+            'project': [project.to_dict() for project in self.project],
+            'quizzes': [quiz.to_dict() for quiz in self.quizzes],
+            'tickets': [ticket.to_dict() for ticket in self.tickets],
+            'feedback_credits': [credit.to_dict() for credit in self.feedback_credits],
+            'portraits': [portrait.to_dict() for portrait in self.portraits],
+            'certificates': [certificate.to_dict() for certificate in self.certificates],
+            'invoices': [invoice.to_dict() for invoice in self.invoices],
+            'given_coas': [coa.to_dict() for coa in self.given_coas],
+            'taken_coas': [coa.to_dict() for coa in self.taken_coas],
+            'testimonials': [testimonial.to_dict() for testimonial in self.testimonials],
+            'youtube_video_component': [component.to_dict() for component in self.youtube_video_component],
+            'youtube_video_creative': [creative.to_dict() for creative in self.youtube_video_creative],
+            'youtube_video_component_revision': [revision.to_dict() for revision in self.youtube_video_component_revision],
+            'youtube_video_creative_revision': [revision.to_dict() for revision in self.youtube_video_creative_revision],
+            'tools': [tool.to_dict() for tool in self.tools],
+            'interested': [interested.to_dict() for interested in self.interested]
+        }
 
     def __repr__(self):
         return f'{self.name.split()[0]} -- {self.email}'
@@ -108,6 +157,22 @@ class Certificate(db.Model):
     issue_date = db.Column(db.String(50))
     path = db.Column(db.String(200))
     member_id = db.Column(db.Integer, db.ForeignKey('member.id'))
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'certificate_no': self.certificate_no,
+            'awardee_name': self.awardee_name,
+            'course_topic': self.course_topic,
+            'course_uuid': self.course_uuid,
+            'course_period': self.course_period,
+            'session_type': self.session_type,
+            'instructor': self.instructor,
+            'lead_instructor': self.lead_instructor,
+            'issue_date': self.issue_date,
+            'path': self.path,
+            'member': self.member
+        }
 
     def __repr__(self):
         return f'{self.course_topic}, Certificate No. {self.certificate_no}'
@@ -218,6 +283,7 @@ class Workshop(db.Model):
     videos = db.relationship('WorkshopVideos', backref='workshop')
     assignment_assessment_videos = db.relationship('WorkshopAssignmentAssessmentVideos', backref='workshop')
     syllabus_weeks = db.relationship('WorkshopSyllabusWeek', backref='workshop')
+    interested = db.relationship('Interested', backref='course')
 
     def __repr__(self):
         return f'{self.name}, {self.topic}'
@@ -257,6 +323,7 @@ class Workshop(db.Model):
             'requirements': self.requirements,
             'schedule': self.schedule,
             'monthly_fee': self.monthly_fee,
+            'interested': [interested.to_dict() for interested in self.interested],
             'syllabus_weeks': [week.to_dict() for week in self.syllabus_weeks]
         }
 

@@ -1024,16 +1024,34 @@ def certificate_download():
     if request.method == 'POST' and request.is_json:
         data = request.get_json()
         if data['type'] == 'download-course-certificate':
+            p('posted certificate download')
             current_user_all_certificates = current_user.certificates
             course_uuid = data['course_uuid']
             for c in current_user_all_certificates:
                 if int(c.course_uuid) == int(course_uuid):
-                    p(c.path)
-                    return send_file(c.path,
+                    certificate_path = c.path[1:]
+                    return send_file(certificate_path,
                                      as_attachment=True,
                                      download_name=os.path.basename(c.path)
                                      )
-
+        if data['type'] == 'email-course-certificate':
+            course_uuid = data['course_uuid']
+            course_topic = db.session.query(Workshop).filter_by(uuid=course_uuid).scalar().topic
+            current_user_email = current_user.email
+            current_user_name = current_user.name
+            current_user_all_certificates = current_user.certificates
+            for c in current_user_all_certificates:
+                if int(c.course_uuid) == int(course_uuid):
+                    certificate_path = c.path[1:]
+                    certificate_name = os.path.basename(c.path)
+            subject = f"Certificate for {course_topic} - WRITART STUDIO"
+            reply_back_email = 'writartstudios@gmail.com'
+            recipients_list = [current_user_email]
+            message_body = f"Hi {current_user_name},\n\nAttached is your certificate for {course_topic}.\n\nBest regards,\nWritart Studio"
+            attachment_file_path = certificate_path
+            send_email_with_pdf_attachment(subject, reply_back_email, recipients_list, message_body, attachment_file_path)
+            return jsonify(status='success', message='Email sent successfully!')
+    
         
     return render_template('certificate_download.html', logged_in=current_user.is_authenticated, admin=admin, current_year=current_year)
 
