@@ -1042,10 +1042,11 @@ def certificate_download():
             current_user_all_certificates = current_user.certificates
             certificate_exists = False
             for c in current_user_all_certificates:
-                if int(c.course_uuid) == int(course_uuid):
-                    certificate_path = c.path[1:]
-                    certificate_exists = True
-                    break
+                if len(current_user_all_certificates) > 0:
+                    if int(c.course_uuid) == int(course_uuid):
+                        certificate_path = c.path[1:]
+                        certificate_exists = True
+                        break
             if not certificate_exists:
                 return jsonify(status='error', message='Certificate not found!')
             else:
