@@ -1069,6 +1069,29 @@ def certificate_download():
     return render_template('certificate_download.html', logged_in=current_user.is_authenticated, admin=admin, current_year=current_year)
 
 
+@school.route('/message_to_teacher', methods=['GET', 'POST'])
+def message_to_teacher():
+    if request.method == 'POST':
+        if request.get_json:
+            data = request.get_json()
+            if data['type'] == 'send-message-to-teacher':
+                course_uuid = data['course_uuid']
+                course_topic = db.session.query(Workshop).filter_by(uuid=course_uuid).scalar().topic
+                message = data['message']
+                student_name = current_user.name
+                student_uuid = current_user.uuid
+                student_email = current_user.email
+                student_phone = current_user.phone
+                student_whatsapp = current_user.whatsapp
+                subject = f"Message from {student_name}, course: {course_topic} - WRITART STUDIO"
+                reply_back_email = student_email
+                recipients_list = ['shwetabhartist@gmail.com']
+                message_body = f"Hi Teacher,\n\n{message}\n\nBest regards,\n\n{student_name}\nUUID: {student_uuid}\nEmail: {student_email}\nPhone: {student_phone}\nWhatsApp: {student_whatsapp}\nCourse: {course_topic}"
+                send_email_with_reply(subject, reply_back_email, recipients_list, message_body)
+                return jsonify(status='success', message="Message sent successfully! You'll get a reply soon on your registered email.")
+
+    return '', 204
+
 @school.route('/enroll', methods=['GET', 'POST'])
 def enroll():
     session['url'] = url_for('school.enroll')

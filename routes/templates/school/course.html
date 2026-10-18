@@ -57,6 +57,15 @@
         align-items: center;
         width: 100%;
     }
+    #talk-to-teacher-popup {
+        width: 60%;
+        background: rgb(145, 163, 133);
+    }
+    #talk-to-teacher-popup-content textarea{
+        width: 80%;
+        margin-bottom: 1%;
+        margin: 1%;
+    }
     .popup-content p {
         font-size: .9rem;
     }
@@ -406,6 +415,9 @@
         #assignment-format {
             font-size: .8rem;
         }
+        #talk-to-teacher-popup {
+            width: 70%;
+        }
     }
     @media (max-width: 900px) {
         .assignment-submission-form input {
@@ -447,6 +459,9 @@
         }
         #quote {
             font-size: .9rem;
+        }
+        #talk-to-teacher-popup {
+            width: 80%;
         }
     }
     @media (max-width: 600px) {
@@ -531,12 +546,15 @@
         .btn-style-1 {
             font-size: .8rem;
         }
+        #talk-to-teacher-popup {
+            width: 95%;
+        }
     }
 </style>
 <div class="light-canvas">
     <div id="top-bar-btn-container">
         <button id="download-certificate" onclick="showCertificatePopup()">Download certificate</button>
-        <button id="talk-to-instructor" onclick="showTalkToInstructorPopup()">Talk to Instructor</button>
+        <button id="talk-to-teacher" onclick="showTalkToTeacherPopup()">Talk to Teacher</button>
         <button id="give-feedback" onclick="showGiveFeedbackPopup()">Give Feedback</button>
     </div>
     <div id="overlay" onclick="closePopup()"></div>
@@ -549,6 +567,16 @@
             <p style="margin: 0%;">Course: {{ws_topic}}</p>
             <button class="btn-style-1" onclick="downloadCertificate({{ws_uuid}}, this)">Download</button>
             <button class="btn-style-1" onclick="emailCertificate({{ws_uuid}}, this)">Send by email</button>
+        </div>
+    </div>
+    <div id="talk-to-teacher-popup" class="popup">
+        <div class="popup-content" id="talk-to-teacher-popup-content">
+            <div class="close-popup-btn-container">
+                <button class="close-popup-btn" onclick="closePopup()">x</button>
+            </div>
+            <p style="font-weight: 500;">Wanna say something to your Teacher?</p>
+            <textarea id="talk-to-teacher-message" placeholder="Type your message here..."></textarea>
+            <button class="btn-style-1" onclick="sendTalkToTeacherMessage({{ws_uuid}}, this)">Send</button>
         </div>
     </div>
     <div class="root-container">
@@ -896,12 +924,17 @@ const courseTopic = {{ ws_topic | tojson }};
 function closePopup() {
     document.getElementById('certificate-popup').style.display = 'none';
     document.getElementById("overlay").style.display = "none";
+    document.getElementById('talk-to-teacher-popup').style.display = 'none';
 }
 function showCertificatePopup() {
     document.getElementById('certificate-popup').style.display = 'block';
     document.getElementById("overlay").style.display = "block";
 }
 
+function showTalkToTeacherPopup() {
+    document.getElementById('talk-to-teacher-popup').style.display = 'block';
+    document.getElementById("overlay").style.display = "block";
+}
 
 
 
@@ -1029,6 +1062,42 @@ async function emailCertificate(course_uuid, emailCertificateBtn) {
     } finally {
         emailCertificateBtn.disabled = false;
         emailCertificateBtn.textContent = "Send by email";
+    }
+}
+
+async function sendTalkToTeacherMessage(course_uuid, sendMessageBtn) {
+    const message = document.getElementById('talk-to-teacher-message').value;
+    const teacherMessageEndpointUrl = "{{ url_for('school.message_to_teacher') }}";
+
+    sendMessageBtn.disabled = true;
+    sendMessageBtn.textContent = "Sending message...";
+
+    try {
+        const response = await fetch(teacherMessageEndpointUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                course_uuid: course_uuid,
+                message: message,
+                type: "send-message-to-teacher"
+            })
+        });
+
+        const data = await response.json();
+        if (data.status === "success") {
+            alert(data.message);
+        } else {
+            alert(data.message || "Failed to send message.");
+        }
+
+    } catch (error) {
+        console.error("Error sending message:", error);
+        alert(error.message || "Something went wrong. Please try again.");
+    } finally {
+        sendMessageBtn.disabled = false;
+        sendMessageBtn.textContent = "Send message";
     }
 }
 
