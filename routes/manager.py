@@ -560,29 +560,31 @@ def home():
                                             user_name=user_name, export_path_student=export_path_student, export_path_school_database=export_path_school_database,
                                             qr_data=qr_data)
                             flash("Certificates prepared", "success")
-                            try:
-                                entry = Certificate(
-                                    certificate_no=certificate_no,
-                                    awardee_name=awardee_name_text,
-                                    course_topic=course_topic,
-                                    course_uuid=ws_uuid,
-                                    course_period=course_period,
-                                    session_type=session_type,
-                                    instructor=instructor,
-                                    lead_instructor='Shwetabh Suman',
-                                    issue_date=issuing_date,
-                                    member_id=member_id,
-                                    path=certificate_path
-                                )
-    
-                                db.session.add(entry)
-                                db.session.commit()
-                                flash("Certificates added to the Database", "success")
-                            except Exception as e:
-                                p(e)
-                                flash("Couldn't add certificates to the database", "error")
                         except Exception as e:
                             flash("Couldn't preapre certificates!", "error")
+
+                        try:
+                            entry = Certificate(
+                                certificate_no=certificate_no,
+                                awardee_name=awardee_name_text,
+                                course_topic=course_topic,
+                                course_uuid=ws_uuid,
+                                course_period=course_period,
+                                session_type=session_type,
+                                instructor=instructor,
+                                lead_instructor='Shwetabh Suman',
+                                issue_date=issuing_date,
+                                member_id=member_id,
+                                path=certificate_path
+                            )
+
+                            db.session.add(entry)
+                            db.session.commit()
+                            flash("Certificates added to the Database", "success")
+                        except Exception as e:
+                            p(e)
+                            flash("Couldn't add certificates to the database", "error")
+                        
 
                         
 
