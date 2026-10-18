@@ -182,12 +182,13 @@ def prepare_certificate(awardee_name_text, course_topic, course_period, issuing_
     issuing_y = 1090
     id_y = 1138
 
+    font_path = "./static/fonts/arial/Arial.ttf"
 
-    name_font = ImageFont.truetype("arial.ttf", size=awardee_name_font_size)
-    topic_font = ImageFont.truetype("arial.ttf", size=course_topic_font_size)
-    period_font = ImageFont.truetype("arial.ttf", size=course_period_font_size)
-    issuing_font = ImageFont.truetype("arial.ttf", size=issuing_date_font_size)
-    certificate_id_font = ImageFont.truetype("arial.ttf", size=certificate_id_font_size)
+    name_font = ImageFont.truetype(font_path, size=awardee_name_font_size)
+    topic_font = ImageFont.truetype(font_path, size=course_topic_font_size)
+    period_font = ImageFont.truetype(font_path, size=course_period_font_size)
+    issuing_font = ImageFont.truetype(font_path, size=issuing_date_font_size)
+    certificate_id_font = ImageFont.truetype(font_path, size=certificate_id_font_size)
 
     draw.text((center_x, name_y), awardee_name, fill=primary_text_color, font=name_font, anchor='mm')
     draw.text((center_x, topic_y), course_topic, fill=primary_text_color, font=topic_font, anchor='mm')
