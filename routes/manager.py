@@ -537,6 +537,9 @@ def home():
                 course_months = course.months
 
                 students = course.participants
+                total_students = len(students)
+                total_certificates_prepared = 0
+                total_certificates_added_to_db = 0
                 for s in students:
                     student_months = s.ws_months
                     is_contained = all(item in student_months for item in course_months)
@@ -562,10 +565,11 @@ def home():
                                             certificate_id=certificate_no, ws_uuid=ws_uuid, user_uuid=user_uuid,
                                             user_name=user_name, export_path_student=export_path_student, export_path_school_database=export_path_school_database,
                                             qr_data=qr_data)
-                            flash("Certificates prepared", "success")
+                            total_certificates_prepared += 1
+                            flash(f"Certificates prepared for {user_name}", "success")
+
                         except Exception as e:
                             db.session.rollback()
-                            app.logger.exception(f"Certificate generation failed for {user_name}")
                             p(e)
                             flash(f"Couldn't preapre certificate for {user_name}!", "error")
 
@@ -586,14 +590,19 @@ def home():
                             try:
                                 db.session.add(entry)
                                 db.session.commit()
-                                flash("Certificates added to the Database", "success")
+                                total_certificates_added_to_db += 1
+                                flash(f"Certificates for {user_name} added to the Database", "success")
                             except Exception as e:
                                 db.session.rollback()
                                 p(e)
-                                flash("Couldn't add certificates to the database", "error")
+                                flash(f"Couldn't add certificates for {user_name} to the database", "error")
                         except Exception as e:
                             p(e)
-                            flash("Couldn't add certificates to the database", "error")
+                            flash(f"Couldn't add certificates for {user_name} to the database", "error")
+
+                flash(f"Total Certificates Prepared: {total_certificates_prepared}", "success")
+                flash(f"Total Certificates Added to Database: {total_certificates_added_to_db}", "success")
+                flash(f"Total Students: {total_students}", "success")
                         
 
                 return redirect(url_for('manager.home'))
