@@ -904,6 +904,7 @@ function showCertificatePopup() {
 
 
 
+
 async function downloadCertificate(course_uuid) {
     const certificateEndpointUrl = "{{ url_for('school.certificate_download') }}";
 
@@ -921,34 +922,54 @@ async function downloadCertificate(course_uuid) {
             body: JSON.stringify(data)
         });
 
-        // Check whether Flask returned an error
+        const contentType = response.headers.get("Content-Type");
+
+        // Handle JSON responses (errors or messages from Flask)
+        if (contentType && contentType.includes("application/json")) {
+            const result = await response.json();
+
+            if (!response.ok || result.status !== "success") {
+                alert(result.message || "Certificate not found.");
+                console.error("Flask response:", response.status, result);
+                return;
+            }
+
+            alert(result.message || "Request completed.");
+            return;
+        }
+
+        // Handle HTTP errors that are not JSON
         if (!response.ok) {
             const errorText = await response.text();
-            const result = await response.json();
-            alert(result.message);
+
             console.error("Flask error status:", response.status);
             console.error("Flask error response:", errorText);
 
-            throw new Error(
-                `HTTP ${response.status}: ${errorText}`
-            );
+            alert("Certificate download failed.");
+            return;
         }
 
-        // Convert response to a downloadable file
+        // Verify that the response is a PDF file
+        if (!contentType || !contentType.includes("application/pdf")) {
+            console.error("Unexpected response type:", contentType);
+            alert("No certificate found");
+            return;
+        }
+
+        // Convert the PDF response into a downloadable file
         const blob = await response.blob();
 
         console.log("File size:", blob.size);
         console.log("Content type:", blob.type);
 
-        const disposition =
-            response.headers.get("Content-Disposition");
+        const disposition = response.headers.get("Content-Disposition");
 
         console.log("Content-Disposition:", disposition);
 
         const match = disposition &&
             disposition.match(/filename="?([^"]+)"?/);
 
-        const filename = match ? match[1] : "download";
+        const filename = match ? match[1] : "certificate.pdf";
 
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement("a");
@@ -960,16 +981,16 @@ async function downloadCertificate(course_uuid) {
         link.click();
         link.remove();
 
-        // Delay cleanup to ensure the download can start
         setTimeout(() => {
             window.URL.revokeObjectURL(url);
         }, 1000);
 
     } catch (error) {
         console.error("Certificate download error:", error);
-        alert("Certificate not found");
+        alert("Something went wrong while downloading the certificate.");
     }
 }
+
 
 async function emailCertificate(course_uuid, emailCertificateBtn) {
     const certificateEndpointUrl = "{{ url_for('school.certificate_download') }}";

@@ -1024,16 +1024,20 @@ def certificate_download():
     if request.method == 'POST' and request.is_json:
         data = request.get_json()
         if data['type'] == 'download-course-certificate':
-            p('posted certificate download')
             current_user_all_certificates = current_user.certificates
             course_uuid = data['course_uuid']
-            for c in current_user_all_certificates:
-                if int(c.course_uuid) == int(course_uuid):
-                    certificate_path = c.path[1:]
-                    return send_file(certificate_path,
-                                     as_attachment=True,
-                                     download_name=os.path.basename(c.path)
-                                     )
+            p(len(current_user_all_certificates))
+            if len(current_user_all_certificates) > 0:
+                for c in current_user_all_certificates:
+                    if int(c.course_uuid) == int(course_uuid):
+                        certificate_path = c.path[1:]
+                        p(certificate_path)
+                        return send_file(certificate_path,
+                                        as_attachment=True,
+                                        download_name=os.path.basename(c.path)
+                                        )
+            else:
+                return jsonify(status='error', message='Certificate not found!')
         if data['type'] == 'email-course-certificate':
             course_uuid = data['course_uuid']
             course_topic = db.session.query(Workshop).filter_by(uuid=course_uuid).scalar().topic
@@ -1048,7 +1052,7 @@ def certificate_download():
                         certificate_exists = True
                         break
                 if not certificate_exists:
-                    return jsonify(status='error', message='Certificate not found!')
+                    return jsonify(status='error', message='No certificate found!')
                 else:
                     subject = f"Certificate for {course_topic} - WRITART STUDIO"
                     reply_back_email = 'writartstudios@gmail.com'
