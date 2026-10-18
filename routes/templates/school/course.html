@@ -65,6 +65,7 @@
         width: 80%;
         margin-bottom: 1%;
         margin: 1%;
+        padding: 0% 1%;
     }
     .popup-content p {
         font-size: .9rem;
@@ -1052,6 +1053,7 @@ async function emailCertificate(course_uuid, emailCertificateBtn) {
         const data = await response.json();
         if (data.status === "success") {
             alert(data.message);
+            window.location.reload();
         } else {
             alert(data.message || "Failed to email certificate.");
         }
