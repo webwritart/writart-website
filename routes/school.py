@@ -1034,7 +1034,6 @@ def certificate_download():
                                      as_attachment=True,
                                      download_name=os.path.basename(c.path)
                                      )
-            return jsonify(status='error', message='Certificate not found!')
         if data['type'] == 'email-course-certificate':
             course_uuid = data['course_uuid']
             course_topic = db.session.query(Workshop).filter_by(uuid=course_uuid).scalar().topic
