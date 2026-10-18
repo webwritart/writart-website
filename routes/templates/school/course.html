@@ -1053,7 +1053,6 @@ async function emailCertificate(course_uuid, emailCertificateBtn) {
         const data = await response.json();
         if (data.status === "success") {
             alert(data.message);
-            window.location.reload();
         } else {
             alert(data.message || "Failed to email certificate.");
         }
@@ -1090,6 +1089,7 @@ async function sendTalkToTeacherMessage(course_uuid, sendMessageBtn) {
         const data = await response.json();
         if (data.status === "success") {
             alert(data.message);
+            window.location.reload();
         } else {
             alert(data.message || "Failed to send message.");
         }
