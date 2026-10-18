@@ -208,11 +208,10 @@ def prepare_certificate(awardee_name_text, course_topic, course_period, issuing_
         image = image.convert('RGB')
 
 
-    if not os.path.exists(export_path_student):
-            os.makedirs(export_path_student)
+    os.makedirs(export_path_student, exist_ok=True)
     os.makedirs(export_path_school_database, exist_ok=True)
 
-    file_name = f"certificate_{ws_uuid}_{user_uuid}_{user_name}.pdf"
+    file_name = f"certificate_{ws_uuid}_{user_uuid}_{secure_filename(user_name)}.pdf"
     file_path = export_path_student + file_name
     course_database_file_path = export_path_school_database + file_name
     

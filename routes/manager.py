@@ -519,7 +519,10 @@ def home():
                 issuing_date = "-".join(reversed(str(issuing_date).split("-")))
                 certificate_no = ''
                 
-                course = db.session.query(Workshop).filter_by(id=course_id).scalar()
+                course = db.session.query(Workshop).filter_by(id=course_id).first()
+                if course is None:
+                    flash("Course not found", "error")
+                    return redirect(url_for('manager.home'))
                 course_topic = course.topic
                 ws_uuid = course.uuid
                 session_type = request.form.get('session_type')
@@ -561,7 +564,9 @@ def home():
                                             qr_data=qr_data)
                             flash("Certificates prepared", "success")
                         except Exception as e:
-                            flash("Couldn't preapre certificates!", "error")
+                            db.session.rollback()
+                            p(e)
+                            flash(f"Couldn't preapre certificate for {user_name}!", "error")
 
                         try:
                             entry = Certificate(
@@ -577,15 +582,17 @@ def home():
                                 member_id=member_id,
                                 path=certificate_path
                             )
-
-                            db.session.add(entry)
-                            db.session.commit()
-                            flash("Certificates added to the Database", "success")
+                            try:
+                                db.session.add(entry)
+                                db.session.commit()
+                                flash("Certificates added to the Database", "success")
+                            except Exception as e:
+                                db.session.rollback()
+                                p(e)
+                                flash("Couldn't add certificates to the database", "error")
                         except Exception as e:
                             p(e)
                             flash("Couldn't add certificates to the database", "error")
-                        
-
                         
 
                 return redirect(url_for('manager.home'))
