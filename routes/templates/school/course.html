@@ -547,7 +547,7 @@
             </div>
             <p style="margin: 0%;">Your certificate is ready to download</p>
             <p style="margin: 0%;">Course: {{ws_topic}}</p>
-            <button class="btn-style-1" onclick="downloadCertificate({{ws_uuid}})">Download</button>
+            <button class="btn-style-1" onclick="downloadCertificate({{ws_uuid}}, this)">Download</button>
             <button class="btn-style-1" onclick="emailCertificate({{ws_uuid}}, this)">Send by email</button>
         </div>
     </div>
@@ -905,8 +905,11 @@ function showCertificatePopup() {
 
 
 
-async function downloadCertificate(course_uuid) {
+async function downloadCertificate(course_uuid, downloadCertificateBtn) {
     const certificateEndpointUrl = "{{ url_for('school.certificate_download') }}";
+
+    downloadCertificateBtn.disabled = true;
+    downloadCertificateBtn.textContent = "Please Wait...";
 
     const data = {
         course_uuid: course_uuid,
@@ -988,6 +991,9 @@ async function downloadCertificate(course_uuid) {
     } catch (error) {
         console.error("Certificate download error:", error);
         alert("Something went wrong while downloading the certificate.");
+    } finally {
+        downloadCertificateBtn.disabled = false;
+        downloadCertificateBtn.textContent = "Download";
     }
 }
 
