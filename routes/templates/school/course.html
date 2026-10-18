@@ -990,6 +990,7 @@ async function emailCertificate(course_uuid, emailCertificateBtn) {
         });
 
         const data = await response.json();
+        alert(data.status);
 
         if (data.status === "success") {
             alert(data.message);
