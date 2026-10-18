@@ -125,7 +125,8 @@ class YoutubeVideoStoryboardScene(db.Model):
         return {
             'id': self.id,
             'uuid': self.uuid,
-            'video': self.video.to_dict(),
+            'video': self.video.temp_title,
+            'scene': self.scene,
             'description': self.description,
             'shots': [shot.to_dict() for shot in excel_sort_shots(self.shots)]
         }
@@ -160,7 +161,7 @@ class YoutubeVideoStoryboardShot(db.Model):
             'creative_direction': self.creative_direction,
             'timing': self.timing,
             'shot_type': self.shot_type,
-            'scene': self.scene.to_dict(),
+            'scene': self.scene.scene,
             'creatives': [creative.to_dict() for creative in self.creatives]
         }
 
