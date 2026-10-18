@@ -170,6 +170,16 @@
     .icon {
         width:20%;
     }
+    #promo-video {
+        width: 100%;
+        height: 50vh;
+        border-radius: 1.5rem;
+        overflow: hidden;
+    }
+    #promo-video iframe {
+        width: 100%;
+        height: 100%;
+    }
 
     @media (min-width: 600px) {
     .hero-content h4 {
@@ -236,6 +246,10 @@
     .icon {
         width:20%;
     }
+        #promo-video {
+            width: 80%;
+            height: 50vh;
+        }
     }
     @media (min-width: 768px) {
     .hero-content h4 {
@@ -408,6 +422,10 @@
         .icon {
             width:25%;
         }
+        #promo-video {
+            width: 60%;
+            height: 60vh;
+        }
     }
     @media (min-width: 1900px) {
       .cover-container {
@@ -456,6 +474,10 @@
         }
         .horizontal-double-div-bg-dark {
             padding: .5% 0%;
+        }
+        #promo-video {
+            width: 60%;
+            height: 80vh;
         }
     }
     @media (min-width: 2500px) {
@@ -515,7 +537,11 @@
             <img class="icon" src="../static/images/courses/595911/book.png">
             <p>In depth tricks, techniques and theory, No to Copying.</p>
         </div>
-        
+    </div>
+    <div id="promo-video">
+        <iframe src="https://www.youtube.com/embed/{{ course_data['promo_yt_id'] }}?si=2BVYS-0QHsxcX4f5&"
+        title="YouTube video player" frameborder="0" allow="accelerometer; autoplay;
+        clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
     </div>
     <div class="course-info" id="syllabus-root-container">
         <p class="section-heading"><b>SYLLABUS</b></p>
