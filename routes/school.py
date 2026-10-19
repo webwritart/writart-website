@@ -13,6 +13,7 @@ from models.videos import Demo
 from models.quiz import Quiz
 from models.workshop_details import *
 from operations.messenger import *
+from operations.miscellaneous import *
 import webbrowser
 from datetime import datetime, date, timedelta
 import json
@@ -31,13 +32,55 @@ def home():
 
 @school.route('/course_registration_template', methods=['GET', 'POST'])
 def course_registration_template():
+    if request.method == 'POST':
+        if request.is_json:
+            data = request.get_json()
+            if data['type'] == 'get-interested-form-user-details':
+                name = current_user.name
+                email = current_user.email
+                phone = current_user.phone
+                whatsapp = current_user.whatsapp
+                return jsonify({'status': 'success', 'name': name, 'email': email, 'phone': phone, 'whatsapp': whatsapp})
+            
+            if data['type'] == 'save-interested-form':
+                name = data['name']
+                email = data['email']
+                phone = data['phone']
+                whatsapp = data['whatsapp']
+                message = data['message']
+                course_uuid = data['course_uuid']
+                course_id = db.session.query(Workshop).filter_by(uuid=int(course_uuid)).scalar().id
+                if current_user.is_authenticated:
+                    member_id = current_user.id
+                else:
+                    member_id = None
+                date_time_now = datetime.now().replace(microsecond=0)
+                existing_uuid_list = [a.uuid for a in db.session.query(Interested).all()]
+                new_uuid = create_uuid(existing_uuid_list, 9)
+                entry = Interested(uuid=new_uuid,
+                                   name=name, 
+                                   email=email, 
+                                   phone=phone, 
+                                   whatsapp=whatsapp, 
+                                   message=message, 
+                                   member_id=member_id,
+                                   course_id=course_id,
+                                   date_time=str(date_time_now)
+                                   )
+
+                db.session.add(entry)
+                db.session.commit()
+
+                return jsonify(status='success!', message="Submitted successfully! We'll keep you in touch!")
     course_uuid = request.args.get('course_uuid')
     session['course_uuid'] = course_uuid
 
     course_obj = db.session.query(Workshop).filter_by(uuid=course_uuid).first()
     course_data_dict = course_obj.to_dict()
 
-    return render_template('course_registration_template.html', course_data=course_data_dict)
+    
+
+    return render_template('course_registration_template.html', course_data=course_data_dict, logged_in=current_user.is_authenticated)
 
 @school.route('/workshops', methods=['GET', 'POST'])
 def workshops():

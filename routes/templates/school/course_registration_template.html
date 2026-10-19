@@ -181,6 +181,141 @@
         height: 100%;
     }
 
+    /* ---------------------------------------------------------- POPUP ---------------------------------------------------------- */
+    #overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 999;
+    }
+    .popup {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 20px;
+        border: 1px solid black;
+        box-shadow: 0 0 10px gray;
+        z-index: 9999;
+        border-radius: .5rem;
+    }
+    .popup-content p {
+        font-size: .9rem;
+    }
+    .popup-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+    .close-popup-btn-container {
+        display: flex;
+        justify-content: flex-end;
+        width: 100%;
+    }
+    .close-popup-btn {
+        background: none;
+        border: none;
+        text-align: right;
+        color: red;
+        font-size: 1.5rem;
+        padding: 2%;
+        margin: 0%;
+    }
+    #interested-popup {
+        width: 95%;
+        padding: 0% 5% 2% 5%;
+        background: rgba(232, 196, 157);
+        border-radius: 1.5rem;
+    }
+    #form-header {
+        width: 100%;
+        text-align: left;
+        font-size: 1.2rem;
+        margin: 0%;
+        margin-bottom: 2%;
+        text-transform: uppercase;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+        padding-top: 0%;
+        color: rgb(123, 72, 41);
+    }
+    #interested-course-topic {
+        font-size: 1.6rem;
+    }
+    #interested-brief {
+        font-size: 1rem;
+        border-bottom: 1px solid rgba(84, 42, 10, 0.833);
+        margin-bottom: 4%;
+    }
+    #interested-popup label {
+        width: 100%;
+        text-align: left;
+        font-size: .9rem;
+        margin: 0%;
+        margin-left: 2%;
+    }
+    #interested-popup input {
+        border-radius: 1.5rem;
+        border: 2px solid rgb(170, 123, 72);
+        box-shadow: 3px 3px 3px rgba(0, 0, 0, .3);
+        color: rgb(151, 88, 33);
+        font-family: 'Roboto-regular', sans-serif;
+        font-weight: 500;
+        font-size: 1rem;
+        padding: .7% 1%;
+        background: rgb(255, 237, 225);
+    }
+    #interested-popup input:focus {
+        border: 2px solid rgb(170, 123, 72);
+        outline: none;
+        background: rgb(255, 255, 255);
+    }
+    #interested-popup textarea {
+        width: 100%;
+        border-radius: 1.5rem;
+        border: 2px solid rgb(170, 123, 72);
+        box-shadow: 3px 3px 3px rgba(0, 0, 0, .3);
+        color: rgb(151, 88, 33);
+        font-family: 'Roboto-regular', sans-serif;
+        font-weight: 500;
+        padding-left: 1%;
+        box-sizing: border-box;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        font-size: 1rem;
+        border: 2px solid rgb(170, 123, 72);
+        background: rgb(255, 237, 225);
+    }
+    #interested-popup textarea:focus {
+        border: 2px solid rgb(170, 123, 72);
+        outline: none;
+        background: rgb(255, 255, 255);
+    }
+    #submit-interested-form-btn {
+        width: 100%;
+        border: 2px solid rgb(134, 78, 19);
+        background: rgb(158, 103, 45);
+        color: white;
+        padding: 1% 0%;
+        border-radius: 1.5rem;
+        font-size: 1rem;
+        box-shadow: 3px 3px 3px rgba(0, 0, 0, .3);
+        margin-top: 3%;
+        transition: all .2s ease;
+    }
+    #submit-interested-form-btn:hover {
+        transform: scale(0.96);
+    }
+    #interested-popup input::placeholder {
+        opacity: .5;
+    }
     @media (min-width: 600px) {
     .hero-content h4 {
             font-size: 1rem;
@@ -249,6 +384,9 @@
         #promo-video {
             width: 80%;
             height: 50vh;
+        }
+        #interested-popup {
+            width: 80%;
         }
     }
     @media (min-width: 768px) {
@@ -341,6 +479,9 @@
         .feature-card p {
             font-size: .9rem;
         }
+        #interested-popup {
+            width: 60%;
+        }
     }
     @media (min-width: 1200px) {
         .cover-container {
@@ -426,6 +567,9 @@
             width: 60%;
             height: 60vh;
         }
+        #interested-popup {
+            width: 50%;
+        }
     }
     @media (min-width: 1900px) {
       .cover-container {
@@ -479,6 +623,9 @@
             width: 60%;
             height: 80vh;
         }
+        #interested-popup {
+            width: 40%;
+        }
     }
     @media (min-width: 2500px) {
      .hero-content p {
@@ -509,6 +656,9 @@
             font-size: 1.5rem;
             width: 20%;
         }
+        #interested-popup {
+            width: 30%;
+        }
     }
 
 </style>
@@ -522,7 +672,7 @@
     </div>
     <div class="horizontal-double-div register-contact">
         <a href="https://wa.me/918920351265?text=Hey,%20I%20want%20to%20register%20for%20%3A%20%2A{{course_data['topic']}}%2A">REGISTER NOW!</a>
-        <a id="contact-us-btn" href="https://wa.me/918920351265?text=Hey,%20I%20want%20to%20know%20more%20about%20%3A%20%2A{{course_data['topic']}}%2A">CONTACT US</a>
+        <a id="contact-us-btn" onclick="openInterestedForm({{course_data['uuid']}})">INTERESTED</a>
     </div>
     <div class="feature-container">
         <div class="feature-card">
@@ -598,5 +748,151 @@
     <a id="course-contact-btn" href="https://wa.me/918920351265?text=Hey,%20I%20want%20to%20know%20more%20about%20%3A%20%2A{{course_data['topic']}}%2A">CONTACT US</a>
     <p>Contact no: <b>+91 8920351265</b></p>
 </div>
+
+<!-- --------------------------------------------------------- POPUP FORMS --------------------------------------------------------------->
+ <div id="overlay" onclick="closePopup()"></div>
+ <div id="interested-popup" class="popup">
+    <div class="popup-content" id="interested-popup-content">
+        <div class="close-popup-btn-container">
+            <button class="close-popup-btn" onclick="closePopup()">x</button>
+        </div>
+        <p id="form-header">Interested form</p>
+        <p id="interested-course-topic" style="margin: 0%;">{{course_data['topic']}}</p>
+        <p id="interested-brief" >We'll keep sharing details about the course if you fill and submit the form below:</p>
+        <label>Name</label>
+        <input id="interested-name" type="text" placeholder="Name" name="name">
+        <label>Email</label>
+        <input id="interested-email" type="email" placeholder="e.g. something@example.com" name="email">
+        <label>Phone</label>
+        <input 
+            type="tel" 
+            id="indianPhone" 
+            name="indianPhone" 
+            pattern="^(\+91[\-\s]?)?[0]?(91)?[6789]\d{9}$" 
+            maxlength="14"
+        >
+        <label>Whatsapp (We send message on this)</label>
+        <input 
+            type="tel" 
+            id="indianWhatsapp" 
+            name="indianPhone" 
+            pattern="^(\+91[\-\s]?)?[0]?(91)?[6789]\d{9}$" 
+            maxlength="14"
+        >
+        <label>Message</label>
+        <textarea id="interested-message" name="message" rows="4"> </textarea>
+        <button id="submit-interested-form-btn" type="submit" name="submit" onclick="submitInterestedForm({{course_data['uuid']}})" value="submit-interested-form">Submit</button>
+    </div>
+</div>
+
+<script>
+    function processIndianNumber(inputNumber) {
+        // Remove all spaces, hyphens, and parentheses
+        const cleanNumber = inputNumber.replace(/[\s\-()]/g, "");
+
+        // Optional country code (+91 or 91), or leading 0
+        // followed by a valid 10-digit Indian mobile number
+        const pattern = /^(?:\+91|91|0)?([6-9]\d{9})$/;
+
+        const match = cleanNumber.match(pattern);
+
+        if (match) {
+            const standardTenDigit = match[1];
+
+            return {
+                isValid: true,
+                formattedBackend: standardTenDigit,
+                formattedInternational: `+91${standardTenDigit}`
+            };
+        }
+
+        return {
+            isValid: false,
+            formattedBackend: null,
+            formattedInternational: null
+        };
+    }
+
+
+    function closePopup() {
+        document.getElementById("overlay").style.display = "none";
+        document.getElementById("interested-popup").style.display = "none";
+    }
+    function openInterestedForm(course_uuid) {
+        if ({{logged_in | tojson}}) {
+            const interestedFormEndpointUrl = "{{url_for('school.course_registration_template')}}";
+            fetch(interestedFormEndpointUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({type: "get-interested-form-user-details" })
+            }).then(response => response.json()).then(data => {
+                if (data.status === 'success') {
+                    document.getElementById('interested-name').value = data.name;
+                    document.getElementById('interested-email').value = data.email;
+                    document.getElementById('indianPhone').value = data.phone;
+                    document.getElementById('indianWhatsapp').value = data.whatsapp;
+                }
+            }).catch((error) => {
+                console.error('Error:', error);
+            })
+        }
+        document.getElementById("overlay").style.display = "block";
+        document.getElementById("interested-popup").style.display = "block";
+    }
+
+    async function submitInterestedForm(course_uuid) {
+        const interestedFormEndpointUrl = "{{url_for('school.course_registration_template')}}";
+        const name = document.getElementById('interested-name').value;
+        const email = document.getElementById('interested-email').value;
+        const phone = document.getElementById('indianPhone').value;
+        const whatsapp = document.getElementById('indianWhatsapp').value;
+        const message = document.getElementById('interested-message').value;
+        if (!name || !email || !phone || !whatsapp || !message) {
+            alert('Please fill all the fields.');
+            return;
+        }
+        const result = processIndianNumber(phone);
+        if (!result.isValid) {
+            alert('Please enter a valid Indian mobile number.');
+            return;
+        }
+        const result2 = processIndianNumber(whatsapp);
+        if (!result2.isValid) {
+            alert('Please enter a valid Indian whatsapp number.');
+            return;
+        }
+        const payload = {
+            name: name,
+            email: email,
+            phone: result.formattedBackend,
+            whatsapp: result2.formattedBackend,
+            message: message,
+            course_uuid: course_uuid,
+            type: "save-interested-form"
+        };
+        try {
+            const response = await fetch(interestedFormEndpointUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+            const data = await response.json();
+            if (data.status === 'success') {
+                alert(data.message);
+            } else {
+                alert(data.message || 'Failed to submit form.');
+            }
+        } catch (error) {
+            console.error('Error submitting form:', error);
+            alert(error.message || 'Something went wrong. Please try again.');
+        } finally {
+            closePopup();
+        }
+    }
+</script>
 
 {% endblock %}

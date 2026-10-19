@@ -71,7 +71,7 @@ class Interested(db.Model):
     name = db.Column(db.String(100))
     email = db.Column(db.String(100))
     phone = db.Column(db.String(100))
-    whastsapp = db.Column(db.String(100))
+    whatsapp = db.Column(db.String(100))
     message = db.Column(db.String(500))
     member_id = db.Column(db.Integer, db.ForeignKey('member.id'))
     course_id = db.Column(db.Integer, db.ForeignKey('workshop.id'))
