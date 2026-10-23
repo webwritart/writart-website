@@ -334,6 +334,12 @@ def home():
             
             if request.method == 'POST' and request.is_json:
                 data = request.get_json()
+                if data['type'] == 'show-storyboard':
+                    video_uuid = data['video_uuid']
+                    video_obj = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar()
+                    this_project_dict = video_obj.to_dict()
+                    return jsonify(status= 'success', project_dict= this_project_dict)
+                
                 if data['type'] == 'get_img_upload_shot_data':
                     video_uuid = data['video_uuid']
                     current_scene = data['current_scene']
@@ -443,7 +449,6 @@ def home():
                         scene_uuid = ''
                         existing_scene_uuid = [a.uuid for a in db.session.query(YoutubeVideoStoryboardScene).all()]
                         scene_uuid = create_uuid(existing_scene_uuid, 9)
-                        p('created scene uuid')
                         entry = YoutubeVideoStoryboardScene (
                             uuid=scene_uuid,
                             scene=scene,
@@ -476,8 +481,12 @@ def home():
                 
                 if data['type'] == 'get_task_details':
                     task_uuid = data['task_uuid']
-                    task = db.session.query(YoutubeVideoComponent).filter_by(uuid=task_uuid).scalar()
-                    task_type = task.component_type
+                    task = db.session.query(YoutubeVideoCreative).filter_by(uuid=task_uuid).scalar()
+                    shot = task.shot
+                    scene = shot.scene
+                    ss = f"{scene.scene}-{shot.shot}"
+                    task_type = task.media_type
+                    temp_title = task.shot.scene.video.temp_title
                     assigned_to_name = db.session.query(Member).filter_by(uuid=int(task.assigned_to_uuid)).scalar().name
                     try:
                         last_assigned = db.session.query(Member).filter_by(uuid=int(task.last_assigned)).scalar().name
@@ -524,14 +533,14 @@ def home():
                         if not feedback:
                             feedback = task.feedback
                     else:
-                        file_path = task.file_path
-                        p(file_path)
+                        file_path = task.media_path
                         file_text = task.text
                         feedback = task.feedback
                     task_dict = {
                         'uuid': task.uuid,
                         'component_type': task_type,
-                        'temp_title': task.youtube_video.temp_title,
+                        'temp_title': temp_title,
+                        'ss': ss,
                         'file_path': file_path,
                         'text': file_text,
                         'feedback': feedback,
@@ -737,7 +746,6 @@ def home():
                     stored_current_video_count = len([a for a in current_user.tools if a.key == 'current_video_uuid'])
                     if stored_current_video_count > 0:
                         existing_current_video_uuid = [a.value for a in current_user.tools if a.key == 'current_video_uuid'][0]
-                        p(existing_current_video_uuid)
                         for c in current_user.tools:
                             if c.key == 'current_video_uuid':
                                 c.value = video_uuid
@@ -756,9 +764,10 @@ def home():
                 pending_reviews = []
             
             if youtube_img_creator in current_user.role:
-                pending_revisions = [(a.uuid, a.youtube_video.temp_title, a.component_type) for a in db.session.query(YoutubeVideoComponent).filter_by(assigned_to_uuid=str(current_user.uuid)).all() if a.approval_status == 'revision-required']
+                pending_revisions = [(a.uuid, a.shot.scene.video.temp_title, a.media_type) for a in db.session.query(YoutubeVideoCreative).filter_by(assigned_to_uuid=str(current_user.uuid)).all() if a.status == 'revision-required']
             else:
                 pending_revisions = []
+
 
             pending_seo = []
             if youtube_seo_manager in current_user.role or youtube_admin in current_user.role:
@@ -773,8 +782,6 @@ def home():
                 for v in all_videos:
                     if len([a for a in v.components if a.component_type == 'yt_title']) != 0 and len([a for a in v.components if a.component_type == 'yt_description']) != 0 and len([a for a in v.components if a.component_type == 'yt_tags']) != 0:
                         if len([a.text for a in v.components if a.component_type == 'yt_title'][0]) != 0 and len([a.text for a in v.components if a.component_type == 'yt_description'][0]) != 0 and len([a.text for a in v.components if a.component_type == 'yt_tags'][0]) != 0:
-                            p(len([a.text for a in v.components if a.component_type == 'yt_title'][0]))
-                            p(f"Description text length: {len([a.text for a in v.components if a.component_type == 'yt_description'][0])} Description: {[a.text for a in v.components if a.component_type == 'yt_description'][0]} Title: {v.temp_title}")
                             edit_seo.append((v.uuid, v.category, v.temp_title))
             else:
                 edit_seo = []
@@ -946,7 +953,6 @@ def add_title_description_tags():
                 if yt_title_stage not in video.stages:
                     video.stages.append(yt_title_stage)
             db.session.commit()
-            p('added title')
 
     def add_description(video_uuid, description):
         video = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar()
@@ -990,7 +996,6 @@ def add_title_description_tags():
                 if yt_description_stage not in video.stages:
                     video.stages.append(yt_description_stage)
             db.session.commit()
-            p('added description')
 
     def add_tags(video_uuid, tags):
         video = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar()
@@ -1034,7 +1039,6 @@ def add_title_description_tags():
                 if yt_tags_stage not in video.stages:
                     video.stages.append(yt_tags_stage)
             db.session.commit()
-            p('added tags')
     
     # -------------------------------------------------------------------------------------------------------
     if request.method == 'POST' and request.get_json:
@@ -1069,7 +1073,6 @@ def add_title_description_tags():
                     last_revision_yt_description = existing_yt_description_row.text
             else:
                 last_revision_yt_description = ''
-            p(last_revision_yt_description)
             return jsonify(last_revision_yt_description)
         
         if data['type'] == 'get-existing-tags':
@@ -1143,16 +1146,12 @@ def save_revision_img():
         revised_image = request.files.getlist('revised_images[]')[0]
         revision_image_text = request.form.get('revision_image_text')
         parent_img_uuid = request.form.get('parent_img_uuid')
-        parent_image = db.session.query(YoutubeVideoComponent).filter_by(uuid=parent_img_uuid).scalar()
-        video_temp_title = parent_image.youtube_video.temp_title
-        channel_name = parent_image.youtube_video.youtube_channel.channel_name
-        member_name = current_user.name
+        parent_image = db.session.query(YoutubeVideoCreative).filter_by(uuid=parent_img_uuid).scalar()
 
-        base_path = f"./static/files/youtube/{parent_image.youtube_video.youtube_channel.id}/{parent_image.youtube_video.id}/image_revisions/"
-        if not os.path.exists(base_path):
-            os.makedirs(base_path)
+        base_path = f"./static/files/youtube/{parent_image.shot.scene.video.youtube_channel.id}/{parent_image.shot.scene.video.id}/image_revisions/"
+        os.makedirs(base_path, exist_ok=True)
 
-        existing_uuid_list = [a.uuid for a in db.session.query(YoutubeVideoComponentRevision)]
+        existing_uuid_list = [a.uuid for a in db.session.query(YoutubeVideoCreativeRevision)]
         uuid = create_uuid(existing_uuid_list, 9)
         file_name = revised_image.filename
         save_path = base_path + file_name
@@ -1165,13 +1164,13 @@ def save_revision_img():
             version_list_int = [float(i) for i in version_list]
             version = f"{(max(version_list_int)+.1):.1f}"
 
-        entry = YoutubeVideoComponentRevision(
+        entry = YoutubeVideoCreativeRevision(
             uuid=uuid,
             version=version,
             file_path=save_path[1:],
             text=revision_image_text,
             date_time=date_time_now,
-            youtube_video_component_id=parent_image.id,
+            youtube_video_creative_id=parent_image.id,
             member_id = current_user.id
         )
         db.session.add(entry)
@@ -1181,10 +1180,6 @@ def save_revision_img():
         parent_image.last_assigned = temp_assigned_uuid
         db.session.commit()
 
-        # send email to the Project lead ------------------------------------------------
-        subject = f"Revised image uploaded - {date_time_now}"
-        body = f"New revised image uploaded\n\nMember: {member_name}\nVideo: {video_temp_title}\nChannel: {channel_name}"
-        send_email_studio(subject, ['shwetabhartist@gmail.com'], body, '', {})
         return jsonify(success='success')
 
 
@@ -1234,6 +1229,42 @@ def save_revision():
 
         return jsonify(success='success')
 
+    if request.method == 'POST' and request.is_json:
+        data = request.get_json()
+        creative_uuid = data['creative_uuid']
+        creative_obj = db.session.query(YoutubeVideoCreative).filter_by(uuid=creative_uuid).first()
+        shot = creative_obj.shot
+        scene = shot.scene
+        scene_shot = f"{scene.scene}-{shot.shot}"
+        main_media_type = creative_obj.media_type
+        main_media_path = creative_obj.media_path
+        creative_revisions = []
+        for r in creative_obj.revisions:
+            creative_revisions.append({
+                'uuid': r.uuid,
+                'version': r.version,
+                'media_type': r.media_type,
+                'media_path': r.file_path
+            })
+        camera_direction = shot.frame_direction
+        direction = shot.creative_direction
+        dialogue_narration = shot.dialogue_narration
+        feedback_audio_path = ''
+
+        all_version_list = [float(r.version) for r in creative_obj.revisions]
+        if len(all_version_list) > 0:
+            all_version_list_descending = sorted(all_version_list, reverse=True)
+            for i in all_version_list_descending:
+                if db.session.query(YoutubeVideoCreativeRevision).filter_by(youtube_video_creative_id=creative_obj.id, version=str(i)).scalar().feedback:
+                    feedback_audio_path = db.session.query(YoutubeVideoCreativeRevision).filter_by(youtube_video_creative_id=creative_obj.id, version=str(i)).scalar().feedback
+                    break
+            if feedback_audio_path == '':
+                feedback_audio_path = creative_obj.feedback
+        else:
+            feedback_audio_path = creative_obj.feedback
+        
+        return jsonify(success='success', scene_shot=scene_shot, main_media_type=main_media_type, main_media_path=main_media_path, creative_revisions=creative_revisions, camera_direction=camera_direction, direction=direction, dialogue_narration=dialogue_narration, feedback_audio_path=feedback_audio_path)
+
 
 @youtube.route('/assign-mate', methods=['POST'])
 def assign_mate():
@@ -1245,6 +1276,8 @@ def assign_mate():
         if mate_uuid == 'remove-mate':
             creative.assigned_to_uuid = None
             creative.status = 'pending'
+            for r in creative.revisions:
+                r.status = 'pending'
             db.session.commit()
             return jsonify(success='success')
         else:
@@ -1257,10 +1290,13 @@ def assign_mate():
         creative_uuid = request.form.get('creative_uuid')
         mate_uuid = request.form.get('mate_uuid')
         creative = db.session.query(YoutubeVideoCreative).filter_by(uuid=creative_uuid).scalar()
+        
 
         if mate_uuid == 'remove-mate':
             creative.assigned_to_uuid = None
             creative.status = 'pending'
+            for r in creative.revisions:
+                r.status = 'pending'
             db.session.commit()
             return jsonify(success='success', creative_uuid=creative_uuid, status='pending')
         else:
@@ -1278,6 +1314,7 @@ def assign_mate():
         if mate_uuid == 'remove-mate':
             cretive_obj.assigned_to_uuid = None
             cretive_obj.status = 'pending'
+            revision_obj.status = 'pending'
             db.session.commit()
             return jsonify(success='success', revision_uuid=revision_uuid, status='pending')
         else:
@@ -1396,7 +1433,6 @@ def project_stage_operations():
             elif selected_stage == 'seo-done':
                 for v in all_videos:
                     video_stage_list = [a.stage for a in v.stages]
-                    p(video_stage_list)
                     if 'yt_video_tags' in video_stage_list and 'yt_description' in video_stage_list and 'yt_title' in video_stage_list:
                         selected_video_uuid_name_tuple_list.append((v.uuid, v.temp_title))
 

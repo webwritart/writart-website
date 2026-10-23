@@ -293,6 +293,30 @@
         height: 100%;
         background: rgba(0, 0, 0, 0.8);
     }
+    .secondary-popup {
+        display: none;
+        position: fixed;
+        z-index: 10000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+    }
+    #media-popup-container-inner {
+        background: rgb(56, 56, 56);
+        height: 100vh;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2%;
+        border-radius: 1.5rem;
+    }
+    .image-large-size, .video-large-size {
+        max-width: 100%;
+        max-height: 100%;
+    }
     .popup-content {
         position: relative;
         width: 80%;
@@ -1014,6 +1038,143 @@
     #go-back:hover {
         background: rgb(37, 40, 26);
     }
+
+    /* -------------------------------------------------- UPLOAD REVISION POPUP ---------------------------------------------------- */
+    #upload-creative-revision-feedback-audio-container {
+        display: flex;
+        padding: .5%;
+        justify-content: center;
+        width: 100%;
+        background: rgb(57, 61, 45);
+        border-radius: .5rem;
+    }
+    #upload-creative-revision-feedback-audio-container audio {
+        padding: .5%;
+    }
+
+    #upload-creative-revision-form-container {
+        background: rgb(237, 244, 206);
+        width: 100%;
+        padding: 3%;
+        border-radius: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        max-height: 95vh;
+    }
+    #upload-creative-revision-media-container {
+        height: 30vh;
+        width: 100%;
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        background: rgb(74, 79, 50);
+        padding: 1% 1%;
+        border-radius: .5rem;
+    }
+    .creative-feedback-media-container-inner {
+        position: relative;
+        height: 94%;
+        flex: 0 0 auto;
+        margin: 0% .5%;
+        display: inline-block; /* Fits tight around the image */
+        text-align: center;
+    }
+    #upload-creative-revision-form-storyboard-container {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+        padding-top: 1.5%;
+        height: 100%;
+    }
+    #upload-creative-revision-storyboard {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 55%;
+        background: rgb(133, 147, 108);
+        color: white;
+        padding: 1%;
+        border-radius: .5rem;
+        margin-right: 2%;
+        height: auto;
+        border: 2px solid rgb(48, 61, 25);
+    }
+    #upload-revision-storyboard-header {
+        font-weight: 600;
+        color: black;
+    }
+    .upload-creative-revision-storyboard-item {
+        width: 100%;
+        background: rgb(196, 199, 140);
+        color: black;
+        margin: 1% 0%;
+        padding: .5% 1% .5% 1%;
+        border-radius: .5rem;
+        font-size: .9rem;
+    }
+    #upload-revision-direction {
+        background: rgb(235, 238, 181);
+        color: black;
+        width: 100%;
+        padding: 1% 1% 1% 1%;
+        border-radius: .5rem;
+        font-size: .9rem;
+        margin: 1% 0%;
+    }
+    #upload-creative-revision-form {
+        width: 45%;
+        height: auto;
+        border: 2px solid rgb(133, 147, 108);
+        padding: 1% 2% 2% 2%;
+        border-radius: .5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    input {
+        border-radius: 1.5rem;
+        color: black;
+        border: none;
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.6);
+        padding: 0.5% 1% .5% 2%;
+    }
+    input::placeholder {
+        color: rgb(105, 126, 56);
+    }
+    #revision-image-files {
+        color: rgb(105, 126, 56);
+    }
+    #revision-image-files::file-selector-button {
+        border-radius: 1.5rem;
+        color: rgb(105, 126, 56);
+        border: none;
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.6);
+        padding: 0.5% 1% .5% 2%;
+    }
+    #upload-creative-revision-scene-shot {
+        font-weight: 900;
+        font-size: 1.5rem;
+
+    }
+    .upload-creative-revision-version {
+        width: 100%;
+        text-align: center;
+        font-weight: 900;
+        font-size: 1.2rem;
+        color: rgb(189, 191, 163);
+    }
+    .upload-creative-revision-version:hover {
+        color: white;
+        cursor: pointer;
+    }
+    .upload-creative-revision-media {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
     /* -------------------------------------------------- CREATE STORYBOARD SECTION ---------------------------------------------------- */
      #create-storyboard-section {
         display: none;
@@ -1360,7 +1521,8 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>
+                            <td id="task-scene-shot-td">
+                                <input id="task-popup-table-uuid" type="hidden" value="">
 
                             </td>
                             <td>
@@ -1386,6 +1548,7 @@
                         </tr>
                     </tbody>
                 </table>
+                <button onclick="goBack()">Go Back</button>
             </div>
             <!-- --------------------------------------- SEO TASK CONTAINER -------------------------------------------- -->
              <div id="seo-task-parent-container">
@@ -1423,7 +1586,7 @@
                 </div>
                <div id="project-btn-container-main">
                     <button id="img-vid-feedbacks" class="section-action-button" onclick="openImageFeedback({{default_video_dict['video_uuid']}})">Feedbacks</button>
-                    <button id="view-storyboard" class="section-action-button">Storyboard</button>
+                    <button id="view-storyboard" class="section-action-button" onclick="showStoryboardPopup({{default_video_dict['video_uuid']}})">Storyboard</button>
                </div>
                 <p id="thumbnail-instruction-section-header" class="vid-detail-section-header">Thumbnail instruction</p>
                 <div id="thumbnail_instruction" class="vid-detail-section">
@@ -1661,7 +1824,58 @@
             </div>
         </div>
     </div>
+    <div id="upload-creative-revision-popup" class="popup">
+        <div class="popup-content">
+            <div id="upload-creative-revision-form-container">
+                <span class="close" onclick="closePopup()">&times;</span>
+                <p id="upload-creative-revision-scene-shot"></p>
+                <div id="upload-creative-revision-media-container"></div>
+                <div id="upload-creative-revision-feedback-audio-container"></div>
+                <div id="upload-creative-revision-form-storyboard-container">
+                    <div id="upload-creative-revision-storyboard">
+                        <p id="upload-revision-storyboard-header">Storyboard</p>
+                        <div id="upload-revision-camera-direction" class="upload-creative-revision-storyboard-item">Camera direction</div>
+                        <div id="upload-revision-direction" class="upload-creative-revision-storyboard-item">Direction</div>
+                        <div id="upload-revision-dialogue-narration" class="upload-creative-revision-storyboard-item">Narration/Dialogue</div>
+                    </div>
+                    <form id="upload-creative-revision-form" enctype="multipart/form-data">
+                        <p id="upload-creative-revision-header">Upload revision</p>
+                        <input type="hidden" id="creative-uuid" name="creative-uuid">
+                        <input type="file" id="creative-revision-file" name="creative-revision-file" class="file-upload-input" accept=".mp4, .avi, .mov, video/*, image/*" required>
+                        <input type="text" id="creative-revision-text-input" name="creative-revision-text-input" placeholder="Anything you want to say?">
+                        <button type="submit" name="submit" value="upload_creative_revision" id="upload-creative-revision-btn" class="form-button">Upload</button>
+                        <div id="upload-creative-revision-status-message"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="storyboard-display-popup" class="popup">
+        <div class="popup-content">
+            <span class="close" onclick="closePopup()">&times;</span>
+            <p id="storyboard-display-temp-title"></p>
+            <table>
+                <tr>
+                    <th>SS</th>
+                    <th>Camera Direction</th>
+                    <th>Direction</th>
+                    <th>Dialogue/Narration</th>
+                </tr>
+                <tr id="storyboard-display-table-row">
+                </tr>
+            </table>
+        </div>
+    </div>
     
+</div>
+<div id="media-popup" class="secondary-popup">
+    <div class="popup-content">
+        <span class="close" onclick="closeMediaPopup()">&times;</span>
+        <div id="media-popup-container-inner">
+            <img class="image-large-size" src="" alt="Large image">
+            <video class="video-large-size" src="" controls></video>
+        </div>
+    </div>
 </div>
 <script>
     // --------------------------------------------------- STORYBOARD CAVAS OPERATIONS ------------------------------------------------------
@@ -2295,6 +2509,7 @@
 
             if (data.task_dict.component_type == 'image') {
                 closeAllNotificationDropdowns();
+                const sceneShotCell = document.getElementById('task-scene-shot-td');
                 const imagesTable = document.getElementById('images-table');
                 const feedbackTempTitle = document.getElementById('feedback-temp-title');
                 const feedbackImage = document.getElementById('feedback-table-image');
@@ -2303,12 +2518,15 @@
                 const feedbackRecordingContainer = document.getElementById('img-feedback-recording-container');
                 const assignedToName = document.getElementById('assigned-to-name');
                 const revisionBtn = document.getElementById('revision-btn');
-
+                const taskPopupTableUuid = document.getElementById('task-popup-table-uuid');
+                
+                sceneShotCell.innerHTML = data.task_dict.ss;
                 feedbackTempTitle.innerHTML = data.task_dict.temp_title;
                 feedbackImage.src = data.task_dict.file_path;
                 feedbackImage.onclick = () => openImageLargeSize(data.task_dict.file_path);
                 downloadImage.onclick = () => downloadDisplayingImage(data.task_dict.file_path);
                 feedbackText.innerHTML = data.task_dict.text;
+                taskPopupTableUuid.value = data.task_dict.uuid;
                 feedbackRecordingContainer.replaceChildren();
                 if (data.task_dict.feedback) {
                     const newAudio = document.createElement('audio');
@@ -2321,7 +2539,7 @@
                 } else {
                     assignedToName.innerHTML = `Last assigned: ${data.task_dict.last_assigned}`;
                 }
-                revisionBtn.onclick = () => uploadRevisionPopup(data.task_dict.uuid, data.task_dict.file_path);
+                revisionBtn.onclick = () => uploadCreativeRevisionPopup(data.task_dict.uuid);
                 imagesTable.style.display = 'block';
             }
             if (data.task_dict.component_type == 'video') {
@@ -2379,8 +2597,10 @@
     }
     function closePopup() {
         document.getElementById("image-popup").style.display = "none";
-        document.getElementById("upload-revision-popup").style.display = "none";
+        document.getElementById("upload-creative-revision-popup").style.display = "none";
         document.getElementById("upload-video-revision-popup").style.display = "none";
+        alert('close popuup pressed');
+        document.getElementById("storyboard-display-popup").style.display = 'none';
     }
     function openImageLargeSize(imagePath) {
         const image = document.getElementById("image-large-size");
@@ -2388,9 +2608,165 @@
         document.getElementById('image-popup').style.display = 'block';
     }
     function uploadRevisionPopup(img_uuid, img_path) {
-        document.getElementById("upload-revision-popup").style.display = "block";
+        document.getElementById("upload-creative-revision-popup").style.display = "block";
         document.getElementById("parent-img-uuid").value = img_uuid;
         document.getElementById("upload-revision-previous-image").src = img_path;
+    }
+
+    function openMediaPopup() {
+        document.getElementById("media-popup").style.display = "block";
+    }
+    function closeMediaPopup() {
+        document.getElementById("media-popup").style.display = "none";
+    }
+
+    function uploadCreativeRevisionPopup(creative_uuid) {
+        document.getElementById("upload-creative-revision-popup").style.display = "block";
+        document.getElementById("creative-uuid").value = creative_uuid;
+
+        const endpointUrl = "{{ url_for('youtube.save_revision') }}";
+
+        fetch(endpointUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                'creative_uuid': creative_uuid,
+                'type': 'get_creative_revision_details'
+            })
+        }).then(response => response.json()).then(data => {
+            document.getElementById('upload-creative-revision-scene-shot').innerHTML = data.scene_shot;
+            document.getElementById('upload-revision-camera-direction').innerHTML = data.camera_direction;
+            document.getElementById('upload-revision-direction').innerHTML = data.direction;
+            document.getElementById('upload-revision-dialogue-narration').innerHTML = data.dialogue_narration;
+
+            const audioContainer = document.getElementById("upload-creative-revision-feedback-audio-container");
+            const audioElement = document.createElement('audio');
+            audioElement.src = data.feedback_audio_path;
+            audioElement.controls = true;
+            audioContainer.replaceChildren();
+            audioContainer.appendChild(audioElement);
+
+            const creativeContainer = document.getElementById("upload-creative-revision-media-container");
+            creativeContainer.replaceChildren();
+            const newDiv = document.createElement('div');
+            newDiv.classList.add('creative-feedback-media-container-inner');
+            if (data.main_media_type == 'image') {
+                const newImage = document.createElement('img');
+                newImage.src = data.main_media_path;
+                newImage.classList.add('creative-feedback-image');
+                newDiv.appendChild(newImage);
+                const newVersion = document.createElement('p');
+                newVersion.classList.add('upload-creative-revision-version');
+                newVersion.textContent = 'Main';
+                newVersion.onclick = () => openMediaLargeSize(data.main_media_type, data.main_media_path);
+                newVersion.style.cursor = 'pointer';
+                newDiv.appendChild(newVersion);
+            } else if (data.main_media_type == 'video') {
+                const newVideo = document.createElement('video');
+                newVideo.src = data.main_media_path;
+                newVideo.classList.add('creative-feedback-video');
+                newVideo.controls = true;
+                newDiv.appendChild(newVideo);
+                const newVersion = document.createElement('p');
+                newVersion.classList.add('upload-creative-revision-version');
+                newVersion.textContent = 'Main';
+                newVersion.style.cursor = 'pointer';
+                newVersion.onclick = () => openMediaLargeSize(data.main_media_type, data.main_media_path);
+                newDiv.appendChild(newVersion);
+            }
+            creativeContainer.append(newDiv);
+
+            const creativeRevisionsList = data.creative_revisions;
+            if (creativeRevisionsList.length > 0) {
+                for (const item of creativeRevisionsList) {
+                    const revisionDiv = document.createElement('div');
+                    revisionDiv.classList.add('creative-feedback-media-container-inner');
+                    if (item['media_type'] == 'image') {
+                        const newImage = document.createElement('img');
+                        newImage.src = item['media_path'];
+                        newImage.classList.add('creative-feedback-image');
+                        revisionDiv.appendChild(newImage);
+                    } else if (item['media_type'] == 'video') {
+                        const newVideo = document.createElement('video');
+                        newVideo.src = item['media_path'];
+                        newVideo.classList.add('creative-feedback-video');
+                        newVideo.controls = true;
+                        revisionDiv.appendChild(newVideo);
+                    }
+                    const newVersion = document.createElement('p');
+                    newVersion.classList.add('upload-creative-revision-version');
+                    newVersion.textContent = item['version'];
+                    newVersion.style.cursor = 'pointer';
+                    newVersion.onclick = () => openMediaLargeSize(item['media_type'], item['media_path']);
+                    revisionDiv.appendChild(newVersion);
+                    creativeContainer.append(revisionDiv);
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    const creativeRevisionForm = document.getElementById('upload-creative-revision-form');
+    creativeRevisionForm.addEventListener('submit', (event) => {
+        event.preventDefault(); // Prevent the form from submitting normally
+        const saveRevisionEndpointUrl = "{{ url_for('youtube.save_revision') }}";
+        const statusMessage = document.getElementById('upload-creative-revision-status-message');
+        const sceneShot = document.getElementById('upload-creative-revision-scene-shot').textContent;
+        const fileInput = document.getElementById("creative-revision-file");
+        const creativeUuid = document.getElementById("creative-uuid").value;
+        const revisionText = document.getElementById("creative-revision-text-input").value;
+        const submitBtn = document.getElementById("upload-creative-revision-btn");
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Uploading...';
+
+        const formData = new FormData();
+        formData.append('scene_shot', sceneShot);
+        formData.append('creative_uuid', creativeUuid);
+        formData.append('file', fileInput.files[0]);
+        formData.append('type', 'upload_revision');
+        formData.append('revision_text', revisionText);
+
+        fetch(saveRevisionEndpointUrl, { method: 'POST', body: formData })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Revision uploaded successfully.');
+                    window.location.reload();
+                } else {
+                    alert('Failed to upload revision.');
+                }
+            })
+            .catch(error => {
+                console.error('Error uploading revision:', error);
+                alert('Failed to upload revision.');
+            });
+    });
+
+    
+    function openMediaLargeSize(media_type, media_path) {
+        const mediaPopupContainerInner = document.getElementById("media-popup-container-inner");
+        mediaPopupContainerInner.replaceChildren();
+        if (media_type == 'image') {
+            const newImage = document.createElement('img');
+            newImage.src = media_path;
+            newImage.classList.add('image-large-size');
+            mediaPopupContainerInner.appendChild(newImage);
+        } else if (media_type == 'video') {
+            const newVideo = document.createElement('video');
+            newVideo.src = media_path;
+            newVideo.classList.add('video-large-size');
+            newVideo.controls = true;
+            mediaPopupContainerInner.appendChild(newVideo);
+        }
+        openMediaPopup();
+    }
+
+    function showStoryboardDisplayPopup() {
+        document.getElementById("storyboard-display-popup").style.display = "block";
     }
     const revisionForm = document.getElementById('upload-revision-form');
     revisionForm.addEventListener('submit', (event) => {
@@ -3338,6 +3714,26 @@
     function openImageFeedback(video_uuid) {
         const endpointUrl = "{{ url_for('youtube.image_feedback') }}";
         window.location.href = endpointUrl + '?video_uuid=' + video_uuid;
+    }
+    async function showStoryboardPopup(video_uuid) {
+        const endpointUrl = "{{ url_for('youtube.home') }}";
+        const response = await fetch(endpointUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                'video_uuid': video_uuid,
+                'type': 'show-storyboard'
+            })
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const result = await response.json();
+        if (result.status == 'success') {
+            showStoryboardDisplayPopup();
+        }
     }
 </script>
 

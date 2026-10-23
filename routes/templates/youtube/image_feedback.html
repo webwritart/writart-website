@@ -814,7 +814,7 @@
                                     {{ creative['text'] }}
                                     {% endif %}
                                 </td>
-                                <td>
+                                <td id="feedback-recording-{{creative['uuid']}}">
                                     {% if youtube_admin in current_user.role %}
                                     <button class="image-feedback-recording-btn" 
                                     data-scene_shot="{{scene.scene}}-{{shot.shot}}" 
@@ -1738,17 +1738,19 @@ document.addEventListener('keydown', (event) => {
     }
     
     // --------------------------------------------------- REVISION POPUP -----------------------------------------------
-    function uploadCreativeRevisionPopup(creative_uuid, scene_shot, main_media_type, main_media_path, creative_revisions, camera_direction, direction, dialogue_narration, feedback_audio_path) {
+    function uploadCreativeRevisionPopup(creative_uuid, scene_shot, main_media_type, main_media_path, creative_revisions, camera_direction, direction, dialogue_narration) {
         document.getElementById("upload-creative-revision-popup").style.display = "block";
         document.getElementById("creative-uuid").value = creative_uuid;
         document.getElementById('upload-creative-revision-scene-shot').innerHTML = scene_shot;
         document.getElementById('upload-revision-camera-direction').innerHTML = camera_direction;
         document.getElementById('upload-revision-direction').innerHTML = direction;
         document.getElementById('upload-revision-dialogue-narration').innerHTML = dialogue_narration;
+        const feedbackAudioParent = document.getElementById(`feedback-recording-${creative_uuid}`);
+        const feedbackAudioPath = feedbackAudioParent.querySelector('audio').src;
 
         const audioContainer = document.getElementById("upload-creative-revision-feedback-audio-container");
         const audioElement = document.createElement('audio');
-        audioElement.src = feedback_audio_path;
+        audioElement.src = feedbackAudioPath;
         audioElement.controls = true;
         audioContainer.replaceChildren();
         audioContainer.appendChild(audioElement);
