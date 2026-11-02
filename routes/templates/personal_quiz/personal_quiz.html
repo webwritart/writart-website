@@ -521,7 +521,6 @@
 
     function nextQuestion() {
         currentScore += 1;
-        currentSerial += 1;
         questionAnswerList.splice(questionIndex, 1);
 
         document.getElementById('current-score').innerHTML = currentScore;
@@ -529,6 +528,8 @@
             finishQuiz();
             return;
         }
+        currentSerial += 1;
+
         const questionText = document.getElementById('question');
         const answerText = document.getElementById('answer');
         const currentSerialText = document.getElementById('current-serial');
