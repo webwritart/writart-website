@@ -541,7 +541,7 @@
 
     function finishQuiz() {
         currentTopScore = Math.round((currentScore/currentSerial) * 100)
-        alert("Quiz finished! Your score: " +  "(" + Math.round((currentScore/totalQuestions) * 100) + "%). Top score: " + topScore);
+        alert("Quiz finished! Your score: " + currentTopScore + "%. Top score: " + topScore);
         // Optionally, you can reset the quiz or redirect to another page
         
         if (currentTopScore > topScore) {
