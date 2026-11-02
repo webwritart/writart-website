@@ -64,8 +64,8 @@ app.register_blueprint(artist_dashboard_operations, url_prefix='/artist_dashboar
 app.register_blueprint(youtube, url_prefix='/youtube')
 app.register_blueprint(personal_quiz, url_prefix='/personal_quiz')
 
-with app.app_context():
-    db.create_all()
+# with app.app_context():
+    # db.create_all()
 
 
 @login_manager.user_loader
