@@ -15,6 +15,9 @@ from pathlib import Path
 import qrcode
 import re
 from werkzeug.utils import secure_filename
+import secrets
+import string
+from models.member import Member
 
 
 
@@ -886,3 +889,22 @@ def previous_shot_from_list(shot_numbers):
         return None
 
     return number_to_excel_column(max_number - 1)
+
+def generate_referral_code(length=10):
+    characters = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+
+    for _ in range(10):
+        referral_code = ''.join(
+            secrets.choice(characters) for _ in range(length)
+        )
+
+        exists = db.session.query(
+            Member.id
+        ).filter_by(
+            referral_code=referral_code
+        ).first()
+
+        if not exists:
+            return referral_code
+
+    raise Exception("Unable to generate a unique referral code")

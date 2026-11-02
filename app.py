@@ -21,6 +21,7 @@ from routes.client_section import client_section
 from routes.api import api_page
 from routes.b2b import b2b
 from routes.youtube import youtube
+from routes.personal_quiz import personal_quiz
 # from operations.artist_tools import delete_watermarked_images
 from models.artist_data import ArtistData
 # from flask_apscheduler import APScheduler
@@ -61,6 +62,7 @@ app.register_blueprint(b2b, url_prefix='/b2b')
 app.register_blueprint(tools, url_prefix='/tools')
 app.register_blueprint(artist_dashboard_operations, url_prefix='/artist_dashboard_operations')
 app.register_blueprint(youtube, url_prefix='/youtube')
+app.register_blueprint(personal_quiz, url_prefix='/personal_quiz')
 
 # with app.app_context():
     # db.create_all()
