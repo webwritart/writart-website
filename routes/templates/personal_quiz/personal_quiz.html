@@ -540,19 +540,17 @@
     }
 
     function finishQuiz() {
-        currentTopScore = Math.round((currentScore/totalQuestions) * 100)
-        alert("Quiz finished! Your score: " + currentScore + "/" + totalQuestions + " (" + Math.round((currentScore/totalQuestions) * 100) + "%). Top score: " + topScore);
+        currentTopScore = Math.round((currentScore/currentSerial) * 100)
+        alert("Quiz finished! Your score: " +  "(" + Math.round((currentScore/totalQuestions) * 100) + "%). Top score: " + topScore);
         // Optionally, you can reset the quiz or redirect to another page
         
         if (currentTopScore > topScore) {
-            topScore = Math.round((currentScore/totalQuestions) * 100);
-            document.getElementById('top-score').innerHTML = topScore;
             fetch("{{ url_for('personal_quiz.update_top_score') }}", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ chapter_id: currentChapterId, new_score: topScore })
+                body: JSON.stringify({ chapter_id: currentChapterId, new_score: currentTopScore })
             })
             .then(response => response.json())
                 .then(data => {

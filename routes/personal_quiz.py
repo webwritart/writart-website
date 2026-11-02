@@ -84,8 +84,6 @@ def update_top_score():
         chapter_id = data.get('chapter_id')
         new_score = data.get('new_score')
 
-        p(f"chapter_id: {chapter_id}\nNew score: {new_score}")
-
         chapter_obj = db.session.query(PersonalQuizChapter).filter_by(id=chapter_id).first()
         if chapter_obj:
             chapter_obj.top_score = new_score
