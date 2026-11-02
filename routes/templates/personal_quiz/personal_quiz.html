@@ -550,7 +550,7 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ chapter_id: currentChapterId, new_score: currentTopScore })
+                body: JSON.stringify({ 'chapter_id': currentChapterId, 'new_score': currentTopScore })
             })
             .then(response => response.json())
                 .then(data => {
