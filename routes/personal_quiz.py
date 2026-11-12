@@ -72,9 +72,8 @@ def load_chapter():
         chapter_obj = db.session.query(PersonalQuizChapter).filter_by(id=chapter_id).first()
         chapter_name = chapter_obj.name if chapter_obj else "Unknown Chapter"
         top_score = chapter_obj.top_score if chapter_obj else "0"
-        question_answer_list = [{'question': a.question,'answer': a.answer} for a in chapter_obj.questions] if chapter_obj else []
 
-        return jsonify({'success': 'success', 'q_a_list': question_answer_list, 'chapter_name': chapter_name, 'top_score': top_score})
+        return jsonify({'success': 'success', 'chapter_name': chapter_name, 'top_score': top_score})
 
 
 @personal_quiz.route('/update_top_score', methods=['POST'])
@@ -89,5 +88,18 @@ def update_top_score():
             chapter_obj.top_score = new_score
             db.session.commit()
             return jsonify({'success': 'success', 'message': 'Top score updated successfully.'})
+        else:
+            return jsonify({'error': 'error', 'message': 'Chapter not found.'})
+
+
+@personal_quiz.route('/get_question_range', methods=['POST'])
+def get_question_range():
+    if request.method == 'POST' and request.is_json:
+        data = request.get_json()
+        chapter_id = data.get('chapter_id')
+        chapter_obj = db.session.query(PersonalQuizChapter).filter_by(id=chapter_id).first()
+        if chapter_obj:
+            question_list = [{'question': a.question,'answer': a.answer} for a in chapter_obj.questions] if chapter_obj else []
+            return jsonify({'success': 'success', 'question_list': question_list})
         else:
             return jsonify({'error': 'error', 'message': 'Chapter not found.'})

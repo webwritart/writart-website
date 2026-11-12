@@ -297,7 +297,7 @@
 <div id="root-container">
     <div id="top-bar">
         <button id="add-quiz-chapter" onclick="openAddQuizChapterPopup()">Add</button>
-        <select id="chapters" oninput="loadQuizChapter(this.value)">
+        <select id="chapters" oninput="getQuestionRange(this.value)">
             <option value="">Chapters</option>
             {% for chapter in chapter_tuple_list %}
                 <option value="{{ chapter[0] }}">{{ chapter[1] }}</option>
@@ -345,16 +345,33 @@
         <button class="btn-style-1" onclick="saveQuizChapter()">Save</button>
     </div>
 </div>
+<div id="select-range-popup" class="popup">
+    <div class="popup-content" id="select-range-popup-content">
+        <div class="close-popup-btn-container">
+            <button class="close-popup-btn" onclick="closePopup()">x</button>
+        </div>
+        <p style="font-weight: 700;">SELECT RANGE</p>
+        <select id="range-begin" oninput="setBeginIndex(this.value)"></select>
+        <select id="range-end" oninput="setEndIndex(this.value)"></select>
+        <button id="load-quiz" class="btn-style-1">Load Quiz</button>
+    </div>
+</div>
 
 <script>
     function closePopup() {
         document.getElementById("overlay").style.display = "none";
         document.getElementById('add-chapter-popup').style.display = 'none';
+        document.getElementById('select-range-popup').style.display = 'none';
     }
 
     function openAddQuizChapterPopup() {
         document.getElementById("overlay").style.display = "block";
         document.getElementById('add-chapter-popup').style.display = 'block';
+    }
+
+    function openSelectRangePopup() {
+        document.getElementById("overlay").style.display = "block";
+        document.getElementById('select-range-popup').style.display = 'block';
     }
 
     function saveQuizChapter() {
@@ -407,6 +424,10 @@
     let currentTopScore;
     let questionIndex;
     let reverseMode = false;
+    let rangeBeginIndex;
+    let rangeEndIndex;
+    let questionList = [];
+
 
     function reverseToggle(isChecked) {
         if (isChecked) {
@@ -430,13 +451,79 @@
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
     
+    function getQuestionRange(chapterId) {
+        currentChapterId = chapterId;
+        const endpointUrl = "{{ url_for('personal_quiz.get_question_range') }}";
+        fetch(endpointUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ chapter_id: chapterId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                questionList = data.question_list;
+                rangeBeginIndex = 0;
+                rangeEndIndex = data.question_list.length - 1;
+                const rangeBeginSelect = document.getElementById('range-begin');
+                const rangeEndSelect = document.getElementById('range-end');
+                const endDefaultOption = document.createElement('option');
+                endDefaultOption.value = data.question_list.length - 1;
+                endDefaultOption.text = 'End';
+                rangeEndSelect.appendChild(endDefaultOption);
+                const firstOption = document.createElement('option');
+                firstOption.value = '0';
+                firstOption.text = 'Start';
+                rangeBeginSelect.appendChild(firstOption);
+                questionList.forEach((item, index) => {
+                    const option = document.createElement('option');
+                    option.value = index;
+                    option.text = item['question'];
+                    rangeBeginSelect.appendChild(option);
+                });
+                const rangePopupBtn = document.getElementById('load-quiz');
+                rangePopupBtn.addEventListener("click", loadQuizChapter.bind(null, chapterId));
+                openSelectRangePopup();
+            } else {
+                alert("Error fetching question range: " + data.error);
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("An error occurred while fetching the question range.");
+        });
+    }
+
+    function setBeginIndex(beginIndex) {
+        const rangeEndSelect = document.getElementById('range-end');
+        rangeBeginIndex = beginIndex;
+        // Clear previous options in range-end
+        rangeEndSelect.replaceChildren();
+        const firstOption = document.createElement('option');
+        firstOption.value = 'end';
+        firstOption.text = 'End';
+        rangeEndSelect.appendChild(firstOption);
+        questionList.slice(parseInt(beginIndex) + 1).forEach((item, index) => {
+            const option = document.createElement('option');
+            option.value = parseInt(beginIndex) + index + 1;
+            option.text = item['question'];
+            rangeEndSelect.appendChild(option);
+        });
+    }
+
+    function setEndIndex(endIndex) {
+        rangeEndIndex = endIndex;
+    }
+
     function loadQuizChapter(chapterId) {
         if (!chapterId) {
             document.getElementById('quiz-body').innerHTML = '';
             return;
         }
-        currentChapterId = chapterId;
         const endpointUrl = "{{ url_for('personal_quiz.load_chapter') }}";
+
         fetch(endpointUrl, {
             method: 'POST',
             headers: {
@@ -468,10 +555,10 @@
                     header.innerHTML = data.chapter_name
                     currentSerial += 1;
                     currentSerialText.innerHTML = currentSerial;
-                    totalQuestions = data.q_a_list.length;
+                    questionAnswerList = questionList.slice(parseInt(rangeBeginIndex), parseInt(rangeEndIndex) + 1);
+                    totalQuestions = questionAnswerList.length;
                     totalQuestionsText.innerHTML = totalQuestions;
                     totalQuestions2Text.innerHTML = totalQuestions;
-                    questionAnswerList = data.q_a_list;
                     currentScoreText.innerHTML = currentScore;
                     topScoreText.innerHTML = topScore;
                     questionIndex = getRandomIntInclusive(0, questionAnswerList.length - 1);
@@ -483,6 +570,7 @@
                         questionText.innerHTML = questionAnswerList[questionIndex]['question'];
                         answerText.innerHTML = questionAnswerList[questionIndex]['answer'];
                     }
+                    closePopup();
                     document.getElementById('quiz-body').style.display = 'flex';
                 } else {
                     alert("Error loading chapter: " + data.error);
