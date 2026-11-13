@@ -187,6 +187,15 @@
         border-bottom: 2px solid black;
         margin: 0%;
     }
+    #top-score-text-toggle:hover {
+        font-size: 0;
+    }
+    #top-score-text-toggle:hover::after {
+        content: attr(data-hover);
+        font-size: 1.2rem;
+        color: red; /* Set your desired text color */
+        cursor: pointer;
+    }
     #quiz-body-button-container {
         display: flex;
         justify-content: center;
@@ -315,7 +324,7 @@
         <div id="quiz-body-header">
             <p>Questions: <span id="current-serial"></span>/<span id="total-questions"></span></p>
             <p>Score: <span id="current-score"></span>/<span id="total-questions2"></span></p>
-            <p>Top Score: <span id="top-score"></span>%</p>
+            <p><span data-hover="Reset: " id="top-score-text-toggle" onclick="resetTopScore()">Top Score: </span><span id="top-score"></span>%</p>
         </div>
         <div id="question-answer-container">
             <p id="question-container"><span id="serial"></span><span id="question"></span></p>
@@ -445,6 +454,26 @@
         questionAnswerList = [];
         currentTopScore = 0;
         questionIndex = 0;
+    }
+
+    function resetTopScore() {
+        const endpointUrl = "{{ url_for('personal_quiz.update_top_score') }}";
+        fetch(endpointUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ chapter_id: currentChapterId, 'type': "reset_score" })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('top score reset successful!');
+                document.getElementById('top-score').innerHTML = "0";
+            } else {
+                alert("Error in reseting Top score!");
+            }
+        })
     }
 
     function getRandomIntInclusive(min, max) {
@@ -645,7 +674,7 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ 'chapter_id': currentChapterId, 'new_score': currentTopScore })
+                body: JSON.stringify({ 'chapter_id': currentChapterId, 'new_score': currentTopScore, 'type': "set_score" })
             })
             .then(response => response.json())
                 .then(data => {
