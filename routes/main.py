@@ -37,12 +37,6 @@ def home():
 
     active_course_data_list = [(a.uuid, a.topic, a.reg_close, a.brief, a.cta_photo_path_desktop, a.cta_photo_path_mobile, a.registration_status, a.promo_yt_id) for a in db.session.query(Workshop).all() if a.registration_status != 'closed']
 
-    all_members = db.session.query(Member).all()
-    for m in all_members:
-        if not m.referral_code:
-            m.referral_code = generate_referral_code()
-            db.session.commit()
-
     return render_template('index.html', logged_in=current_user.is_authenticated, admin=admin, client=client,
                            animation_admin=animation_admin, portrait_list=portrait_list, maximum_discount=maximum_discount, active_course_data_list=active_course_data_list)
 
