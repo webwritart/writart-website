@@ -261,10 +261,12 @@ def student_dashboard():
         news_date = f'{dt} {month_name}, {year}'
         common_news_dict[item] = {'news_text': news_text, 'news_link': news_link, 'news_date': news_date}
 
+    referral_code = current_user.referral_code
+
 
     return render_template('student_dashboard.html', logged_in=current_user.is_authenticated, current_year=current_year,
                             school_news_dict=school_news_dict, common_news_dict=common_news_dict,
-                           admin=admin, artist=artist, instructor=instructor, multiple_roles=multiple_roles)
+                           admin=admin, artist=artist, instructor=instructor, multiple_roles=multiple_roles, referral_code=referral_code)
 
 
 @account.route('/artist-dashboard', methods=['GET', 'POST'])

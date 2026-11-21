@@ -57,9 +57,14 @@
         align-items: center;
         width: 100%;
     }
+    #referral-popup-content div {
+        width: 100%;
+    }
+    .video-container {
+        min-height: 30vh;
+    }
     #talk-to-teacher-popup {
         width: 60%;
-        background: rgb(145, 163, 133);
     }
     #talk-to-teacher-popup-content textarea{
         width: 80%;
@@ -80,6 +85,9 @@
         border: none;
         text-align: right;
         color: red;
+        background: rgba(83, 25, 25, 0.22); 
+        padding: 1% 5%; 
+        border-radius: .4rem;
     }
     .btn-style-1 {
         border: none;
@@ -93,6 +101,14 @@
     }
     .btn-style-1:hover {
         transform: scale(0.96);
+    }
+    #top-bar-promotion-container {
+        width: 100%;
+        background: rgb(128, 58, 0);
+        color: white;
+        padding: .2% 0%;
+        text-align: center;
+        cursor: pointer;
     }
     .root-container {
         padding: 0% 10% 2% 10%;
@@ -580,6 +596,30 @@
             <button class="btn-style-1" onclick="sendTalkToTeacherMessage({{ws_uuid}}, this)">Send</button>
         </div>
     </div>
+    <div id="top-bar-promotion-container" onclick="openReferralPopup()">
+        <div>Refer to <b>earn flat ₹500</b>. Get Cashback or use to get Discount. Click to <span style="color: yellow;">know more</span>. [Referral code: <b style="letter-spacing: .1rem;">{{referral_code}}]</b></div>
+    </div>
+    <div id="referral-popup" class="popup">
+        <div class="popup-content" id="referral-popup-content">
+            <div class="close-popup-btn-container">
+                <button class="close-popup-btn" onclick="closePopup()">x</button>
+            </div>
+            <div style="text-align: center; border: 2px solid black;">Referral code: <b>{{referral_code}}</b></div>
+            <div style="margin-top: 1%;"><B>STEPS:</B></div>
+            <div>1. Spread the word and give this referral code to students who join through your referral.</div>
+            <div>2. If the student you referred registers and joins a Writart course you get ₹500 from Writart per student joining.</div>
+            <div>3. You can either choose to get discount of ₹500 in the courses by Writart or get Cashback through UPI or in Bank Account.</div>
+            <div>4. No limit on the referral reward. For example if many students join through your referral you get (number of students X ₹500) as reward.</div>
+            <div class="video-container">
+                <iframe id="referral-explainer-video"  class="responsive-iframe"
+                    src="https://www.youtube.com/embed/3dmvM1FH7tY" 
+                    title="YouTube video player" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+        </div>
+    </div>
     <div class="root-container">
         <p class="section-title">Recorded lessons</p>
         {% if enrolment_alert == 'on' %}
@@ -926,6 +966,8 @@ function closePopup() {
     document.getElementById('certificate-popup').style.display = 'none';
     document.getElementById("overlay").style.display = "none";
     document.getElementById('talk-to-teacher-popup').style.display = 'none';
+    document.getElementById('referral-popup').style.display = 'none'
+    document.getElementById('referral-explainer-video').src = "";
 }
 function showCertificatePopup() {
     document.getElementById('certificate-popup').style.display = 'block';
@@ -937,7 +979,10 @@ function showTalkToTeacherPopup() {
     document.getElementById("overlay").style.display = "block";
 }
 
-
+function openReferralPopup() {
+    document.getElementById('referral-popup').style.display = 'block';
+    document.getElementById('referral-explainer-video').src = "https://www.youtube.com/embed/3dmvM1FH7tY";
+}
 
 async function downloadCertificate(course_uuid, downloadCertificateBtn) {
     const certificateEndpointUrl = "{{ url_for('school.certificate_download') }}";

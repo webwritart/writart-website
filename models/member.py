@@ -53,9 +53,11 @@ class Member(UserMixin, db.Model):
     insta_url = db.Column(db.String(100))
     x = db.Column(db.String(100))
     registration_date = db.Column(db.String(50))
+    registration_referral_code = db.Column(db.String(50))
     token = db.Column(db.String(10))
     referral_code = db.Column(db.String(20), unique=True)
     artworks = db.relationship('Artwork', backref='artist')
+    referral_transactions = db.relationship('ReferralTransaction', backref='member')
     participated = db.relationship('Workshop', secondary=member_workshop, backref='participants')
     role = db.relationship('Role', secondary=member_role, backref='members')
     ws_months = db.relationship('WorkshopMonth', secondary=member_workshop_month, backref='members')
@@ -103,6 +105,7 @@ class Member(UserMixin, db.Model):
             'x': self.x,
             'registration_date': self.registration_date,
             'token': self.token,
+            'referral_transactions': [transaction.to_dict() for transaction in self.referral_transactions],
             'artworks': [artwork.to_dict() for artwork in self.artworks],
             'participated': [workshop.to_dict() for workshop in self.participated],
             'role': [role.to_dict() for role in self.role],
@@ -129,6 +132,39 @@ class Member(UserMixin, db.Model):
 
     def __repr__(self):
         return f'{self.name.split()[0]} -- {self.email}'
+
+
+class ReferralTransaction(db.Model):
+    __tablename__ = 'referral_transaction'
+
+    id = db.Column(db.Integer, primary_key=True)
+    points = db.Column(db.Integer)
+    amount = db.Column(db.Integer)
+    status = db.Column(db.String(100)) #e.g. available, used, on hold etc.
+    credited_for = db.Column(db.String(100)) #e.g. student, product sale etc.
+    date_of_credit = db.Column(db.String(20)) #date and time
+    date_of_debit = db.Column(db.String(20)) #date and time
+    debited_for = db.Column(db.String(100)) #e.g. course, painting, etc
+    debited_for_product_detail = db.Column(db.String(100)) #product name like course name or product code in case of painting etc.
+    member_id = db.Column(db.Integer, db.ForeignKey('member.id'))
+
+    def __repr__(self):
+        return f'{self.date_of_credit}--{self.credited_for}--{self.status}'
+
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'points': self.points,
+            'amount': self.amount,
+            'status': self.status,
+            'credited_for': self.credited_for,
+            'date_of_credit': self.date_of_credit,
+            'date_of_debit': self.date_of_debit,
+            'debited_for': self.debited_for,
+            'debited_for_product_detail': self.debited_for_product_detail,
+            'member': self.member
+        }
 
 
 class MemberTools(db.Model):
@@ -177,8 +213,6 @@ class Certificate(db.Model):
 
     def __repr__(self):
         return f'{self.course_topic}, Certificate No. {self.certificate_no}'
-
-
 
 
 class Portrait(db.Model):

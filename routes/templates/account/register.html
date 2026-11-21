@@ -19,6 +19,10 @@
         padding: 2%;
         border-radius: 1rem;
     }
+    .inline-form-fields {
+        display: flex;
+        width: 100%;
+    }
     input {
         margin: 0% !important;
         padding: 0% 1% !important;
@@ -53,6 +57,28 @@
     .registration-btn:hover {
         background-color: rgb(74, 81, 21);
     }
+
+    /* responsive---------------------------------- */
+    @media (max-width: 1920px) {
+        #registration-form {
+            width: 30%;
+        }
+    }
+    @media (max-width: 1280px) {
+        #registration-form {
+            width: 40%;
+        }
+    }
+    @media (max-width: 900px) {
+        #registration-form {
+            width: 60%;
+        }
+    }
+    @media (max-width: 600px) {
+        #registration-form {
+            width: 80%;
+        }
+    }
 </style>
 
 <div id="form-container">
@@ -66,6 +92,10 @@
 
     <form name="registration" id="registration-form" action="{{ url_for('account.registration_form') }}" onsubmit="return validateRegistration()" method="post">
         <p class="form-title">Register</p>
+        <div class="inline-form-fields">
+            <div style="white-space: nowrap; padding-right: 1%;">Referral code:</div>
+            <input type="text" name="referral" id="referral">
+        </div>
         <input type="text" name="name" placeholder="Name (required)" required="required" />
         <input type="email" name="email" placeholder="Email (required)" required="required" />
         <input type="email" name="retype-email" placeholder="Type email again(required)" required="required" />
