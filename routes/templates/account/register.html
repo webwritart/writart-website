@@ -58,6 +58,10 @@
         background-color: rgb(74, 81, 21);
     }
 
+    #referral-code-check-display{
+        display: none;
+    }
+
     /* responsive---------------------------------- */
     @media (max-width: 1920px) {
         #registration-form {
@@ -82,6 +86,10 @@
 </style>
 
 <div id="form-container">
+        
+
+    <form name="registration" id="registration-form" action="{{ url_for('account.registration_form') }}" onsubmit="return validateRegistration()" method="post">
+        <p class="form-title">Register</p>
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                   {% for category, message in messages %}
@@ -89,13 +97,11 @@
                   {% endfor %}
             {% endif %}
         {% endwith %}
-
-    <form name="registration" id="registration-form" action="{{ url_for('account.registration_form') }}" onsubmit="return validateRegistration()" method="post">
-        <p class="form-title">Register</p>
         <div class="inline-form-fields">
             <div style="white-space: nowrap; padding-right: 1%;">Referral code:</div>
-            <input type="text" name="referral" id="referral">
+            <input type="text" name="referral" id="referral" oninput="checkReferralCode(this.value)">
         </div>
+        <p id="referral-code-check-display"></p>
         <input type="text" name="name" placeholder="Name (required)" required="required" />
         <input type="email" name="email" placeholder="Email (required)" required="required" />
         <input type="email" name="retype-email" placeholder="Type email again(required)" required="required" />
@@ -110,7 +116,7 @@
         </select>
         <label id="dob-label">Date of Birth (required)</label>
         <input id="dob" type="date" name="dob" required>
-        <select id="state" name="billing_state">
+        <select id="state" name="billing_state" required>
             <option value="Select State" style="background-color:#aaa; color:#fff">State</option>
             <option value="Andra Pradesh">Andra Pradesh</option>
             <option value="Arunachal Pradesh">Arunachal Pradesh</option>
@@ -402,4 +408,33 @@
     </form>
 </div>
 <script src="../static/js/my_account.js"></script>
+<script>
+    function checkReferralCode(referralCode) {
+        const endpointUrl = "{{url_for('account.referral_check')}}";
+        const referralCodeCheckDisplay = document.getElementById('referral-code-check-display');
+        const data = {
+            referral_code: referralCode,
+            type: 'registration-referral-check'
+        };
+        fetch(endpointUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                referralCodeCheckDisplay.textContent = data.message;
+                referralCodeCheckDisplay.style.color = 'green';
+                referralCodeCheckDisplay.style.display = 'block';
+            } else {
+                referralCodeCheckDisplay.textContent = data.message;
+                referralCodeCheckDisplay.style.color = 'red';
+                referralCodeCheckDisplay.style.display = 'block';
+            }
+        })
+    }
+</script>
 {% endblock %}

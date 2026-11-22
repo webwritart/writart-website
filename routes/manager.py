@@ -11,7 +11,7 @@ from operations.quiz import add_quiz_data_to_db
 from models.payment import Payment
 from models.query import Query
 from models.tool import Tools, ArtworkPriceTime
-from models.member import Member, Workshop, Role, Portrait, WorkshopVideos, Certificate, WorkshopDemo
+from models.member import *
 from models.workshop_details import *
 from models.news import News
 from models.youtube import *
@@ -20,6 +20,7 @@ from routes.account import today_date
 import difflib, io, datetime, json
 from PIL import Image
 from sqlalchemy import or_
+from rapidfuzz import process, fuzz
 
 
 manager = Blueprint('manager', __name__, static_folder='static', template_folder='templates/manager')
@@ -1265,58 +1266,165 @@ def manual_enroll():
             for m in ws_month:
                 ws_month_list.append(m.month)
             workshop_dict[ws_id] = {'id':ws_id, 'topic': ws_topic, 'months':ws_month_list}
+
+        if request.method == 'POST' and request.is_json:
+            data = request.get_json()
+            if data['type'] == 'search-member':
+                name_text = data['name-text']
+                name_dict = {}
+                if len(db.session.query(Member).all()) > 0:
+                    name_list = db.session.query(Member).all()
+                    for n in name_list:
+                        name_dict[n.id] = {'name': n.name,'billing_state': n.billing_state}
+                
+                matches = process.extract(
+                    name_text,
+                    {member_id: details['name'] for member_id, details in name_dict.items()},
+                    scorer=fuzz.WRatio,
+                    limit=5,
+                    score_cutoff=60
+                )
+
+                results = {
+                    member_id: name_dict[member_id]
+                    for matched_name, score, member_id in matches
+                }
+                return jsonify(results)
+            
+            if data['type'] == 'get-referrer-referral-amount':
+                student_id = data['student-id']
+                student = db.session.query(Member).filter_by(id=student_id).scalar()
+                referral_amt = 0
+                available_referral_transactions = [a for a in student.referral_transactions if a.status == 'available']
+                if len(available_referral_transactions) > 0:
+                    for t in available_referral_transactions:
+                        referral_amt += t.amount
+                try:
+                    referrer_obj = db.session.query(Member).filter_by(referral_code=student.registration_referral_code).scalar()
+                    referrer = [referrer_obj.id, referrer_obj.name, referrer_obj.billing_state, referrer_obj.email]
+                except Exception as e:
+                    p(e)
+                    referrer = [None, None, None, None]
+                return jsonify({'total_referral_amount': referral_amt, 'referrer': referrer})
+
+            if data['type'] == 'deduct-referral-amt':
+                p('posted deduct referral amt')
+                student_id = data['student-id']
+                student = db.session.query(Member).filter_by(id=student_id).scalar()
+                deductable_referral_amt = data['deductable-referral-amt']
+                deducted_amt = 0
+                try:
+                    available_referral_transactions = [a for a in student.referral_transactions if a.status == 'available']
+                    if len(available_referral_transactions) > 0:
+                        for t in available_referral_transactions:
+                            if int(deductable_referral_amt) >= int(t.amount):
+                                t.status = 'used'
+                                deductable_referral_amt =int(deductable_referral_amt) - int(t.amount)
+                                deducted_amt += int(t.amount)
+                                db.session.commit()
+                            else:
+                                break
+                    remainaing_referral_amt = 0
+                    available_referral_transactions = [a for a in student.referral_transactions if a.status == 'available']
+                    if len(available_referral_transactions) > 0:
+                        for t in available_referral_transactions:
+                            remainaing_referral_amt += t.amount
+
+                    subject = f"Referral Amount Transferred - {today_date}"
+                    recipients = [student.email]
+                    body = f"Dear {student.name},\n\nYou have been transferred ₹{deducted_amt} of the referral reward to your account. You must get it within 3 days.\nAvailable referral reward: ₹{remainaing_referral_amt}.\n\nIf you haven't received the amount please contact us at +91 89203 51265 (Whatsapp only)."
+                    send_email_school(subject, recipients, body, '', {})
+                    message = f"Deducted Referral Amount: {deducted_amt}"
+                    return jsonify(message=message, remaining_referral_amt=remainaing_referral_amt)
+                except Exception as e:
+                    p(e)
+                    remainaing_referral_amt = 0
+                    available_referral_transactions = [a for a in student.referral_transactions if a.status == 'available']
+                    p(available_referral_transactions)
+                    if len(available_referral_transactions) > 0:
+                        for t in available_referral_transactions:
+                            remainaing_referral_amt += t.amount
+                    return jsonify(message="Something went wrong!", remainaing_referral_amt=remainaing_referral_amt)
+            
         if request.method == 'POST':
             workshop_id = request.form.get('course')
             month = request.form.get('month')
             if workshop_id != 'default':
                 workshop = db.session.query(Workshop).filter_by(id=workshop_id).scalar()
+                monthly_fee = workshop.monthly_fee
                 workshop_months = workshop.months
                 for m in workshop_months:
                     if m.month == int(month):
                         req_month = m
             else:
                 flash('Aborted! Please choose the workshop/course', 'error')
-            email_list = []
-            student_emails = request.form.get('email')
-            if ',' in student_emails:
-                separated_email_list = student_emails.split(',')
-                for email in separated_email_list:
-                    email_list.append(email.strip())
-                for email in email_list:
-                    student = db.session.query(Member).filter_by(email=email).scalar()
-                    if workshop not in  student.participated:
-                        student.participated.append(workshop)
-                    if req_month not in student.ws_months:
-                        student.ws_months.append(req_month)
-                        if student_role not in student.role:
-                            student.role.append(student_role)
-                        db.session.commit()
-                        subject = 'Enrolment Success'
-                        message = f"Dear {student.name},\n\nHooray! You have been successfully enrolled in the month {req_month.month} of {workshop.topic}!"
-                        send_email_school(subject, [email], message, '', '')
-                        flash('Student enrolled successfully', 'success')
-                    else:
-                        flash('Aborted! Already enrolled!', 'error')
+            student_id = request.form.get('student-id')
+            referrer_details = request.form.get('referrer-details')
+            if referrer_details[0]:
+                referring_member = db.session.query(Member).filter_by(id=referrer_details[0]).scalar()
             else:
-                student = db.session.query(Member).filter_by(email=student_emails.strip()).scalar()
-                
-                if int(month) == 1:
-                        if workshop not in  student.participated:
-                            student.participated.append(workshop)
+                referring_member = None
+            student = db.session.query(Member).filter_by(id=student_id).scalar()
+            email = student.email
+            try:
+                if workshop not in  student.participated:
+                    student.participated.append(workshop)
                 if req_month not in student.ws_months:
                     student.ws_months.append(req_month)
                     if student_role not in student.role:
                         student.role.append(student_role)
+
+                    deducted_referral_amt = 0
+                    all_available_referral_transactions = [a for a in student.referral_transactions if a.status == 'available']
+                        
+                    if len(all_available_referral_transactions) > 0:
+                        for t in all_available_referral_transactions:
+                            if monthly_fee >= t.amount:
+                                monthly_fee -= t.amount
+                                deducted_referral_amt += t.amount
+                                t.status = 'used'
+                                if monthly_fee == 0:
+                                    break
+                    
+                    if referring_member:
+                        referral_transaction = ReferralTransaction(
+                            amount=500,
+                            status='available',
+                            credited_for=f"Student-registration: {student.name}",
+                            date_of_credit=today_date,
+                            member_id=referrer_details[0]
+                        )
+                        db.session.add(referral_transaction)
+                    if student.registration_referral_code != 'used':
+                        student.registration_referral_code = 'used'
                     db.session.commit()
-                    subject = "Enrolment Success"
-                    message = f"Dear {student.name},\n\nHooray! You have been successfully enrolled in the month {req_month.month} of {workshop.topic}!"
-                    send_email_school(subject, [student_emails.strip()], message, '', '')
-                    flash('Student enrolled successfully!', 'success')
+
+                    remainaing_referral_amount = 0
+                    all_available_referral_transactions = [a for a in student.referral_transactions if a.status == 'available']
+                    if len(all_available_referral_transactions) > 0:
+                        for t in all_available_referral_transactions:
+                            remainaing_referral_amount += t.amount
+                    
+                    flash('Student enrolled successfully', 'success')
+                    subject = 'Enrolment Success'
+                    if deducted_referral_amt == 0:
+                        message = f"Dear {student.name},\n\nHooray! You have been successfully enrolled in the month {req_month.month} of {workshop.topic}!"
+                    else:
+                        message = f"Dear {student.name},\n\nHooray! You have been successfully enrolled in the month {req_month.month} of {workshop.topic}!\n\nYou have used ₹{deducted_referral_amt} as discount from your total referral reward amount.\nRemaining referral reward amount: ₹{remainaing_referral_amount}"
+                    send_email_school(subject, [email], message, '', '')
+                    if referring_member:
+                        subject = f"Earned referral reward - {today_date}"
+                        recipients = ['shwetabhartist@gmail.com', referring_member.email]
+                        body = f"Dear {referring_member.name},\n\nThe member you referred, {student.name}, has enrolled in the course, {workshop.topic}, and you have been awarded ₹500 as referral reward.\nYou can use it either to get discount on the next course payments or you can ask for the money transfer directly to your bank account through UPI or direct bank transfer"
+                        send_email_school(subject, recipients, body, None, None)
+                    
                 else:
-                    flash('Aborted Already enrolled!', 'error')
-
-
-
+                    flash('Aborted! Already enrolled!', 'error')
+            except Exception as e:
+                p(e)
+                db.session.rollback()
+                flash('Aborted! Something went wrong!', 'error')
+                
         return render_template('manual_enroll.html', current_year=current_year, logged_in=current_user.is_authenticated,
                                ws_dict=workshop_dict)
 

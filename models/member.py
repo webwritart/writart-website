@@ -53,9 +53,9 @@ class Member(UserMixin, db.Model):
     insta_url = db.Column(db.String(100))
     x = db.Column(db.String(100))
     registration_date = db.Column(db.String(50))
-    registration_referral_code = db.Column(db.String(50))
+    registration_referral_code = db.Column(db.String(50)) # The referral code by the referrer used to register
     token = db.Column(db.String(10))
-    referral_code = db.Column(db.String(20), unique=True)
+    referral_code = db.Column(db.String(20), unique=True) # The referral code belonging to this member
     artworks = db.relationship('Artwork', backref='artist')
     referral_transactions = db.relationship('ReferralTransaction', backref='member')
     participated = db.relationship('Workshop', secondary=member_workshop, backref='participants')

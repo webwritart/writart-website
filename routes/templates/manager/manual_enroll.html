@@ -1,10 +1,60 @@
 {% extends "base.html" %}
 {% block content %}
-<div style="display:flex; height: 90vh; width:100%; justify-content:center; align-items: center;">
+<style>
+    #search-student-list {
+        max-height: 200px;
+        overflow: auto;
+        display: none;
+        border: 2px solid black;
+        background: rgb(146, 225, 214);
+    }
+    .name-search-options {
+        cursor: pointer;
+    }
+    .name-search-options:hover {
+        background: white;
+    }
+    #referral-amt, #referrer {
+        display: none;
+    }
+    .inline-div {
+        display: flex;
+        justify-content: space-evenly;
+    }
+    .inline-div input, .inline-div div {
+        width: 50%;
+    }
+    #deduct-btn {
+        background: grey; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        color: white; 
+        border-radius: .5rem; 
+        cursor: pointer;
+        transition: all .2s ease-in-out;
+    }
+    #deduct-btn:hover {
+        transform: scale(0.98);
+    }
+    #deductable-referral-amt, #deduct-btn{
+        display: none;
+    }
+</style>
+<div style="display:flex; flex-direction: column; height: 90vh; width:100%; justify-content:center; align-items: center;">
     <div class="box2" style="width:50%;">
         <h1>MANUAL ENROLL</h1>
         <form action="{{ url_for('manager.manual_enroll') }}" method="post">
-            <input type="text" name="email" placeholder="Student's email or emails separated by comma" required>
+            <input type="text" name="student-name" id="student-name" placeholder="Type name to search" oninput="searchStudentName()">
+            <p id="referral-amt"></p>
+            <p id="referrer"></p>
+            <div class="inline-div">
+                <input type="number" name="deductable-referral-amt" id="deductable-referral-amt" placeholder="Deductable referral amt">
+                <div id="deduct-btn" onclick="deductReferralAmt()">Deduct</div>
+            </div>
+            <div id="search-student-list"></div>
+            <input type="hidden" name="referrer-details" id="referrer-details">
+            <input type="hidden" name="student-id" id="student-id">
             <select id="course" name="course" required onchange="getWsId()">
                 <option value="default">Workshop/course Selection</option>
             </select>
@@ -46,5 +96,109 @@
             month.appendChild(option);
         });
     });
+
+    function searchStudentName() {
+        const studentName = document.getElementById('student-name').value;
+        const endpointUrl = "{{ url_for('manager.manual_enroll') }}";
+        data = {
+            'type': 'search-member',
+            'name-text': studentName
+        };
+        fetch(endpointUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then(response => response.json())
+        .then(data => {
+            const searchStudentList = document.getElementById('search-student-list');
+            searchStudentList.replaceChildren();
+            Object.keys(data).forEach(key => {
+                const option = document.createElement('option');
+                option.value = key;
+                option.textContent = `${data[key]['name']} | ${data[key]['billing_state']}`;
+                option.classList.add("name-search-options");
+                option.addEventListener("click", () => {
+                    selectStudent(key, data[key]['name']);
+                });
+                searchStudentList.appendChild(option);
+                searchStudentList.style.display = 'block';
+            });
+        }).catch(error => {
+            console.log(error);
+        });
+    }   
+
+    function selectStudent(key, name) {
+        const studentName = document.getElementById('student-name');
+        const studentId = document.getElementById('student-id');
+        const endpointUrl = "{{ url_for('manager.manual_enroll') }}";
+        studentId.value = key;
+        studentName.value = name;
+        const searchStudentList = document.getElementById('search-student-list');
+        searchStudentList.replaceChildren();
+        searchStudentList.style.display = 'none';
+
+        data = {
+            'type': 'get-referrer-referral-amount',
+            'student-id': key
+        }
+        fetch(endpointUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then(response => response.json())
+        .then(data => {
+            const totalReferralAmount = document.getElementById('referral-amt');
+            const referrer = document.getElementById('referrer');
+            const referrerDetails = document.getElementById('referrer-details');
+            referrerDetails.value = data['referrer'];
+            referrer.textContent = `Referrer: ${data['referrer'][1]}-${data['referrer'][2]}-ID: ${data['referrer'][0]}`;
+            totalReferralAmount.textContent = `Available referral amount: ₹${data['total_referral_amount']}`;
+            totalReferralAmount.style.display = 'block';
+            referrer.style.display = 'block';
+            if (data['total_referral_amount'] == 0) {
+                const deductableReferralAmt = document.getElementById('deductable-referral-amt');
+                deductableReferralAmt.style.display = 'none';
+                const deductBtn = document.getElementById('deduct-btn');
+                deductBtn.style.display = 'none';
+            } else {
+                const deductableReferralAmt = document.getElementById('deductable-referral-amt');
+                deductableReferralAmt.style.display = 'block';
+                const deductBtn = document.getElementById('deduct-btn');
+                deductBtn.style.display = 'flex';
+            }
+        }).catch(error => {
+            console.log(error);
+        });
+    }
+
+    function deductReferralAmt() {
+        const deductableReferralAmt = document.getElementById('deductable-referral-amt').value;
+        const studentId = document.getElementById('student-id').value;
+        const endpointUrl = "{{ url_for('manager.manual_enroll') }}";
+        data = {
+            'type': 'deduct-referral-amt',
+            'deductable-referral-amt': deductableReferralAmt,
+            'student-id': studentId
+        }
+        fetch(endpointUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then(response => response.json())
+        .then(data => {
+            const totalReferralAmount = document.getElementById('referral-amt');
+            totalReferralAmount.textContent = `Available referral amount: ₹${data['remaining_referral_amt']}`;
+            alert(data['message']);
+        }).catch(error => {
+            console.log(error);
+        });
+    }
 </script>
 {% endblock %}

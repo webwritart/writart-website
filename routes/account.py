@@ -175,7 +175,12 @@ def home():
         
         role_count = len(roles)
 
-        return render_template('my_account.html', certificate_list=certificate_list, certificate=certificate,
+        all_available_referral_transactions = [a for a in current_user.referral_transactions if a.status == 'available']
+        total_referral_amount = 0
+        for r in all_available_referral_transactions:
+            total_referral_amount += r.amount
+
+        return render_template('my_account.html', total_referral_amount=total_referral_amount, certificate_list=certificate_list, certificate=certificate,
                                name=current_user.name, logged_in=current_user.is_authenticated, admin=admin,
                                client=client,
                                animation_admin=animation_admin, roles=roles, role_count=role_count, current_year=current_year)
@@ -1986,6 +1991,7 @@ def registration_form():
             uuid = create_uuid(uuid_list, 6)
 
         # ------------------------------------------ Add details to session ----------------------------------------- #
+            session['referral_code'] = request.form.get('referral')
             session['name'] = request.form.get('name')
             session['email'] = request.form.get('email')
             session['password'] = hash_and_salted_password
@@ -2008,6 +2014,7 @@ def registration_form():
 def captcha_verification():
     captcha_value, captcha_uri = generate_captcha()
     session['captcha_value'] = captcha_value
+    p(f"generated Captcha value: {captcha_value}")
     return render_template("captcha_verification.html", current_year=current_year, captcha=captcha_uri)
 
 
@@ -2019,6 +2026,9 @@ def register():
             if request.form.get('agree'):
                 captcha = request.form.get('captcha')
                 captcha_value = session['captcha_value']
+                p(f"User entered Captcha value: {captcha}")
+                p(f"Session Captcha value: {captcha_value}")
+
                 if captcha == captcha_value:
                     name = session['name']
                     email = session['email']
@@ -2032,75 +2042,120 @@ def register():
                     billing_country = session['billing_country']
                     billing_pincode = session['billing_pincode']
                     uuid = session['uuid']
+                    referral_code = session['referral_code']
+                    new_member_referral_code = generate_referral_code()
 
-                    new_user = Member(
-                        email=email,
-                        password=password,
-                        name=name,
-                        phone=phone,
-                        whatsapp=whatsapp,
-                        profession=profession,
-                        sex=sex,
-                        dob=dob,
-                        billing_state=billing_state,
-                        billing_country=billing_country,
-                        billing_pincode=billing_pincode,
-                        registration_date=today_date,
-                        uuid=uuid
-                    )
-                    db.session.add(new_user)
-                    db.session.commit()
+                    try:
+                        referring_member = db.session.query(Member).filter_by(referral_code=referral_code).scalar()
+                    except Exception as e:
+                        referring_member = None
 
-                    all_users = db.session.query(Member).all()
-                    admin = db.session.query(Role).filter_by(name='admin').scalar()
+                    if not referring_member:
+                        referral_code = ''  
 
-                    if len(all_users) == 1:
-                        all_users[0].role.append(admin)
+                    try:
+                        new_user = Member(
+                            email=email,
+                            password=password,
+                            name=name,
+                            phone=phone,
+                            whatsapp=whatsapp,
+                            profession=profession,
+                            sex=sex,
+                            dob=dob,
+                            billing_state=billing_state,
+                            billing_country=billing_country,
+                            billing_pincode=billing_pincode,
+                            registration_date=today_date,
+                            uuid=uuid,
+                            referral_code=new_member_referral_code,
+                            registration_referral_code=referral_code
+                        )
+                        db.session.add(new_user)
+
+                        
+                        
                         db.session.commit()
 
-                    login_user(new_user)
-                    session['logged_in'] = True
-
-                    # if artist_account == 'yes':
-                    #     artist = db.session.query(Role).filter_by(name='artist').one()
-                    #
-                    #     current_user.role.append(artist)
-                    #     db.session.commit()
-                    #     entry = ArtistData(
-                    #         artist=current_user.name,
-                    #         watermarked_artworks=0,
-                    #         gallery_artworks=0,
-                    #         all_collections=0,
-                    #         commission_collections=0,
-                    #         sold_artworks=0,
-                    #         queried_artworks=0,
-                    #         shipped_artworks=0,
-                    #         contracted_artworks=0,
-                    #         sold_commissions=0,
-                    #         memory_occupied_total=0,
-                    #         memory_occupied_gallery=0,
-                    #         member=current_user,
-                    #     )
-                    #     db.session.add(entry)
-                    #     db.session.commit()
-
-                    mail = render_template('mails/registration_success.html')
-                    send_email_support('Registration success!', [email],
-                                    '',
-                                    mail, '')
-                    mail_message = f'New Registration:\n\nName: {name}\nEmail: {email}\n' \
-                                f'Phone: {phone}\n' \
-                                f'Sex: {sex}\nProfession: {profession}\n' \
-                                f'State: {billing_state}\n Country: {billing_country}\n Pincode: {billing_pincode}\n'
-                    send_email_support('New Registration!', ['writartstudios@gmail.com'], mail_message, '', '')
-                    if 'url' in session:
-                        return redirect(session['url'])
-                    return redirect(url_for('account.home', name=current_user.name.split()[0]))
+                        if referring_member:
+                            subject = f"Referred student registered - {today_date}"
+                            recipients = ['shwetabhartist@gmail.com', referring_member.email]
+                            body = f"Dear {referring_member.name},\n\n{name} registered using your referral code and you will get ₹500 as referral reward when {name} enrols for any course."
+                            send_email_school(subject, recipients, body, None, None)
+                        
+                        all_users = db.session.query(Member).all()
+                        admin = db.session.query(Role).filter_by(name='admin').scalar()
+    
+                        if len(all_users) == 1:
+                            all_users[0].role.append(admin)
+                            db.session.commit()
+    
+                        login_user(new_user)
+                        session['logged_in'] = True
+    
+                        # if artist_account == 'yes':
+                        #     artist = db.session.query(Role).filter_by(name='artist').one()
+                        #
+                        #     current_user.role.append(artist)
+                        #     db.session.commit()
+                        #     entry = ArtistData(
+                        #         artist=current_user.name,
+                        #         watermarked_artworks=0,
+                        #         gallery_artworks=0,
+                        #         all_collections=0,
+                        #         commission_collections=0,
+                        #         sold_artworks=0,
+                        #         queried_artworks=0,
+                        #         shipped_artworks=0,
+                        #         contracted_artworks=0,
+                        #         sold_commissions=0,
+                        #         memory_occupied_total=0,
+                        #         memory_occupied_gallery=0,
+                        #         member=current_user,
+                        #     )
+                        #     db.session.add(entry)
+                        #     db.session.commit()
+    
+                        mail = render_template('mails/registration_success.html')
+                        send_email_support('Registration success!', [email],
+                                        '',
+                                        mail, '')
+                        mail_message = f'New Registration:\n\nName: {name}\nEmail: {email}\n' \
+                                    f'Phone: {phone}\n' \
+                                    f'Sex: {sex}\nProfession: {profession}\n' \
+                                    f'State: {billing_state}\n Country: {billing_country}\n Pincode: {billing_pincode}\n'
+                        send_email_support('New Registration!', ['writartstudios@gmail.com'], mail_message, '', '')
+                        if 'url' in session:
+                            return redirect(session['url'])
+                        return redirect(url_for('account.home', name=current_user.name.split()[0]))
+                    except Exception as e:
+                            db.session.rollback()
+                            p(f"Databse error occurred: {e}")
                 else:
                     flash("Aborted! Captcha doesn't match!", "error")
                 
+
+                    
+                
     return render_template("register.html", logged_in=current_user.is_authenticated, current_year=current_year)
 
+
+@account.route('/referral-check', methods=['POST'])
+def referral_check():
+    if request.method == 'POST' and request.is_json:
+        data = request.get_json()
+        if data['type'] == 'registration-referral-check':
+            referral_code = data['referral_code']
+            try:
+                member = db.session.query(Member).filter_by(referral_code=referral_code).scalar()
+                message = f"Referral code is valid | Referror: {member.name}"
+                return jsonify({'status': 'success', 'message': message})
+            except Exception as e:
+                p(e)
+                message = f"Referral code is invalid."
+                return jsonify({'status': 'error', 'message': message})
+        
+    return '', 204
 
 @account.route('/login', methods=['GET', 'POST'])
 def login():

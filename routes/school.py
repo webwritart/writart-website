@@ -78,7 +78,6 @@ def course_registration_template():
     course_obj = db.session.query(Workshop).filter_by(uuid=course_uuid).first()
     course_data_dict = course_obj.to_dict()
 
-    
 
     return render_template('course_registration_template.html', course_data=course_data_dict, logged_in=current_user.is_authenticated)
 
