@@ -207,8 +207,15 @@ def main_dashboard():
         if student in roles:
             return redirect(url_for('account.student_dashboard', logged_in=current_user.is_authenticated, current_year=current_year))
 
+    all_available_referral_transactions = [a for a in current_user.referral_transactions if a.status == 'available']
+    total_referral_amount = 0
+    if len(all_available_referral_transactions) > 0:
+        for t in all_available_referral_transactions:
+            total_referral_amount += t.amount
+
     return render_template('main_dashboard.html', logged_in=current_user.is_authenticated, current_year=current_year, admin=admin,
-                           artist=artist, instructor=instructor, student=student, youtube_img_creator=youtube_img_creator, youtube_admin=youtube_admin, youtube_seo_manager=youtube_seo_manager)
+                           artist=artist, instructor=instructor, student=student, youtube_img_creator=youtube_img_creator, youtube_admin=youtube_admin, youtube_seo_manager=youtube_seo_manager,
+                           total_referral_amount=total_referral_amount)
 
 
 

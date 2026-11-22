@@ -109,6 +109,7 @@
         padding: .2% 0%;
         text-align: center;
         cursor: pointer;
+        font-size: 1rem;
     }
     .root-container {
         padding: 0% 10% 2% 10%;
@@ -416,6 +417,7 @@
     @media (max-width: 480px) {
         .testimonial-container { padding: 30px 20px; }
         .nav-btn { display: none; }
+        
     }
 
     @media (max-width: 1200px) {
@@ -566,6 +568,9 @@
         #talk-to-teacher-popup {
             width: 95%;
         }
+        #top-bar-promotion-container {
+            font-size: .8rem;
+        }
     }
 </style>
 <div class="light-canvas">
@@ -597,7 +602,7 @@
         </div>
     </div>
     <div id="top-bar-promotion-container" onclick="openReferralPopup()">
-        <div>Refer to <b>earn flat ₹500</b>. Get Cashback or use to get Discount. Click to <span style="color: yellow;">know more</span>. [Referral code: <b style="letter-spacing: .1rem;">{{referral_code}}]</b></div>
+        <div>Refer to <b>earn flat ₹500</b>. Get Cashback or use to get Discount. Click to <span style="color: yellow;">know more</span>. [ Referral code: <b style="letter-spacing: .1rem;">{{referral_code}}</b> ]   Balance: <span>₹{{available_referral_amount}}</span></div>
     </div>
     <div id="referral-popup" class="popup">
         <div class="popup-content" id="referral-popup-content">
@@ -981,6 +986,7 @@ function showTalkToTeacherPopup() {
 
 function openReferralPopup() {
     document.getElementById('referral-popup').style.display = 'block';
+    document.getElementById("overlay").style.display = "block";
     document.getElementById('referral-explainer-video').src = "";
 }
 

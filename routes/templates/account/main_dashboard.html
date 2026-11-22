@@ -9,6 +9,7 @@
         justify-content: center;
         height: 80vh;
         background: rgb(164, 173, 155);
+        font-size: 1rem;
     }
     #container h1 {
         padding-bottom: 5%;
@@ -18,25 +19,100 @@
         width: 40%;
         font-size: 1rem;
     }
+    #referral-div {
+        text-align: center;
+    }
+    #referral-div {
+        font-size: 1rem;
+    }
+    #referral-know-more {
+        background: rgb(49, 56, 40);
+        color: white;
+        border: none;
+        padding: 1% 5%;
+        border-radius: .5rem;
+        margin-top: 2%;
+        opacity: .5;
+        transition: all .2s ease-in-out;
+    }
+    #referral-know-more:hover {
+        opacity: .8;
+    }
+
+    /* -----------------------------------------------POPUP------------------------------------------------- */
+    #overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 999;
+    }
+    .popup {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 20px;
+        border: 1px solid black;
+        box-shadow: 0 0 10px gray;
+        z-index: 9999;
+        border-radius: .5rem;
+    }
+    .popup-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+    #referral-popup-content div {
+        width: 100%;
+    }
+    .video-container {
+        min-height: 30vh;
+    }
+    .close-popup-btn-container {
+        display: flex;
+        justify-content: flex-end;
+        width: 100%;
+    }
+    .close-popup-btn {
+        background: none;
+        border: none;
+        text-align: right;
+        color: red;
+        background: rgba(83, 25, 25, 0.22); 
+        padding: 1% 5%; 
+        border-radius: .4rem;
+    }
+
+    /* -------------------------------------------- RESPONSIVE ---------------------------------------------- */
 
     @media (max-width: 1200px) {
+        
     }
     @media (max-width: 900px) {
         #container a {
             width: 60%;
         }
+        
     }
     @media (max-width: 600px) {
         #container a {
             width: 80%;
         }
-
+        #referral-div {
+            font-size: .9rem;
+        }
     }
 </style>
 
 
 <div id="container">
-    <h1>Main dashboard</h1>
     {% if instructor in current_user.role %}
     <a class="btn btn-primary btn-block btn-large" href="{{url_for('account.instructor_dashboard')}}">Instructor Dashboard</a>
     {% endif %}
@@ -49,7 +125,47 @@
     {% if youtube_img_creator in current_user.role or youtube_admin in current_user.role or youtube_seo_manager in current_user.role %}
     <a class="btn btn-primary btn-block btn-large" href="{{url_for('youtube.home')}}">Youtube Dashboard</a>
     {% endif %}
-    
+    <div id="referral-div">
+        Referral Code: <b>{{current_user.referral_code}}</b><br>
+        Balance: <span style="color: rgb(0, 93, 0);"><b>₹ {{total_referral_amount}}</b></span><br>
+        <button id="referral-know-more" onclick="openReferralPopup()">Know more</button>
+    </div>
+</div>
+<div id="overlay" onclick="closePopup()"></div>
+<div id="referral-popup" class="popup">
+    <div class="popup-content" id="referral-popup-content">
+        <div class="close-popup-btn-container">
+            <button class="close-popup-btn" onclick="closePopup()">x</button>
+        </div>
+        <div style="text-align: center; border: 2px solid black;">Referral code: <b>{{current_user.referral_code}}</b></div>
+        <div style="margin-top: 1%;"><B>STEPS:</B></div>
+        <div>1. Spread the word and give this referral code to students who join through your referral.</div>
+        <div>2. If the student you referred registers and joins a Writart course you get ₹500 from Writart per student joining.</div>
+        <div>3. You can either choose to get discount of ₹500 in the courses by Writart or get Cashback through UPI or in Bank Account.</div>
+        <div>4. No limit on the referral reward. For example if many students join through your referral you get (number of students X ₹500) as reward.</div>
+        <div class="video-container">
+            <iframe id="referral-explainer-video"  class="responsive-iframe"
+                src="" 
+                title="YouTube video player" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+            </iframe>
+        </div>
+    </div>
 </div>
 
+<script>
+
+    function closePopup() {
+        document.getElementById("overlay").style.display = "none";
+        document.getElementById('referral-popup').style.display = 'none'
+        document.getElementById('referral-explainer-video').src = "";
+    }
+
+    function openReferralPopup() {
+        document.getElementById('referral-popup').style.display = 'block';
+        document.getElementById("overlay").style.display = "block";
+        document.getElementById('referral-explainer-video').src = "";
+    }
+</script>
 {% endblock %}

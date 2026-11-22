@@ -920,6 +920,11 @@ def course():
         return redirect(url_for('account.login', instruction='Log in to continue'))
 
     referral_code = current_user.referral_code
+    all_available_referral_transactions = [a for a in current_user.referral_transactions if a.status == 'available']
+    available_referral_amount = 0
+    if len(all_available_referral_transactions) > 0:
+        for t in all_available_referral_transactions:
+            available_referral_amount += t.amount
 
     return render_template('course.html', logged_in=current_user.is_authenticated,
                            video_count=video_count, vid_id_list=vid_id_list, vid_caption_list=vid_caption_list,
@@ -932,7 +937,7 @@ def course():
                            non_enrolment_msg_submissions=non_enrolment_msg_submissions, current_year=current_year, submitted_assignments_list=submitted_assignments_list, admin=admin,
                            all_submitted_pending_assignments_dict=all_submitted_pending_assignments_dict, my_submitted_assignment_list_count=my_submitted_assignment_list_count,
                            all_submitted_pending_assignments_dict_count=all_submitted_pending_assignments_dict_count, testimonial_dict=testimonial_dict, testimonial_count=testimonial_count,
-                           my_assessed_vid_dict=my_assessed_vid_dict, my_assessed_video_count=my_assessed_video_count, referral_code=referral_code)
+                           my_assessed_vid_dict=my_assessed_vid_dict, my_assessed_video_count=my_assessed_video_count, referral_code=referral_code, available_referral_amount=available_referral_amount)
 
 
 @school.route('/submit-feedback-files', methods=['GET', 'POST'])
