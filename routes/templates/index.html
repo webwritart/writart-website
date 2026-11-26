@@ -76,7 +76,6 @@ img {vertical-align: middle;}
     align-items: center;
     width: 100%;
     background: rgb(198, 210, 176);
-    padding: 1%;
 }
 #promo-video {
     margin: 1% 0% 1% 1%;
@@ -258,6 +257,25 @@ img {vertical-align: middle;}
     font-family: 'Roboto-medium', sans-serif;
     color: red;
 }
+#referral-program-vid-container {
+    width: 100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    background: black;
+    padding: 1%;
+    margin-top: 1%;
+    margin-bottom: 1%;
+}
+#referral-program-vid-container iframe {
+    width: 60%;
+}
+.section-heading-center {
+    width: 100%;
+    text-align: center;
+    color: white;
+    font-size: 1rem;
+}
 @media(max-width: 599px) {
     #active-course-desktop {
         display: none;
@@ -279,6 +297,10 @@ img {vertical-align: middle;}
         width: 100%;
         height: 40vh;
     }
+    #referral-program-vid-container iframe {
+        width: 90%;
+    }
+
 }
 /* Laptop */
 @media (min-width: 900px) and (max-width: 1279px) {
@@ -301,6 +323,9 @@ img {vertical-align: middle;}
     #promo-video {
         width: 100%;
         height: 40vh;
+    }
+    #referral-program-vid-container iframe {
+        width: 80%;
     }
 }
 
@@ -380,6 +405,15 @@ img {vertical-align: middle;}
 
         </div>
         {% endfor %}
+    </div>
+    <div id="referral-program-vid-container">
+        <p class="section-heading-center"><b>REFERRAL PROGRAM</b></p>
+        <iframe id="referral-explainer-video"  class="responsive-iframe"
+            src="https://youtube.com/embed/LrABVo13gN4" 
+            title="YouTube video player" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+        </iframe>
     </div>
 </div>
 
