@@ -1304,7 +1304,7 @@ def manual_enroll():
                     referrer = [referrer_obj.id, referrer_obj.name, referrer_obj.billing_state, referrer_obj.email]
                 except Exception as e:
                     p(e)
-                    referrer = [None, None, None, None]
+                    referrer = None
                 return jsonify({'total_referral_amount': referral_amt, 'referrer': referrer})
 
             if data['type'] == 'deduct-referral-amt':
@@ -1360,7 +1360,8 @@ def manual_enroll():
                 flash('Aborted! Please choose the workshop/course', 'error')
             student_id = request.form.get('student-id')
             referrer_details = request.form.get('referrer-details')
-            if referrer_details[0]:
+            
+            if referrer_details:
                 referring_member = db.session.query(Member).filter_by(id=referrer_details[0]).scalar()
             else:
                 referring_member = None

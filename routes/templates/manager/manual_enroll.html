@@ -134,7 +134,7 @@
         const studentName = document.getElementById('student-name');
         const studentId = document.getElementById('student-id');
         const endpointUrl = "{{ url_for('manager.manual_enroll') }}";
-        alert(key);
+    
         studentId.value = key;
         studentName.value = name;
         const searchStudentList = document.getElementById('search-student-list');
