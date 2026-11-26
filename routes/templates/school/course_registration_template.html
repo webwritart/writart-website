@@ -179,7 +179,23 @@
         width: 100%;
         height: 100%;
     }
-
+    #referral-program-vid-container {
+        width: 100%;
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        background: black;
+        padding: 1%;
+    }
+    #referral-program-vid-container iframe {
+        width: 90%;
+    }
+    .section-heading-center {
+        width: 100%;
+        text-align: center;
+        color: white;
+        font-size: 1rem;
+    }
     /* ---------------------------------------------------------- POPUP ---------------------------------------------------------- */
     #overlay {
         display: none;
@@ -346,15 +362,21 @@
             padding: 0.5% 5%;
         }
         #course-title {
-          padding:2% 0% 0% 0%;
+            padding:2% 0% 0% 0%;
           font-size: 1.2rem;
         }
       .course-info {
-        width:80%;
+            width:80%;
+      }
+      #referral-program-vid-container iframe{
+        width: 90%;
       }
       .section-heading {
-        font-size: 1.1rem;
+            font-size: 1.1rem;
       }
+        .section-heading-center {
+            font-size: 1.1rem;
+        }
       .syllabus-category {
         font-size: .9rem;
       }
@@ -417,6 +439,9 @@
         }
         .section-heading {
           font-size: 1.2rem;
+        }
+        .section-heading-center {
+            font-size: 1.2rem;
         }
         .syllabus-category {
           font-size: 1rem;
@@ -481,6 +506,9 @@
         #interested-popup {
             width: 60%;
         }
+        #referral-program-vid-container iframe{
+            width: 80%;
+        }
     }
     @media (min-width: 1200px) {
         .cover-container {
@@ -524,6 +552,9 @@
       .section-heading {
         font-size: 1.3rem;
       }
+      .section-heading-center {
+        font-size: 1.3rem;
+    }
       .syllabus-category {
         font-size: 1.1rem;
       }
@@ -568,6 +599,9 @@
         }
         #interested-popup {
             width: 50%;
+        }
+        #referral-program-vid-container iframe{
+            width: 60%;
         }
     }
     @media (min-width: 1900px) {
@@ -742,6 +776,15 @@
             {% endif %}
             <p class="text" style="width:50%;"><span style="color:red;"><s>₹3000</s></span> <b>₹ {{ course_data['monthly_fee'] }}</b> per month</p>
         </div>
+    </div>
+    <div id="referral-program-vid-container">
+        <p class="section-heading-center"><b>REFERRAL PROGRAM</b></p>
+        <iframe id="referral-explainer-video"  class="responsive-iframe"
+            src="https://youtube.com/embed/LrABVo13gN4" 
+            title="YouTube video player" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+        </iframe>
     </div>
     <p id="contact-text">To get admitted to the course or if you have any question please contact us.</p>
     <a id="course-contact-btn" href="https://wa.me/918920351265?text=Hey,%20I%20want%20to%20know%20more%20about%20%3A%20%2A{{course_data['topic']}}%2A">CONTACT US</a>

@@ -46,6 +46,24 @@
     .ws-thumbnail-container img {
         max-height: 200px;
     }
+       #referral-program-vid-container {
+        width: 100%;
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        background: black;
+        padding: 1%;
+    }
+    #referral-program-vid-container iframe {
+        width: 60%;
+    }
+    .section-heading-center {
+        width: 100%;
+        text-align: center;
+        color: white;
+        font-size: 1rem;
+    }
+    /* ---------------------------------------------------------- RESPONSIVE ------------------------------------------------------- */
     @media (max-width: 1200px) {
         .ws-thumbnail-container img {
             max-height: 150px;
@@ -55,6 +73,7 @@
         .ws-thumbnail-container img {
             max-height: 100px;
         }
+        
     }
     @media (max-width: 600px) {
         
@@ -70,6 +89,9 @@
         }
         .video-wrapper-container h3 {
             font-size: .9rem;
+        }
+        #referral-program-vid-container iframe {
+            width: 90%;
         }
     }
 </style>
@@ -175,6 +197,15 @@
             </div>
         {% endif %}
     </div>
+</div>
+<div id="referral-program-vid-container">
+    <p class="section-heading-center"><b>REFERRAL PROGRAM</b></p>
+    <iframe id="referral-explainer-video"  class="responsive-iframe"
+        src="https://youtube.com/embed/LrABVo13gN4" 
+        title="YouTube video player" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+        allowfullscreen>
+    </iframe>
 </div>
 <div class="video-wrapper" style="padding: 1% 0% 2% 0%; background: rgb(35, 77, 53); border: solid 1px black; border-bottom: 0;">
     <div class="video-wrapper-container">
