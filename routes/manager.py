@@ -835,7 +835,7 @@ def vis_user_all_users():
                 'phone':member.phone,
                 'whatsapp':member.whatsapp,
                 'profession':member.profession,
-                'state':member.state,
+                'state':member.billing_state,
                 'reg':member.registration_date
             }
         return render_template('vis_user_all_users.html', logged_in=current_user.is_authenticated, admin=admin,
@@ -1364,7 +1364,7 @@ def manual_enroll():
                 referring_member = db.session.query(Member).filter_by(id=referrer_details[0]).scalar()
             else:
                 referring_member = None
-            student = db.session.query(Member).filter_by(id=student_id).scalar()
+            student = db.session.query(Member).filter_by(id=int(student_id)).scalar()
             email = student.email
             try:
                 if workshop not in  student.participated:
