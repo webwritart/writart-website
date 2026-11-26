@@ -69,11 +69,22 @@
         align-items: center;
         width: 100%;
     }
+    #referral-popup {
+        width: 60%;
+        font-size: 1rem;
+    }
     #referral-popup-content div {
         width: 100%;
     }
     .video-container {
-        min-height: 30vh;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .video-container iframe {
+        width: 60%;
+        border: 5px solid black;
     }
     .close-popup-btn-container {
         display: flex;
@@ -93,11 +104,17 @@
     /* -------------------------------------------- RESPONSIVE ---------------------------------------------- */
 
     @media (max-width: 1200px) {
-        
+        .video-container iframe {
+            width: 90%;
+        }
     }
     @media (max-width: 900px) {
         #container a {
             width: 60%;
+        }
+        #referral-popup {
+            width: 70%;
+            font-size: .9rem;
         }
         
     }
@@ -107,6 +124,10 @@
         }
         #referral-div {
             font-size: .9rem;
+        }
+        #referral-popup {
+            width: 80%;
+            font-size: .8rem;
         }
     }
 </style>
