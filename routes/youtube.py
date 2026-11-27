@@ -339,11 +339,24 @@ def home():
                     video_obj = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar()
                     temp_title = video_obj.temp_title
                     this_project_dict = video_obj.to_dict()
-                    for s in this_project_dict['storyboard_scenes']:
-                        for shot in s['shots']:
-                            shot.pop("creatives", None)
                     
-                    return jsonify(status= 'success', project_dict= this_project_dict, title= temp_title)
+                    storyboard_scene_shot_dict = {}
+                    for scene in this_project_dict['storyboard_scenes']:
+                        for shot in scene['shots']:
+                            ss = scene['scene'] + '-' + shot['shot']
+                            c_d = shot['frame_direction']
+                            d = shot['creative_direction']
+                            d_n = shot['dialogue_narration']
+                            drawing = shot['storyboard_img_path']
+                            storyboard_scene_shot_dict[ss] = {
+                                'ss': ss,
+                                'camera_direction': c_d,
+                                'creative_direction': d,
+                                'dialogue_narration': d_n,
+                                'drawing': drawing
+                            }
+                    
+                    return jsonify(status= 'success', project_dict= storyboard_scene_shot_dict, title= temp_title)
                 
                 if data['type'] == 'get_img_upload_shot_data':
                     video_uuid = data['video_uuid']

@@ -3839,43 +3839,39 @@
             const tbody = document.getElementById('storyboard-display-body');
             tbody.replaceChildren();
             
-            const scenes = result.project_dict.storyboard_scenes;
-            for (let i = 0; i < scenes.length; i++) {
-                const shots = scenes[i].shots;
-                for (let j = 0; j < shots.length; j++) {
-                    const tr = document.createElement('tr');
-                    tr.classList.add('storyboard-display-table-row');
-                    const ss = document.createElement('td');
-                    ss.classList.add('storyboard-ss');
-                    const drawing = document.createElement('td');
-                    drawing.classList.add('storyboard-drawing');
-                    const cameraDirection = document.createElement('td');
-                    cameraDirection.classList.add('storyboard-camera-direction');
-                    const direction = document.createElement('td');
-                    direction.classList.add('storyboard-direction');
-                    const dialogueNarration = document.createElement('td');
-                    dialogueNarration.classList.add('storyboard-dialogue-narration');
-                    ss.innerHTML = scenes[i].scene + '-' + shots[j].shot;
-                    const storyboardImage = document.createElement('img');
-                    const drawingOrientation = await checkImageOrientation(shots[j].storyboard_img_path);
-                    if (drawingOrientation == 'landscape') {
-                        storyboardImage.classList.add('storyboard-display-image-landscape');
-                    } else if (drawingOrientation == 'portrait') {
-                        storyboardImage.classList.add('storyboard-display-image-portrait');
-                    }
-                    storyboardImage.src = shots[j].storyboard_img_path;
-                    drawing.appendChild(storyboardImage);
-                    cameraDirection.innerHTML = shots[j].frame_direction;
-                    direction.innerHTML = shots[j].creative_direction;
-                    dialogueNarration.innerHTML = shots[j].dialogue_narration;
-                    tr.appendChild(ss);
-                    tr.appendChild(cameraDirection);
-                    tr.appendChild(direction);
-                    tr.appendChild(dialogueNarration);
-                    tr.appendChild(drawing);
-
-                    tbody.appendChild(tr);
+            const sceneShotDict = result.project_dict;
+            for (const [key, value] of Object.entries(sceneShotDict)) {
+                const tr = document.createElement('tr');
+                tr.classList.add('storyboard-display-table-row');
+                const ss = document.createElement('td');
+                ss.classList.add('storyboard-ss');
+                const drawing = document.createElement('td');
+                drawing.classList.add('storyboard-drawing');
+                const cameraDirection = document.createElement('td');
+                cameraDirection.classList.add('storyboard-camera-direction');
+                const direction = document.createElement('td');
+                direction.classList.add('storyboard-direction');
+                const dialogueNarration = document.createElement('td');
+                dialogueNarration.classList.add('storyboard-dialogue-narration');
+                ss.innerHTML = key;
+                const storyboardImage = document.createElement('img');
+                const drawingOrientation = await checkImageOrientation(value['drawing']);
+                if (drawingOrientation == 'landscape') {
+                    storyboardImage.classList.add('storyboard-display-image-landscape');
+                } else if (drawingOrientation == 'portrait') {
+                    storyboardImage.classList.add('storyboard-display-image-portrait');
                 }
+                storyboardImage.src = value['drawing'];
+                drawing.appendChild(storyboardImage);
+                cameraDirection.innerHTML = value.camera_direction;
+                direction.innerHTML = value.creative_direction;
+                dialogueNarration.innerHTML = value.dialogue_narration;
+                tr.appendChild(ss);
+                tr.appendChild(cameraDirection);
+                tr.appendChild(direction);
+                tr.appendChild(dialogueNarration);
+                tr.appendChild(drawing);
+                tbody.appendChild(tr);
             }
             showStoryboardDisplayPopup();
         }
