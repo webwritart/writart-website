@@ -1934,10 +1934,10 @@
                 <thead>
                     <tr>
                         <th>SS</th>
-                        <th>Drawing</th>
                         <th>Camera Direction</th>
                         <th>Direction</th>
                         <th>Dialogue/Narration</th>
+                        <th>Drawing</th>
                     </tr>
                 </thead>
                 <tbody id="storyboard-display-body">
@@ -3871,10 +3871,11 @@
                     direction.innerHTML = shots[j].creative_direction;
                     dialogueNarration.innerHTML = shots[j].dialogue_narration;
                     tr.appendChild(ss);
-                    tr.appendChild(drawing);
                     tr.appendChild(cameraDirection);
                     tr.appendChild(direction);
                     tr.appendChild(dialogueNarration);
+                    tr.appendChild(drawing);
+
                     tbody.appendChild(tr);
                 }
             }
