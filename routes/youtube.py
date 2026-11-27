@@ -339,6 +339,9 @@ def home():
                     video_obj = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar()
                     temp_title = video_obj.temp_title
                     this_project_dict = video_obj.to_dict()
+                    for s in this_project_dict['storyboard_scenes']:
+                        for shot in s['shots']:
+                            shot.pop("creatives", None)
                     
                     return jsonify(status= 'success', project_dict= this_project_dict, title= temp_title)
                 
