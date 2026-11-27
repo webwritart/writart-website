@@ -337,8 +337,10 @@ def home():
                 if data['type'] == 'show-storyboard':
                     video_uuid = data['video_uuid']
                     video_obj = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar()
+                    temp_title = video_obj.temp_title
                     this_project_dict = video_obj.to_dict()
-                    return jsonify(status= 'success', project_dict= this_project_dict)
+                    
+                    return jsonify(status= 'success', project_dict= this_project_dict, title= temp_title)
                 
                 if data['type'] == 'get_img_upload_shot_data':
                     video_uuid = data['video_uuid']

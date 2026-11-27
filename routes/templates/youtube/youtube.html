@@ -286,12 +286,15 @@
     .popup {
         display: none;
         position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 20px;
+        border: 1px solid black;
+        box-shadow: 0 0 10px gray;
         z-index: 9999;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.8);
+        border-radius: .5rem;
     }
     .secondary-popup {
         display: none;
@@ -1340,6 +1343,77 @@
         justify-content: center;
         align-items: center;
     }
+    /* ------------------------------------------------ STORYBOARD DISPLAY POPUP ----------------------------------------------- */
+     #overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 999;
+    }
+    #storyboard-display-popup {
+        width: 90%;
+        max-height: 95vh;
+        background: black;
+    }
+    #storyboard-popup-content {
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+    #storyboard-display-temp-title {
+        color: white;
+        width: 100%;
+        text-align: center;
+    }
+    #storyboard-display-table {
+        border: 2px solid rgba(255, 0, 0, 0.606);
+    }
+    #storyboard-display-table th {
+        background: rgb(174, 0, 0);
+        border: 1px solid rgba(255, 0, 0, 0.606);
+    }
+    #storyboard-display-body {
+        background: black;
+        color: rgba(255, 255, 255, 0.733);
+    }
+    .storyboard-ss {
+        width: 5%;
+    }
+    .storyboard-drawing {
+        width: 20%;
+    }
+    .storyboard-camera-direction {
+        width: 25%;
+    }
+    .storyboard-direction {
+        width: 25%;
+    }
+    .storyboard-dialogue-narration {
+        width: 25%;
+    }
+    .storyboard-display-image-landscape {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .storyboard-display-image-horizontal {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+        background: white;
+    }
+    .storyboard-display-image-portrait {
+        width: auto;
+        height: 100%;
+        object-fit: cover;
+        background: white;
+    }
+    #storyboard-display-body td {
+        border: 1px solid rgba(255, 0, 0, 0.606);
+    }
     
     /* --------------------------------------------------IMAGES DISPLAY---------------------------------------------------- */
     
@@ -1800,6 +1874,8 @@
             <button type="submit" name="submit" value="select_current_video" id="select-current-video-submit-btn" class="form-button" onclick="setCurrentVideo()">Set Current video</button>
         </form>
     </div>
+    <!-- ------------------------------------------------------POPUPS------------------------------------------------------------------ -->
+    <div id="overlay" onclick="closePopup()"></div>
     <div id="image-popup" class="popup">
         <div class="popup-content">
             <span class="close" onclick="closePopup()">&times;</span>
@@ -1851,18 +1927,22 @@
         </div>
     </div>
     <div id="storyboard-display-popup" class="popup">
-        <div class="popup-content">
+        <div id="storyboard-popup-content">
             <span class="close" onclick="closePopup()">&times;</span>
             <p id="storyboard-display-temp-title"></p>
-            <table>
-                <tr>
-                    <th>SS</th>
-                    <th>Camera Direction</th>
-                    <th>Direction</th>
-                    <th>Dialogue/Narration</th>
-                </tr>
-                <tr id="storyboard-display-table-row">
-                </tr>
+            <table id="storyboard-display-table">
+                <thead>
+                    <tr>
+                        <th>SS</th>
+                        <th>Drawing</th>
+                        <th>Camera Direction</th>
+                        <th>Direction</th>
+                        <th>Dialogue/Narration</th>
+                    </tr>
+                </thead>
+                <tbody id="storyboard-display-body">
+                    
+                </tbody>
             </table>
         </div>
     </div>
@@ -2598,19 +2678,20 @@
     function closePopup() {
         document.getElementById("image-popup").style.display = "none";
         document.getElementById("upload-creative-revision-popup").style.display = "none";
-        document.getElementById("upload-video-revision-popup").style.display = "none";
-        alert('close popuup pressed');
         document.getElementById("storyboard-display-popup").style.display = 'none';
+        document.getElementById("overlay").style.display = 'none';
     }
     function openImageLargeSize(imagePath) {
         const image = document.getElementById("image-large-size");
         image.src = imagePath;
         document.getElementById('image-popup').style.display = 'block';
+        document.getElementById('overlay').style.display = 'block';
     }
     function uploadRevisionPopup(img_uuid, img_path) {
         document.getElementById("upload-creative-revision-popup").style.display = "block";
         document.getElementById("parent-img-uuid").value = img_uuid;
         document.getElementById("upload-revision-previous-image").src = img_path;
+        document.getElementById('overlay').style.display = 'block';
     }
 
     function openMediaPopup() {
@@ -2767,6 +2848,7 @@
 
     function showStoryboardDisplayPopup() {
         document.getElementById("storyboard-display-popup").style.display = "block";
+        document.getElementById('overlay').style.display = 'block';
     }
     const revisionForm = document.getElementById('upload-revision-form');
     revisionForm.addEventListener('submit', (event) => {
@@ -3715,6 +3797,28 @@
         const endpointUrl = "{{ url_for('youtube.image_feedback') }}";
         window.location.href = endpointUrl + '?video_uuid=' + video_uuid;
     }
+
+    function checkImageOrientation(imgSrc) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+
+            img.onload = function () {
+                const width = img.width;
+                const height = img.height;
+
+                const orientation = width > height ? 'landscape' : 'portrait';
+
+                resolve(orientation);
+            };
+
+            img.onerror = function () {
+                reject('Unable to load image');
+            };
+
+            img.src = imgSrc;
+        });
+    }
+
     async function showStoryboardPopup(video_uuid) {
         const endpointUrl = "{{ url_for('youtube.home') }}";
         const response = await fetch(endpointUrl, {
@@ -3732,6 +3836,48 @@
         }
         const result = await response.json();
         if (result.status == 'success') {
+            const storyboardDisplayTitle = document.getElementById('storyboard-display-temp-title');
+            storyboardDisplayTitle.innerHTML = `${result.title} - STORYBOARD`;
+            const tbody = document.getElementById('storyboard-display-body');
+            tbody.replaceChildren();
+            
+            const scenes = result.project_dict.storyboard_scenes;
+            for (let i = 0; i < scenes.length; i++) {
+                const shots = scenes[i].shots;
+                for (let j = 0; j < shots.length; j++) {
+                    const tr = document.createElement('tr');
+                    tr.classList.add('storyboard-display-table-row');
+                    const ss = document.createElement('td');
+                    ss.classList.add('storyboard-ss');
+                    const drawing = document.createElement('td');
+                    drawing.classList.add('storyboard-drawing');
+                    const cameraDirection = document.createElement('td');
+                    cameraDirection.classList.add('storyboard-camera-direction');
+                    const direction = document.createElement('td');
+                    direction.classList.add('storyboard-direction');
+                    const dialogueNarration = document.createElement('td');
+                    dialogueNarration.classList.add('storyboard-dialogue-narration');
+                    ss.innerHTML = scenes[i].scene + '-' + shots[j].shot;
+                    const storyboardImage = document.createElement('img');
+                    const drawingOrientation = await checkImageOrientation(shots[j].storyboard_img_path);
+                    if (drawingOrientation == 'landscape') {
+                        storyboardImage.classList.add('storyboard-display-image-landscape');
+                    } else if (drawingOrientation == 'portrait') {
+                        storyboardImage.classList.add('storyboard-display-image-portrait');
+                    }
+                    storyboardImage.src = shots[j].storyboard_img_path;
+                    drawing.appendChild(storyboardImage);
+                    cameraDirection.innerHTML = shots[j].frame_direction;
+                    direction.innerHTML = shots[j].creative_direction;
+                    dialogueNarration.innerHTML = shots[j].dialogue_narration;
+                    tr.appendChild(ss);
+                    tr.appendChild(drawing);
+                    tr.appendChild(cameraDirection);
+                    tr.appendChild(direction);
+                    tr.appendChild(dialogueNarration);
+                    tbody.appendChild(tr);
+                }
+            }
             showStoryboardDisplayPopup();
         }
     }
