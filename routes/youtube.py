@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, flash, send_file, session, url_for, jsonify
+from flask import Blueprint, render_template, request, redirect, flash, send_file, session, url_for, jsonify, current_app
 from flask_login import current_user
 from extensions import *
 from models.youtube import *
@@ -22,6 +22,7 @@ date_time_now = datetime.now().replace(microsecond=0)
 
 @youtube.route('/', methods=['GET', 'POST'])
 def home():
+    current_app.logger.info("youtube home is to load and logged successfull! --------------------------------------")
     admin = db.session.query(Role).filter_by(name='admin').one_or_none()
     youtube_img_creator = db.session.query(Role).filter_by(name='youtube_img_creator').one_or_none()
     youtube_seo_manager = db.session.query(Role).filter_by(name='youtube_seo_manager').one_or_none()

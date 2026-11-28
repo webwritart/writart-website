@@ -29,6 +29,8 @@ from sqlalchemy import create_engine, text
 from models.tool import Tools, ArtworkPriceTime, SupportTicket
 from models.news import News
 from models.transactions import *
+import logging
+import sys
 
 
 load_dotenv()
@@ -47,6 +49,11 @@ mail.init_app(app)
 db.init_app(app)
 login_manager.init_app(app)
 # scheduler = APScheduler()
+logging.basicConfig(
+    stream=sys.stdout,
+    level=logging.INFO,
+    format='%(asctime)s %(levelname)s %(message)s'
+)
 
 app.register_blueprint(main, url_prefix='/')
 app.register_blueprint(account, url_prefix='/account')
