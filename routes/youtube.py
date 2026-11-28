@@ -82,7 +82,8 @@ def home():
                     default_scene_no = str(last_scene_no)
                     default_shot_no = 'A'
                 default_scene_obj = [a for a in current_video.storyboard_scenes if a.scene == default_scene_no][0]
-                
+                body = f"{default_scene_no}-{default_shot_no}"
+                send_email_school('test - from function', ['shwetabhartist@gmail.com'], body, '', '')
                 return (default_scene_no, default_shot_no, default_scene_obj)
                 
             global first_channel, first_video
@@ -839,8 +840,6 @@ def home():
             req_scene = [a for a in project_dict['storyboard_scenes'] if a['scene'] == '1']
             # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             current_user_roles = [a.name for a in current_user.role]
-            body = f"{current_creatives_upload_scene_shot_data_tuple}"
-            send_email_school("Test", ['shwetabhartist@gmail.com'], body, '', '')
             return render_template('youtube.html', current_year=current_year, channels=channels, default_video_dict=default_video_dict, logged_in=current_user.is_authenticated, admin=admin, first_channel=default_channel,
                                 current_video_option_list=current_video_option_list, pending_revisions=pending_revisions, pending_reviews=pending_reviews, pending_seo=pending_seo, edit_seo=edit_seo, youtube_img_creator=youtube_img_creator, youtube_seo_manager=youtube_seo_manager, youtube_admin=youtube_admin, current_user_roles=current_user_roles,
                                 project_dict=project_dict, current_scene_shot_tuple=current_scene_shot_tuple, current_creatives_upload_scene_shot_data_tuple=current_creatives_upload_scene_shot_data_tuple, upload_images_form_top_bar_data_tuple=upload_images_form_top_bar_data_tuple, current_creatives_upload_scene_shot_tuple=current_creatives_upload_scene_shot_tuple)
