@@ -22,7 +22,6 @@ date_time_now = datetime.now().replace(microsecond=0)
 
 @youtube.route('/', methods=['GET', 'POST'])
 def home():
-    current_app.logger.info("youtube home is to load and logged successfull! --------------------------------------")
     admin = db.session.query(Role).filter_by(name='admin').one_or_none()
     youtube_img_creator = db.session.query(Role).filter_by(name='youtube_img_creator').one_or_none()
     youtube_seo_manager = db.session.query(Role).filter_by(name='youtube_seo_manager').one_or_none()
@@ -182,6 +181,8 @@ def home():
 
                         
                         current_creatives_upload_scene_shot_tuple = find_missing_creative(current_video)
+                        body = f"{current_creatives_upload_scene_shot_tuple} - line 184"
+                        send_email_school('test', ['shwetabhartist@gmail.com'], body, '', '')
 
                         # if not current_creatives_upload_scene_shot_tuple:
                         #     if len(current_video.storyboard_scenes) > 0:
@@ -207,6 +208,8 @@ def home():
                         except Exception as e:
                             p(e)
                         current_creatives_upload_scene_shot_tuple = find_missing_creative(first_video)
+                        body = f"{current_creatives_upload_scene_shot_tuple} - line 211"
+                        send_email_school('test', ['shwetabhartist@gmail.com'], body, '', '')
                         # if not current_creatives_upload_scene_shot_tuple:
                         #     if len(first_video.storyboard_scenes) > 0:
                         #         last_scene_obj_tuple = [(a.scene, a) for a in first_video.storyboard_scenes if a.scene == str(max([int(a.scene) for a in first_video.storyboard_scenes]))][0]
