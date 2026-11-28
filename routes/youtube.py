@@ -78,15 +78,9 @@ def home():
                     else:
                         default_scene_no = str(last_scene_no)
                         default_shot_no = last_shot_no
-                    body = f"{default_scene_no}-{default_shot_no} - default shot no not in last scene all shot no list"
-                    send_email_school('test - from function', ['shwetabhartist@gmail.com'], body, '', '')
                 else:
                     default_scene_no = str(last_scene_no)
-                    body = f"{default_scene_no}-{default_shot_no} - default shot no not in last scene all shot no list"
-                    send_email_school('test - from function', ['shwetabhartist@gmail.com'], body, '', '')
                 default_scene_obj = [a for a in current_video.storyboard_scenes if a.scene == default_scene_no][0]
-                body = f"{default_scene_no}-{default_shot_no}"
-                send_email_school('test - from function', ['shwetabhartist@gmail.com'], body, '', '')
                 return (default_scene_no, default_shot_no, default_scene_obj)
                 
             global first_channel, first_video
@@ -185,8 +179,6 @@ def home():
 
                         
                         current_creatives_upload_scene_shot_tuple = find_missing_creative(current_video)
-                        body = f"{current_creatives_upload_scene_shot_tuple} - line 184"
-                        send_email_school('test', ['shwetabhartist@gmail.com'], body, '', '')
 
                         # if not current_creatives_upload_scene_shot_tuple:
                         #     if len(current_video.storyboard_scenes) > 0:
@@ -212,8 +204,6 @@ def home():
                         except Exception as e:
                             p(e)
                         current_creatives_upload_scene_shot_tuple = find_missing_creative(first_video)
-                        body = f"{current_creatives_upload_scene_shot_tuple} - line 211"
-                        send_email_school('test', ['shwetabhartist@gmail.com'], body, '', '')
                         # if not current_creatives_upload_scene_shot_tuple:
                         #     if len(first_video.storyboard_scenes) > 0:
                         #         last_scene_obj_tuple = [(a.scene, a) for a in first_video.storyboard_scenes if a.scene == str(max([int(a.scene) for a in first_video.storyboard_scenes]))][0]
@@ -953,9 +943,6 @@ def upload_video():
         db.session.commit()
 
         # send email to Leader -----------------------------------------------------
-        subject = f"New video uploaded - {date_time_now}"
-        body = f"New video uploaded\n\nVideo: {video_temp_title}\nScene-shot: {scene}-{shot}\nMember: {current_user.name}\nChannel: {channel_name}"
-        send_email_studio(subject, ['shwetabhartist@gmail.com'], body, '', {})
         return jsonify('success')
 
 
