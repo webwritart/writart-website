@@ -435,7 +435,6 @@ def home():
                         'direction': get_project_dict_data(this_project_dict, "creative_direction", scene, shot),
                         'narration_dialogue': get_project_dict_data(this_project_dict, "dialogue_narration", scene, shot),
                         'creatives_list': shot_creatives_list,
-                        'current_scene_shot_list': current_scene_shot_list,
 
                     }
                     return jsonify(upload_media_next_shot_data_dict)
