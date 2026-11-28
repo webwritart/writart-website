@@ -78,9 +78,12 @@ def home():
                     else:
                         default_scene_no = str(last_scene_no)
                         default_shot_no = last_shot_no
+                    body = f"{default_scene_no}-{default_shot_no} - default shot no not in last scene all shot no list"
+                    send_email_school('test - from function', ['shwetabhartist@gmail.com'], body, '', '')
                 else:
                     default_scene_no = str(last_scene_no)
-                    default_shot_no = 'A'
+                    body = f"{default_scene_no}-{default_shot_no} - default shot no not in last scene all shot no list"
+                    send_email_school('test - from function', ['shwetabhartist@gmail.com'], body, '', '')
                 default_scene_obj = [a for a in current_video.storyboard_scenes if a.scene == default_scene_no][0]
                 body = f"{default_scene_no}-{default_shot_no}"
                 send_email_school('test - from function', ['shwetabhartist@gmail.com'], body, '', '')
