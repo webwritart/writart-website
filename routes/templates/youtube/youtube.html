@@ -3274,6 +3274,7 @@
                 document.getElementById('upload-images-storyboard-narration-dialogue').innerHTML = data.narration_dialogue;
                 document.getElementById('upload-images-storyboard-direction').innerHTML = data.direction;
                 document.getElementById('upload-images-storyboard-type').innerHTML = `&ensp;(${data.shot_type})`;
+                alert(data.current_scene_shot_list);
                 const creativesDisplayContainer = document.getElementById('upload-images-creatives-display-container');
 
                 if (data.creatives_list.length == 0) {

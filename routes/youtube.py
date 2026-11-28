@@ -366,6 +366,9 @@ def home():
                     scene = None
                     shot = None
                     shot_uuid = None
+                    p('---------------------------------')
+                    p(f"current shot {current_shot}")
+                    p("---------------------------------")
 
                     video_obj = db.session.query(YoutubeVideo).filter_by(uuid=video_uuid).scalar()
                     scene_list = [a.scene for a in video_obj.storyboard_scenes]
@@ -397,14 +400,18 @@ def home():
 
                     elif subtype == 'previous':
                         if previous_shot_number_single_shot_input(current_shot) in current_scene_shot_list:
+                            p(f"previous shot : {previous_shot_number_single_shot_input(current_shot)}")
+                            
                             scene = current_scene
                             shot = previous_shot_number_single_shot_input(current_shot)
+                            
                             try:
                                 shot_uuid = [b for b in [a for a in video_obj.storyboard_scenes if a.scene == scene][0].shots if b.shot == shot][0].uuid
                             except Exception as e:
                                 p(e)
 
                         else:
+                            p(f"Previous shot not in the scene shot list")
                             if str(int(current_scene) - 1) in scene_list:
                                 scene = str(int(current_scene) - 1)
                                 shot = max([a.shot for a in [a for a in video_obj.storyboard_scenes if a.scene == scene][0].shots])
@@ -427,7 +434,9 @@ def home():
                         'camera_direction': get_project_dict_data(this_project_dict, "frame_direction", scene, shot),
                         'direction': get_project_dict_data(this_project_dict, "creative_direction", scene, shot),
                         'narration_dialogue': get_project_dict_data(this_project_dict, "dialogue_narration", scene, shot),
-                        'creatives_list': shot_creatives_list
+                        'creatives_list': shot_creatives_list,
+                        'current_scene_shot_list': current_scene_shot_list,
+
                     }
                     return jsonify(upload_media_next_shot_data_dict)
                 
