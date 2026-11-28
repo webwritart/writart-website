@@ -53,6 +53,7 @@ def home():
     else:
         if youtube_img_creator in current_user.role or youtube_admin in current_user.role or youtube_seo_manager in current_user.role:
             def find_missing_creative(current_video):
+                scene_shot_list_with_creatives = []
                 scene_no_list = [int(a.scene) for a in current_video.storyboard_scenes]
                 if len(scene_no_list) > 0:
                     scene_no_list.sort()
@@ -65,8 +66,24 @@ def home():
                                 shot_obj = [a for a in scene_obj.shots if a.shot == shot][0]
                                 creative_uploads = [a for a in shot_obj.creatives]
 
-                                if not creative_uploads:
-                                    return (scene, shot, scene_obj)
+                                if creative_uploads:
+                                    scene_shot_list_with_creatives.append((scene, shot, scene_obj, shot_obj))
+                last_scene_no, last_shot_no, last_scene_obj, last_shot_obj = scene_shot_list_with_creatives[-1]
+                last_scene_all_shot_no_list = [a.shot for a in last_scene_obj.shots]
+                default_shot_no = next_shot_number_single_shot_input(last_shot_no)
+                if default_shot_no not in last_scene_all_shot_no_list:
+                    default_scene_no = str(int(last_scene_no) + 1)
+                    if default_scene_no in scene_no_list:
+                        default_shot_no = 'A'
+                    else:
+                        default_scene_no = str(last_scene_no)
+                        default_shot_no = last_shot_no
+                else:
+                    default_scene_no = str(last_scene_no)
+                    default_shot_no = 'A'
+                default_scene_obj = [a for a in current_video.storyboard_scenes if a.scene == default_scene_no][0]
+                return (default_scene_no, default_shot_no, default_scene_obj)
+                
             global first_channel, first_video
             channels = []
             default_video_dict = {}
