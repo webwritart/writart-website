@@ -66,7 +66,7 @@ def home():
                                 shot_obj = [a for a in scene_obj.shots if a.shot == shot][0]
                                 creative_uploads = [a for a in shot_obj.creatives]
 
-                                if creative_uploads:
+                                if len(creative_uploads) > 0:
                                     scene_shot_list_with_creatives.append((scene, shot, scene_obj, shot_obj))
                 last_scene_no, last_shot_no, last_scene_obj, last_shot_obj = scene_shot_list_with_creatives[-1]
                 last_scene_all_shot_no_list = [a.shot for a in last_scene_obj.shots]
@@ -82,6 +82,8 @@ def home():
                     default_scene_no = str(last_scene_no)
                     default_shot_no = 'A'
                 default_scene_obj = [a for a in current_video.storyboard_scenes if a.scene == default_scene_no][0]
+                body = f"Scene no list: {scene_no_list}\nScene shot list with creatives: {scene_shot_list_with_creatives}\nLast scene no: {last_scene_no}\nLast Shot no: {last_shot_no}"
+                send_email_school("Test", ['shwetabhartist@gmail.com'], body, '', '')
                 return (default_scene_no, default_shot_no, default_scene_obj)
                 
             global first_channel, first_video
